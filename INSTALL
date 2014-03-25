@@ -1,0 +1,33 @@
+This is the installation file for the Sirion package.
+
+MANDATORY PREREQUISITES
+You will need the following installed and configured properly on your 
+system before building Sirion:
+
+Qt4 Toolkit, v4.6 or better (http://www.trolltech.com/).
+
+X11 Window System
+Virtually all Linux distros should include this.
+
+
+BUILD ENVIRONMENT
+Some distros may require that the CPPFLAGS and LDFLAGS
+environmental variables be set prior to running 'configure' in order for
+Qt4 to be detected properly.  Some known cases are:
+
+  CentOS/RedHat 5 (i386): export CPPFLAGS=-I/usr/lib/qt4/include
+                	  export LDFLAGS=-L/usr/lib/qt4/lib
+                	  export PATH=/usr/lib/qt4/bin:$PATH
+
+CentOS/RedHat 5 (x86_64): export CPPFLAGS=-I/usr/lib64/qt4/include
+                 	  export LDFLAGS=-L/usr/lib64/qt4/lib64
+                	  export PATH=/usr/lib64/qt4/bin:$PATH
+
+
+INSTALLATION
+Once the prerequisites are set up, building and installation of the code is
+done by cd'ing to the top of the source tree and typing './configure
+[options]', 'make', followed (as root) by 'make install'.  Those who
+obtained the source via CVS will need to do './autogen.sh' first.  There
+are a number of options for the 'configure' script; do './configure --help'
+for a detailed list.

@@ -1,0 +1,78 @@
+## glasscoder.spec.in
+##
+##    JACK-Based Media Streaming Encoder
+##
+##    Copyright (C) 2014  Fred Gleason <fredg@paravelsystems.com>
+##
+##      $Id: glasscoder.spec.in,v 1.2 2014/02/18 22:36:03 cvs Exp $
+##
+##    This program is free software; you can redistribute it and/or modify
+##    it under the terms of version 2 of the GNU General Public License as
+##    published by the Free Software Foundation;
+##
+##    This program is distributed in the hope that it will be useful,
+##    but WITHOUT ANY WARRANTY; without even the implied warranty of
+##    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##    GNU General Public License for more details.
+##
+##    You should have received a copy of the GNU General Public License
+##    along with this program; if not, write to the Free Software
+##    Foundation, Inc., 59 Temple Place, Suite 330, 
+##    Boston, MA  02111-1307  USA
+##
+
+Summary: Minimalist Media Streaming Encoder for JACK
+Name: glasscoder
+Version: @VERSION@
+Release: @RPM_RELEASE@%{?dist}
+License: GPLv2
+Packager: Fred Gleason <fredg@paravelsystems.com>
+Group: Productivity/Multimedia/Other
+Source: %{name}-@VERSION@.tar.gz
+BuildRequires: qt-devel libshout-devel libsamplerate-devel lame-devel jack-audio-connection-kit-devel
+BuildRoot: /var/tmp/%{name}-@VERSION@
+
+
+%description
+Glasscoder is a live media encoder intended for use with Shoutcast and Icecast
+streaming servers.  It uses the JACK Audio Connection Kit for audio input
+and is capable of generating MPEG-1 Layer 3 ('MP3') streams.  It is controlled
+completely from the command-line, with no configuration files or GUI
+required.
+
+
+%prep
+
+
+%setup
+
+
+%build
+./configure --prefix=/usr
+make
+
+
+%install
+rm -rf $RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT
+
+%post
+
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+
+%files
+%defattr(-,root,root)
+%{_bindir}/glasscoder
+%doc AUTHORS
+%doc ChangeLog
+%doc COPYING 
+%doc NEWS 
+%doc README 
+
+
+%changelog
+* Tue Feb 18 2014 Fred Gleason <fredg@paravelsystems.com>
+-- Initial RPM creation.

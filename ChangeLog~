@@ -1,0 +1,19 @@
+2014-02-17 Fred Gleason <fredg@paravelsystems.com>
+	* Initial package creation.
+2014-02-18 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented basic MPEG-1 Layer 3 streaming.
+2014-02-18 Fred Gleason <fredg@paravelsystems.com>
+	* Refactored sources into separate components for Jack, Lame and
+	Shout.
+2014-02-18 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented sample rate conversion.
+2014-02-18 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented the 'make rpm' target.
+2014-02-18 Fred Gleason <fredg@paravelsystems.com>
+	* Changed the names of the input ports from 'sirion_<n>' to
+	'input_<n>'.
+2014-02-24 Fred Gleason <fredg@paravelsystems.com>
+	* Added '--stream-description', '--stream-genre',
+	'--stream-name' and '--stream-url' options.
+2014-02-24 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.5.0.
