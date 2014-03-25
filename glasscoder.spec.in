@@ -1,10 +1,8 @@
 ## glasscoder.spec.in
 ##
-##    JACK-Based Media Streaming Encoder
+##    Minimalist JACK-Based Media Streaming Encoder
 ##
 ##    Copyright (C) 2014  Fred Gleason <fredg@paravelsystems.com>
-##
-##      $Id: glasscoder.spec.in,v 1.2 2014/02/18 22:36:03 cvs Exp $
 ##
 ##    This program is free software; you can redistribute it and/or modify
 ##    it under the terms of version 2 of the GNU General Public License as
@@ -66,6 +64,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 %{_bindir}/glasscoder
+%{_mandir}/man1/glasscoder.1.gz
 %doc AUTHORS
 %doc ChangeLog
 %doc COPYING 

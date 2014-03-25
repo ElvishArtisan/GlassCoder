@@ -22,7 +22,8 @@
 ##   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 ##
 
-SUBDIRS = src
+SUBDIRS = docs\
+          src
 
 rpm:	dist
 	cp glasscoder-$(VERSION).tar.gz $(RPM_ROOT)/SOURCES/

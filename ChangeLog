@@ -21,3 +21,5 @@
 	* Changed the project name to 'glasscoder'.
 2014-03-25 Fred Gleason <fredg@paravelsystems.com>
 	* Updated 'README'.
+2014-03-25 Fred Gleason <fredg@paravelsystems.com>
+	* Added manpage for glasscoder in 'docs/glasscoder.1'.
