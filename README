@@ -1,1 +1,6 @@
-This is the README file for the Sirion package.
+This is the README file for the GlassCoder package.
+
+GlassCoder is a minimalist audio encoder for IceCast and Shoutcast streaming
+servers that uses the JACK Audio Connection Kit.  GlassCoder utilizes no
+configuration files or GUI interface at all; its entire 'user interface'
+consists of a command-line invocation.
