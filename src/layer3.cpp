@@ -45,13 +45,15 @@ void MainObject::layer3EncodeData()
     if(audio_channels==2) {
       if((s=lame_encode_buffer_interleaved_ieee_float(sir_lameopts,sir_pcm_out,
 						      n,mpeg,8640))>=0) {
-	shout_send(sir_shout,mpeg,s);
+	sir_icy->writeData((const char *)mpeg,s);
+	//shout_send(sir_shout,mpeg,s);
       }
     }
     else {
       if((s=lame_encode_buffer_ieee_float(sir_lameopts,sir_pcm_out,NULL,n,
 					  mpeg,8640))>=0) {
-	shout_send(sir_shout,mpeg,s);
+	sir_icy->writeData((const char *)mpeg,s);
+	//shout_send(sir_shout,mpeg,s);
       }
     }
   }

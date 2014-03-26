@@ -198,16 +198,7 @@ MainObject::MainObject(QObject *parent)
   //
   // Start Shout Instance
   //
-  if(!StartShout()) {
-    exit(256);
-  }
-
-  //
-  // Start JACK
-  //
-  if(!StartJack()) {
-    exit(256);
-  }
+  StartShout();
 
   //
   // Encoder Timer
@@ -215,7 +206,32 @@ MainObject::MainObject(QObject *parent)
   sir_encoder_timer=new QTimer(this);
   sir_encoder_timer->setSingleShot(true);
   connect(sir_encoder_timer,SIGNAL(timeout()),this,SLOT(layer3EncodeData()));
-  sir_encoder_timer->start(RINGBUFFER_SERVICE_INTERVAL);
+}
+
+
+void MainObject::icyConnectedData(int result,const QString &txt)
+{
+  switch(result) {
+  case 200:  // Success
+    if(!StartJack()) {
+      exit(256);
+    }
+    sir_encoder_timer->start(RINGBUFFER_SERVICE_INTERVAL);
+    break;
+
+  default:
+    syslog(LOG_ERR,"server returned \"%d %s\"",
+	   result,(const char *)txt.toUtf8());
+    exit(256);
+    break;
+  }
+}
+
+
+void MainObject::icyDisconnectedData()
+{
+  syslog(LOG_ERR,"unable to connect to server");
+  exit(256);
 }
 
 

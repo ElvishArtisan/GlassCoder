@@ -35,6 +35,7 @@
 #include <samplerate.h>
 #include <shout/shout.h>
 
+#include "icyconnection.h"
 #include "ringbuffer.h"
 
 #define DEFAULT_JACK_CLIENT_NAME "glasscoder"
@@ -54,6 +55,8 @@ class MainObject : public QObject
   MainObject(QObject *parent=0);
 
  private slots:
+  void icyConnectedData(int result,const QString &txt);
+  void icyDisconnectedData();
   void layer3EncodeData();
 
  private:
@@ -91,7 +94,7 @@ class MainObject : public QObject
   //
   // Shout
   //
-  bool StartShout();
+  void StartShout();
   QString shoutErrorText(int err) const;
   QString shout_server_hostname;
   QString shout_server_mountpoint;
@@ -100,6 +103,7 @@ class MainObject : public QObject
   QString shout_server_username;
   int shout_server_type;
   shout_t *sir_shout;
+  IcyConnection *sir_icy;
 
   //
   // LAME (MPEG Layer3)

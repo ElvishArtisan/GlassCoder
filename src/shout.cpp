@@ -24,8 +24,43 @@
 
 #include "glasscoder.h"
 
-bool MainObject::StartShout()
+void MainObject::StartShout()
 {
+  int err;
+
+  //
+  // Create Connector Instance
+  //
+  sir_icy=new IcyConnection(this);
+  connect(sir_icy,SIGNAL(connected(int,const QString &)),
+	  this,SLOT(icyConnectedData(int,const QString &)));
+  connect(sir_icy,SIGNAL(disconnected()),this,SLOT(icyDisconnectedData()));
+
+  //
+  // Set Configuration
+  //
+  sir_icy->setServerMountpoint(shout_server_mountpoint);
+  sir_icy->setServerUsername(shout_server_username);
+  sir_icy->setServerPassword(shout_server_password);
+  sir_icy->setServerType(IcyConnection::Icecast2Server);
+  sir_icy->setContentType("audio/mpeg");
+  sir_icy->setAudioBitrate(audio_bitrate);
+  sir_icy->setAudioChannels(audio_channels);
+  sir_icy->setAudioSamplerate(audio_samplerate);
+  sir_icy->setStreamDescription(stream_description);
+  sir_icy->setStreamGenre(stream_genre);
+  sir_icy->setStreamName(stream_name);
+  sir_icy->setStreamUrl(stream_url);
+
+  //
+  // Open the server connection
+  //
+  sir_icy->connectToServer(shout_server_hostname,shout_server_port);
+
+
+
+
+  /*
   int err;
 
   //
@@ -140,8 +175,9 @@ bool MainObject::StartShout()
 	   (const char *)shoutErrorText(err).toAscii());
     return false;
   }
-
   return true;
+
+  */
 }
 
 
