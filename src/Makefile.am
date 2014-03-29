@@ -39,7 +39,6 @@ dist_glasscoder_SOURCES = cmdswitch.cpp cmdswitch.h\
                           layer3.cpp\
                           profile.cpp profile.h\
                           ringbuffer.cpp ringbuffer.h\
-                          shout.cpp\
                           glasscoder.cpp glasscoder.h
 
 nodist_glasscoder_SOURCES = moc_connector.cpp\

@@ -27,6 +27,7 @@
 #include <QtCore/QCoreApplication>
 
 #include "cmdswitch.h"
+#include "connectorfactory.h"
 #include "glasscoder.h"
 
 MainObject::MainObject(QObject *parent)
@@ -185,7 +186,7 @@ MainObject::MainObject(QObject *parent)
   //
   // Start Shout Instance
   //
-  StartShout();
+  StartServerConnection();
 
   //
   // Encoder Timer
@@ -219,6 +220,40 @@ void MainObject::icyDisconnectedData()
 {
   syslog(LOG_ERR,"unable to connect to server");
   exit(256);
+}
+
+
+void MainObject::StartServerConnection()
+{
+  int err;
+
+  //
+  // Create Connector Instance
+  //
+  sir_connector=ConnectorFactory(Connector::Icecast2Server,this);
+  connect(sir_connector,SIGNAL(connected(int,const QString &)),
+	  this,SLOT(icyConnectedData(int,const QString &)));
+  connect(sir_connector,SIGNAL(disconnected()),this,SLOT(icyDisconnectedData()));
+
+  //
+  // Set Configuration
+  //
+  sir_connector->setServerMountpoint(shout_server_mountpoint);
+  sir_connector->setServerUsername(shout_server_username);
+  sir_connector->setServerPassword(shout_server_password);
+  sir_connector->setContentType("audio/mpeg");
+  sir_connector->setAudioBitrate(audio_bitrate);
+  sir_connector->setAudioChannels(audio_channels);
+  sir_connector->setAudioSamplerate(audio_samplerate);
+  sir_connector->setStreamDescription(stream_description);
+  sir_connector->setStreamGenre(stream_genre);
+  sir_connector->setStreamName(stream_name);
+  sir_connector->setStreamUrl(stream_url);
+
+  //
+  // Open the server connection
+  //
+  sir_connector->connectToServer(shout_server_hostname,shout_server_port);
 }
 
 

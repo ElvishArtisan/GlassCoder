@@ -32,3 +32,5 @@
 	'src/connector.h'.
 	* Added an 'IcyConnector' class in 'src/icyconnector.cpp' and
 	'src/icyconnector.h'.
+2014-03-29 Fred Gleason <fredg@paravelsystems.com>
+	* Removed 'src/shout.cpp'.

@@ -91,9 +91,9 @@ class MainObject : public QObject
   friend int JackProcess(jack_nframes_t nframes, void *arg);
 
   //
-  // Shout
+  // Server Connection
   //
-  void StartShout();
+  void StartServerConnection();
   QString shout_server_hostname;
   QString shout_server_mountpoint;
   QString shout_server_password;
