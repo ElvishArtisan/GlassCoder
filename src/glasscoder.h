@@ -33,7 +33,6 @@
 #include <lame/lame.h>
 #endif  // HAVE_LAME
 #include <samplerate.h>
-#include <shout/shout.h>
 
 #include "icyconnection.h"
 #include "ringbuffer.h"
@@ -65,7 +64,7 @@ class MainObject : public QObject
   //
   unsigned audio_bitrate;
   unsigned audio_channels;
-  unsigned audio_format;
+  // unsigned audio_format;
   unsigned audio_samplerate;
   QString stream_description;
   QString stream_genre;
@@ -95,14 +94,11 @@ class MainObject : public QObject
   // Shout
   //
   void StartShout();
-  QString shoutErrorText(int err) const;
   QString shout_server_hostname;
   QString shout_server_mountpoint;
   QString shout_server_password;
   uint16_t shout_server_port;
   QString shout_server_username;
-  int shout_server_type;
-  shout_t *sir_shout;
   IcyConnection *sir_icy;
 
   //

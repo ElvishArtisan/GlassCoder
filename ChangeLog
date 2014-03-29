@@ -25,3 +25,5 @@
 	* Added manpage for glasscoder in 'docs/glasscoder.1'.
 2014-03-25 Fred Gleason <fredg@paravelsystems.com>
 	* Added 'IcyConnection' class in 'src/icyconnection.[cpp,h].
+2014-03-26 Fred Gleason <fredg@paravelsystems.com>
+	* Removed 'libshout' dependency.

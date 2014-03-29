@@ -80,11 +80,6 @@ AC_CHECK_HEADER(jack/jack.h,[],[AC_MSG_ERROR([*** JACK not found ***])])
 AC_CHECK_HEADER(samplerate.h,[],[AC_MSG_ERROR([*** libsamplerate not found ***])])
 
 #
-# Check for LibShout (Mandatory)
-#
-AC_CHECK_HEADER(shout/shout.h,[],[AC_MSG_ERROR([*** libshout not found ***])])
-
-#
 # Check for Lame (Optional, required for MPEG Layer 3 support)
 #
 AC_CHECK_HEADER(lame/lame.h,[LAME_FOUND=yes],[])
@@ -125,11 +120,11 @@ fi
 # Linux vs. OS X Setup
 #
 if test $ar_gcc_os = "darwin10" ; then
-  AC_SUBST(SIRLIBS,"-lsamplerate -ljack -lshout")
+  AC_SUBST(SIRLIBS,"-lsamplerate -ljack")
   AC_SUBST(SIRFLAGS,"-framework QtCore -framework QtNetwork")
   AC_DEFINE(OSX)
 else
-  AC_SUBST(SIRLIBS,"-lsamplerate -ljack -lshout -lQtCore -lQtNetwork")
+  AC_SUBST(SIRLIBS,"-lsamplerate -ljack -lQtCore -lQtNetwork")
   AC_SUBST(SIRFLAGS,"")
   AC_DEFINE(LINUX)
 fi
