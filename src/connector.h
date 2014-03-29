@@ -1,6 +1,6 @@
-// icyconnection.h
+// connector.h
 //
-// Abstract an ICY source connection.
+// Abstract base class for streaming server source connections.
 //
 //   (C) Copyright 2014 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -18,8 +18,8 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef ICYCONNECTION_H
-#define ICYCONNECTION_H
+#ifndef CONNECTOR_H
+#define CONNECTOR_H
 
 #include <stdint.h>
 
@@ -27,16 +27,15 @@
 #include <QtCore/QString>
 #include <QtNetwork/QTcpSocket>
 
-class IcyConnection : public QObject
+class Connector : public QObject
 {
   Q_OBJECT;
  public:
   enum ServerType {Shoutcast1Server=0,Shoutcast2Server=1,
 		   Icecast1Server=2,Icecast2Server=3};
-  IcyConnection(QObject *parent=0);
-  ~IcyConnection();
-  IcyConnection::ServerType serverType() const;
-  void setServerType(IcyConnection::ServerType type);
+  Connector(QObject *parent=0);
+  ~Connector();
+  virtual Connector::ServerType serverType() const=0;
   QString serverUsername() const;
   void setServerUsername(const QString &str);
   QString serverPassword() const;
@@ -61,24 +60,16 @@ class IcyConnection : public QObject
   void setStreamGenre(const QString &str);
   bool streamPublic() const;
   void setStreamPublic(bool state);
-  void connectToServer(const QString &hostname,uint16_t port);
-  int64_t writeData(const char *data,int64_t len);
+  virtual void connectToServer(const QString &hostname,uint16_t port)=0;
+  virtual int64_t writeData(const char *data,int64_t len)=0;
+  static QString serverTypeText(Connector::ServerType);
 
  signals:
   void connected(int result,const QString &txt);
   void disconnected();
   void error(QAbstractSocket::SocketError err);
 
- private slots:
-  void socketConnectedData();
-  void socketDisconnectedData();
-  void socketReadyReadData();
-  void socketErrorData(QAbstractSocket::SocketError err);
-
  private:
-  void ProcessHeaders(const QString &hdrs);
-  void WriteHeader(const QString &str);
-  IcyConnection::ServerType icy_server_type;
   QString icy_server_username;
   QString icy_server_password;
   QString icy_server_mountpoint;
@@ -91,11 +82,8 @@ class IcyConnection : public QObject
   QString icy_stream_url;
   QString icy_stream_genre;
   bool icy_stream_public;
-  QString icy_hostname;
-  uint16_t icy_port;
-  QTcpSocket *icy_socket;
-  QString icy_recv_buffer;
 };
 
+Connector *ConnectorFactory(Connector::ServerType type);
 
-#endif  // ICYCONNECTION_H
+#endif  // CONNECTOR_H

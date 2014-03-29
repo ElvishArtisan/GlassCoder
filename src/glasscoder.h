@@ -34,7 +34,7 @@
 #endif  // HAVE_LAME
 #include <samplerate.h>
 
-#include "icyconnection.h"
+#include "connector.h"
 #include "ringbuffer.h"
 
 #define DEFAULT_JACK_CLIENT_NAME "glasscoder"
@@ -99,7 +99,7 @@ class MainObject : public QObject
   QString shout_server_password;
   uint16_t shout_server_port;
   QString shout_server_username;
-  IcyConnection *sir_icy;
+  Connector *sir_connector;
 
   //
   // LAME (MPEG Layer3)

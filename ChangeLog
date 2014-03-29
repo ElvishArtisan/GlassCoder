@@ -27,3 +27,8 @@
 	* Added 'IcyConnection' class in 'src/icyconnection.[cpp,h].
 2014-03-26 Fred Gleason <fredg@paravelsystems.com>
 	* Removed 'libshout' dependency.
+2014-03-29 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Connector' base class in 'src/connector.cpp' and
+	'src/connector.h'.
+	* Added an 'IcyConnector' class in 'src/icyconnector.cpp' and
+	'src/icyconnector.h'.

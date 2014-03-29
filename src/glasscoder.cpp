@@ -36,7 +36,6 @@ MainObject::MainObject(QObject *parent)
   bool debug=false;
   audio_bitrate=DEFAULT_AUDIO_BITRATE;
   audio_channels=MAX_AUDIO_CHANNELS;
-  //  audio_format=SHOUT_FORMAT_MP3;
   audio_samplerate=DEFAULT_AUDIO_SAMPLERATE;
   jack_server_name="";
   jack_client_name=DEFAULT_JACK_CLIENT_NAME;
@@ -44,7 +43,6 @@ MainObject::MainObject(QObject *parent)
   shout_server_mountpoint="";
   shout_server_password="";
   shout_server_port=DEFAULT_SHOUT_SERVER_PORT;
-  // shout_server_type=SHOUT_PROTOCOL_HTTP;
   shout_server_username=DEFAULT_SHOUT_SERVER_USERNAME;
 
   CmdSwitch *cmd=new CmdSwitch(qApp->argc(),qApp->argv(),"glasscoder",GLASSCODER_USAGE);
@@ -118,17 +116,14 @@ MainObject::MainObject(QObject *parent)
     }
     if(cmd->key(i)=="--server-type") {
       if(cmd->value(i).toLower()=="icecast1") {
-	//shout_server_type=SHOUT_PROTOCOL_XAUDIOCAST;
 	cmd->setProcessed(i,true);
       }
       else {
 	if(cmd->value(i).toLower()=="icecast2") {
-	  //shout_server_type=SHOUT_PROTOCOL_HTTP;
 	  cmd->setProcessed(i,true);
 	}
 	else {
 	  if(cmd->value(i).toLower()=="shout") {
-	    //shout_server_type=SHOUT_PROTOCOL_ICY;
 	    cmd->setProcessed(i,true);
 	  }
 	  else {

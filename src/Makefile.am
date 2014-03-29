@@ -32,7 +32,9 @@ moc_%.cpp:	%.h
 bin_PROGRAMS = glasscoder
 
 dist_glasscoder_SOURCES = cmdswitch.cpp cmdswitch.h\
-                          icyconnection.cpp icyconnection.h\
+                          connector.cpp connector.h\
+                          connectorfactory.cpp connectorfactory.h\
+                          icyconnector.cpp icyconnector.h\
                           jack.cpp\
                           layer3.cpp\
                           profile.cpp profile.h\
@@ -40,8 +42,9 @@ dist_glasscoder_SOURCES = cmdswitch.cpp cmdswitch.h\
                           shout.cpp\
                           glasscoder.cpp glasscoder.h
 
-nodist_glasscoder_SOURCES = moc_glasscoder.cpp\
-                            moc_icyconnection.cpp
+nodist_glasscoder_SOURCES = moc_connector.cpp\
+                            moc_glasscoder.cpp\
+                            moc_icyconnector.cpp
 
 glasscoder_LDADD = @SIRLIBS@
 glasscoder_LDFLAGS = @SIRFLAGS@
