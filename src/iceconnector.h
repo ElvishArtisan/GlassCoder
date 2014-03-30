@@ -1,4 +1,4 @@
-// icyconnector.h
+// iceconnector.h
 //
 // Source connector class for IceCast2 servers.
 //
@@ -18,18 +18,18 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef ICYCONNECTOR_H
-#define ICYCONNECTOR_H
+#ifndef ICECONNECTOR_H
+#define ICECONNECTOR_H
 
 #include "connector.h"
 
-class IcyConnector : public Connector
+class IceConnector : public Connector
 {
   Q_OBJECT;
  public:
-  IcyConnector(QObject *parent=0);
-  ~IcyConnector();
-  IcyConnector::ServerType serverType() const;
+  IceConnector(QObject *parent=0);
+  ~IceConnector();
+  IceConnector::ServerType serverType() const;
   void connectToServer(const QString &hostname,uint16_t port);
   int64_t writeData(const char *data,int64_t len);
 
@@ -42,11 +42,11 @@ class IcyConnector : public Connector
  private:
   void ProcessHeaders(const QString &hdrs);
   void WriteHeader(const QString &str);
-  QString icy_hostname;
-  uint16_t icy_port;
-  QTcpSocket *icy_socket;
-  QString icy_recv_buffer;
+  QString ice_hostname;
+  uint16_t ice_port;
+  QTcpSocket *ice_socket;
+  QString ice_recv_buffer;
 };
 
 
-#endif  // ICYCONNECTOR_H
+#endif  // ICECONNECTOR_H

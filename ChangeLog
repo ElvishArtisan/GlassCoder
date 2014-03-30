@@ -40,3 +40,9 @@
 2014-03-29 Fred Gleason <fredg@paravelsystems.com>
 	* Added 'Connector::urlEncode()' and 'Connector::urlDecode()'
 	methods in 'src/connector.cpp' and 'src/connector.h'.
+2014-03-29 Fred Gleason <fredg@paravelsystems.com>
+	* Renamed 'src/icyconnector.cpp' to 'src/iceconnector.cpp'
+	* Renamed 'src/icyconnector.h' to 'src/iceconnector.h'
+	* Added 'Connector::base64Encode()' and 'Connector::base64Decode()'
+	methods in 'src/connector.cpp' and 'src/connector.h'.
+	* Implemented proper password processing in 'src/iceconnector.cpp'.

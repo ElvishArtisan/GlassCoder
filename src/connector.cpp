@@ -294,3 +294,119 @@ QString Connector::urlDecode(const QString &str)
 
   return ret;
 }
+
+
+char base64_dict[64]={'A','B','C','D','E','F','G','H','I','J','K','L','M','N',
+		      'O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b',
+		      'c','d','e','f','g','h','i','j','k','l','m','n','o','p',
+		      'q','r','s','t','u','v','w','x','y','z','0','1','2','3',
+		      '4','5','6','7','8','9','+','/'};
+
+
+QString Connector::base64Encode(const QString &str)
+{
+  QString ret;
+  uint32_t buf;
+
+  //
+  // Build Groups
+  //
+  for(int i=0;i<str.length();i+=3) {
+    buf=(0xff&(str.at(i).toLatin1()))<<16;
+    if((i+1)<str.length()) {
+      buf|=(0xff&(str.at(i+1).toLatin1()))<<8;
+      if((i+2)<str.length()) {
+	buf|=0xff&(str.at(i+2).toLatin1());
+      }
+    }
+
+    //
+    // Dictionary Lookup
+    //
+    for(int i=3;i>=0;i--) {
+      ret+=base64_dict[0x3f&(buf>>(6*i))];
+    }
+  }
+
+  //
+  // Apply Padding
+  //
+  switch(str.length()%3) {
+    case 1:
+      ret=ret.left(ret.length()-2)+"==";
+      break;
+      
+    case 2:
+      ret=ret.left(ret.length()-1)+"=";
+      break;
+  }
+
+
+  return ret;
+}
+
+
+QString Connector::base64Decode(const QString &str,bool *ok)
+{
+  QString ret;
+  uint32_t buf=0;
+  char c;
+  int pad=0;
+  bool found=false;
+
+  //
+  // Set Status
+  //
+  if(ok!=NULL) {
+    *ok=true;
+  }
+
+  //
+  // Dictionary Lookup
+  //
+  for(int i=0;i<str.length();i+=4) {
+    buf=0;
+    for(int j=0;j<4;j++) {
+      if(((i+j)<str.length())&&(c=str.at(i+j).toLatin1())!='=') {
+	found=false;
+	for(unsigned k=0;k<64;k++) {
+	  if(base64_dict[k]==c) {
+	    buf|=(k<<(6*(3-j)));
+	    found=true;
+	  }
+	}
+	if(!found) {  // Illegal character!
+	  if(ok!=NULL) {
+	    *ok=false;
+	  }
+	  return QString();
+	}
+      }
+      else {
+	if(str.at(i+j)=='=') {
+	  pad++;
+	}
+      }
+    }
+
+    //
+    // Extract Groups
+    //
+    for(int i=2;i>=0;i--) {
+      ret+=(0xff&(buf>>(8*i)));
+    }
+  }
+
+  //
+  // Apply Padding
+  //
+  if(pad>2) {
+    if(ok!=NULL) {
+      *ok=false;
+    }
+    return QString();
+  }
+  ret=ret.left(ret.length()-pad);
+
+  return ret;
+}

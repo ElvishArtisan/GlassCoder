@@ -18,7 +18,7 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#include "icyconnector.h"
+#include "iceconnector.h"
 #include "connectorfactory.h"
 
 Connector *ConnectorFactory(Connector::ServerType type,QObject *parent)
@@ -31,7 +31,7 @@ Connector *ConnectorFactory(Connector::ServerType type,QObject *parent)
     break;
 
   case Connector::Icecast2Server:
-    conn=new IcyConnector(parent);
+    conn=new IceConnector(parent);
     break;
   }
 

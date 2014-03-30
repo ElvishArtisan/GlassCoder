@@ -1,4 +1,4 @@
-// icyconnector.cpp
+// iceconnector.cpp
 //
 // Source connector class for IceCast2 servers
 //
@@ -20,58 +20,56 @@
 
 #include <QtCore/QStringList>
 
-#include "icyconnector.h"
+#include "iceconnector.h"
 
-IcyConnector::IcyConnector(QObject *parent)
+IceConnector::IceConnector(QObject *parent)
   : Connector(parent)
 {
-  icy_hostname="";
-  icy_port=8000;
-  icy_recv_buffer="";
+  ice_hostname="";
+  ice_port=8000;
+  ice_recv_buffer="";
 
-  icy_socket=new QTcpSocket(this);
-  connect(icy_socket,SIGNAL(connected()),this,SLOT(socketConnectedData()));
-  connect(icy_socket,SIGNAL(disconnected()),
+  ice_socket=new QTcpSocket(this);
+  connect(ice_socket,SIGNAL(connected()),this,SLOT(socketConnectedData()));
+  connect(ice_socket,SIGNAL(disconnected()),
 	  this,SLOT(socketDisconnectedData()));
-  connect(icy_socket,SIGNAL(readyRead()),this,SLOT(socketReadyReadData()));
-  connect(icy_socket,SIGNAL(error(QAbstractSocket::SocketError)),
+  connect(ice_socket,SIGNAL(readyRead()),this,SLOT(socketReadyReadData()));
+  connect(ice_socket,SIGNAL(error(QAbstractSocket::SocketError)),
 	  this,SLOT(socketErrorData(QAbstractSocket::SocketError)));
 }
 
 
-IcyConnector::~IcyConnector()
+IceConnector::~IceConnector()
 {
-  delete icy_socket;
+  delete ice_socket;
 }
 
 
-IcyConnector::ServerType IcyConnector::serverType() const
+IceConnector::ServerType IceConnector::serverType() const
 {
   return Connector::Icecast2Server;
 }
 
 
-void IcyConnector::connectToServer(const QString &hostname,uint16_t port)
+void IceConnector::connectToServer(const QString &hostname,uint16_t port)
 {
-  icy_hostname=hostname;
-  icy_port=port;
-  icy_socket->connectToHost(hostname,port);
+  ice_hostname=hostname;
+  ice_port=port;
+  ice_socket->connectToHost(hostname,port);
 }
 
 
-int64_t IcyConnector::writeData(const char *data,int64_t len)
+int64_t IceConnector::writeData(const char *data,int64_t len)
 {
-  return icy_socket->write(data,len);
+  return ice_socket->write(data,len);
 }
 
 
-void IcyConnector::socketConnectedData()
+void IceConnector::socketConnectedData()
 {
   WriteHeader("SOURCE /"+serverMountpoint()+" HTTP/1.0");
   WriteHeader(QString("Authorization: Basic ")+
-	      "c291cmNlOmt1am8kYXRvbWlj");  // FIXME
-  //WriteHeader(QString("Authorization: Basic ")+
-  //"c291cmNlOmt1am8kYXRvbWll");  // FIXME
+	      Connector::base64Encode(serverUsername()+":"+serverPassword()));
   WriteHeader(QString("User-Agent: GlassCoder/")+VERSION);
   WriteHeader("Content-Type: "+contentType());
   WriteHeader("ice-name: "+streamName());
@@ -86,36 +84,36 @@ void IcyConnector::socketConnectedData()
 }
 
 
-void IcyConnector::socketDisconnectedData()
+void IceConnector::socketDisconnectedData()
 {
   printf("socketDisconnectedData()\n");
 }
 
 
-void IcyConnector::socketReadyReadData()
+void IceConnector::socketReadyReadData()
 {
   char data[1501];
   int64_t n;
 
-  while((n=icy_socket->read(data,1500))>0) {
+  while((n=ice_socket->read(data,1500))>0) {
     data[n]=0;
     //printf("recvd %ld bytes: |%s|\n",n,data);
     for(int64_t i=0;i<n;i++) {
       switch(0xFF&data[i]) {
       case 10:
-	if((icy_recv_buffer.length()>=2)&&
-	   (icy_recv_buffer.toUtf8().at(icy_recv_buffer.length()-3)==13)) {
-	  icy_recv_buffer=icy_recv_buffer.left(icy_recv_buffer.length()-1);
-	  ProcessHeaders(icy_recv_buffer);
-	  icy_recv_buffer="";
+	if((ice_recv_buffer.length()>=2)&&
+	   (ice_recv_buffer.toUtf8().at(ice_recv_buffer.length()-3)==13)) {
+	  ice_recv_buffer=ice_recv_buffer.left(ice_recv_buffer.length()-1);
+	  ProcessHeaders(ice_recv_buffer);
+	  ice_recv_buffer="";
 	}
 	else {
-	  icy_recv_buffer+=data[i];
+	  ice_recv_buffer+=data[i];
 	}
 	break;
 
       default:
-	icy_recv_buffer+=data[i];
+	ice_recv_buffer+=data[i];
 	break;
       }
     }
@@ -123,13 +121,13 @@ void IcyConnector::socketReadyReadData()
 }
 
 
-void IcyConnector::socketErrorData(QAbstractSocket::SocketError err)
+void IceConnector::socketErrorData(QAbstractSocket::SocketError err)
 {
   printf("socketErrorData(): %d\n",err);
 }
 
 
-void IcyConnector::ProcessHeaders(const QString &hdrs)
+void IceConnector::ProcessHeaders(const QString &hdrs)
 {
   QStringList f0;
   QStringList f1;
@@ -149,7 +147,7 @@ void IcyConnector::ProcessHeaders(const QString &hdrs)
 }
 
 
-void IcyConnector::WriteHeader(const QString &str)
+void IceConnector::WriteHeader(const QString &str)
 {
-  icy_socket->write((str+"\r\n").toUtf8());
+  ice_socket->write((str+"\r\n").toUtf8());
 }

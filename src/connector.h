@@ -67,6 +67,8 @@ class Connector : public QObject
   static QString serverTypeText(Connector::ServerType);
   static QString urlEncode(const QString &str);
   static QString urlDecode(const QString &str);
+  static QString base64Encode(const QString &str);
+  static QString base64Decode(const QString &str,bool *ok=NULL);
 
  signals:
   void dataRequested(Connector *conn);
