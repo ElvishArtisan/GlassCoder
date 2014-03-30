@@ -1,6 +1,6 @@
-// connectorfactory.cpp
+// codecfactory.cpp
 //
-// Instantiate Connector classes.
+// Instantiate Codec classes
 //
 //   (C) Copyright 2014 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -18,22 +18,21 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#include "icyconnector.h"
-#include "connectorfactory.h"
+#include "codecfactory.h"
+#include "mpegl3codec.h"
 
-Connector *ConnectorFactory(Connector::ServerType type,QObject *parent)
+Codec *CodecFactory(Codec::Type type,Ringbuffer *ring,QObject *parent)
 {
-  Connector *conn=NULL;
+  Codec *cdc=NULL;
 
   switch(type) {
-  case Connector::Shoutcast1Server:
-  case Connector::Shoutcast2Server:
+  case Codec::TypeMpegL3:
+    cdc=new MpegL3Codec(ring,parent);
     break;
 
-  case Connector::Icecast2Server:
-    conn=new IcyConnector(parent);
+  default:
     break;
   }
 
-  return conn;
+  return cdc;
 }

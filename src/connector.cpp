@@ -23,173 +23,208 @@
 Connector::Connector(QObject *parent)
   : QObject(parent)
 {
-  icy_server_username="source";
-  icy_server_password="";
-  icy_server_mountpoint="";
-  icy_content_type="";
-  icy_audio_channels=2;
-  icy_audio_samplerate=44100;
-  icy_audio_bitrate=128;
-  icy_stream_name="no name";
-  icy_stream_description="unknown";
-  icy_stream_url="";
-  icy_stream_genre="unknown";
-  icy_stream_public=true;
+  conn_server_username="source";
+  conn_server_password="";
+  conn_server_mountpoint="";
+  conn_content_type="";
+  conn_audio_channels=2;
+  conn_audio_samplerate=44100;
+  conn_audio_bitrate=128;
+  conn_stream_name="no name";
+  conn_stream_description="unknown";
+  conn_stream_url="";
+  conn_stream_genre="unknown";
+  conn_stream_public=true;
+
+  conn_data_timer=new QTimer(this);
+  connect(conn_data_timer,SIGNAL(timeout()),this,SLOT(dataTimeoutData()));
 }
 
 
 Connector::~Connector()
 {
+  delete conn_data_timer;
 }
 
 
 QString Connector::serverUsername() const
 {
-  return icy_server_username;
+  return conn_server_username;
 }
 
 
 void Connector::setServerUsername(const QString &str)
 {
-  icy_server_username=str;
+  conn_server_username=str;
 }
 
 
 QString Connector::serverPassword() const
 {
-  return icy_server_password;
+  return conn_server_password;
 }
 
 
 void Connector::setServerPassword(const QString &str)
 {
-  icy_server_password=str;
+  conn_server_password=str;
 }
 
 
 QString Connector::serverMountpoint() const
 {
-  return icy_server_mountpoint;
+  return conn_server_mountpoint;
 }
 
 
 void Connector::setServerMountpoint(const QString &str)
 {
-  icy_server_mountpoint=str;
+  conn_server_mountpoint=str;
 }
 
 
 QString Connector::contentType() const
 {
-  return icy_content_type;
+  return conn_content_type;
 }
 
 
 void Connector::setContentType(const QString &str)
 {
-  icy_content_type=str;
+  conn_content_type=str;
 }
 
 
 unsigned Connector::audioChannels() const
 {
-  return icy_audio_channels;
+  return conn_audio_channels;
 }
 
 
 void Connector::setAudioChannels(unsigned chans)
 {
-  icy_audio_channels=chans;
+  conn_audio_channels=chans;
 }
 
 
 unsigned Connector::audioSamplerate() const
 {
-  return icy_audio_samplerate;
+  return conn_audio_samplerate;
 }
 
 
 void Connector::setAudioSamplerate(unsigned rate)
 {
-  icy_audio_samplerate=rate;
+  conn_audio_samplerate=rate;
 }
 
 
 unsigned Connector::audioBitrate() const
 {
-  return icy_audio_bitrate;
+  return conn_audio_bitrate;
 }
 
 
 void Connector::setAudioBitrate(unsigned rate)
 {
-  icy_audio_bitrate=rate;
+  conn_audio_bitrate=rate;
 }
 
 
 QString Connector::streamName() const
 {
-  return icy_stream_name;
+  return conn_stream_name;
 }
 
 
 void Connector::setStreamName(const QString &str)
 {
-  icy_stream_name=str;
+  conn_stream_name=str;
 }
 
 
 QString Connector::streamDescription() const
 {
-  return icy_stream_description;
+  return conn_stream_description;
 }
 
 
 void Connector::setStreamDescription(const QString &str)
 {
-  icy_stream_description=str;
+  conn_stream_description=str;
 }
 
 
 QString Connector::streamUrl() const
 {
-  return icy_stream_url;
+  return conn_stream_url;
 }
 
 
 void Connector::setStreamUrl(const QString &str)
 {
-  icy_stream_url=str;
+  conn_stream_url=str;
 }
 
 
 QString Connector::streamGenre() const
 {
-  return icy_stream_genre;
+  return conn_stream_genre;
 }
 
 
 void Connector::setStreamGenre(const QString &str)
 {
-  icy_stream_genre=str;
+  conn_stream_genre=str;
 }
 
 
 bool Connector::streamPublic() const
 {
-  return icy_stream_public;
+  return conn_stream_public;
 }
 
 
 void Connector::setStreamPublic(bool state)
 {
-  icy_stream_public=state;
+  conn_stream_public=state;
 }
 
 
-QString Connector::serverTypeText(Connector::ServerType)
+QString Connector::serverTypeText(Connector::ServerType type)
 {
   QString ret=tr("Unknown");
 
+  switch(type) {
+  case Connector::Shoutcast1Server:
+    ret=tr("Shoutcast v1");
+    break;
+
+  case Connector::Shoutcast2Server:
+    ret=tr("Shoutcast v2");
+    break;
+
+  case Connector::Icecast2Server:
+    ret=tr("Icecast v2");
+    break;
+  }
+
   return ret;
+}
+
+
+void Connector::dataTimeoutData()
+{
+  emit dataRequested(this);
+}
+
+
+void Connector::setConnected(bool state)
+{
+  if(state) {
+    conn_data_timer->start(RINGBUFFER_SERVICE_INTERVAL);
+  }
+  else {
+    conn_data_timer->stop();
+  }
 }

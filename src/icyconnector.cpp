@@ -144,6 +144,7 @@ void IcyConnector::ProcessHeaders(const QString &hdrs)
     txt+=f1[i]+" ";
   }
   txt=txt.left(txt.length()-1);
+  setConnected(true);
   emit connected(f1[1].toInt(),txt);
 }
 

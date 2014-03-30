@@ -25,14 +25,16 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
+#include <QtCore/QTimer>
 #include <QtNetwork/QTcpSocket>
+
+#define RINGBUFFER_SERVICE_INTERVAL 50
 
 class Connector : public QObject
 {
   Q_OBJECT;
  public:
-  enum ServerType {Shoutcast1Server=0,Shoutcast2Server=1,
-		   Icecast1Server=2,Icecast2Server=3};
+  enum ServerType {Shoutcast1Server=0,Shoutcast2Server=1,Icecast2Server=2};
   Connector(QObject *parent=0);
   ~Connector();
   virtual Connector::ServerType serverType() const=0;
@@ -65,25 +67,32 @@ class Connector : public QObject
   static QString serverTypeText(Connector::ServerType);
 
  signals:
+  void dataRequested(Connector *conn);
   void connected(int result,const QString &txt);
   void disconnected();
   void error(QAbstractSocket::SocketError err);
 
+ private slots:
+  void dataTimeoutData();
+
+ protected:
+  void setConnected(bool state);
+
  private:
-  QString icy_server_username;
-  QString icy_server_password;
-  QString icy_server_mountpoint;
-  QString icy_content_type;
-  unsigned icy_audio_channels;
-  unsigned icy_audio_samplerate;
-  unsigned icy_audio_bitrate;
-  QString icy_stream_name;
-  QString icy_stream_description;
-  QString icy_stream_url;
-  QString icy_stream_genre;
-  bool icy_stream_public;
+  QString conn_server_username;
+  QString conn_server_password;
+  QString conn_server_mountpoint;
+  QString conn_content_type;
+  unsigned conn_audio_channels;
+  unsigned conn_audio_samplerate;
+  unsigned conn_audio_bitrate;
+  QString conn_stream_name;
+  QString conn_stream_description;
+  QString conn_stream_url;
+  QString conn_stream_genre;
+  bool conn_stream_public;
+  QTimer *conn_data_timer;
 };
 
-Connector *ConnectorFactory(Connector::ServerType type);
 
 #endif  // CONNECTOR_H

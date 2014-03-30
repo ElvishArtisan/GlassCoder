@@ -66,7 +66,6 @@ bool MainObject::StartJack()
 {
   jack_options_t jackopts=JackNullOption;
   jack_status_t jackstat=JackFailure;
-  int err=0;
 
   //
   // Create Ringbuffer
@@ -132,32 +131,7 @@ bool MainObject::StartJack()
     syslog(LOG_ERR,"unable to join JACK graph");
     return false;
   }
-  if((sir_jack_sample_rate=jack_get_sample_rate(sir_jack_client))==
-     audio_samplerate) {
-    sir_pcm_buffer[0]=new float[MAX_AUDIO_CHANNELS*1152];
-    sir_pcm_buffer[1]=NULL;
-    sir_pcm_in=sir_pcm_buffer[0];
-    sir_pcm_out=sir_pcm_buffer[0];
-    sir_src_state=NULL;
-    sir_src_data=NULL;
-  }
-  else {
-    sir_pcm_buffer[0]=new float[MAX_AUDIO_CHANNELS*1152];
-    sir_pcm_buffer[1]=new float[MAX_AUDIO_CHANNELS*6912];
-    sir_pcm_in=sir_pcm_buffer[0];
-    sir_pcm_out=sir_pcm_buffer[1];
-    if((sir_src_state=src_new(SRC_SINC_FASTEST,audio_channels,&err))==NULL) {
-      syslog(LOG_ERR,"unable to create sample rate converter");
-      return false;
-    }
-    sir_src_data=new SRC_DATA;
-    memset(sir_src_data,0,sizeof(SRC_DATA));
-    sir_src_data->data_in=sir_pcm_buffer[0];
-    sir_src_data->data_out=sir_pcm_buffer[1];
-    sir_src_data->output_frames=6912;
-    sir_src_data->src_ratio=
-      (double)audio_samplerate/(double)sir_jack_sample_rate;
-  }
+  sir_jack_sample_rate=jack_get_sample_rate(sir_jack_client);
 
   //
   // Register Ports

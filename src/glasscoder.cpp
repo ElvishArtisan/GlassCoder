@@ -27,6 +27,7 @@
 #include <QtCore/QCoreApplication>
 
 #include "cmdswitch.h"
+#include "codecfactory.h"
 #include "connectorfactory.h"
 #include "glasscoder.h"
 
@@ -40,13 +41,14 @@ MainObject::MainObject(QObject *parent)
   audio_samplerate=DEFAULT_AUDIO_SAMPLERATE;
   jack_server_name="";
   jack_client_name=DEFAULT_JACK_CLIENT_NAME;
-  shout_server_hostname="";
-  shout_server_mountpoint="";
-  shout_server_password="";
-  shout_server_port=DEFAULT_SHOUT_SERVER_PORT;
-  shout_server_username=DEFAULT_SHOUT_SERVER_USERNAME;
+  server_hostname="";
+  server_mountpoint="";
+  server_password="";
+  server_port=DEFAULT_SERVER_PORT;
+  server_username=DEFAULT_SERVER_USERNAME;
 
-  CmdSwitch *cmd=new CmdSwitch(qApp->argc(),qApp->argv(),"glasscoder",GLASSCODER_USAGE);
+  CmdSwitch *cmd=
+    new CmdSwitch(qApp->argc(),qApp->argv(),"glasscoder",GLASSCODER_USAGE);
   for(unsigned i=0;i<cmd->keys();i++) {
     if(cmd->key(i)=="-d") {
       debug=true;
@@ -96,20 +98,20 @@ MainObject::MainObject(QObject *parent)
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--server-hostname") {
-      shout_server_hostname=cmd->value(i);
+      server_hostname=cmd->value(i);
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--server-mountpoint") {
-      shout_server_mountpoint=cmd->value(i);
+      server_mountpoint=cmd->value(i);
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--server-password") {
-      shout_server_password=cmd->value(i);
+      server_password=cmd->value(i);
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--server-port") {
-      shout_server_port=cmd->value(i).toUInt(&ok);
-      if((!ok)||(shout_server_port==0)) {
+      server_port=cmd->value(i).toUInt(&ok);
+      if((!ok)||(server_port==0)) {
 	syslog(LOG_ERR,"invalid --shout-server-port value");
 	exit(256);
       }
@@ -136,7 +138,7 @@ MainObject::MainObject(QObject *parent)
       }
     }
     if(cmd->key(i)=="--server-username") {
-      shout_server_username=cmd->value(i);
+      server_username=cmd->value(i);
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--stream-description") {
@@ -161,7 +163,7 @@ MainObject::MainObject(QObject *parent)
       exit(256);
     }
   }
-  if(shout_server_hostname.isEmpty()) {
+  if(server_hostname.isEmpty()) {
     syslog(LOG_ERR,"missing --server-hostname parameter");
     exit(256);
   }
@@ -176,10 +178,14 @@ MainObject::MainObject(QObject *parent)
     openlog("glasscoder",0,LOG_DAEMON);
   }
 
+  if(!StartJack()) {
+    exit(256);
+  }
+
   //
   // Initialize Encoder
   //
-  if(!StartLame()) {
+  if(!StartCodec()) {
     exit(256);
   }
 
@@ -187,31 +193,15 @@ MainObject::MainObject(QObject *parent)
   // Start Shout Instance
   //
   StartServerConnection();
-
-  //
-  // Encoder Timer
-  //
-  sir_encoder_timer=new QTimer(this);
-  sir_encoder_timer->setSingleShot(true);
-  connect(sir_encoder_timer,SIGNAL(timeout()),this,SLOT(layer3EncodeData()));
 }
 
 
 void MainObject::icyConnectedData(int result,const QString &txt)
 {
-  switch(result) {
-  case 200:  // Success
-    if(!StartJack()) {
-      exit(256);
-    }
-    sir_encoder_timer->start(RINGBUFFER_SERVICE_INTERVAL);
-    break;
-
-  default:
+  if(result!=200) {
     syslog(LOG_ERR,"server returned \"%d %s\"",
 	   result,(const char *)txt.toUtf8());
     exit(256);
-    break;
   }
 }
 
@@ -223,10 +213,30 @@ void MainObject::icyDisconnectedData()
 }
 
 
+void MainObject::encodeData()
+{
+  sir_codec->encode(sir_connector);
+}
+
+
+bool MainObject::StartCodec()
+{
+  if((sir_codec=CodecFactory(Codec::TypeMpegL3,sir_ringbuffer,this))==NULL) {
+    syslog(LOG_ERR,"unsupported codec type \"%s\"",
+	   (const char *)Codec::codecTypeText(Codec::TypeMpegL3).toUtf8());
+    return false;
+  }
+  sir_codec->setBitrate(audio_bitrate);
+  sir_codec->setChannels(audio_channels);
+  sir_codec->setSourceSamplerate(jack_get_sample_rate(sir_jack_client));
+  sir_codec->setStreamSamplerate(audio_samplerate);
+
+  return sir_codec->start();
+}
+
+
 void MainObject::StartServerConnection()
 {
-  int err;
-
   //
   // Create Connector Instance
   //
@@ -234,13 +244,15 @@ void MainObject::StartServerConnection()
   connect(sir_connector,SIGNAL(connected(int,const QString &)),
 	  this,SLOT(icyConnectedData(int,const QString &)));
   connect(sir_connector,SIGNAL(disconnected()),this,SLOT(icyDisconnectedData()));
+  connect(sir_connector,SIGNAL(dataRequested(Connector *)),
+	  sir_codec,SLOT(encode(Connector *)));
 
   //
   // Set Configuration
   //
-  sir_connector->setServerMountpoint(shout_server_mountpoint);
-  sir_connector->setServerUsername(shout_server_username);
-  sir_connector->setServerPassword(shout_server_password);
+  sir_connector->setServerMountpoint(server_mountpoint);
+  sir_connector->setServerUsername(server_username);
+  sir_connector->setServerPassword(server_password);
   sir_connector->setContentType("audio/mpeg");
   sir_connector->setAudioBitrate(audio_bitrate);
   sir_connector->setAudioChannels(audio_channels);
@@ -253,7 +265,7 @@ void MainObject::StartServerConnection()
   //
   // Open the server connection
   //
-  sir_connector->connectToServer(shout_server_hostname,shout_server_port);
+  sir_connector->connectToServer(server_hostname,server_port);
 }
 
 

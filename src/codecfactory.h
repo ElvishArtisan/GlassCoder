@@ -1,6 +1,6 @@
-// connectorfactory.cpp
+// codecfactory.h
 //
-// Instantiate Connector classes.
+// Instantiate Codec classes
 //
 //   (C) Copyright 2014 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -18,22 +18,12 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#include "icyconnector.h"
-#include "connectorfactory.h"
+#ifndef CODECFACTORY_H
+#define CODECFACTORY_H
 
-Connector *ConnectorFactory(Connector::ServerType type,QObject *parent)
-{
-  Connector *conn=NULL;
+#include "codec.h"
 
-  switch(type) {
-  case Connector::Shoutcast1Server:
-  case Connector::Shoutcast2Server:
-    break;
+Codec *CodecFactory(Codec::Type type,Ringbuffer *ring,QObject *parent=0);
 
-  case Connector::Icecast2Server:
-    conn=new IcyConnector(parent);
-    break;
-  }
 
-  return conn;
-}
+#endif  // CODECFACTORY_H
