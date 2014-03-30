@@ -228,3 +228,69 @@ void Connector::setConnected(bool state)
     conn_data_timer->stop();
   }
 }
+
+
+QString Connector::urlEncode(const QString &str)
+{
+  QString ret;
+
+  for(int i=0;i<str.length();i++) {
+    if(str.at(i).isLetterOrNumber()) {
+      ret+=str.mid(i,1);
+    }
+    else {
+      ret+=QString().sprintf("%%%02X",str.at(i).toLatin1());
+    }
+  }
+
+  return ret;
+}
+
+
+QString Connector::urlDecode(const QString &str)
+{
+  int istate=0;
+  unsigned n;
+  QString code;
+  QString ret;
+  bool ok=false;
+
+  for(int i=0;i<str.length();i++) {
+    switch(istate) {
+    case 0:
+      if(str.at(i)==QChar('+')) {
+	ret+=" ";
+      }
+      else {
+	if(str.at(i)==QChar('%')) {
+	  istate=1;
+	}
+	else {
+	  ret+=str.at(i);
+	}
+      }
+      break;
+
+    case 1:
+      n=str.mid(i,1).toUInt(&ok);
+      if((!ok)||(n>9)) {
+	istate=0;
+      }
+      code=str.mid(i,1);
+      istate=2;
+      break;
+
+    case 2:
+      n=str.mid(i,1).toUInt(&ok);
+      if((!ok)||(n>9)) {
+	istate=0;
+      }
+      code+=str.mid(i,1);
+      ret+=QChar(code.toInt(&ok,16));
+      istate=0;
+      break;
+    }
+  }
+
+  return ret;
+}

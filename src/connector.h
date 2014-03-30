@@ -65,6 +65,8 @@ class Connector : public QObject
   virtual void connectToServer(const QString &hostname,uint16_t port)=0;
   virtual int64_t writeData(const char *data,int64_t len)=0;
   static QString serverTypeText(Connector::ServerType);
+  static QString urlEncode(const QString &str);
+  static QString urlDecode(const QString &str);
 
  signals:
   void dataRequested(Connector *conn);

@@ -37,3 +37,6 @@
 2014-03-29 Fred Gleason <fredg@paravelsystems.com>
 	* Removed 'src/layer3.cpp'.
 	* Refactored code to employ abstract Codec and Connector classes.
+2014-03-29 Fred Gleason <fredg@paravelsystems.com>
+	* Added 'Connector::urlEncode()' and 'Connector::urlDecode()'
+	methods in 'src/connector.cpp' and 'src/connector.h'.
