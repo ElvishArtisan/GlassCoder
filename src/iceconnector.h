@@ -30,8 +30,11 @@ class IceConnector : public Connector
   IceConnector(QObject *parent=0);
   ~IceConnector();
   IceConnector::ServerType serverType() const;
-  void connectToServer(const QString &hostname,uint16_t port);
-  int64_t writeData(const char *data,int64_t len);
+
+ protected:
+  void connectToHostConnector(const QString &hostname,uint16_t port);
+  void disconnectFromHostConnector();
+  int64_t writeDataConnector(const char *data,int64_t len);
 
  private slots:
   void socketConnectedData();
@@ -42,8 +45,6 @@ class IceConnector : public Connector
  private:
   void ProcessHeaders(const QString &hdrs);
   void WriteHeader(const QString &str);
-  QString ice_hostname;
-  uint16_t ice_port;
   QTcpSocket *ice_socket;
   QString ice_recv_buffer;
 };

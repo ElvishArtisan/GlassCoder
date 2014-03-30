@@ -25,8 +25,6 @@
 IceConnector::IceConnector(QObject *parent)
   : Connector(parent)
 {
-  ice_hostname="";
-  ice_port=8000;
   ice_recv_buffer="";
 
   ice_socket=new QTcpSocket(this);
@@ -51,15 +49,19 @@ IceConnector::ServerType IceConnector::serverType() const
 }
 
 
-void IceConnector::connectToServer(const QString &hostname,uint16_t port)
+void IceConnector::connectToHostConnector(const QString &hostname,uint16_t port)
 {
-  ice_hostname=hostname;
-  ice_port=port;
   ice_socket->connectToHost(hostname,port);
 }
 
 
-int64_t IceConnector::writeData(const char *data,int64_t len)
+void IceConnector::disconnectFromHostConnector()
+{
+  ice_socket->disconnectFromHost();
+}
+
+
+int64_t IceConnector::writeDataConnector(const char *data,int64_t len)
 {
   return ice_socket->write(data,len);
 }
@@ -86,7 +88,7 @@ void IceConnector::socketConnectedData()
 
 void IceConnector::socketDisconnectedData()
 {
-  printf("socketDisconnectedData()\n");
+  setConnected(false);
 }
 
 
@@ -123,7 +125,7 @@ void IceConnector::socketReadyReadData()
 
 void IceConnector::socketErrorData(QAbstractSocket::SocketError err)
 {
-  printf("socketErrorData(): %d\n",err);
+  setError(err);
 }
 
 

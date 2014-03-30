@@ -62,8 +62,8 @@ class Connector : public QObject
   void setStreamGenre(const QString &str);
   bool streamPublic() const;
   void setStreamPublic(bool state);
-  virtual void connectToServer(const QString &hostname,uint16_t port)=0;
-  virtual int64_t writeData(const char *data,int64_t len)=0;
+  virtual void connectToServer(const QString &hostname,uint16_t port);
+  virtual int64_t writeData(const char *data,int64_t len);
   static QString serverTypeText(Connector::ServerType);
   static QString urlEncode(const QString &str);
   static QString urlDecode(const QString &str);
@@ -78,9 +78,16 @@ class Connector : public QObject
 
  private slots:
   void dataTimeoutData();
+  void watchdogTimeoutData();
 
  protected:
   void setConnected(bool state);
+  void setError(QAbstractSocket::SocketError err);
+  virtual void connectToHostConnector(const QString &hostname,uint16_t port)=0;
+  virtual void disconnectFromHostConnector()=0;
+  virtual int64_t writeDataConnector(const char *data,int64_t len)=0;
+  QString hostHostname() const;
+  uint16_t hostPort() const;
 
  private:
   QString conn_server_username;
@@ -96,6 +103,11 @@ class Connector : public QObject
   QString conn_stream_genre;
   bool conn_stream_public;
   QTimer *conn_data_timer;
+  QTimer *conn_watchdog_timer;
+  bool conn_watchdog_active;
+  bool conn_connected;
+  QString conn_host_hostname;
+  uint16_t conn_host_port;
 };
 
 

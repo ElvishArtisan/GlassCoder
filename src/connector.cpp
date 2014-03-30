@@ -18,6 +18,8 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <syslog.h>
+
 #include "connector.h"
 
 Connector::Connector(QObject *parent)
@@ -35,9 +37,19 @@ Connector::Connector(QObject *parent)
   conn_stream_url="";
   conn_stream_genre="unknown";
   conn_stream_public=true;
+  conn_host_hostname="";
+  conn_host_port=0;
+  conn_connected=false;
+  conn_watchdog_active=false;
 
   conn_data_timer=new QTimer(this);
   connect(conn_data_timer,SIGNAL(timeout()),this,SLOT(dataTimeoutData()));
+  conn_data_timer->start(RINGBUFFER_SERVICE_INTERVAL);
+
+  conn_watchdog_timer=new QTimer(this);
+  conn_watchdog_timer->setSingleShot(true);
+  connect(conn_watchdog_timer,SIGNAL(timeout()),
+	  this,SLOT(watchdogTimeoutData()));
 }
 
 
@@ -191,6 +203,23 @@ void Connector::setStreamPublic(bool state)
 }
 
 
+void Connector::connectToServer(const QString &hostname,uint16_t port)
+{
+  conn_host_hostname=hostname;
+  conn_host_port=port;
+  connectToHostConnector(hostname,port);
+}
+
+
+int64_t Connector::writeData(const char *data,int64_t len)
+{
+  if(conn_connected) {
+    return writeDataConnector(data,len);
+  }
+  return 0;
+}
+
+
 QString Connector::serverTypeText(Connector::ServerType type)
 {
   QString ret=tr("Unknown");
@@ -219,14 +248,58 @@ void Connector::dataTimeoutData()
 }
 
 
+void Connector::watchdogTimeoutData()
+{
+  connectToHostConnector(conn_host_hostname,conn_host_port);
+}
+
+
 void Connector::setConnected(bool state)
 {
-  if(state) {
-    conn_data_timer->start(RINGBUFFER_SERVICE_INTERVAL);
+  if(state&&conn_watchdog_active) {
+    if(conn_server_mountpoint.isEmpty()) {
+      syslog(LOG_WARNING,"connection to \"%s:%u\" restored",
+	     (const char *)conn_host_hostname.toUtf8(),0xFFFF&conn_host_port);
+    }
+    else {
+      syslog(LOG_WARNING,"connection to \"%s:%u/%s\" restored",
+	     (const char *)conn_host_hostname.toUtf8(),0xFFFF&conn_host_port,
+	     (const char *)conn_server_mountpoint.toUtf8());
+      conn_watchdog_active=false;
+    }
   }
-  else {
-    conn_data_timer->stop();
+  conn_connected=state;
+}
+
+
+void Connector::setError(QAbstractSocket::SocketError err)
+{
+  if(!conn_watchdog_active) {
+    if(conn_server_mountpoint.isEmpty()) {
+      syslog(LOG_WARNING,"connection to \"%s:%u\" lost",
+	     (const char *)conn_host_hostname.toUtf8(),0xFFFF&conn_host_port);
+    }
+    else {
+      syslog(LOG_WARNING,"connection to \"%s:%u/%s\" lost",
+	     (const char *)conn_host_hostname.toUtf8(),0xFFFF&conn_host_port,
+	     (const char *)conn_server_mountpoint.toUtf8());
+      conn_watchdog_active=true;
+    }
   }
+  disconnectFromHostConnector();
+  conn_watchdog_timer->start(5000);
+}
+
+
+QString Connector::hostHostname() const
+{
+  return conn_host_hostname;
+}
+
+
+uint16_t Connector::hostPort() const
+{
+  return conn_host_port;
 }
 
 
