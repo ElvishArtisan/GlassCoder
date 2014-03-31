@@ -18,6 +18,8 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <syslog.h>
+
 #include <QtCore/QStringList>
 
 #include "icyconnector.h"
@@ -51,7 +53,7 @@ IcyConnector::ServerType IcyConnector::serverType() const
 
 void IcyConnector::connectToHostConnector(const QString &hostname,uint16_t port)
 {
-  icy_socket->connectToHost(hostname,port);
+  icy_socket->connectToHost(hostname,port+1);
 }
 
 
@@ -102,6 +104,15 @@ void IcyConnector::socketReadyReadData()
 	}
 	break;
 
+      case 13:
+	if(QString(icy_recv_buffer)=="invalid password") {
+	  syslog(LOG_WARNING,"login to \"%s:%d\" rejected: invalid password",
+		 (const char *)hostHostname().toUtf8(),0xFFFF&hostPort());
+	}
+	else {
+	  icy_recv_buffer+=data[i];
+	}
+
       default:
 	icy_recv_buffer+=data[i];
 	break;
@@ -125,7 +136,9 @@ void IcyConnector::ProcessHeaders(const QString &hdrs)
 
   f0=hdrs.split("\r\n");
   if(f0[0]!="OK2") {
-    emit disconnected();
+    syslog(LOG_WARNING,"login to \"%s:%d\" rejected: %s",
+	   (const char *)hostHostname().toUtf8(),0xFFFF&hostPort(),
+	   (const char *)f0[0].toUtf8());
     return;
   }
   WriteHeader("icy-name: "+streamName());
@@ -137,7 +150,6 @@ void IcyConnector::ProcessHeaders(const QString &hdrs)
   WriteHeader("");
 
   setConnected(true);
-  emit connected(200,"Connected");
 }
 
 

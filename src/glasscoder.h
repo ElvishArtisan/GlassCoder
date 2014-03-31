@@ -49,8 +49,6 @@ class MainObject : public QObject
   MainObject(QObject *parent=0);
 
  private slots:
-  void icyConnectedData(int result,const QString &txt);
-  void icyDisconnectedData();
   void encodeData();
 
  private:

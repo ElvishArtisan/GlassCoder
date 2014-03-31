@@ -52,3 +52,6 @@
 2014-03-30 Fred Gleason <fredg@paravelsystems.com>
 	* Added a connector for the ICY [Shoutcast 1] protocol in
 	'src/icyconnector.cpp' and 'src/icyconnector.h'.
+2014-03-30 Fred Gleason <fredg@paravelsystems.com>
+	* Refactored signaling in server connectors to provide reliable
+	notification of authentication failures.

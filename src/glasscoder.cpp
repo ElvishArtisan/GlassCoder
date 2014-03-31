@@ -194,23 +194,6 @@ MainObject::MainObject(QObject *parent)
 }
 
 
-void MainObject::icyConnectedData(int result,const QString &txt)
-{
-  if(result!=200) {
-    syslog(LOG_ERR,"server returned \"%d %s\"",
-	   result,(const char *)txt.toUtf8());
-    exit(256);
-  }
-}
-
-
-void MainObject::icyDisconnectedData()
-{
-  syslog(LOG_ERR,"unable to connect to server");
-  exit(256);
-}
-
-
 void MainObject::encodeData()
 {
   sir_codec->encode(sir_connector);
@@ -239,9 +222,6 @@ void MainObject::StartServerConnection()
   // Create Connector Instance
   //
   sir_connector=ConnectorFactory(server_type,this);
-  connect(sir_connector,SIGNAL(connected(int,const QString &)),
-	  this,SLOT(icyConnectedData(int,const QString &)));
-  connect(sir_connector,SIGNAL(disconnected()),this,SLOT(icyDisconnectedData()));
   connect(sir_connector,SIGNAL(dataRequested(Connector *)),
 	  sir_codec,SLOT(encode(Connector *)));
 

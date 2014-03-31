@@ -18,6 +18,8 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <syslog.h>
+
 #include <QtCore/QStringList>
 
 #include "iceconnector.h"
@@ -136,16 +138,30 @@ void IceConnector::ProcessHeaders(const QString &hdrs)
   QString txt;
 
   f0=hdrs.split("\r\n");
-  f1=f0[0].split(" ");
-  if(f1[0].left(7)!="HTTP/1.") {
-    emit disconnected();
+  for(int i=0;i<f0.size();i++) {
+    f1=f0[i].split(" ");
+    if(f1[0].left(7)=="HTTP/1.") {
+      for(int i=2;i<f1.size();i++) {
+	txt+=f1[i]+" ";
+      }
+      txt=txt.left(txt.length()-1);
+      if(f1[1].toInt()==200) {
+	setConnected(true);
+      }
+      else {
+	syslog(LOG_ERR,"server \"%s:%u/%s\" returned \"%d %s\"",
+	       (const char *)hostHostname().toUtf8(),0xFFFF&hostPort(),
+	       (const char *)serverMountpoint().toUtf8(),
+	       f1[1].toInt(),(const char *)txt.toUtf8());
+	setError(QAbstractSocket::UnknownSocketError);
+      }
+      return;
+    }
   }
-  for(int i=2;i<f1.size();i++) {
-    txt+=f1[i]+" ";
-  }
-  txt=txt.left(txt.length()-1);
-  setConnected(true);
-  emit connected(f1[1].toInt(),txt);
+  syslog(LOG_ERR,"server \"%s:%u/%s\" returned unrecognized response",
+	 (const char *)hostHostname().toUtf8(),0xFFFF&hostPort(),
+	 (const char *)serverMountpoint().toUtf8());
+  setError(QAbstractSocket::UnknownSocketError);
 }
 
 
