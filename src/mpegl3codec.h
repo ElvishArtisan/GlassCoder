@@ -71,8 +71,7 @@ class MpegL3Codec : public Codec
   int (*lame_encode_buffer_int)
     (lame_global_flags *,const int,const int,const int,unsigned char *,
      const int);
-  int(*lame_encode_flush_nogap)
-    (lame_global_flags *,unsigned char *,int);
+  int(*lame_encode_flush_nogap)(lame_global_flags *,unsigned char *,int);
   int (*lame_init_bitstream)(lame_global_flags *);
   int (*lame_encode_flush)(lame_global_flags *,unsigned char *,int);
   int (*lame_set_bWriteVbrTag)(lame_global_flags *, int);

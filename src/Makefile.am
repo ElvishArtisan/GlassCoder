@@ -22,7 +22,7 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\"
+AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing
 
 # The dependency for qt's Meta Object Compiler (moc)
 moc_%.cpp:	%.h

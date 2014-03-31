@@ -66,3 +66,5 @@
 	* Implemented fields for 'streamIrc', 'streamIcq' and
 	'streamAim' in 'src/icyconnector.cpp' and 'src/icyconnector.h'.
 	* Updated the glasscoder(1) man page.
+2014-03-30 Fred Gleason <fredg@paravelsystems.com>
+	* Added '-Wno-strict-aliasing' to CPP_FLAGS in 'src/Makefile.am'.
