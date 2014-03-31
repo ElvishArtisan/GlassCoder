@@ -19,6 +19,7 @@
 //
 
 #include "iceconnector.h"
+#include "icyconnector.h"
 #include "connectorfactory.h"
 
 Connector *ConnectorFactory(Connector::ServerType type,QObject *parent)
@@ -27,6 +28,9 @@ Connector *ConnectorFactory(Connector::ServerType type,QObject *parent)
 
   switch(type) {
   case Connector::Shoutcast1Server:
+    conn=new IcyConnector(parent);
+    break;
+
   case Connector::Shoutcast2Server:
     break;
 

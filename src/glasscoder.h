@@ -64,6 +64,7 @@ class MainObject : public QObject
   QString stream_genre;
   QString stream_name;
   QString stream_url;
+  Connector::ServerType server_type;
   QString server_hostname;
   QString server_mountpoint;
   QString server_password;

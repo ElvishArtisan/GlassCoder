@@ -41,6 +41,7 @@ MainObject::MainObject(QObject *parent)
   audio_samplerate=DEFAULT_AUDIO_SAMPLERATE;
   jack_server_name="";
   jack_client_name=DEFAULT_JACK_CLIENT_NAME;
+  server_type=Connector::Icecast2Server;
   server_hostname="";
   server_mountpoint="";
   server_password="";
@@ -118,22 +119,19 @@ MainObject::MainObject(QObject *parent)
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--server-type") {
-      if(cmd->value(i).toLower()=="icecast1") {
+      if(cmd->value(i).toLower()=="icecast2") {
+	server_type=Connector::Icecast2Server;
 	cmd->setProcessed(i,true);
       }
       else {
-	if(cmd->value(i).toLower()=="icecast2") {
+	if(cmd->value(i).toLower()=="shout") {
+	  server_type=Connector::Shoutcast1Server;
 	  cmd->setProcessed(i,true);
 	}
 	else {
-	  if(cmd->value(i).toLower()=="shout") {
-	    cmd->setProcessed(i,true);
-	  }
-	  else {
-	    syslog(LOG_ERR,"unknown server type \"%s\"",
-		   (const char *)cmd->value(i).toAscii());
-	    exit(256);
-	  }
+	  syslog(LOG_ERR,"unknown server type \"%s\"",
+		 (const char *)cmd->value(i).toAscii());
+	  exit(256);
 	}
       }
     }
@@ -190,7 +188,7 @@ MainObject::MainObject(QObject *parent)
   }
 
   //
-  // Start Shout Instance
+  // Start Server Connection
   //
   StartServerConnection();
 }
@@ -240,7 +238,7 @@ void MainObject::StartServerConnection()
   //
   // Create Connector Instance
   //
-  sir_connector=ConnectorFactory(Connector::Icecast2Server,this);
+  sir_connector=ConnectorFactory(server_type,this);
   connect(sir_connector,SIGNAL(connected(int,const QString &)),
 	  this,SLOT(icyConnectedData(int,const QString &)));
   connect(sir_connector,SIGNAL(disconnected()),this,SLOT(icyDisconnectedData()));

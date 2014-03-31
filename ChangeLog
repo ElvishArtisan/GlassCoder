@@ -49,3 +49,6 @@
 2014-03-30 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented automatic servier reconnection in 'src/connector.cpp',
 	'src/connector.h', 'src/iceconnector.cpp' and 'src/iceconnector.h'.
+2014-03-30 Fred Gleason <fredg@paravelsystems.com>
+	* Added a connector for the ICY [Shoutcast 1] protocol in
+	'src/icyconnector.cpp' and 'src/icyconnector.h'.

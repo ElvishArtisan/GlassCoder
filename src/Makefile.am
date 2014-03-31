@@ -37,6 +37,7 @@ dist_glasscoder_SOURCES = cmdswitch.cpp cmdswitch.h\
                           connector.cpp connector.h\
                           connectorfactory.cpp connectorfactory.h\
                           iceconnector.cpp iceconnector.h\
+                          icyconnector.cpp icyconnector.h\
                           jack.cpp\
                           mpegl3codec.cpp mpegl3codec.h\
                           profile.cpp profile.h\
@@ -47,6 +48,7 @@ nodist_glasscoder_SOURCES = moc_codec.cpp\
                             moc_connector.cpp\
                             moc_glasscoder.cpp\
                             moc_iceconnector.cpp\
+                            moc_icyconnector.cpp\
                             moc_mpegl3codec.cpp
 
 glasscoder_LDADD = @SIRLIBS@
