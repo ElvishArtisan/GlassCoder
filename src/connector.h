@@ -58,6 +58,12 @@ class Connector : public QObject
   void setStreamDescription(const QString &str);
   QString streamUrl() const;
   void setStreamUrl(const QString &str);
+  QString streamIrc() const;
+  void setStreamIrc(const QString &str);
+  QString streamIcq() const;
+  void setStreamIcq(const QString &str);
+  QString streamAim() const;
+  void setStreamAim(const QString &str);
   QString streamGenre() const;
   void setStreamGenre(const QString &str);
   bool streamPublic() const;
@@ -100,6 +106,9 @@ class Connector : public QObject
   QString conn_stream_name;
   QString conn_stream_description;
   QString conn_stream_url;
+  QString conn_stream_irc;
+  QString conn_stream_icq;
+  QString conn_stream_aim;
   QString conn_stream_genre;
   bool conn_stream_public;
   QTimer *conn_data_timer;

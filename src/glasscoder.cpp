@@ -47,6 +47,13 @@ MainObject::MainObject(QObject *parent)
   server_password="";
   server_port=DEFAULT_SERVER_PORT;
   server_username=DEFAULT_SERVER_USERNAME;
+  stream_genre="";
+  stream_name="";
+  stream_url="";
+  stream_irc="";
+  stream_icq="";
+  stream_aim="";
+
 
   CmdSwitch *cmd=
     new CmdSwitch(qApp->argc(),qApp->argv(),"glasscoder",GLASSCODER_USAGE);
@@ -155,6 +162,18 @@ MainObject::MainObject(QObject *parent)
       stream_url=cmd->value(i);
       cmd->setProcessed(i,true);
     }
+    if(cmd->key(i)=="--stream-irc") {
+      stream_irc=cmd->value(i);
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--stream-icq") {
+      stream_icq=cmd->value(i);
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--stream-aim") {
+      stream_aim=cmd->value(i);
+      cmd->setProcessed(i,true);
+    }
     if(!cmd->processed(i)) {
       syslog(LOG_ERR,"glasscoder: unknown option \"%s\"\n",
 	      (const char *)cmd->key(i).toAscii());
@@ -239,6 +258,9 @@ void MainObject::StartServerConnection()
   sir_connector->setStreamGenre(stream_genre);
   sir_connector->setStreamName(stream_name);
   sir_connector->setStreamUrl(stream_url);
+  sir_connector->setStreamIrc(stream_irc);
+  sir_connector->setStreamIcq(stream_icq);
+  sir_connector->setStreamAim(stream_aim);
 
   //
   // Open the server connection

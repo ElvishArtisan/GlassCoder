@@ -112,6 +112,7 @@ void IcyConnector::socketReadyReadData()
 	else {
 	  icy_recv_buffer+=data[i];
 	}
+	break;
 
       default:
 	icy_recv_buffer+=data[i];
@@ -146,6 +147,9 @@ void IcyConnector::ProcessHeaders(const QString &hdrs)
   WriteHeader("icy-pub: "+QString().sprintf("%d",streamPublic()));
   WriteHeader("icy-br: "+QString().sprintf("%u",audioBitrate()));
   WriteHeader("icy-url: "+streamUrl());
+  WriteHeader("icy-irc: "+streamIrc());
+  WriteHeader("icy-icq: "+streamIcq());
+  WriteHeader("icy-aim: "+streamAim());
   WriteHeader("Content-Type: "+contentType());
   WriteHeader("");
 

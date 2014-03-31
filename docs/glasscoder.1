@@ -17,82 +17,118 @@ sole 'user interface' is its command-line invocation.
 .TP
 .B --audio-bitrate=<\fIkbps\fP>
 The stream data rate in kilobits per second.  Default value is 128.
+
 .TP
 .B --audio-channels=<\fIchans\fP>
 The number of audio channels to use.  Valid values are \fI1\fP or \fI2\fP.
 Default value is \fP2\fP.
+
 .TP
 .B --audio-format=<\fIfmt\fP>
 The audio encoding format to use.  Valid <\fIfmt\fP> values are:
 .RS
+
 .TP
 MP3
 MPEG-1 Layer 3
 .RE
+
 .TP
 .B --audio-samplerate=<\fIrate\fP>
 The audio sample rate to use for streaming.  If the JACK graph is operating
 at a different sample rate, the input will be automatically resampled to
 this rate.  Default value is 44100.
+
 .TP
 .B --help
 Print a short usage message and exit.
+
 .TP
 .B --jack-server-name=<\fIname\fP>
 The name of the JACK server instance to use.
+
 .TP
 .B --jack-client-name=<\fIname\fP>
 The client name to use.  Default is 'glasscoder'.
+
 .TP
 .B --server-hostname=<\fIhostname\fP>
 The host name or IP address of the streaming server.  This parameter has
 no default.
+
 .TP
 .B --server-mountpoint=<\fImount\fP>
 The server mountpoint to use.  This parameter only has meaning when used
 with an Icecast server.  Default value is to use no mountpoint.
+
 .TP
 .B --server-password=<\fIpasswd\fP>
 The password to use when authenticating to the server.  This parameter
 has no default.
+
 .TP
 .B --server-port=<\fIport-num\fP>
 The port number to use when connecting to the server.  Default value is
 \fI8000\fP.
+
 .TP
 .B --server-type=<\fItype\fP>
 The type of streaming server to use.  Valid values for <\fItype\fP> are:
 .RS
+
 .TP
 IceCast2
 IceCast v2
+
 .TP
 Shout1
 Shoutcast v1
+
 .TP
 Default value is \fIIceCast2\fP.
 .RE
+
 .TP
-.B --stream-username=<\fIname\fP>
+.B --server-username=<\fIname\fP>
 The user name to use when authenticating to the server.  Default value
-is \fIsource\fP.
+is \fIsource\fP.  The setting is used only by Icecast servers.
+
+.TP
+.B --stream-aim=<\fIaim\fP>
+The AOL Instant Mesanger ID to associate with the stream.  There is no
+default value.  This setting is used only by Shoutcast servers.
+
 .TP
 .B --stream-description=<\fIstring\fP>
 The string to show as the stream description.  There is no default value.
+This setting is used only by Icecast servers.
+
 .TP
 .B --stream-genre=<\fIstring\fP>
 The string to show as the stream genre.  There is no default value.
+
+.TP
+.B --stream-icq=<\fIicq\fP>
+The ICQ ID to associate with the stream.  There is no default value.
+This setting is used only by Shoutcast servers.
+
+.TP
+.B --stream-irc=<\fIirc\fP>
+The Internet Relay Chat ID to associate with the stream.  There is no
+default value.  This setting is used only by Shoutcast servers.
+
 .TP
 .B --stream-name=<\fIstring\fP>
 The string to show as the stream name.  There is no default value.
+
 .TP
 .B --stream-url=<\fIurl\fP>
 The URL to show for a page giving more information about the stream.
 There is no default value.
+
 .TP
 .B --version
 Output version information and exit.
-
 
 .SH AUTHOR
 Fred Gleason <fredg@paravelsystems.com>

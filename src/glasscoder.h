@@ -40,7 +40,7 @@
 #define DEFAULT_AUDIO_BITRATE 128
 #define DEFAULT_AUDIO_SAMPLERATE 44100
 #define RINGBUFFER_SIZE 262144
-#define GLASSCODER_USAGE "[options]\n\n--audio-bitrate=<kbps>\n     The stream data rate in kilobits per second.  Default value is 128.\n\n--audio-channels=<chans>\n     The number of audio channels to use.  Valid values are 1 or 2.  Default\n     value is 2.\n\n--audio-format=<fmt>\n     The audio encoding format to use.  Value values are:\n          MP3 - MPEG-1 Layer 3\n     Default value is MP3.\n\n--audio-samplerate=<rate>\n     The audio sample rate to use for streaming.  Default value is 44100.\n\n--jack-server-name=<name>\n     The name of the JACK server instance to use.\n\n--jack-client-name=<name>\n     The client name to use.  Default value is 'glasscoder'.\n\n--server-hostname=<hostname>\n     The host name or IP address of the streaming server.  This parameter\n     has no default.\n\n--server-mountpoint=<mount>\n     The mountpoint to use on the server.  Default value is to use no\n     mountpoint.\n\n--server-password=<passwd>\n     The password to use when authenticating to the server.  This parameter\n     has no default.\n\n--server-port=<port>\n     The port number to connect to the server.  Default value is 8000.\n\n--server-type=<type>\n     Set the type of server to use.  Options are:\n          IceCast1 - IceCast v1\n          IceCast2 - IceCast v2\n          Shout - ShoutCast\n     Default value is 'IceCast2'.\n\n--server-username=<name>\n     The user name to use when authenticating to the server.  Default\n     value is 'source'.\n\n--stream-description=<str>\n     The description of the stream.\n\n--stream-genre=<str>\n     The genre of the stream.\n\n--stream-name=<str>\n     The name of the stream.\n\n--stream-url=<url>\n     The URL of the stream.\n"
+#define GLASSCODER_USAGE "[options]\n"
 
 class MainObject : public QObject
 {
@@ -62,6 +62,9 @@ class MainObject : public QObject
   QString stream_genre;
   QString stream_name;
   QString stream_url;
+  QString stream_irc;
+  QString stream_icq;
+  QString stream_aim;
   Connector::ServerType server_type;
   QString server_hostname;
   QString server_mountpoint;

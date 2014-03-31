@@ -59,4 +59,10 @@
 	* Removed 'Connector::Shoutcast2Server' and
 	'Connector::Icecast1Server' enumeration values from
 	'src/connector.h'.
-	* Updated 'docs/glasscoder.1'.
+	* Updated the glasscoder(1) man page.
+2014-03-30 Fred Gleason <fredg@paravelsystems.com>
+	* Added accessor methods for 'streamIrc', 'streamIcq' and
+	'streamAim' in 'src/connector.cpp' and 'src/connector.h'.
+	* Implemented fields for 'streamIrc', 'streamIcq' and
+	'streamAim' in 'src/icyconnector.cpp' and 'src/icyconnector.h'.
+	* Updated the glasscoder(1) man page.

@@ -35,6 +35,9 @@ Connector::Connector(QObject *parent)
   conn_stream_name="no name";
   conn_stream_description="unknown";
   conn_stream_url="";
+  conn_stream_irc="";
+  conn_stream_icq="";
+  conn_stream_aim="";
   conn_stream_genre="unknown";
   conn_stream_public=true;
   conn_host_hostname="";
@@ -176,6 +179,42 @@ QString Connector::streamUrl() const
 void Connector::setStreamUrl(const QString &str)
 {
   conn_stream_url=str;
+}
+
+
+QString Connector::streamIrc() const
+{
+  return conn_stream_irc;
+}
+
+
+void Connector::setStreamIrc(const QString &str)
+{
+  conn_stream_irc=str;
+}
+
+
+QString Connector::streamIcq() const
+{
+  return conn_stream_icq;
+}
+
+
+void Connector::setStreamIcq(const QString &str)
+{
+  conn_stream_icq=str;
+}
+
+
+QString Connector::streamAim() const
+{
+  return conn_stream_aim;
+}
+
+
+void Connector::setStreamAim(const QString &str)
+{
+  conn_stream_aim=str;
 }
 
 
