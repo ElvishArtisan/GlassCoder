@@ -3,7 +3,7 @@ This is the installation file for the GlassCoder package.
 MANDATORY PREREQUISITES
 ---------------------------------------------------------------------------
 You will need the following installed and configured properly on your 
-system before building Sirion:
+system before building GlassCoder:
 
 Qt4 Toolkit, v4.6 or better (http://www.trolltech.com/).
 
