@@ -74,3 +74,5 @@
 	* Updated 'README'.
 2014-03-31 Fred Gleason <fredg@paravelsystems.com>
 	* Documented the '-d' switch in the glasscoder(1) man page.
+2014-03-31 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.6.0.
