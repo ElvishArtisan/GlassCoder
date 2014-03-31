@@ -2,5 +2,13 @@ This is the README file for the GlassCoder package.
 
 GlassCoder is a minimalist audio encoder for IceCast and Shoutcast streaming
 servers that uses the JACK Audio Connection Kit.  GlassCoder utilizes no
-configuration files or GUI interface at all; its entire 'user interface'
-consists of a command-line invocation.
+configuration files or GUI interface at all; with a 'user interface' that
+consists entirely of the command-line invocation.  As such, it is well
+suited for use cases where the encoder is completely driven by an external
+system or script.
+
+At present, the following audio codecs are supported:
+
+   MPEG Layer 3 ('MP3')
+
+

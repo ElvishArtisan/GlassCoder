@@ -1,13 +1,24 @@
-This is the installation file for the Sirion package.
+This is the installation file for the GlassCoder package.
 
 MANDATORY PREREQUISITES
+---------------------------------------------------------------------------
 You will need the following installed and configured properly on your 
 system before building Sirion:
 
 Qt4 Toolkit, v4.6 or better (http://www.trolltech.com/).
 
+Secret Rabbit Code
+A sample-rate converter library, written by Erik de Castro Lopo.  Included
+with most distros, or you can find it at http://www.mega-nerd.com/SRC/.
+
 X11 Window System
 Virtually all Linux distros should include this.
+
+
+OPTIONAL PREREQUISITES -- At least one of the following is required:
+---------------------------------------------------------------------------
+LAME - MPEG Layer 3 Encoder Library, v.99.3 or later.  Needed for
+generating MPEG Layer 3 streams.  Available at http://lame.sourceforge.net/.
 
 
 BUILD ENVIRONMENT
