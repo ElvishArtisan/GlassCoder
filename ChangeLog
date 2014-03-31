@@ -55,3 +55,8 @@
 2014-03-30 Fred Gleason <fredg@paravelsystems.com>
 	* Refactored signaling in server connectors to provide reliable
 	notification of authentication failures.
+2014-03-30 Fred Gleason <fredg@paravelsystems.com>
+	* Removed 'Connector::Shoutcast2Server' and
+	'Connector::Icecast1Server' enumeration values from
+	'src/connector.h'.
+	* Updated 'docs/glasscoder.1'.

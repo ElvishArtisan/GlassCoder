@@ -124,7 +124,7 @@ MainObject::MainObject(QObject *parent)
 	cmd->setProcessed(i,true);
       }
       else {
-	if(cmd->value(i).toLower()=="shout") {
+	if(cmd->value(i).toLower()=="shout1") {
 	  server_type=Connector::Shoutcast1Server;
 	  cmd->setProcessed(i,true);
 	}
