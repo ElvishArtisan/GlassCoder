@@ -57,6 +57,7 @@ class MainObject : public QObject
   //
   unsigned audio_bitrate;
   unsigned audio_channels;
+  Codec::Type audio_format;
   unsigned audio_samplerate;
   QString stream_description;
   QString stream_genre;

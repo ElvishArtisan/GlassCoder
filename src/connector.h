@@ -78,8 +78,6 @@ class Connector : public QObject
 
  signals:
   void dataRequested(Connector *conn);
-  //  void connected(int result,const QString &txt);
-  //  void disconnected();
   void error(QAbstractSocket::SocketError err);
 
  private slots:

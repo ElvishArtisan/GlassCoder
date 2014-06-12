@@ -30,6 +30,18 @@ MpegL3Codec::MpegL3Codec(Ringbuffer *ring,QObject *parent)
 }
 
 
+QString MpegL3Codec::contentType() const
+{
+  return "audio/mpeg";
+}
+
+
+unsigned MpegL3Codec::pcmFrames() const
+{
+  return 1152;
+}
+
+
 bool MpegL3Codec::startCodec()
 {
 #ifdef HAVE_LAME

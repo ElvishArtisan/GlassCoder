@@ -18,6 +18,7 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include "aaccodec.h"
 #include "codecfactory.h"
 #include "mpegl3codec.h"
 
@@ -26,11 +27,15 @@ Codec *CodecFactory(Codec::Type type,Ringbuffer *ring,QObject *parent)
   Codec *cdc=NULL;
 
   switch(type) {
+  case Codec::TypeAac:
+    cdc=new AacCodec(ring,parent);
+    break;
+
   case Codec::TypeMpegL3:
     cdc=new MpegL3Codec(ring,parent);
     break;
 
-  default:
+  case Codec::TypeLast:
     break;
   }
 

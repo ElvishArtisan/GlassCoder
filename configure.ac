@@ -60,7 +60,9 @@ esac
 # Option Switches
 #
 AC_ARG_ENABLE(lame,[  --disable-lame          disable MPEG Layer 3 support],
-		      [LAME_DISABLED=yes],[]) 
+	      [LAME_DISABLED=yes],[]) 
+AC_ARG_ENABLE(faac,[  --disable-faac          disable MPEG-2/4 AAC support],
+	      [FAAC_DISABLED=yes],[]) 
 
 #
 # Check for Qt (Mandatory)
@@ -87,6 +89,17 @@ if test $LAME_FOUND ; then
   if test -z $LAME_DISABLED ; then
     AC_DEFINE(HAVE_LAME)
     USING_LAME=yes
+  fi
+fi
+
+#
+# Check for FAAC (Optional, required for MPEG-2/4 AAC support)
+#
+AC_CHECK_HEADER(faac.h,[FAAC_FOUND=yes],[])
+if test $FAAC_FOUND ; then
+  if test -z $FAAC_DISABLED ; then
+    AC_DEFINE(HAVE_FAAC)
+    USING_FAAC=yes
   fi
 fi
 
@@ -159,9 +172,14 @@ AC_MSG_NOTICE("|       *** GLASSCODER CONFIGURATION SUMMARY ***      |")
 AC_MSG_NOTICE("|-----------------------------------------------------|")
 AC_MSG_NOTICE("| Encoding Formats:                                   |")
 if test -z $USING_LAME ; then
-AC_MSG_NOTICE("|                              MPEG Layer 3 ... No    |")
+AC_MSG_NOTICE("|                   MPEG Layer 3 (via LAME) ... No    |")
 else
-AC_MSG_NOTICE("|                              MPEG Layer 3 ... Yes   |")
+AC_MSG_NOTICE("|                   MPEG Layer 3 (via LAME) ... Yes   |")
+fi
+if test -z $USING_FAAC ; then
+AC_MSG_NOTICE("|                   MPEG-2/4 AAC (via FAAC) ... No    |")
+else
+AC_MSG_NOTICE("|                   MPEG-2/4 AAC (via FAAC) ... Yes   |")
 fi
 AC_MSG_NOTICE("|-----------------------------------------------------|")
 AC_MSG_NOTICE()

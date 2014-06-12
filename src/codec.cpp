@@ -94,7 +94,7 @@ bool Codec::start()
   int err;
 
   if(codec_source_samplerate==codec_stream_samplerate) {
-    codec_pcm_buffer[0]=new float[MAX_AUDIO_CHANNELS*1152];
+    codec_pcm_buffer[0]=new float[MAX_AUDIO_CHANNELS*MAX_AUDIO_BUFFER];
     codec_pcm_buffer[1]=NULL;
     codec_pcm_in=codec_pcm_buffer[0];
     codec_pcm_out=codec_pcm_buffer[0];
@@ -102,8 +102,8 @@ bool Codec::start()
     codec_src_data=NULL;
   }
   else {
-    codec_pcm_buffer[0]=new float[MAX_AUDIO_CHANNELS*1152];
-    codec_pcm_buffer[1]=new float[MAX_AUDIO_CHANNELS*6912];
+    codec_pcm_buffer[0]=new float[MAX_AUDIO_CHANNELS*MAX_AUDIO_BUFFER];
+    codec_pcm_buffer[1]=new float[MAX_AUDIO_CHANNELS*MAX_AUDIO_BUFFER*6];
     codec_pcm_in=codec_pcm_buffer[0];
     codec_pcm_out=codec_pcm_buffer[1];
     if((codec_src_state=src_new(SRC_SINC_FASTEST,codec_channels,&err))==NULL) {
@@ -114,7 +114,7 @@ bool Codec::start()
     memset(codec_src_data,0,sizeof(SRC_DATA));
     codec_src_data->data_in=codec_pcm_buffer[0];
     codec_src_data->data_out=codec_pcm_buffer[1];
-    codec_src_data->output_frames=6912;
+    codec_src_data->output_frames=MAX_AUDIO_BUFFER*6;
     codec_src_data->src_ratio=
       (double)codec_stream_samplerate/(double)codec_source_samplerate;
   }
@@ -130,7 +130,14 @@ QString Codec::codecTypeText(Codec::Type type)
   case Codec::TypeMpegL3:
     ret=tr("MPEG Layer 3");
     break;
-  }
+ 
+  case Codec::TypeAac:
+    ret=tr("AAC");
+    break;
+
+  case Codec::TypeLast:
+    break;
+ }
 
   return ret;
 }
@@ -141,8 +148,8 @@ void Codec::encode(Connector *conn)
   int n;
   int err=0;
 
-  while(codec_ring->readSpace()>=1152) {
-    n=codec_ring->read(codec_pcm_in,1152);
+  while(codec_ring->readSpace()>=pcmFrames()) {
+    n=codec_ring->read(codec_pcm_in,pcmFrames());
     if(codec_src_state!=NULL) {
       codec_src_data->input_frames=n;
       if((err=src_process(codec_src_state,codec_src_data))!=0) {

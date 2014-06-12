@@ -32,12 +32,13 @@
 #include "ringbuffer.h"
 
 #define MAX_AUDIO_CHANNELS 2
+#define MAX_AUDIO_BUFFER 4096
 
 class Codec : public QObject
 {
   Q_OBJECT;
  public:
-  enum Type {TypeMpegL3=0};
+  enum Type {TypeMpegL3=0,TypeAac=1,TypeLast=2};
   Codec(Codec::Type type,Ringbuffer *ring,QObject *parent=0);
   ~Codec();
   unsigned bitrate() const;
@@ -48,6 +49,8 @@ class Codec : public QObject
   void setSourceSamplerate(unsigned rate);
   unsigned streamSamplerate() const;
   void setStreamSamplerate(unsigned rate);
+  virtual QString contentType() const=0;
+  virtual unsigned pcmFrames() const=0;
   virtual bool start();
   static QString codecTypeText(Codec::Type type);
 

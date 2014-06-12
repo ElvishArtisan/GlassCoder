@@ -31,7 +31,8 @@ moc_%.cpp:	%.h
 
 bin_PROGRAMS = glasscoder
 
-dist_glasscoder_SOURCES = cmdswitch.cpp cmdswitch.h\
+dist_glasscoder_SOURCES = aaccodec.cpp aaccodec.h\
+                          cmdswitch.cpp cmdswitch.h\
                           codec.cpp codec.h\
                           codecfactory.cpp codecfactory.h\
                           connector.cpp connector.h\
@@ -44,7 +45,8 @@ dist_glasscoder_SOURCES = cmdswitch.cpp cmdswitch.h\
                           ringbuffer.cpp ringbuffer.h\
                           glasscoder.cpp glasscoder.h
 
-nodist_glasscoder_SOURCES = moc_codec.cpp\
+nodist_glasscoder_SOURCES = moc_aaccodec.cpp\
+                            moc_codec.cpp\
                             moc_connector.cpp\
                             moc_glasscoder.cpp\
                             moc_iceconnector.cpp\

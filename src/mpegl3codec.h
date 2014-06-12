@@ -32,6 +32,8 @@ class MpegL3Codec : public Codec
   Q_OBJECT;
  public:
   MpegL3Codec(Ringbuffer *ring,QObject *parent=0);
+  QString contentType() const;
+  unsigned pcmFrames() const;
   bool startCodec();
 
  protected:

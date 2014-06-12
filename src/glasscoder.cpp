@@ -38,6 +38,7 @@ MainObject::MainObject(QObject *parent)
   bool debug=false;
   audio_bitrate=DEFAULT_AUDIO_BITRATE;
   audio_channels=MAX_AUDIO_CHANNELS;
+  audio_format=Codec::TypeMpegL3;
   audio_samplerate=DEFAULT_AUDIO_SAMPLERATE;
   jack_server_name="";
   jack_client_name=DEFAULT_JACK_CLIENT_NAME;
@@ -80,13 +81,19 @@ MainObject::MainObject(QObject *parent)
     }
     if(cmd->key(i)=="--audio-format") {
       if(cmd->value(i).toLower()=="mp3") {
-	// audio_format=SHOUT_FORMAT_MP3;
+	audio_format=Codec::TypeMpegL3;
 	cmd->setProcessed(i,true);
       }
       else {
-	syslog(LOG_ERR,"unknown --audio-format value \"%s\"",
-	       (const char *)cmd->value(i).toAscii());
-	exit(256);
+	if(cmd->value(i).toLower()=="aac") {
+	  audio_format=Codec::TypeAac;
+	  cmd->setProcessed(i,true);
+	}
+	else {
+	  syslog(LOG_ERR,"unknown --audio-format value \"%s\"",
+		 (const char *)cmd->value(i).toAscii());
+	  exit(256);
+	}
       }
     }
     if(cmd->key(i)=="--audio-samplerate") {
@@ -221,7 +228,7 @@ void MainObject::encodeData()
 
 bool MainObject::StartCodec()
 {
-  if((sir_codec=CodecFactory(Codec::TypeMpegL3,sir_ringbuffer,this))==NULL) {
+  if((sir_codec=CodecFactory(audio_format,sir_ringbuffer,this))==NULL) {
     syslog(LOG_ERR,"unsupported codec type \"%s\"",
 	   (const char *)Codec::codecTypeText(Codec::TypeMpegL3).toUtf8());
     return false;
@@ -250,7 +257,7 @@ void MainObject::StartServerConnection()
   sir_connector->setServerMountpoint(server_mountpoint);
   sir_connector->setServerUsername(server_username);
   sir_connector->setServerPassword(server_password);
-  sir_connector->setContentType("audio/mpeg");
+  sir_connector->setContentType(sir_codec->contentType());
   sir_connector->setAudioBitrate(audio_bitrate);
   sir_connector->setAudioChannels(audio_channels);
   sir_connector->setAudioSamplerate(audio_samplerate);
