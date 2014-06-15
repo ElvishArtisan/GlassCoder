@@ -1,4 +1,4 @@
-.TH glasscoder 1 "March 2014" Linux "Linux Audio Manual"
+.TH glasscoder 1 "June 2014" Linux "Linux Audio Manual"
 .SH NAME
 glasscoder \- Minimalist audio encoder for Icecast/Shoutcast servers
 
@@ -7,8 +7,8 @@ glasscoder [OPTIONS]
 
 .SH DESCRIPTION
 \fBGlasscoder\fP is an audio encoder that uses the JACK Audio Connection Kit.
-It is capable of sending live MPEG Layer 3 (aka 'mp3') streams to an
-Icecast or Shoutcast audio streaming server.
+It is capable of sending live Advanced Audio Coding (AAC) and MPEG Layer 3
+(aka 'mp3') streams to an Icecast or Shoutcast audio streaming server.
 
 \fBGlasscoder\fP has no GUI or configuration file components at all; its
 sole 'user interface' is its command-line invocation.
@@ -31,6 +31,12 @@ Default value is \fP2\fP.
 .TP
 .B --audio-format=<\fIfmt\fP>
 The audio encoding format to use.  Valid <\fIfmt\fP> values are:
+.RS
+
+.TP
+AAC
+Advanced Audio Coding
+.RE
 .RS
 
 .TP

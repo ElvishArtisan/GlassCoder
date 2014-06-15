@@ -84,3 +84,5 @@
 	* Implemented AAC stereo format.
 	* Refactored the 'Codec::encode()' method in 'src/codec.cpp' to
 	support exact PCM buffer sizes.
+2014-06-14 Fred Gleason <fredg@paravelsystems.com>
+	* Documented AAC format in 'docs/glasscoder.1'
