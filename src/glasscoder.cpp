@@ -80,19 +80,25 @@ MainObject::MainObject(QObject *parent)
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--audio-format") {
-      if(cmd->value(i).toLower()=="mp3") {
-	audio_format=Codec::TypeMpegL3;
+      if(cmd->value(i).toLower()=="mp2") {
+	audio_format=Codec::TypeMpegL2;
 	cmd->setProcessed(i,true);
       }
       else {
-	if(cmd->value(i).toLower()=="aac") {
-	  audio_format=Codec::TypeAac;
+	if(cmd->value(i).toLower()=="mp3") {
+	  audio_format=Codec::TypeMpegL3;
 	  cmd->setProcessed(i,true);
 	}
 	else {
-	  syslog(LOG_ERR,"unknown --audio-format value \"%s\"",
-		 (const char *)cmd->value(i).toAscii());
-	  exit(256);
+	  if(cmd->value(i).toLower()=="aac") {
+	    audio_format=Codec::TypeAac;
+	    cmd->setProcessed(i,true);
+	  }
+	  else {
+	    syslog(LOG_ERR,"unknown --audio-format value \"%s\"",
+		   (const char *)cmd->value(i).toAscii());
+	    exit(256);
+	  }
 	}
       }
     }

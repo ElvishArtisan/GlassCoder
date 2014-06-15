@@ -1,6 +1,6 @@
 // mpegl3codec.h
 //
-// Codec class for MPEG Layer 3
+// Codec class for MPEG-1 Layer 3
 //
 //   (C) Copyright 2014 Fred Gleason <fredg@paravelsystems.com>
 //

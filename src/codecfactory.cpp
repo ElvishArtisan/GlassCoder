@@ -20,6 +20,7 @@
 
 #include "aaccodec.h"
 #include "codecfactory.h"
+#include "mpegl2codec.h"
 #include "mpegl3codec.h"
 
 Codec *CodecFactory(Codec::Type type,Ringbuffer *ring,QObject *parent)
@@ -27,12 +28,16 @@ Codec *CodecFactory(Codec::Type type,Ringbuffer *ring,QObject *parent)
   Codec *cdc=NULL;
 
   switch(type) {
-  case Codec::TypeAac:
-    cdc=new AacCodec(ring,parent);
+  case Codec::TypeMpegL2:
+    cdc=new MpegL2Codec(ring,parent);
     break;
 
   case Codec::TypeMpegL3:
     cdc=new MpegL3Codec(ring,parent);
+    break;
+
+  case Codec::TypeAac:
+    cdc=new AacCodec(ring,parent);
     break;
 
   case Codec::TypeLast:

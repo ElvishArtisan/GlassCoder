@@ -40,7 +40,7 @@ class Codec : public QObject
 {
   Q_OBJECT;
  public:
-  enum Type {TypeMpegL3=0,TypeAac=1,TypeLast=2};
+  enum Type {TypeMpegL2=0,TypeMpegL3=1,TypeAac=2,TypeLast=3};
   Codec(Codec::Type type,Ringbuffer *ring,QObject *parent=0);
   ~Codec();
   unsigned bitrate() const;

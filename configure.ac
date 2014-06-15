@@ -59,6 +59,8 @@ esac
 #
 # Option Switches
 #
+AC_ARG_ENABLE(twolame,[  --disable-twolame       disable MPEG Layer 2 encode support],
+		      [TWOLAME_DISABLED=yes],[])
 AC_ARG_ENABLE(lame,[  --disable-lame          disable MPEG Layer 3 support],
 	      [LAME_DISABLED=yes],[]) 
 AC_ARG_ENABLE(faac,[  --disable-faac          disable MPEG-2/4 AAC support],
@@ -80,6 +82,17 @@ AC_CHECK_HEADER(jack/jack.h,[],[AC_MSG_ERROR([*** JACK not found ***])])
 # Check for Secret Rabbit Code (Mandatory)
 #
 AC_CHECK_HEADER(samplerate.h,[],[AC_MSG_ERROR([*** libsamplerate not found ***])])
+
+#
+# Check for TwoLame (Optional, required for MPEG Layer 2 support)
+#
+AC_CHECK_HEADER(twolame.h,[TWOLAME_FOUND=yes],[])
+if test $TWOLAME_FOUND ; then
+  if test -z $TWOLAME_DISABLED ; then
+    AC_DEFINE(HAVE_TWOLAME)
+    USING_TWOLAME=yes
+  fi
+fi
 
 #
 # Check for Lame (Optional, required for MPEG Layer 3 support)
@@ -171,15 +184,20 @@ AC_MSG_NOTICE("|-----------------------------------------------------|")
 AC_MSG_NOTICE("|       *** GLASSCODER CONFIGURATION SUMMARY ***      |")
 AC_MSG_NOTICE("|-----------------------------------------------------|")
 AC_MSG_NOTICE("| Encoding Formats:                                   |")
-if test -z $USING_LAME ; then
-AC_MSG_NOTICE("|                   MPEG Layer 3 (via LAME) ... No    |")
+if test -z $USING_TWOLAME ; then
+AC_MSG_NOTICE("|              MPEG-1 Layer 2 (via TwoLAME) ... No    |")
 else
-AC_MSG_NOTICE("|                   MPEG Layer 3 (via LAME) ... Yes   |")
+AC_MSG_NOTICE("|              MPEG-1 Layer 2 (via TwoLAME) ... Yes   |")
+fi
+if test -z $USING_LAME ; then
+AC_MSG_NOTICE("|                 MPEG-1 Layer 3 (via LAME) ... No    |")
+else
+AC_MSG_NOTICE("|                 MPEG-1 Layer 3 (via LAME) ... Yes   |")
 fi
 if test -z $USING_FAAC ; then
-AC_MSG_NOTICE("|                   MPEG-2/4 AAC (via FAAC) ... No    |")
+AC_MSG_NOTICE("|                     MPEG-2 AAC (via FAAC) ... No    |")
 else
-AC_MSG_NOTICE("|                   MPEG-2/4 AAC (via FAAC) ... Yes   |")
+AC_MSG_NOTICE("|                     MPEG-2 AAC (via FAAC) ... Yes   |")
 fi
 AC_MSG_NOTICE("|-----------------------------------------------------|")
 AC_MSG_NOTICE()

@@ -40,6 +40,7 @@ dist_glasscoder_SOURCES = aaccodec.cpp aaccodec.h\
                           iceconnector.cpp iceconnector.h\
                           icyconnector.cpp icyconnector.h\
                           jack.cpp\
+                          mpegl2codec.cpp mpegl2codec.h\
                           mpegl3codec.cpp mpegl3codec.h\
                           profile.cpp profile.h\
                           ringbuffer.cpp ringbuffer.h\
@@ -51,6 +52,7 @@ nodist_glasscoder_SOURCES = moc_aaccodec.cpp\
                             moc_glasscoder.cpp\
                             moc_iceconnector.cpp\
                             moc_icyconnector.cpp\
+                            moc_mpegl2codec.cpp\
                             moc_mpegl3codec.cpp
 
 glasscoder_LDADD = @SIRLIBS@

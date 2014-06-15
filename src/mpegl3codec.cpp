@@ -1,6 +1,6 @@
 // mpegl3codec.cpp
 //
-// Codec class for MPEG Layer 3
+// Codec class for MPEG-1 Layer 3
 //
 //   (C) Copyright 2014 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -138,6 +138,7 @@ bool MpegL3Codec::startCodec()
 
 void MpegL3Codec::encodeData(Connector *conn,const float *pcm,int frames)
 {
+#ifdef HAVE_LAME
   int s;
   unsigned char mpeg[8640];
 
@@ -153,4 +154,5 @@ void MpegL3Codec::encodeData(Connector *conn,const float *pcm,int frames)
       conn->writeData((const char *)mpeg,s);
     }
   }
+#endif  // HAVE_LAME
 }

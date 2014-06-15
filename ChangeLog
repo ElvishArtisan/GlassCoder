@@ -88,3 +88,6 @@
 	* Documented AAC format in 'docs/glasscoder.1'
 2014-06-14 Fred Gleason <fredg@paravelsystems.com>
 	* Documented the FAAC dependency in 'INSTALL'.
+2014-06-15 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented MPEG-1 Layer 2 format in 'src/mpegl2codec.cpp' and
+	'src/mpegl2codec.h'.

@@ -18,11 +18,15 @@ Virtually all Linux distros should include this.
 OPTIONAL PREREQUISITES -- At least one of the following is required:
 ---------------------------------------------------------------------------
 FAAC - Free Advanced Audio Codec, v1.28 or later.  Needed for generating
-AAC streams.  Available at http://www.audiocoding.com/faac.html.
+MPEG-2 AAC streams.  Available at http://www.audiocoding.com/faac.html.
 
-LAME - MPEG Layer 3 Encoder Library, v.99.3 or later.  Needed for
-generating MPEG Layer 3 (MP3) streams.  Available at
+LAME - MPEG-1 Layer 3 Encoder Library, v.99.3 or later.  Needed for
+generating MPEG-1 Layer 3 (MP3) streams.  Available at
 http://lame.sourceforge.net/.
+
+TwoLAME - MPEG-1 Layer 2 Encoder Library, v0.2.12 or later.  Needed for
+generating MPEG-1 Layer 2 (MP2) streams.  Available at
+http://www.twolame.org/.
 
 
 BUILD ENVIRONMENT

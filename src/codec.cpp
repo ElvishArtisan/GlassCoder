@@ -133,12 +133,16 @@ QString Codec::codecTypeText(Codec::Type type)
   QString ret=tr("Unknown");
 
   switch(type) {
+  case Codec::TypeMpegL2:
+    ret=tr("MPEG-1 Layer 3");
+    break;
+ 
   case Codec::TypeMpegL3:
-    ret=tr("MPEG Layer 3");
+    ret=tr("MPEG-1 Layer 3");
     break;
  
   case Codec::TypeAac:
-    ret=tr("AAC");
+    ret=tr("MPEG-2 AAC");
     break;
 
   case Codec::TypeLast:
