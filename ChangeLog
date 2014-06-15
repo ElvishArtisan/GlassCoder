@@ -80,3 +80,7 @@
 	* Updated 'INSTALL'.
 2014-06-11 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented AAC single channel format.
+2014-06-14 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented AAC stereo format.
+	* Refactored the 'Codec::encode()' method in 'src/codec.cpp' to
+	support exact PCM buffer sizes.

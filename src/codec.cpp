@@ -22,11 +22,12 @@
 
 Codec::Codec(Codec::Type type,Ringbuffer *ring,QObject *parent)
 {
-  codec_ring=ring;
+  codec_ring1=ring;
   codec_bitrate=128;
   codec_channels=2;
   codec_source_samplerate=48000;
   codec_stream_samplerate=48000;
+  codec_ring2=NULL;
 }
 
 
@@ -37,6 +38,9 @@ Codec::~Codec()
   }
   if(codec_src_data!=NULL) {
     delete codec_src_data;
+  }
+  if((codec_ring2!=codec_ring1)&&(codec_ring2!=NULL)) {
+    delete codec_ring2;
   }
 }
 
@@ -100,6 +104,7 @@ bool Codec::start()
     codec_pcm_out=codec_pcm_buffer[0];
     codec_src_state=NULL;
     codec_src_data=NULL;
+    codec_ring2=codec_ring1;
   }
   else {
     codec_pcm_buffer[0]=new float[MAX_AUDIO_CHANNELS*MAX_AUDIO_BUFFER];
@@ -117,6 +122,7 @@ bool Codec::start()
     codec_src_data->output_frames=MAX_AUDIO_BUFFER*6;
     codec_src_data->src_ratio=
       (double)codec_stream_samplerate/(double)codec_source_samplerate;
+    codec_ring2=new Ringbuffer(262144,codec_channels);
   }
   return startCodec();
 }
@@ -148,22 +154,26 @@ void Codec::encode(Connector *conn)
   int n;
   int err=0;
 
-  while(codec_ring->readSpace()>=pcmFrames()) {
-    n=codec_ring->read(codec_pcm_in,pcmFrames());
-    if(codec_src_state!=NULL) {
+  if(codec_src_state!=NULL) {
+    while(codec_ring1->readSpace()>=pcmFrames()) {
+      n=codec_ring1->read(codec_pcm_in,pcmFrames());
       codec_src_data->input_frames=n;
       if((err=src_process(codec_src_state,codec_src_data))!=0) {
 	syslog(LOG_WARNING,"SRC error [%s]",src_strerror(err));
 	continue;
       }
       n=codec_src_data->output_frames_gen;
+      codec_ring2->write(codec_pcm_out,n);
     }
-    encodeData(conn,codec_pcm_out,n);
+  }
+  while(codec_ring2->readSpace()>=pcmFrames()) {
+    n=codec_ring2->read(codec_pcm_in,pcmFrames());
+    encodeData(conn,codec_pcm_in,n);
   }
 }
 
 
 Ringbuffer *Codec::ring()
 {
-  return codec_ring;
+  return codec_ring1;
 }

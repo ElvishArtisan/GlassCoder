@@ -21,6 +21,8 @@
 #ifndef CODEC_H
 #define CODEC_H
 
+#include <queue>
+
 #include <dlfcn.h>
 #include <syslog.h>
 
@@ -63,7 +65,8 @@ class Codec : public QObject
   Ringbuffer *ring();
 
  private:
-  Ringbuffer *codec_ring;
+  Ringbuffer *codec_ring1;
+  Ringbuffer *codec_ring2;
   unsigned codec_bitrate;
   unsigned codec_channels;
   unsigned codec_source_samplerate;

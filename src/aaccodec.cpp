@@ -45,7 +45,7 @@ QString AacCodec::contentType() const
 
 unsigned AacCodec::pcmFrames() const
 {
-  return aac_input_samples;
+  return aac_input_samples/channels();
 }
 
 
@@ -112,7 +112,7 @@ void AacCodec::encodeData(Connector *conn,const float *pcm,int frames)
   int16_t pcms[frames*channels()];
 
   src_float_to_short_array(pcm,pcms,frames*channels());
-  if((s=faacEncEncode(aac_encoder,(int32_t *)pcms,frames,aac_buffer,aac_buffer_size))>0) {
+  if((s=faacEncEncode(aac_encoder,(int32_t *)pcms,frames*channels(),aac_buffer,aac_buffer_size))>0) {
     conn->writeData((const char *)aac_buffer,s);
   }
   else {
