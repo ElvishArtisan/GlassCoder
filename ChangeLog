@@ -86,3 +86,5 @@
 	support exact PCM buffer sizes.
 2014-06-14 Fred Gleason <fredg@paravelsystems.com>
 	* Documented AAC format in 'docs/glasscoder.1'
+2014-06-14 Fred Gleason <fredg@paravelsystems.com>
+	* Documented the FAAC dependency in 'INSTALL'.
