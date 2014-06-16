@@ -59,6 +59,8 @@ esac
 #
 # Option Switches
 #
+AC_ARG_ENABLE(vorbis,[  --disable-vorbis        disable OggVorbis support],
+	      [VORBIS_DISABLED=yes],[]) 
 AC_ARG_ENABLE(twolame,[  --disable-twolame       disable MPEG Layer 2 encode support],
 		      [TWOLAME_DISABLED=yes],[])
 AC_ARG_ENABLE(lame,[  --disable-lame          disable MPEG Layer 3 support],
@@ -82,6 +84,17 @@ AC_CHECK_HEADER(jack/jack.h,[],[AC_MSG_ERROR([*** JACK not found ***])])
 # Check for Secret Rabbit Code (Mandatory)
 #
 AC_CHECK_HEADER(samplerate.h,[],[AC_MSG_ERROR([*** libsamplerate not found ***])])
+
+#
+# Check for OggVorbis
+#
+AC_CHECK_HEADER(vorbis/vorbisfile.h,[VORBIS_FOUND=yes],[])
+if test $VORBIS_FOUND = yes ; then
+  if test -z $VORBIS_DISABLED ; then
+    AC_DEFINE(HAVE_VORBIS)
+    USING_VORBIS=yes
+  fi
+fi
 
 #
 # Check for TwoLame (Optional, required for MPEG Layer 2 support)
@@ -198,6 +211,11 @@ if test -z $USING_FAAC ; then
 AC_MSG_NOTICE("|                     MPEG-2 AAC (via FAAC) ... No    |")
 else
 AC_MSG_NOTICE("|                     MPEG-2 AAC (via FAAC) ... Yes   |")
+fi
+if test -z $USING_VORBIS ; then
+AC_MSG_NOTICE("|   OggVorbis (via libogg and libvorbisenc) ... No    |")
+else
+AC_MSG_NOTICE("|   OggVorbis (via libogg and libvorbisenc) ... Yes   |")
 fi
 AC_MSG_NOTICE("|-----------------------------------------------------|")
 AC_MSG_NOTICE()

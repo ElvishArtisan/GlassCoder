@@ -55,10 +55,9 @@ MainObject::MainObject(QObject *parent)
   stream_icq="";
   stream_aim="";
 
-  openlog("glasscoder",LOG_PERROR,LOG_DAEMON);
-
   CmdSwitch *cmd=
     new CmdSwitch(qApp->argc(),qApp->argv(),"glasscoder",GLASSCODER_USAGE);
+  openlog("glasscoder",LOG_PERROR,LOG_DAEMON);
   for(unsigned i=0;i<cmd->keys();i++) {
     if(cmd->key(i)=="--audio-bitrate") {
       audio_bitrate=cmd->value(i).toUInt(&ok);
@@ -92,9 +91,15 @@ MainObject::MainObject(QObject *parent)
 	    cmd->setProcessed(i,true);
 	  }
 	  else {
-	    syslog(LOG_ERR,"unknown --audio-format value \"%s\"",
-		   (const char *)cmd->value(i).toAscii());
-	    exit(256);
+	    if(cmd->value(i).toLower()=="vorbis") {
+	      audio_format=Codec::TypeVorbis;
+	      cmd->setProcessed(i,true);
+	    }
+	    else {
+	      syslog(LOG_ERR,"unknown --audio-format value \"%s\"",
+		     (const char *)cmd->value(i).toAscii());
+	      exit(256);
+	    }
 	  }
 	}
       }
@@ -210,6 +215,7 @@ MainObject::MainObject(QObject *parent)
   if((audio_quality<0.0)&&(audio_bitrate==0)) {
     audio_bitrate=DEFAULT_AUDIO_BITRATE;
   }
+
 
   if(!StartJack()) {
     exit(256);

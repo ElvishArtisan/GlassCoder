@@ -105,3 +105,6 @@
 	'src/mpeg2codec.h'.
 	* Added support for VBR encoding in 'src/aaccodec.cpp' and
 	'src/aaccodec.h'.
+2014-06-16 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented OggVorbis format in 'src/vorbiscodec.cpp' and
+	'src/vorbiscodec.h'.

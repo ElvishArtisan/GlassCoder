@@ -158,6 +158,10 @@ QString Codec::codecTypeText(Codec::Type type)
     ret=tr("MPEG-2 AAC");
     break;
 
+  case Codec::TypeVorbis:
+    ret=tr("OggVorbis");
+    break;
+
   case Codec::TypeLast:
     break;
  }

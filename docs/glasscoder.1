@@ -32,26 +32,32 @@ The audio encoding format to use.  The default value is \fBMP3\fP.  Valid
 .RS
 
 .TP
-MP2
-MPEG-1 Layer 2
+\fBMP2\fP
+MPEG-1/1.5 Layer 2
 .RE
 .RS
 
 .TP
-MP3
-MPEG-1 Layer 3
+\fBMP3\fP
+MPEG-1/1.5 Layer 3
 .RE
 .RS
 
 .TP
-AAC
-MPEG-2 Advanced Audio Coding
+\fBAAC\fP
+MPEG-2 Advanced Audio Coding (Main Profile)
+.RE
+.RS
+
+.TP
+\fBVORBIS\fP
+OggVorbis
 .RE
 
 .TP
 .B --audio-quality=<\fIqual\fP>
-Use variable bitrate streaming at the given audio quality, in the range 0.0
-(lowest quality) to 1.0 (highest).  Use of this option is mutually exclusive
+Use variable bitrate streaming at the given audio quality.  <\fIfmt\fP> can
+be in the range 0.0 (lowest quality) to 1.0 (highest).  Use of this option is mutually exclusive
 with that of the \fB--audio-bitrate\fP option (see above).
 
 .TP
