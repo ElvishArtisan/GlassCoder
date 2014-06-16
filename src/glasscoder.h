@@ -55,7 +55,6 @@ class MainObject : public QObject
   //
   // Arguments
   //
-  Codec::BitMode audio_bitmode;
   unsigned audio_bitrate;
   unsigned audio_channels;
   Codec::Type audio_format;

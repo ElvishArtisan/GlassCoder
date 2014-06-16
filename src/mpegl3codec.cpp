@@ -93,6 +93,9 @@ bool MpegL3Codec::startCodec()
     dlsym(l3_lame_handle,"lame_encode_flush_nogap");
   *(void **)(&lame_init_bitstream)=
     dlsym(l3_lame_handle,"lame_init_bitstream");
+  *(void **)(&lame_set_VBR)=dlsym(l3_lame_handle,"lame_set_VBR");
+  *(void **)(&lame_set_VBR_quality)=
+    dlsym(l3_lame_handle,"lame_set_VBR_quality");
   if(lame_encode_buffer_ieee_float==NULL) {  // Earlier versions of LAME didn't include this!
     return false;
   }
@@ -121,7 +124,13 @@ bool MpegL3Codec::startCodec()
   lame_set_num_channels(l3_lameopts,channels());
   lame_set_in_samplerate(l3_lameopts,streamSamplerate());
   lame_set_out_samplerate(l3_lameopts,streamSamplerate());
-  lame_set_brate(l3_lameopts,bitrate());
+  if(bitrate()==0) {
+    lame_set_VBR(l3_lameopts,vbr_default);
+    lame_set_VBR_quality(l3_lameopts,(int)(9.0*(1.0-quality())));
+  }
+  else {
+    lame_set_brate(l3_lameopts,bitrate());
+  }
   lame_set_bWriteVbrTag(l3_lameopts,0);
   if(lame_init_params(l3_lameopts)!=0) {
     lame_close(l3_lameopts);

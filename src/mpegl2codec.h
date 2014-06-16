@@ -57,6 +57,8 @@ class MpegL2Codec : public Codec
     (twolame_options *,const float[],int,unsigned char *,int);
   int (*twolame_encode_flush)(twolame_options *,unsigned char *,int);
   int (*twolame_set_energy_levels)(twolame_options *,int);
+  int (*twolame_set_VBR)(twolame_options *, int);
+  int (*twolame_set_VBR_level)(twolame_options *, float);
 #endif  // HAVE_TWOLAME
 };
 

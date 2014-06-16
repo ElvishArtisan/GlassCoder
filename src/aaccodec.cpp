@@ -87,9 +87,15 @@ bool AacCodec::startCodec()
   config->shortctl=SHORTCTL_NORMAL;
   config->useLfe=0;
   config->allowMidside=1;
-  config->bitRate=1000*bitrate()/channels();
   config->bandWidth=0;  // Use FAAC Defaults
-  config->quantqual=0;
+  if(bitrate()==0) {
+    config->bitRate=0;
+    config->quantqual=(int)(400.0*quality()+100.0);
+  }
+  else {
+    config->bitRate=1000*bitrate()/channels();
+    config->quantqual=0;
+  }
   config->outputFormat=1;  // ADTS
   config->inputFormat=FAAC_INPUT_16BIT;
   if(faacEncSetConfiguration(aac_encoder,config)<0) {

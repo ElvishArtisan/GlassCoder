@@ -95,3 +95,13 @@
 	* Added '--audio-bitmode=' and '--audio-quality=' switches in
 	'src/glasscoder.cpp', 'src/glasscoder.h', 'src/codec.cpp' and
 	'src/codec.h'.
+2014-06-16 Fred Gleason <fredg@paravelsystems.com>
+	* Removed the '--audio-bitmode=' switch in 'src/glasscoder.cpp',
+	'src/glasscoder.h', 'src/codec.cpp' and 'src/codec.h'.
+	* Removed the '-d' switch in 'src/glasscoder.cpp'.
+	* Added support for VBR encoding in 'src/mpeg3codec.cpp' and
+	'src/mpeg3codec.h'.
+	* Added support for VBR encoding in 'src/mpeg2codec.cpp' and
+	'src/mpeg2codec.h'.
+	* Added support for VBR encoding in 'src/aaccodec.cpp' and
+	'src/aaccodec.h'.

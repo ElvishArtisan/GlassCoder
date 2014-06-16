@@ -23,7 +23,6 @@
 Codec::Codec(Codec::Type type,Ringbuffer *ring,QObject *parent)
 {
   codec_ring1=ring;
-  codec_bitmode=Codec::BitModeConstant;
   codec_bitrate=128;
   codec_channels=2;
   codec_quality=0.5;
@@ -44,18 +43,6 @@ Codec::~Codec()
   if((codec_ring2!=codec_ring1)&&(codec_ring2!=NULL)) {
     delete codec_ring2;
   }
-}
-
-
-Codec::BitMode Codec::bitmode() const
-{
-  return codec_bitmode;
-}
-
-
-void Codec::setBitmode(Codec::BitMode mode)
-{
-  codec_bitmode=mode;
 }
 
 

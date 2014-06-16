@@ -35,12 +35,10 @@ MainObject::MainObject(QObject *parent)
   : QObject(parent)
 {
   bool ok=false;
-  bool debug=false;
-  audio_bitmode=Codec::BitModeConstant;
-  audio_bitrate=DEFAULT_AUDIO_BITRATE;
+  audio_bitrate=0;
   audio_channels=MAX_AUDIO_CHANNELS;
   audio_format=Codec::TypeMpegL3;
-  audio_quality=0.5;
+  audio_quality=-1.0;
   audio_samplerate=DEFAULT_AUDIO_SAMPLERATE;
   jack_server_name="";
   jack_client_name=DEFAULT_JACK_CLIENT_NAME;
@@ -57,31 +55,11 @@ MainObject::MainObject(QObject *parent)
   stream_icq="";
   stream_aim="";
 
+  openlog("glasscoder",LOG_PERROR,LOG_DAEMON);
 
   CmdSwitch *cmd=
     new CmdSwitch(qApp->argc(),qApp->argv(),"glasscoder",GLASSCODER_USAGE);
   for(unsigned i=0;i<cmd->keys();i++) {
-    if(cmd->key(i)=="-d") {
-      debug=true;
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--audio-bitmode") {
-      if(cmd->value(i).toLower()=="cbr") {
-	audio_bitmode=Codec::BitModeConstant;
-	cmd->setProcessed(i,true);
-      }
-      else {
-	if(cmd->value(i).toLower()=="vbr") {
-	  audio_bitmode=Codec::BitModeVariable;
-	  cmd->setProcessed(i,true);
-	}
-	else {
-	  syslog(LOG_ERR,"unknown --audio-bitmode value \"%s\"",
-		 (const char *)cmd->value(i).toAscii());
-	  exit(256);
-	}
-      }
-    }
     if(cmd->key(i)=="--audio-bitrate") {
       audio_bitrate=cmd->value(i).toUInt(&ok);
       if(!ok) {
@@ -215,7 +193,7 @@ MainObject::MainObject(QObject *parent)
       cmd->setProcessed(i,true);
     }
     if(!cmd->processed(i)) {
-      syslog(LOG_ERR,"glasscoder: unknown option \"%s\"\n",
+      syslog(LOG_ERR,"glasscoder: unknown option \"%s\"",
 	      (const char *)cmd->key(i).toAscii());
       exit(256);
     }
@@ -224,15 +202,13 @@ MainObject::MainObject(QObject *parent)
     syslog(LOG_ERR,"missing --server-hostname parameter");
     exit(256);
   }
-
-  //
-  // Open Syslog
-  //
-  if(debug) {
-    openlog("glasscoder",LOG_PERROR,LOG_DAEMON);
+  if((audio_quality>=0.0)&&(audio_bitrate>0)) {
+    syslog(LOG_ERR,
+	   "--audio-quality and --audio-bitrate are mutually exclusive");
+    exit(256);
   }
-  else {
-    openlog("glasscoder",0,LOG_DAEMON);
+  if((audio_quality<0.0)&&(audio_bitrate==0)) {
+    audio_bitrate=DEFAULT_AUDIO_BITRATE;
   }
 
   if(!StartJack()) {
@@ -266,7 +242,6 @@ bool MainObject::StartCodec()
 	   (const char *)Codec::codecTypeText(Codec::TypeMpegL3).toUtf8());
     return false;
   }
-  sir_codec->setBitmode(audio_bitmode);
   sir_codec->setBitrate(audio_bitrate);
   sir_codec->setChannels(audio_channels);
   sir_codec->setQuality(audio_quality);

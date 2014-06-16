@@ -76,6 +76,9 @@ bool MpegL2Codec::startCodec()
     dlsym(twolame_handle,"twolame_encode_flush");
   *(void **)(&twolame_set_energy_levels)=
     dlsym(twolame_handle,"twolame_set_energy_levels");
+  *(void **)(&twolame_set_VBR)=dlsym(twolame_handle,"twolame_set_VBR");
+  *(void **)(&twolame_set_VBR_level)=
+    dlsym(twolame_handle,"twolame_set_VBR_level");
 
   //
   // Initialize Encoder Instance
@@ -99,7 +102,13 @@ bool MpegL2Codec::startCodec()
   twolame_set_num_channels(twolame_lameopts,channels());
   twolame_set_in_samplerate(twolame_lameopts,streamSamplerate());
   twolame_set_out_samplerate(twolame_lameopts,streamSamplerate());
-  twolame_set_bitrate(twolame_lameopts,bitrate());
+  if(bitrate()==0) {
+    twolame_set_VBR(twolame_lameopts,TRUE);
+    twolame_set_VBR_level(twolame_lameopts,(int)(20.0*quality()-10.0));
+  }
+  else {
+    twolame_set_bitrate(twolame_lameopts,bitrate());
+  }
   twolame_set_energy_levels(twolame_lameopts,1);
   if(twolame_init_params(twolame_lameopts)!=0) {
     syslog(LOG_ERR,"unable to start MP2 encoder");
