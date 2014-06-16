@@ -36,9 +36,11 @@ MainObject::MainObject(QObject *parent)
 {
   bool ok=false;
   bool debug=false;
+  audio_bitmode=Codec::BitModeConstant;
   audio_bitrate=DEFAULT_AUDIO_BITRATE;
   audio_channels=MAX_AUDIO_CHANNELS;
   audio_format=Codec::TypeMpegL3;
+  audio_quality=0.5;
   audio_samplerate=DEFAULT_AUDIO_SAMPLERATE;
   jack_server_name="";
   jack_client_name=DEFAULT_JACK_CLIENT_NAME;
@@ -62,6 +64,23 @@ MainObject::MainObject(QObject *parent)
     if(cmd->key(i)=="-d") {
       debug=true;
       cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--audio-bitmode") {
+      if(cmd->value(i).toLower()=="cbr") {
+	audio_bitmode=Codec::BitModeConstant;
+	cmd->setProcessed(i,true);
+      }
+      else {
+	if(cmd->value(i).toLower()=="vbr") {
+	  audio_bitmode=Codec::BitModeVariable;
+	  cmd->setProcessed(i,true);
+	}
+	else {
+	  syslog(LOG_ERR,"unknown --audio-bitmode value \"%s\"",
+		 (const char *)cmd->value(i).toAscii());
+	  exit(256);
+	}
+      }
     }
     if(cmd->key(i)=="--audio-bitrate") {
       audio_bitrate=cmd->value(i).toUInt(&ok);
@@ -101,6 +120,14 @@ MainObject::MainObject(QObject *parent)
 	  }
 	}
       }
+    }
+    if(cmd->key(i)=="--audio-quality") {
+      audio_quality=cmd->value(i).toDouble(&ok);
+      if((!ok)||(audio_quality<0.0)||(audio_quality>1.0)) {
+	syslog(LOG_ERR,"invalid --audio-quality value");
+	exit(256);
+      }
+      cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--audio-samplerate") {
       audio_samplerate=cmd->value(i).toUInt(&ok);
@@ -239,8 +266,10 @@ bool MainObject::StartCodec()
 	   (const char *)Codec::codecTypeText(Codec::TypeMpegL3).toUtf8());
     return false;
   }
+  sir_codec->setBitmode(audio_bitmode);
   sir_codec->setBitrate(audio_bitrate);
   sir_codec->setChannels(audio_channels);
+  sir_codec->setQuality(audio_quality);
   sir_codec->setSourceSamplerate(jack_get_sample_rate(sir_jack_client));
   sir_codec->setStreamSamplerate(audio_samplerate);
 

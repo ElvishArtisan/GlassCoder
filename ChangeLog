@@ -91,3 +91,7 @@
 2014-06-15 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented MPEG-1 Layer 2 format in 'src/mpegl2codec.cpp' and
 	'src/mpegl2codec.h'.
+2014-06-15 Fred Gleason <fredg@paravelsystems.com>
+	* Added '--audio-bitmode=' and '--audio-quality=' switches in
+	'src/glasscoder.cpp', 'src/glasscoder.h', 'src/codec.cpp' and
+	'src/codec.h'.

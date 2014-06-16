@@ -20,8 +20,28 @@ Set debug mode.  This causes error and warning messages to be printed
 to standard error as well as being sent to syslog.
 
 .TP
+.B --audio-bitmode=<\fImode\fP>
+The bit allocation mode.  The default value is \fBCBR\fP.  Valid
+<\fImode\fP> values are:
+.RS
+
+.TP
+CBR
+Constant bitrate.
+.RE
+.RS
+
+.TP
+VBR
+Variable bitrate.
+.RE
+
+
+.TP
 .B --audio-bitrate=<\fIkbps\fP>
-The stream data rate in kilobits per second.  Default value is 128.
+The stream data rate in kilobits per second.  This value is used only for
+constant bitrate (CBR) streams (see the \fB--audio-bitmode\fP option, above).
+Default value is 128.
 
 .TP
 .B --audio-channels=<\fIchans\fP>
@@ -30,7 +50,8 @@ Default value is \fP2\fP.
 
 .TP
 .B --audio-format=<\fIfmt\fP>
-The audio encoding format to use.  Valid <\fIfmt\fP> values are:
+The audio encoding format to use.  The default value is \fBMP3\fP.  Valid
+<\fIfmt\fP> values are:
 .RS
 
 .TP
@@ -49,6 +70,12 @@ MPEG-1 Layer 3
 AAC
 MPEG-2 Advanced Audio Coding
 .RE
+
+.TP
+.B --audio-quality=<\fIqual\fP>
+The encoding audio quality, in the range 0.0 (lowest quality) to 1.0 (highest).
+This value is used only for variable bitrate (VBR) streams (see the
+\fB--audio-bitmode\fP option, above).  Default value is 0.5.
 
 .TP
 .B --audio-samplerate=<\fIrate\fP>
