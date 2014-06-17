@@ -108,3 +108,5 @@
 2014-06-16 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented OggVorbis format in 'src/vorbiscodec.cpp' and
 	'src/vorbiscodec.h'.
+2014-06-17 Fred Gleason <fredg@paravelsystems.com>
+	* Added optional dependencies for OggVorbis support in 'INSTALL'.

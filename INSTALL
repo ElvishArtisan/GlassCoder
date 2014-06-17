@@ -11,9 +11,6 @@ Secret Rabbit Code
 A sample-rate converter library, written by Erik de Castro Lopo.  Included
 with most distros, or you can find it at http://www.mega-nerd.com/SRC/.
 
-X11 Window System
-Virtually all Linux distros should include this.
-
 
 OPTIONAL PREREQUISITES -- At least one of the following is required:
 ---------------------------------------------------------------------------
@@ -24,12 +21,16 @@ LAME - MPEG-1 Layer 3 Encoder Library, v.99.3 or later.  Needed for
 generating MPEG-1 Layer 3 (MP3) streams.  Available at
 http://lame.sourceforge.net/.
 
+OggVorbis -  A free, patent-clear audio codec.  Both 'libogg' and 'libvorbis'
+libraries are required.  Available at http://www.xiph.org.
+
 TwoLAME - MPEG-1 Layer 2 Encoder Library, v0.2.12 or later.  Needed for
 generating MPEG-1 Layer 2 (MP2) streams.  Available at
 http://www.twolame.org/.
 
 
 BUILD ENVIRONMENT
+---------------------------------------------------------------------------
 Some distros may require that the CPPFLAGS and LDFLAGS
 environmental variables be set prior to running 'configure' in order for
 Qt4 to be detected properly.  Some known cases are:
