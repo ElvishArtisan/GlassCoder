@@ -120,3 +120,6 @@
 2014-06-17 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented Opus [RFC 6717] format in 'src/opuscodec.cpp' and
 	'src/opuscodec.h'.
+2014-06-17 Fred Gleason <fredg@paravelsystems.com>
+	* Changed the mime-type for Ogg Vorbis to 'audio/ogg' in
+	'src/vorbiscodec.cpp'.

@@ -39,7 +39,7 @@ VorbisCodec::~VorbisCodec()
 
 QString VorbisCodec::contentType() const
 {
-  return "application/ogg";
+  return "audio/ogg";
 }
 
 
