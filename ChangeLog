@@ -115,3 +115,5 @@
 2014-06-17 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented MPEG-4 HE-AAC+ format in 'src/heaaccodec.cpp' and
 	'src/heaaccodec.h'.
+2014-06-17 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed build errors when building with no codec libraries.

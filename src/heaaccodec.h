@@ -55,10 +55,10 @@ class HeAacCodec : public Codec
   int (*aacplusEncEncode)(aacplusEncHandle, int32_t *, unsigned int,
                          unsigned char *,unsigned int);
   int (*aacplusEncClose)(aacplusEncHandle);
+#endif  // HAVE_AACPLUS
   unsigned long heaac_input_samples;
   unsigned long heaac_buffer_size;
   unsigned char *heaac_buffer;
-#endif  // HAVE_AACPLUS
 };
 
 

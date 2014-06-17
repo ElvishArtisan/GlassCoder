@@ -171,10 +171,10 @@ class VorbisCodec : public Codec
   ogg_stream_state vorbis_ogg_stream;
   ogg_page vorbis_ogg_page;
   ogg_packet vorbis_ogg_packet;
+#endif  // HAVE_VORBIS
   unsigned long vorbis_input_samples;
   unsigned long vorbis_buffer_size;
   unsigned char *vorbis_buffer;
-#endif  // HAVE_VORBIS
 };
 
 

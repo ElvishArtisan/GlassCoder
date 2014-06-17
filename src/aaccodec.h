@@ -52,10 +52,10 @@ class AacCodec : public Codec
   int FAACAPI (*faacEncSetConfiguration)(faacEncHandle,faacEncConfigurationPtr);
   int FAACAPI (*faacEncEncode)
     (faacEncHandle,int32_t *,unsigned int,unsigned char *,unsigned int);
+#endif  // HAVE_FAAC
   unsigned long aac_input_samples;
   unsigned long aac_buffer_size;
   unsigned char *aac_buffer;
-#endif  // HAVE_FAAC
 };
 
 
