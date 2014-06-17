@@ -14,6 +14,10 @@ with most distros, or you can find it at http://www.mega-nerd.com/SRC/.
 
 OPTIONAL PREREQUISITES -- At least one of the following is required:
 ---------------------------------------------------------------------------
+AACPlus - HE-AAC+ Codec, v2.0.2 or later.  Needed for generating MPEG-4
+HE-AAC+ streams.  Available at http://tipok.org.ua/node/17.  Be sure to
+read the important legal notice at the bottom of that page!
+
 FAAC - Free Advanced Audio Codec, v1.28 or later.  Needed for generating
 MPEG-2 AAC streams.  Available at http://www.audiocoding.com/faac.html.
 

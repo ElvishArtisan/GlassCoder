@@ -20,6 +20,7 @@
 
 #include "aaccodec.h"
 #include "codecfactory.h"
+#include "heaaccodec.h"
 #include "mpegl2codec.h"
 #include "mpegl3codec.h"
 #include "vorbiscodec.h"
@@ -39,6 +40,10 @@ Codec *CodecFactory(Codec::Type type,Ringbuffer *ring,QObject *parent)
 
   case Codec::TypeAac:
     cdc=new AacCodec(ring,parent);
+    break;
+
+  case Codec::TypeHeAac:
+    cdc=new HeAacCodec(ring,parent);
     break;
 
   case Codec::TypeVorbis:

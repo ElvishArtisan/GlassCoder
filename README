@@ -7,11 +7,10 @@ consists entirely of the command-line invocation.  As such, it is well
 suited for use cases where the encoder is completely driven by an external
 system or script.
 
-At present, the following audio codecs are supported:
+The following audio codecs are supported:
 
    MPEG-1/1.5 Layer 2 ('MP2')
    MPEG-1/1.5 Layer 3 ('MP3')
    MPEG-2 Advanced Audio Coding, Main Profile ('AAC')
+   MPEG-4 Advanced Audio Coding, High Efficiency Profile ('HE-AAC+')
    OggVorbis
-
-

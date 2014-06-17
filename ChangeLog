@@ -112,3 +112,6 @@
 	* Added optional dependencies for OggVorbis support in 'INSTALL'.
 2014-06-17 Fred Gleason <fredg@paravelsystems.com>
 	* Updated 'README'.
+2014-06-17 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented MPEG-4 HE-AAC+ format in 'src/heaaccodec.cpp' and
+	'src/heaaccodec.h'.

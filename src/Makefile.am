@@ -38,6 +38,7 @@ dist_glasscoder_SOURCES = aaccodec.cpp aaccodec.h\
                           connector.cpp connector.h\
                           connectorfactory.cpp connectorfactory.h\
                           glasscoder.cpp glasscoder.h\
+                          heaaccodec.cpp heaaccodec.h\
                           iceconnector.cpp iceconnector.h\
                           icyconnector.cpp icyconnector.h\
                           jack.cpp\
@@ -51,6 +52,7 @@ nodist_glasscoder_SOURCES = moc_aaccodec.cpp\
                             moc_codec.cpp\
                             moc_connector.cpp\
                             moc_glasscoder.cpp\
+                            moc_heaaccodec.cpp\
                             moc_iceconnector.cpp\
                             moc_icyconnector.cpp\
                             moc_mpegl2codec.cpp\

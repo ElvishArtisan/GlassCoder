@@ -155,7 +155,11 @@ QString Codec::codecTypeText(Codec::Type type)
     break;
  
   case Codec::TypeAac:
-    ret=tr("MPEG-2 AAC");
+    ret=tr("MPEG-2 AAC Main Profile");
+    break;
+
+  case Codec::TypeHeAac:
+    ret=tr("MPEG-4 AAC High Efficiency");
     break;
 
   case Codec::TypeVorbis:
