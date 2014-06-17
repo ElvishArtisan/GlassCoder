@@ -130,27 +130,7 @@ void MpegL2Codec::encodeData(Connector *conn,const float *pcm,int frames)
 
   if((s=twolame_encode_buffer_float32_interleaved(twolame_lameopts,pcm,frames,
 						  mpeg,8640))>=0) {
-    conn->writeData((const char *)mpeg,s);
+    conn->writeData(mpeg,s);
   }
-
-
-
-  /*
-  int s;
-  unsigned char mpeg[8640];
-
-  if(channels()==2) {
-    if((s=lame_encode_buffer_interleaved_ieee_float(l3_lameopts,pcm,
-						    frames,mpeg,8640))>=0) {
-      conn->writeData((const char *)mpeg,s);
-    }
-  }
-  else {
-    if((s=lame_encode_buffer_ieee_float(l3_lameopts,pcm,NULL,frames,
-					mpeg,8640))>=0) {
-      conn->writeData((const char *)mpeg,s);
-    }
-  }
-  */
 #endif  // HAVE_TWOLAME
 }

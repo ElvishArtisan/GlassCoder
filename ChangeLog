@@ -117,3 +117,6 @@
 	'src/heaaccodec.h'.
 2014-06-17 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed build errors when building with no codec libraries.
+2014-06-17 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented Opus [RFC 6717] format in 'src/opuscodec.cpp' and
+	'src/opuscodec.h'.

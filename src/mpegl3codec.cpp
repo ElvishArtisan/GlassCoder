@@ -154,13 +154,13 @@ void MpegL3Codec::encodeData(Connector *conn,const float *pcm,int frames)
   if(channels()==2) {
     if((s=lame_encode_buffer_interleaved_ieee_float(l3_lameopts,pcm,
 						    frames,mpeg,8640))>=0) {
-      conn->writeData((const char *)mpeg,s);
+      conn->writeData(mpeg,s);
     }
   }
   else {
     if((s=lame_encode_buffer_ieee_float(l3_lameopts,pcm,NULL,frames,
 					mpeg,8640))>=0) {
-      conn->writeData((const char *)mpeg,s);
+      conn->writeData(mpeg,s);
     }
   }
 #endif  // HAVE_LAME

@@ -250,7 +250,7 @@ void Connector::connectToServer(const QString &hostname,uint16_t port)
 }
 
 
-int64_t Connector::writeData(const char *data,int64_t len)
+int64_t Connector::writeData(const unsigned char *data,int64_t len)
 {
   if(conn_connected) {
     return writeDataConnector(data,len);

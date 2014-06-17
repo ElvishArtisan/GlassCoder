@@ -34,7 +34,7 @@ class IceConnector : public Connector
  protected:
   void connectToHostConnector(const QString &hostname,uint16_t port);
   void disconnectFromHostConnector();
-  int64_t writeDataConnector(const char *data,int64_t len);
+  int64_t writeDataConnector(const unsigned char *data,int64_t len);
 
  private slots:
   void socketConnectedData();

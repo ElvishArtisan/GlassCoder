@@ -119,7 +119,7 @@ void AacCodec::encodeData(Connector *conn,const float *pcm,int frames)
 
   src_float_to_short_array(pcm,pcms,frames*channels());
   if((s=faacEncEncode(aac_encoder,(int32_t *)pcms,frames*channels(),aac_buffer,aac_buffer_size))>0) {
-    conn->writeData((const char *)aac_buffer,s);
+    conn->writeData(aac_buffer,s);
   }
   else {
     if(s<0) {

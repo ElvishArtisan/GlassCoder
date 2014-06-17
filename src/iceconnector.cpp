@@ -63,9 +63,9 @@ void IceConnector::disconnectFromHostConnector()
 }
 
 
-int64_t IceConnector::writeDataConnector(const char *data,int64_t len)
+int64_t IceConnector::writeDataConnector(const unsigned char *data,int64_t len)
 {
-  return ice_socket->write(data,len);
+  return ice_socket->write((const char *)data,len);
 }
 
 

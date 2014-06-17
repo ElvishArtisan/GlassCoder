@@ -23,6 +23,7 @@
 #include "heaaccodec.h"
 #include "mpegl2codec.h"
 #include "mpegl3codec.h"
+#include "opuscodec.h"
 #include "vorbiscodec.h"
 
 Codec *CodecFactory(Codec::Type type,Ringbuffer *ring,QObject *parent)
@@ -48,6 +49,10 @@ Codec *CodecFactory(Codec::Type type,Ringbuffer *ring,QObject *parent)
 
   case Codec::TypeVorbis:
     cdc=new VorbisCodec(ring,parent);
+    break;
+
+  case Codec::TypeOpus:
+    cdc=new OpusCodec(ring,parent);
     break;
 
   case Codec::TypeLast:

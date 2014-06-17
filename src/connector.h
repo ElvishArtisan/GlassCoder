@@ -69,7 +69,7 @@ class Connector : public QObject
   bool streamPublic() const;
   void setStreamPublic(bool state);
   virtual void connectToServer(const QString &hostname,uint16_t port);
-  virtual int64_t writeData(const char *data,int64_t len);
+  virtual int64_t writeData(const unsigned char *data,int64_t len);
   static QString serverTypeText(Connector::ServerType);
   static QString urlEncode(const QString &str);
   static QString urlDecode(const QString &str);
@@ -89,7 +89,7 @@ class Connector : public QObject
   void setError(QAbstractSocket::SocketError err);
   virtual void connectToHostConnector(const QString &hostname,uint16_t port)=0;
   virtual void disconnectFromHostConnector()=0;
-  virtual int64_t writeDataConnector(const char *data,int64_t len)=0;
+  virtual int64_t writeDataConnector(const unsigned char *data,int64_t len)=0;
   QString hostHostname() const;
   uint16_t hostPort() const;
 

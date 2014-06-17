@@ -101,9 +101,15 @@ MainObject::MainObject(QObject *parent)
 		cmd->setProcessed(i,true);
 	      }
 	      else {
-		syslog(LOG_ERR,"unknown --audio-format value \"%s\"",
-		       (const char *)cmd->value(i).toAscii());
-		exit(256);
+		if(cmd->value(i).toLower()=="opus") {
+		  audio_format=Codec::TypeOpus;
+		  cmd->setProcessed(i,true);
+		}
+		else {
+		  syslog(LOG_ERR,"unknown --audio-format value \"%s\"",
+			 (const char *)cmd->value(i).toAscii());
+		  exit(256);
+		}
 	      }
 	    }
 	  }

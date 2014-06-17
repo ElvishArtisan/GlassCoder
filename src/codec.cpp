@@ -163,7 +163,11 @@ QString Codec::codecTypeText(Codec::Type type)
     break;
 
   case Codec::TypeVorbis:
-    ret=tr("OggVorbis");
+    ret=tr("Ogg Vorbis");
+    break;
+
+  case Codec::TypeOpus:
+    ret=tr("Opus [RFC 6716]");
     break;
 
   case Codec::TypeLast:

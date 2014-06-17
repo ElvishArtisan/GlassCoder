@@ -305,10 +305,8 @@ void VorbisCodec::encodeData(Connector *conn,const float *pcm,int frames)
     while(vorbis_bitrate_flushpacket(&vorbis_vorbis_dsp,&vorbis_ogg_packet)) {
       ogg_stream_packetin(&vorbis_ogg_stream,&vorbis_ogg_packet);
       while(ogg_stream_pageout(&vorbis_ogg_stream,&vorbis_ogg_page)!=0) {
-	conn->writeData((const char *)vorbis_ogg_page.header,
-			vorbis_ogg_page.header_len);
-	conn->writeData((const char *)vorbis_ogg_page.body,
-			vorbis_ogg_page.body_len);
+	conn->writeData(vorbis_ogg_page.header,vorbis_ogg_page.header_len);
+	conn->writeData(vorbis_ogg_page.body,vorbis_ogg_page.body_len);
       }
     }
   }
