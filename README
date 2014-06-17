@@ -9,6 +9,9 @@ system or script.
 
 At present, the following audio codecs are supported:
 
-   MPEG Layer 3 ('MP3')
+   MPEG-1/1.5 Layer 2 ('MP2')
+   MPEG-1/1.5 Layer 3 ('MP3')
+   MPEG-2 Advanced Audio Coding, Main Profile ('AAC')
+   OggVorbis
 
 
