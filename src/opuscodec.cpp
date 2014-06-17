@@ -36,7 +36,7 @@ QString OpusCodec::contentType() const
 
 unsigned OpusCodec::pcmFrames() const
 {
-  return 1920;
+  return 960;
 }
 
 
@@ -60,13 +60,14 @@ bool OpusCodec::startCodec()
   *(void **)(&opus_encode_float)=dlsym(opus_handle,"opus_encode_float");
   *(void **)(&opus_encoder_destroy)=dlsym(opus_handle,"opus_encoder_destroy");
   *(void **)(&opus_encoder_ctl)=dlsym(opus_handle,"opus_encoder_ctl");
+  *(void **)(&opus_strerror)=dlsym(opus_handle,"opus_strerror");
 
   //
   // Initialize Encoder Instance
   //
   if((opus_encoder=opus_encoder_create(streamSamplerate(),channels(),
 				       OPUS_APPLICATION_AUDIO,&err))==NULL) {
-    syslog(LOG_ERR,"internal error, unable to create codec");
+    syslog(LOG_ERR,"unable to create codec [%s]",opus_strerror(err));
     return false;
   }
   if(bitrate()==0) {
@@ -91,7 +92,7 @@ void OpusCodec::encodeData(Connector *conn,const float *pcm,int frames)
   int s;
   unsigned char data[8192];
 
-  if((s=opus_encode_float(opus_encoder,pcm,frames,data,8192))>0) {
+  if((s=opus_encode_float(opus_encoder,pcm,frames,data,8192))>1) {
     conn->writeData(data,s);
   }
   else {

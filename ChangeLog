@@ -123,3 +123,5 @@
 2014-06-17 Fred Gleason <fredg@paravelsystems.com>
 	* Changed the mime-type for Ogg Vorbis to 'audio/ogg' in
 	'src/vorbiscodec.cpp'.
+2014-06-17 Fred Gleason <fredg@paravelsystems.com>
+	* Added error reporting in 'src'opuscodec.cpp'.

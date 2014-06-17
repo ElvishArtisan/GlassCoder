@@ -52,6 +52,7 @@ class OpusCodec : public Codec
 				  unsigned char *, opus_int32);
   void (*opus_encoder_destroy)(OpusEncoder *);
   int (*opus_encoder_ctl)(OpusEncoder *, int request,...);
+  const char *(*opus_strerror)(int error);
 #endif  // HAVE_OPUS
 };
 
