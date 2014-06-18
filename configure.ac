@@ -90,13 +90,23 @@ AC_CHECK_HEADER(jack/jack.h,[],[AC_MSG_ERROR([*** JACK not found ***])])
 AC_CHECK_HEADER(samplerate.h,[],[AC_MSG_ERROR([*** libsamplerate not found ***])])
 
 #
-# Check for OggVorbis
+# Check for Ogg and friends (Optional, required for Vorbis and Opus support)
 #
-AC_CHECK_HEADER(vorbis/vorbisfile.h,[VORBIS_FOUND=yes],[])
-if test $VORBIS_FOUND = yes ; then
-  if test -z $VORBIS_DISABLED ; then
-    AC_DEFINE(HAVE_VORBIS)
-    USING_VORBIS=yes
+AC_CHECK_HEADER(ogg/ogg.h,[OGG_FOUND=yes],[])
+if test $OGG_FOUND ; then
+  AC_CHECK_HEADER(vorbis/vorbisfile.h,[VORBIS_FOUND=yes],[])
+  if test $VORBIS_FOUND ; then
+    if test -z $VORBIS_DISABLED ; then
+      AC_DEFINE(HAVE_VORBIS)
+      USING_VORBIS=yes
+    fi
+  fi
+  AC_CHECK_HEADER(opus/opus.h,[OPUS_FOUND=yes],[])
+  if test $OPUS_FOUND ; then
+    if test -z $OPUS_DISABLED ; then
+      AC_DEFINE(HAVE_OPUS)
+      USING_OPUS=yes
+    fi
   fi
 fi
 
@@ -141,17 +151,6 @@ if test $AACPLUS_FOUND ; then
   if test -z $AACPLUS_DISABLED ; then
     AC_DEFINE(HAVE_AACPLUS)
     USING_AACPLUS=yes
-  fi
-fi
-
-#
-# Check for libopus (Optional, required for Opus support)
-#
-AC_CHECK_HEADER(opus/opus.h,[OPUS_FOUND=yes],[])
-if test $OPUS_FOUND ; then
-  if test -z $OPUS_DISABLED ; then
-    AC_DEFINE(HAVE_OPUS)
-    USING_OPUS=yes
   fi
 fi
 
@@ -243,15 +242,15 @@ AC_MSG_NOTICE("|              MPEG-4 HE-AAC+ (via AACPlus) ... No    |")
 else
 AC_MSG_NOTICE("|              MPEG-4 HE-AAC+ (via AACPlus) ... Yes   |")
 fi
-if test -z $USING_VORBIS ; then
-AC_MSG_NOTICE("|  Ogg Vorbis (via libogg and libvorbisenc) ... No    |")
-else
-AC_MSG_NOTICE("|  Ogg Vorbis (via libogg and libvorbisenc) ... Yes   |")
-fi
 if test -z $USING_OPUS ; then
-AC_MSG_NOTICE("|                        Opus (via libopus) ... No    |")
+AC_MSG_NOTICE("|         Ogg Opus (via libogg and libopus) ... No    |")
 else
-AC_MSG_NOTICE("|                        Opus (via libopus) ... Yes   |")
+AC_MSG_NOTICE("|         Ogg Opus (via libogg and libopus) ... Yes   |")
+fi
+if test -z $USING_VORBIS ; then
+AC_MSG_NOTICE("|     Ogg Vorbis (via libogg and libvorbis) ... No    |")
+else
+AC_MSG_NOTICE("|     Ogg Vorbis (via libogg and libvorbis) ... Yes   |")
 fi
 AC_MSG_NOTICE("|-----------------------------------------------------|")
 AC_MSG_NOTICE()

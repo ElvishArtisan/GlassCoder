@@ -125,3 +125,5 @@
 	'src/vorbiscodec.cpp'.
 2014-06-17 Fred Gleason <fredg@paravelsystems.com>
 	* Added error reporting in 'src'opuscodec.cpp'.
+2014-06-18 Fred Gleason <fredg@paravelsystems.com>
+	* Refactored rules for detecting Ogg components in 'configure.ac'.
