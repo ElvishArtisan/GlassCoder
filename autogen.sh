@@ -22,16 +22,6 @@
 ##    Boston, MA  02111-1307  USA
 ##
 
-libtoolize=libtoolize
-if which glibtoolize > /dev/null 2>&1; then
-      libtoolize=glibtoolize
-fi
-
-$libtoolize --force 2>&1 | sed '/^You should/d' || {
-    echo "libtool failed, exiting..."
-    exit 1
-}
-
 aclocal $ACLOCAL_FLAGS || {
     echo "aclocal \$ACLOCAL_FLAGS where \$ACLOCAL_FLAGS= failed, exiting..."
     exit 1

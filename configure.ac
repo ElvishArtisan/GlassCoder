@@ -41,7 +41,6 @@ fi
 # Basic Compiler Checks
 #
 AC_PROG_CXX
-AC_PROG_LIBTOOL
 AC_LANG(C++)
 
 # to avoid rpath usage :
