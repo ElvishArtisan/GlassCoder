@@ -41,7 +41,7 @@ class HeAacCodec : public Codec
   void encodeData(Connector *conn,const float *pcm,int frames);
 
  private:
-#ifdef HAVE_FAAC
+#ifdef HAVE_AACPLUS
   void *heaac_handle;
   aacplusEncHandle heaac_encoder;
   aacplusEncConfiguration *(*aacplusEncGetCurrentConfiguration)

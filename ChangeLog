@@ -129,3 +129,6 @@
 	* Refactored rules for detecting Ogg components in 'configure.ac'.
 2014-06-18 Fred Gleason <fredg@paravelsystems.com>
 	* Removed LibTool components from 'configure.ac' and 'autogen.sh'.
+2014-06-18 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/heaaccodec.h' that broke the build when the
+	AAACPlus library was not present.
