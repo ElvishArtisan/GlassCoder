@@ -47,6 +47,7 @@ CentOS/RedHat 5 (x86_64): export CPPFLAGS=-I/usr/lib64/qt4/include
                  	  export LDFLAGS=-L/usr/lib64/qt4/lib64
                 	  export PATH=/usr/lib64/qt4/bin:$PATH
 
+Ubuntu:                   export CPPFLAGS=-I/usr/include/qt4
 
 INSTALLATION
 Once the prerequisites are set up, building and installation of the code is
