@@ -37,7 +37,7 @@ MainObject::MainObject(QObject *parent)
   bool ok=false;
   audio_bitrate=0;
   audio_channels=MAX_AUDIO_CHANNELS;
-  audio_format=Codec::TypeMpegL3;
+  audio_format=Codec::TypeVorbis;
   audio_quality=-1.0;
   audio_samplerate=DEFAULT_AUDIO_SAMPLERATE;
   jack_server_name="";

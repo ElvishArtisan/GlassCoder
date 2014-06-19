@@ -68,8 +68,8 @@ AC_ARG_ENABLE(aacplus,[  --disable-aacplus       disable MPEG-4 HE-AAC+ support]
 	      [AACPLUS_DISABLED=yes],[]) 
 AC_ARG_ENABLE(vorbis,[  --disable-vorbis        disable Ogg Vorbis support],
 	      [VORBIS_DISABLED=yes],[]) 
-AC_ARG_ENABLE(opus,[  --disable-opus          disable Opus support],
-	      [OPUS_DISABLED=yes],[]) 
+#AC_ARG_ENABLE(opus,[  --disable-opus          disable Opus support],
+#	      [OPUS_DISABLED=yes],[]) 
 
 #
 # Check for Qt (Mandatory)
@@ -100,13 +100,13 @@ if test $OGG_FOUND ; then
       USING_VORBIS=yes
     fi
   fi
-  AC_CHECK_HEADER(opus/opus.h,[OPUS_FOUND=yes],[])
-  if test $OPUS_FOUND ; then
-    if test -z $OPUS_DISABLED ; then
-      AC_DEFINE(HAVE_OPUS)
-      USING_OPUS=yes
-    fi
-  fi
+#  AC_CHECK_HEADER(opus/opus.h,[OPUS_FOUND=yes],[])
+#  if test $OPUS_FOUND ; then
+#    if test -z $OPUS_DISABLED ; then
+#      AC_DEFINE(HAVE_OPUS)
+#      USING_OPUS=yes
+#    fi
+#  fi
 fi
 
 #
@@ -241,11 +241,11 @@ AC_MSG_NOTICE("|              MPEG-4 HE-AAC+ (via AACPlus) ... No    |")
 else
 AC_MSG_NOTICE("|              MPEG-4 HE-AAC+ (via AACPlus) ... Yes   |")
 fi
-if test -z $USING_OPUS ; then
-AC_MSG_NOTICE("|         Ogg Opus (via libogg and libopus) ... No    |")
-else
-AC_MSG_NOTICE("|         Ogg Opus (via libogg and libopus) ... Yes   |")
-fi
+#if test -z $USING_OPUS ; then
+#AC_MSG_NOTICE("|         Ogg Opus (via libogg and libopus) ... No    |")
+#else
+#AC_MSG_NOTICE("|         Ogg Opus (via libogg and libopus) ... Yes   |")
+#fi
 if test -z $USING_VORBIS ; then
 AC_MSG_NOTICE("|     Ogg Vorbis (via libogg and libvorbis) ... No    |")
 else

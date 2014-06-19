@@ -7,8 +7,8 @@ glasscoder [OPTIONS]
 
 .SH DESCRIPTION
 \fBGlasscoder\fP is an audio encoder that uses the JACK Audio Connection Kit.
-It is capable of sending live Advanced Audio Coding (AAC) and MPEG Layer 3
-(aka 'mp3') streams to an Icecast or Shoutcast audio streaming server.
+It is capable of sending live streams using a variety of formats to an Icecast
+or Shoutcast audio streaming server.
 
 \fBGlasscoder\fP has no GUI or configuration file components at all; its
 sole 'user interface' is its command-line invocation.
@@ -27,7 +27,7 @@ Default value is \fP2\fP.
 
 .TP
 .B --audio-format=<\fIfmt\fP>
-The audio encoding format to use.  The default value is \fBMP3\fP.  Valid
+The audio encoding format to use.  The default value is \fBVORBIS\fP.  Valid
 <\fIfmt\fP> values are:
 .RS
 
@@ -57,7 +57,7 @@ MPEG-4 Advanced Audio Coding (High Efficiency Profile)
 
 .TP
 \fBVORBIS\fP
-OggVorbis
+Ogg Vorbis
 .RE
 
 .TP

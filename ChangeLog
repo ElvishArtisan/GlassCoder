@@ -134,3 +134,6 @@
 	AAACPlus library was not present.
 2014-06-19 Fred Gleason <fredg@paravelsystems.com>
 	* Added note for building on Ubuntu in 'INSTALL'.
+2014-06-19 Fred Gleason <fredg@paravelsystems.com>
+	* Changed the default audio format to 'VORBIS' in
+	'src/glasscoder.cpp'.

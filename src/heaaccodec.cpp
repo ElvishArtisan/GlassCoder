@@ -66,6 +66,10 @@ bool HeAacCodec::startCodec()
     syslog(LOG_ERR,"unsupported stream sample rate");
     return false;
   }
+  if(channels()!=2) {
+    syslog(LOG_ERR,"unsupported channel count");
+    return false;
+  }
 
   //
   // Load Library
