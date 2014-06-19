@@ -27,16 +27,16 @@ License: GPLv2
 Packager: Fred Gleason <fredg@paravelsystems.com>
 Group: Productivity/Multimedia/Other
 Source: %{name}-@VERSION@.tar.gz
-BuildRequires: qt-devel libshout-devel libsamplerate-devel lame-devel jack-audio-connection-kit-devel
+BuildRequires: qt-devel libsamplerate-devel jack-audio-connection-kit-devel
 BuildRoot: /var/tmp/%{name}-@VERSION@
 
 
 %description
 Glasscoder is a live media encoder intended for use with Shoutcast and Icecast
 streaming servers.  It uses the JACK Audio Connection Kit for audio input
-and is capable of generating MPEG-1 Layer 3 ('MP3') streams.  It is controlled
-completely from the command-line, with no configuration files or GUI
-required.
+and is capable of generating live audio streams in a vairety of formats.
+It is controlled completely from the command-line, with no configuration
+files or GUI required.
 
 
 %prep
@@ -73,5 +73,7 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Jun 10 2014 Fred Gleason <fredg@paravelsystems.com>
+-- Removed the 'libshout-devel' and 'lame-devel' build dependencies.
 * Tue Feb 18 2014 Fred Gleason <fredg@paravelsystems.com>
 -- Initial RPM creation.
