@@ -141,3 +141,5 @@
 	* Incremented the package version to 0.8.0.
 2014-06-19 Fred Gleason <fredg@paravelsystems.com>
 	* Updated 'glasscoder.spec.in'.
+2014-07-10 Fred Gleason <fredg@paravelsystems.com>
+	* Added libdl to the libraries list in 'configure.ac'.

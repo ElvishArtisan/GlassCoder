@@ -187,7 +187,7 @@ if test $ar_gcc_os = "darwin10" ; then
   AC_SUBST(SIRFLAGS,"-framework QtCore -framework QtNetwork")
   AC_DEFINE(OSX)
 else
-  AC_SUBST(SIRLIBS,"-lsamplerate -ljack -lQtCore -lQtNetwork")
+  AC_SUBST(SIRLIBS,"-lsamplerate -ljack -ldl -lQtCore -lQtNetwork")
   AC_SUBST(SIRFLAGS,"")
   AC_DEFINE(LINUX)
 fi
