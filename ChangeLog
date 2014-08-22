@@ -143,3 +143,6 @@
 	* Updated 'glasscoder.spec.in'.
 2014-07-10 Fred Gleason <fredg@paravelsystems.com>
 	* Added libdl to the libraries list in 'configure.ac'.
+2014-08-22 Fred Gleason <fredg@paravelsystems.com>
+	* Modernized the AM_INIT() and AC_INIT() invocations in
+	'configure.ac'.
