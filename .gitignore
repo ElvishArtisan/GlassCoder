@@ -1,13 +1,18 @@
-# Compiled Object files
-*.slo
+*~
+.deps
+*.la
 *.lo
 *.o
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
+*.spec
+aclocal.m4
+autom4te.cache
+config.log
+config.status
+configure
+depcomp
+install-sh
+Makefile
+Makefile.in
+missing
+moc_*
+src/glasscoder
