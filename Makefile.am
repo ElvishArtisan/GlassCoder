@@ -26,12 +26,12 @@ SUBDIRS = docs\
           src
 
 rpm:	dist
-	cp glasscoder-$(VERSION).tar.gz $(RPM_ROOT)/SOURCES/
+	cp glasscoder-$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES/
 	$(RPMBUILD) -ba --target $(ARCH)-$(VENDOR)-linux glasscoder.spec
-	mv $(RPM_ROOT)/RPMS/$(ARCH)/glasscoder-*.rpm $(top_srcdir)/
-	mv $(RPM_ROOT)/SRPMS/glasscoder-*.src.rpm $(top_srcdir)/
-	rm $(RPM_ROOT)/SOURCES/glasscoder-$(VERSION).tar.gz
-	rm -rf $(RPM_ROOT)/BUILD/glasscoder-$(VERSION)
+	mv $(HOME)/rpmbuild/RPMS/$(ARCH)/glasscoder-*.rpm $(top_srcdir)/
+	mv $(HOME)/rpmbuild/SRPMS/glasscoder-*.src.rpm $(top_srcdir)/
+	rm $(HOME)/rpmbuild/SOURCES/glasscoder-$(VERSION).tar.gz
+	rm -rf $(HOME)/rpmbuild/BUILD/glasscoder-$(VERSION)
 
 EXTRA_DIST = glasscoder.spec.in\
              autogen.sh\

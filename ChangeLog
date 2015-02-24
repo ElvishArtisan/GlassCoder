@@ -146,3 +146,5 @@
 2014-08-22 Fred Gleason <fredg@paravelsystems.com>
 	* Modernized the AM_INIT() and AC_INIT() invocations in
 	'configure.ac'.
+2015-02-24 Fred Gleason <fredg@paravelsystems.com>
+	* Updated the 'make rpm' target to use in-home build directories.
