@@ -171,9 +171,15 @@ MainObject::MainObject(QObject *parent)
 	  cmd->setProcessed(i,true);
 	}
 	else {
-	  syslog(LOG_ERR,"unknown server type \"%s\"",
-		 (const char *)cmd->value(i).toAscii());
-	  exit(256);
+	  if(cmd->value(i).toLower()=="shout2") {
+	    server_type=Connector::Shoutcast2Server;
+	    cmd->setProcessed(i,true);
+	  }
+	  else {
+	    syslog(LOG_ERR,"unknown server type \"%s\"",
+		   (const char *)cmd->value(i).toAscii());
+	    exit(256);
+	  }
 	}
       }
     }

@@ -24,9 +24,10 @@
 
 #include "icyconnector.h"
 
-IcyConnector::IcyConnector(QObject *parent)
+IcyConnector::IcyConnector(int version,QObject *parent)
   : Connector(parent)
 {
+  icy_protocol_version=version;
   icy_recv_buffer="";
 
   icy_socket=new QTcpSocket(this);
@@ -89,7 +90,7 @@ void IcyConnector::socketReadyReadData()
 
   while((n=icy_socket->read(data,1500))>0) {
     data[n]=0;
-    //printf("recvd %ld bytes: |%s|\n",n,data);
+    //    printf("recvd %ld bytes: |%s|\n",n,data);
     for(int64_t i=0;i<n;i++) {
       switch(0xFF&data[i]) {
       case 10:
@@ -146,7 +147,9 @@ void IcyConnector::ProcessHeaders(const QString &hdrs)
   WriteHeader("icy-genre: "+streamGenre());
   WriteHeader("icy-pub: "+QString().sprintf("%d",streamPublic()));
   WriteHeader("icy-br: "+QString().sprintf("%u",audioBitrate()));
-  WriteHeader("icy-url: "+streamUrl());
+  if(icy_protocol_version==1) {
+    WriteHeader("icy-url: "+streamUrl());
+  }
   WriteHeader("icy-irc: "+streamIrc());
   WriteHeader("icy-icq: "+streamIcq());
   WriteHeader("icy-aim: "+streamAim());

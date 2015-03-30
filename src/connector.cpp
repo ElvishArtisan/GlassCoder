@@ -268,6 +268,10 @@ QString Connector::serverTypeText(Connector::ServerType type)
     ret=tr("Shoutcast v1");
     break;
 
+  case Connector::Shoutcast2Server:
+    ret=tr("Shoutcast v2");
+    break;
+
   case Connector::Icecast2Server:
     ret=tr("Icecast v2");
     break;

@@ -151,3 +151,5 @@
 2015-03-20 Fred Gleason <fredg@paravelsystems.com>
 	* Added '-Wno-portability' flag to the automake(1) invocation
 	in 'autogen.sh'.
+2015-03-30 Fred Gleason <fredg@paravelsystems.com>
+	* Added support for Shoutcast v2.
