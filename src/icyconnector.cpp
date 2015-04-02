@@ -1,8 +1,8 @@
 // icyconnector.cpp
 //
-// Source connector class for IceCast2 servers
+// Source connector class for Shoutcast servers
 //
-//   (C) Copyright 2014 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
