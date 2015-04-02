@@ -158,4 +158,6 @@
 	an IceCast2 server in 'src/glasscoder.cpp'.
 2015-04-02 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/jack.cpp' that threw a segfault when
-	jack_port_get_buffer() returned a NULL port value.
+	jack_port_get_buffer() returned a NULL port value
+2015-04-02 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.8.1.
