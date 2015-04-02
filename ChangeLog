@@ -153,3 +153,6 @@
 	in 'autogen.sh'.
 2015-03-30 Fred Gleason <fredg@paravelsystems.com>
 	* Added support for Shoutcast v2.
+2015-04-02 Fred Gleason <fredg@paravelsystems.com>
+	* Added a sanity check for specifying no mountpoint when using
+	an IceCast2 server in 'src/glasscoder.cpp'.

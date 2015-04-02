@@ -221,6 +221,10 @@ MainObject::MainObject(QObject *parent)
       exit(256);
     }
   }
+
+  //
+  // Sanity Checks
+  //
   if(server_hostname.isEmpty()) {
     syslog(LOG_ERR,"missing --server-hostname parameter");
     exit(256);
@@ -230,10 +234,14 @@ MainObject::MainObject(QObject *parent)
 	   "--audio-quality and --audio-bitrate are mutually exclusive");
     exit(256);
   }
+  if((server_type==Connector::Icecast2Server)&&(server_mountpoint.isEmpty())) {
+    syslog(LOG_ERR,"mountpoint not specified");
+    exit(256);
+  }
+
   if((audio_quality<0.0)&&(audio_bitrate==0)) {
     audio_bitrate=DEFAULT_AUDIO_BITRATE;
   }
-
 
   if(!StartJack()) {
     exit(256);
