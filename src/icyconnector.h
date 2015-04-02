@@ -27,7 +27,7 @@ class IcyConnector : public Connector
 {
   Q_OBJECT;
  public:
-  IcyConnector(QObject *parent=0);
+  IcyConnector(int ver,QObject *parent=0);
   ~IcyConnector();
   IcyConnector::ServerType serverType() const;
 
@@ -47,6 +47,7 @@ class IcyConnector : public Connector
   void WriteHeader(const QString &str);
   QTcpSocket *icy_socket;
   QString icy_recv_buffer;
+  int icy_protocol_version;
 };
 
 

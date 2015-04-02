@@ -28,7 +28,11 @@ Connector *ConnectorFactory(Connector::ServerType type,QObject *parent)
 
   switch(type) {
   case Connector::Shoutcast1Server:
-    conn=new IcyConnector(parent);
+    conn=new IcyConnector(1,parent);
+    break;
+
+  case Connector::Shoutcast2Server:
+    conn=new IcyConnector(2,parent);
     break;
 
   case Connector::Icecast2Server:
