@@ -4,8 +4,6 @@
 //
 //   (C) Copyright 2014 Fred Gleason <fredg@paravelsystems.com>
 //
-//      $Id: jack.cpp,v 1.3 2014/02/18 23:00:46 cvs Exp $
-//
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
 //   published by the Free Software Foundation.
@@ -48,8 +46,10 @@ int JackProcess(jack_nframes_t nframes, void *arg)
   // Interleave Channels
   //
   for(i=0;i<obj->audio_channels;i++) {
-    for(j=0;j<nframes;j++) {
-      cb_interleave_buffer[obj->audio_channels*j+i]=(float)cb_buffers[i][j];
+    if(cb_buffers[i]!=NULL) {
+      for(j=0;j<nframes;j++) {
+	cb_interleave_buffer[obj->audio_channels*j+i]=(float)cb_buffers[i][j];
+      }
     }
   }
 

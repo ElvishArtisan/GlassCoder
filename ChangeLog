@@ -156,3 +156,6 @@
 2015-04-02 Fred Gleason <fredg@paravelsystems.com>
 	* Added a sanity check for specifying no mountpoint when using
 	an IceCast2 server in 'src/glasscoder.cpp'.
+2015-04-02 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/jack.cpp' that threw a segfault when
+	jack_port_get_buffer() returned a NULL port value.
