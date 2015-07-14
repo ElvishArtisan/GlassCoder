@@ -29,6 +29,7 @@ IcyConnector::IcyConnector(int version,QObject *parent)
 {
   icy_protocol_version=version;
   icy_recv_buffer="";
+  icy_authenticated=false;
 
   icy_socket=new QTcpSocket(this);
   connect(icy_socket,SIGNAL(connected()),this,SLOT(socketConnectedData()));
@@ -79,6 +80,11 @@ void IcyConnector::socketConnectedData()
 
 void IcyConnector::socketDisconnectedData()
 {
+  if(!icy_authenticated) {
+    syslog(LOG_WARNING,"login to \"%s:%d\" rejected: bad password",
+	   (const char *)hostHostname().toUtf8(),0xFFFF&hostPort());
+  }
+  icy_authenticated=false;
   setConnected(false);
 }
 
@@ -143,6 +149,7 @@ void IcyConnector::ProcessHeaders(const QString &hdrs)
 	   (const char *)f0[0].toUtf8());
     return;
   }
+  icy_authenticated=true;
   WriteHeader("icy-name: "+streamName());
   WriteHeader("icy-genre: "+streamGenre());
   WriteHeader("icy-pub: "+QString().sprintf("%d",streamPublic()));

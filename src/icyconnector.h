@@ -48,6 +48,7 @@ class IcyConnector : public Connector
   QTcpSocket *icy_socket;
   QString icy_recv_buffer;
   int icy_protocol_version;
+  bool icy_authenticated;
 };
 
 
