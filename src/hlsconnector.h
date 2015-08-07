@@ -1,6 +1,6 @@
-// iceconnector.h
+// hlsconnector.h
 //
-// Source connector class for IceCast2 servers.
+// HLS/HTTP streaming connector for GlassCoder
 //
 //   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -18,36 +18,42 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef ICECONNECTOR_H
-#define ICECONNECTOR_H
+#ifndef HLSCONNECTOR_H
+#define HLSCONNECTOR_H
+
+#define HLS_SEGMENT_SIZE 10
+#define HLS_VERSION 3
+
+#include <stdio.h>
+
+#include <QtCore/QDir>
 
 #include "connector.h"
 
-class IceConnector : public Connector
+class HlsConnector : public Connector
 {
   Q_OBJECT;
  public:
-  IceConnector(QObject *parent=0);
-  ~IceConnector();
-  IceConnector::ServerType serverType() const;
+  HlsConnector(QObject *parent=0);
+  ~HlsConnector();
+  Connector::ServerType serverType() const;
+  void connectToServer(const QString &hostname,uint16_t port);
 
  protected:
   void connectToHostConnector(const QString &hostname,uint16_t port);
   void disconnectFromHostConnector();
   int64_t writeDataConnector(int frames,const unsigned char *data,int64_t len);
 
- private slots:
-  void socketConnectedData();
-  void socketDisconnectedData();
-  void socketReadyReadData();
-  void socketErrorData(QAbstractSocket::SocketError err);
-
  private:
-  void ProcessHeaders(const QString &hdrs);
-  void WriteHeader(const QString &str);
-  QTcpSocket *ice_socket;
-  QString ice_recv_buffer;
+  void RotateMediaFile();
+  QDir *hls_temp_dir;
+  QString hls_playlist_filename;
+  FILE *hls_playlist_handle;
+  int hls_sequence_number;
+  QString hls_media_filename;
+  FILE *hls_media_handle;
+  int hls_media_frames;
 };
 
 
-#endif  // ICECONNECTOR_H
+#endif  // HLSCONNECTOR_H

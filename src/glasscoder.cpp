@@ -2,9 +2,7 @@
 //
 // glasscoder(1) Audio Encoder
 //
-//   (C) Copyright 2014 Fred Gleason <fredg@paravelsystems.com>
-//
-//      $Id: glasscoder.cpp,v 1.4 2014/02/24 21:02:45 cvs Exp $
+//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -161,24 +159,30 @@ MainObject::MainObject(QObject *parent)
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--server-type") {
-      if(cmd->value(i).toLower()=="icecast2") {
-	server_type=Connector::Icecast2Server;
+      if(cmd->value(i).toLower()=="hls") {
+	server_type=Connector::HlsServer;
 	cmd->setProcessed(i,true);
       }
       else {
-	if(cmd->value(i).toLower()=="shout1") {
-	  server_type=Connector::Shoutcast1Server;
+	if(cmd->value(i).toLower()=="icecast2") {
+	  server_type=Connector::Icecast2Server;
 	  cmd->setProcessed(i,true);
 	}
 	else {
-	  if(cmd->value(i).toLower()=="shout2") {
-	    server_type=Connector::Shoutcast2Server;
+	  if(cmd->value(i).toLower()=="shout1") {
+	    server_type=Connector::Shoutcast1Server;
 	    cmd->setProcessed(i,true);
 	  }
 	  else {
-	    syslog(LOG_ERR,"unknown server type \"%s\"",
-		   (const char *)cmd->value(i).toAscii());
-	    exit(256);
+	    if(cmd->value(i).toLower()=="shout2") {
+	      server_type=Connector::Shoutcast2Server;
+	      cmd->setProcessed(i,true);
+	    }
+	    else {
+	      syslog(LOG_ERR,"unknown server type \"%s\"",
+		     (const char *)cmd->value(i).toAscii());
+	      exit(256);
+	    }
 	  }
 	}
       }

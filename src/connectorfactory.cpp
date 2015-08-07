@@ -18,6 +18,7 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include "hlsconnector.h"
 #include "iceconnector.h"
 #include "icyconnector.h"
 #include "connectorfactory.h"
@@ -27,6 +28,10 @@ Connector *ConnectorFactory(Connector::ServerType type,QObject *parent)
   Connector *conn=NULL;
 
   switch(type) {
+  case Connector::HlsServer:
+    conn=new HlsConnector(parent);
+    break;
+
   case Connector::Shoutcast1Server:
     conn=new IcyConnector(1,parent);
     break;

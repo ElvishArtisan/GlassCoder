@@ -2,9 +2,7 @@
 ##
 ## Makefile for the glasscoder(1) Audio Encoder.
 ##
-## (C) Copyright 2014 Fred Gleason <fredg@paravelsystems.com>
-##
-##      $Id: Makefile.am,v 1.3 2014/02/18 20:35:55 cvs Exp $
+## (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -39,6 +37,7 @@ dist_glasscoder_SOURCES = aaccodec.cpp aaccodec.h\
                           connectorfactory.cpp connectorfactory.h\
                           glasscoder.cpp glasscoder.h\
                           heaaccodec.cpp heaaccodec.h\
+                          hlsconnector.cpp hlsconnector.h\
                           iceconnector.cpp iceconnector.h\
                           icyconnector.cpp icyconnector.h\
                           jack.cpp\
@@ -54,6 +53,7 @@ nodist_glasscoder_SOURCES = moc_aaccodec.cpp\
                             moc_connector.cpp\
                             moc_glasscoder.cpp\
                             moc_heaaccodec.cpp\
+                            moc_hlsconnector.cpp\
                             moc_iceconnector.cpp\
                             moc_icyconnector.cpp\
                             moc_mpegl2codec.cpp\

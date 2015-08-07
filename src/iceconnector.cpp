@@ -2,7 +2,7 @@
 //
 // Source connector class for IceCast2 servers
 //
-//   (C) Copyright 2014 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -63,7 +63,8 @@ void IceConnector::disconnectFromHostConnector()
 }
 
 
-int64_t IceConnector::writeDataConnector(const unsigned char *data,int64_t len)
+int64_t IceConnector::writeDataConnector(int frames,const unsigned char *data,
+					 int64_t len)
 {
   return ice_socket->write((const char *)data,len);
 }

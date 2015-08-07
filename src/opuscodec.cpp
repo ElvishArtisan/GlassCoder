@@ -93,7 +93,7 @@ void OpusCodec::encodeData(Connector *conn,const float *pcm,int frames)
   unsigned char data[8192];
 
   if((s=opus_encode_float(opus_encoder,pcm,frames,data,8192))>1) {
-    conn->writeData(data,s);
+    conn->writeData(frames,data,s);
   }
   else {
     printf("n: %d\n",s);

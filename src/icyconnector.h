@@ -2,7 +2,7 @@
 //
 // Source connector class for ShoutCast v1 servers.
 //
-//   (C) Copyright 2014 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -34,7 +34,7 @@ class IcyConnector : public Connector
  protected:
   void connectToHostConnector(const QString &hostname,uint16_t port);
   void disconnectFromHostConnector();
-  int64_t writeDataConnector(const unsigned char *data,int64_t len);
+  int64_t writeDataConnector(int frames,const unsigned char *data,int64_t len);
 
  private slots:
   void socketConnectedData();

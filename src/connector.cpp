@@ -250,10 +250,10 @@ void Connector::connectToServer(const QString &hostname,uint16_t port)
 }
 
 
-int64_t Connector::writeData(const unsigned char *data,int64_t len)
+int64_t Connector::writeData(int frames,const unsigned char *data,int64_t len)
 {
   if(conn_connected) {
-    return writeDataConnector(data,len);
+    return writeDataConnector(frames,data,len);
   }
   return 0;
 }
@@ -264,6 +264,10 @@ QString Connector::serverTypeText(Connector::ServerType type)
   QString ret=tr("Unknown");
 
   switch(type) {
+  case Connector::HlsServer:
+    ret=tr("HLS/HTTP");
+    break;
+
   case Connector::Shoutcast1Server:
     ret=tr("Shoutcast v1");
     break;

@@ -127,7 +127,7 @@ void HeAacCodec::encodeData(Connector *conn,const float *pcm,int frames)
 
   src_float_to_short_array(pcm,pcms,frames*channels());
   if((s=aacplusEncEncode(heaac_encoder,(int32_t *)pcms,frames*channels(),heaac_buffer,heaac_buffer_size))>0) {
-    conn->writeData(heaac_buffer,s);
+    conn->writeData(frames,heaac_buffer,s);
   }
   else {
     if(s<0) {

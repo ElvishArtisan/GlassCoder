@@ -65,7 +65,8 @@ void IcyConnector::disconnectFromHostConnector()
 }
 
 
-int64_t IcyConnector::writeDataConnector(const unsigned char *data,int64_t len)
+int64_t IcyConnector::writeDataConnector(int frames,const unsigned char *data,
+					 int64_t len)
 {
   return icy_socket->write((const char *)data,len);
 }
