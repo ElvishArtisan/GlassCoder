@@ -31,6 +31,7 @@ HlsConnector::HlsConnector(QObject *parent)
 {
   hls_sequence_number=0;
   hls_media_frames=0;
+  hls_total_media_frames=0;
 
   //
   // Create working directory
@@ -101,21 +102,6 @@ void HlsConnector::stop()
 void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
 {
   //
-  // ID3 tag (see HTTP Live Streaming Draft sec. 4)
-  //
-  uint8_t id3_header[HLS_ID3_HEADER_SIZE]= 
-    {0x49,0x44,0x33,0x04,0x00,0x00,0x00,0x00,
-     0x00,0x3F,0x50,0x52,0x49,0x56,0x00,0x00,
-     0x00,0x35,0x00,0x00,0x63,0x6F,0x6D,0x2E,
-     0x61,0x70,0x70,0x6C,0x65,0x2E,0x73,0x74,
-     0x72,0x65,0x61,0x6D,0x69,0x6E,0x67,0x2E,
-     0x74,0x72,0x61,0x6E,0x73,0x70,0x6F,0x72,
-     0x74,0x53,0x74,0x72,0x65,0x61,0x6D,0x54,
-     0x69,0x6D,0x65,0x73,0x74,0x61,0x6D,0x70,
-     0x00,0x00,0x00,0x00,0x00,0x00,0x0D,0xBB,
-     0xA0};
-
-  //
   // Calculate publish point info
   //
   QStringList f0=serverMountpoint().split("/",QString::SkipEmptyParts);
@@ -125,14 +111,12 @@ void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
     hls_put_directory+="/";
     hls_put_directory+=f0[i];
   }
-  //  printf("dir: |%s|  base: |%s|\n",(const char *)hls_put_directory.toUtf8(),
-  //	 (const char *)hls_put_basename.toUtf8());
 
   //
   // Create playlist file
   //
   hls_playlist_filename=hls_temp_dir->path()+"/"+hls_put_basename+".m3u8";
-  printf("playlist: %s\n",(const char *)hls_playlist_filename.toAscii());
+  //  printf("playlist: %s\n",(const char *)hls_playlist_filename.toAscii());
   if((hls_playlist_handle=fopen(hls_playlist_filename.toUtf8(),"w"))!=NULL) {
     fprintf(hls_playlist_handle,"#EXTM3U\n");
     fprintf(hls_playlist_handle,"#EXT-X-TARGETDURATION:%d\n",HLS_SEGMENT_SIZE);
@@ -165,6 +149,9 @@ void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
   //
   // Write ID3 tag
   //
+  uint8_t id3_header[HLS_ID3_HEADER_SIZE];
+  hls_total_media_frames=HLS_SEGMENT_SIZE*audioSamplerate();
+  GetStreamTimestamp(id3_header,hls_total_media_frames);
   fwrite(id3_header,1,HLS_ID3_HEADER_SIZE,hls_media_handle);
 
   setConnected(true);
@@ -179,10 +166,11 @@ void HlsConnector::disconnectFromHostConnector()
 int64_t HlsConnector::writeDataConnector(int frames,const unsigned char *data,
 					 int64_t len)
 {
-  if((hls_media_frames+frames)>(int)(HLS_SEGMENT_SIZE*audioSamplerate())) {
+  if((hls_media_frames+(uint64_t)frames)>(HLS_SEGMENT_SIZE*audioSamplerate())) {
     RotateMediaFile();
   }
-  hls_media_frames+=frames;
+  hls_media_frames+=(uint64_t)frames;
+  hls_total_media_frames+=(uint64_t)frames;
   return fwrite(data,len,1,hls_media_handle);
 }
 
@@ -301,10 +289,43 @@ void HlsConnector::RotateMediaFile()
 	   (const char *)(hls_temp_dir->path()+"/"+hls_media_filename).toUtf8(),
 	   strerror(errno));
   }
+  uint8_t id3_header[HLS_ID3_HEADER_SIZE];
+  GetStreamTimestamp(id3_header,hls_total_media_frames);
+  fwrite(id3_header,1,HLS_ID3_HEADER_SIZE,hls_media_handle);
 }
 
 
 QString HlsConnector::GetMediaFilename(int seqno)
 {
   return hls_put_basename+QString().sprintf("%d.",seqno)+extension();
+}
+
+
+void HlsConnector::GetStreamTimestamp(uint8_t *bytes,uint64_t frames)
+{
+  //
+  // ID3 PRIV tag (see HTTP Live Streaming Draft sec. 4)
+  //
+  static uint8_t id3_header[HLS_ID3_HEADER_SIZE]= 
+    {0x49,0x44,0x33,0x04,0x00,0x00,0x00,0x00,
+     0x00,0x3F,0x50,0x52,0x49,0x56,0x00,0x00,
+     0x00,0x35,0x00,0x00,0x63,0x6F,0x6D,0x2E,
+     0x61,0x70,0x70,0x6C,0x65,0x2E,0x73,0x74,
+     0x72,0x65,0x61,0x6D,0x69,0x6E,0x67,0x2E,
+     0x74,0x72,0x61,0x6E,0x73,0x70,0x6F,0x72,
+     0x74,0x53,0x74,0x72,0x65,0x61,0x6D,0x54,
+     0x69,0x6D,0x65,0x73,0x74,0x61,0x6D,0x70,
+     0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+     0x00};
+
+  memcpy(bytes,id3_header,HLS_ID3_HEADER_SIZE);
+  
+  //
+  // MPEG-2 timestamps are expressed in 1/90000ths of a second
+  //
+  uint64_t stamp=(uint64_t)(90000.0*(double)frames/(double)audioSamplerate())&
+    (0x1FFFFFFFF);
+  for(int i=0;i<8;i++) {  // Use network byte order!
+    bytes[(HLS_ID3_HEADER_SIZE-8)+i]=0xFF&(stamp>>(56-8*i));
+  }
 }

@@ -58,13 +58,15 @@ class HlsConnector : public Connector
  private:
   void RotateMediaFile();
   QString GetMediaFilename(int seqno);
+  void GetStreamTimestamp(uint8_t *bytes,uint64_t frames);
   QDir *hls_temp_dir;
   QString hls_playlist_filename;
   FILE *hls_playlist_handle;
   int hls_sequence_number;
   QString hls_media_filename;
   FILE *hls_media_handle;
-  int hls_media_frames;
+  uint64_t hls_media_frames;
+  uint64_t hls_total_media_frames;
   QString hls_put_directory;
   QString hls_put_basename;
   QProcess *hls_put_process;
