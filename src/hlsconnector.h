@@ -22,7 +22,7 @@
 #define HLSCONNECTOR_H
 
 #define HLS_SEGMENT_SIZE 10
-#define HLS_VERSION 3
+#define HLS_VERSION 6
 #define HLS_ID3_HEADER_SIZE 73
 
 #include <stdio.h>

@@ -123,6 +123,8 @@ void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
     fprintf(hls_playlist_handle,"#EXT-X-MEDIA-SEQUENCE:0\n");
     fprintf(hls_playlist_handle,"#EXT-X-ALLOW-CACHE:NO\n");
     fprintf(hls_playlist_handle,"#EXT-X-PLAYLIST-TYPE:EVENT\n");
+    fprintf(hls_playlist_handle,
+	    "#EXT-X-START:TIME-OFFSET=-%d.0000,PRECISE=NO\n",HLS_SEGMENT_SIZE);
     fflush(hls_playlist_handle);
   }
   else {
