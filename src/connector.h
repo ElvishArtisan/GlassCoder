@@ -73,6 +73,7 @@ class Connector : public QObject
   void setExtension(const QString &str);
   virtual void connectToServer(const QString &hostname,uint16_t port);
   virtual int64_t writeData(int frames,const unsigned char *data,int64_t len);
+  virtual void stop();
   static QString serverTypeText(Connector::ServerType);
   static QString urlEncode(const QString &str);
   static QString urlDecode(const QString &str);
@@ -82,10 +83,12 @@ class Connector : public QObject
  signals:
   void dataRequested(Connector *conn);
   void error(QAbstractSocket::SocketError err);
+  void stopped();
 
  private slots:
   void dataTimeoutData();
   void watchdogTimeoutData();
+  void stopTimeoutData();
 
  protected:
   void setConnected(bool state);
@@ -120,6 +123,7 @@ class Connector : public QObject
   bool conn_connected;
   QString conn_host_hostname;
   uint16_t conn_host_port;
+  QTimer *conn_stop_timer;
 };
 
 

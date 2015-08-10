@@ -169,3 +169,5 @@
 	and 'src/hlsconnector.h'.
 2015-08-10 Fred Gleason <fredg@paravelsystems.com>
 	* Added code for stream distribution via http PUT.
+2015-08-10 Fred Gleason <fredg@paravelsystems.com>
+	* Added stop mechanism for connectors.

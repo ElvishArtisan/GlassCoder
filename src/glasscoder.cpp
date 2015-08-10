@@ -18,6 +18,7 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <syslog.h>
@@ -28,6 +29,22 @@
 #include "codecfactory.h"
 #include "connectorfactory.h"
 #include "glasscoder.h"
+
+//
+// Globals
+//
+bool glasscoder_exiting=false;
+
+void SignalHandler(int signo)
+{
+  switch(signo) {
+  case SIGTERM:
+  case SIGINT:
+    glasscoder_exiting=true;
+    break;
+  }
+}
+
 
 MainObject::MainObject(QObject *parent)
   : QObject(parent)
@@ -262,12 +279,29 @@ MainObject::MainObject(QObject *parent)
   // Start Server Connection
   //
   StartServerConnection();
+
+  //
+  // Set Signals
+  //
+  sir_exit_timer=new QTimer(this);
+  connect(sir_exit_timer,SIGNAL(timeout()),this,SLOT(exitTimerData()));
+  sir_exit_timer->start(250);
+  ::signal(SIGINT,SignalHandler);
+  ::signal(SIGTERM,SignalHandler);
 }
 
 
 void MainObject::encodeData()
 {
   sir_codec->encode(sir_connector);
+}
+
+
+void MainObject::exitTimerData()
+{
+  if(glasscoder_exiting) {
+    sir_connector->stop();
+  }
 }
 
 
@@ -296,6 +330,7 @@ void MainObject::StartServerConnection()
   sir_connector=ConnectorFactory(server_type,this);
   connect(sir_connector,SIGNAL(dataRequested(Connector *)),
 	  sir_codec,SLOT(encode(Connector *)));
+  connect(sir_connector,SIGNAL(stopped()),qApp,SLOT(quit()));
 
   //
   // Set Configuration

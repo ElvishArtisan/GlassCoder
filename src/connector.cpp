@@ -53,11 +53,16 @@ Connector::Connector(QObject *parent)
   conn_watchdog_timer->setSingleShot(true);
   connect(conn_watchdog_timer,SIGNAL(timeout()),
 	  this,SLOT(watchdogTimeoutData()));
+
+  conn_stop_timer=new QTimer(this);
+  conn_stop_timer->setSingleShot(true);
+  connect(conn_stop_timer,SIGNAL(timeout()),this,SLOT(stopTimeoutData()));
 }
 
 
 Connector::~Connector()
 {
+  delete conn_stop_timer;
   delete conn_data_timer;
 }
 
@@ -271,6 +276,12 @@ int64_t Connector::writeData(int frames,const unsigned char *data,int64_t len)
 }
 
 
+void Connector::stop()
+{
+  conn_stop_timer->start(0);
+}
+
+
 QString Connector::serverTypeText(Connector::ServerType type)
 {
   QString ret=tr("Unknown");
@@ -306,6 +317,12 @@ void Connector::dataTimeoutData()
 void Connector::watchdogTimeoutData()
 {
   connectToHostConnector(conn_host_hostname,conn_host_port);
+}
+
+
+void Connector::stopTimeoutData()
+{
+  emit stopped();
 }
 
 

@@ -75,6 +75,29 @@ Connector::ServerType HlsConnector::serverType() const
 }
 
 
+void HlsConnector::stop()
+{
+  //
+  // Write end tag
+  //
+  fprintf(hls_playlist_handle,"#EXT-X-ENDLIST\n");
+  fclose(hls_playlist_handle);
+
+  //
+  // Upload it
+  //
+  hls_stop_args.push_back("-T");
+  hls_stop_args.push_back(hls_playlist_filename);
+  hls_stop_args.push_back("http://"+hostHostname()+hls_put_directory+"/");
+  hls_stop_process=new QProcess(this);
+  connect(hls_stop_process,SIGNAL(error(QProcess::ProcessError)),
+	  this,SLOT(stopErrorData(QProcess::ProcessError)));
+  connect(hls_stop_process,SIGNAL(finished(int,QProcess::ExitStatus)),
+	  this,SLOT(stopFinishedData(int,QProcess::ExitStatus)));
+  hls_stop_process->start("curl",hls_stop_args);
+}
+
+
 void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
 {
   //
@@ -196,6 +219,40 @@ void HlsConnector::putCollectGarbageData()
 }
 
 
+void HlsConnector::stopErrorData(QProcess::ProcessError err)
+{
+  syslog(LOG_ERR,"curl(1) process error: %d, cmd: \"curl %s\"",err,
+	 (const char *)hls_stop_args.join(" ").toUtf8());
+
+  emit stopped();
+}
+
+
+void HlsConnector::stopFinishedData(int exit_code,QProcess::ExitStatus exit_status)
+{
+  if(exit_status==QProcess::CrashExit) {
+    syslog(LOG_ERR,"curl(1) process crashed, cmd: \"curl %s\"",
+	   (const char *)hls_stop_args.join(" ").toUtf8());
+    exit(256);
+  }
+  if(exit_code!=0) {
+    syslog(LOG_WARNING,"curl(1) returned exit code: %d, cmd: \"curl %s\"",
+	   exit_code,(const char *)hls_stop_args.join(" ").toUtf8());
+  }
+
+  //
+  // Remove temporary directory
+  //
+  QStringList files=hls_temp_dir->entryList(QDir::Files|QDir::NoDotAndDotDot);
+  for(int i=0;i<files.size();i++) {
+    hls_temp_dir->remove(files[i]);
+  }
+  rmdir(hls_temp_dir->path().toUtf8());
+
+  emit stopped();
+}
+
+
 void HlsConnector::RotateMediaFile()
 {
   //
@@ -249,6 +306,5 @@ void HlsConnector::RotateMediaFile()
 
 QString HlsConnector::GetMediaFilename(int seqno)
 {
-  return "fileSequence"+QString().sprintf("%d.",seqno)+extension();
-  //  return hls_put_basename+QString().sprintf("%d.",seqno)+extension();
+  return hls_put_basename+QString().sprintf("%d.",seqno)+extension();
 }

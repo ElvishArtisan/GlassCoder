@@ -2,9 +2,7 @@
 //
 // glasscoder(1) Audio Encoder
 //
-//   (C) Copyright 2014 Fred Gleason <fredg@paravelsystems.com>
-//
-//      $Id: glasscoder.h,v 1.5 2014/02/24 21:02:45 cvs Exp $
+//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -50,6 +48,7 @@ class MainObject : public QObject
 
  private slots:
   void encodeData();
+  void exitTimerData();
 
  private:
   //
@@ -97,6 +96,11 @@ class MainObject : public QObject
   //
   bool StartCodec();
   Codec *sir_codec;
+
+  //
+  // Miscelaneous
+  //
+  QTimer *sir_exit_timer;
 };
 
 

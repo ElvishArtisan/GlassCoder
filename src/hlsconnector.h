@@ -41,6 +41,7 @@ class HlsConnector : public Connector
   HlsConnector(QObject *parent=0);
   ~HlsConnector();
   Connector::ServerType serverType() const;
+  void stop();
 
  protected:
   void connectToHostConnector(const QString &hostname,uint16_t port);
@@ -51,6 +52,8 @@ class HlsConnector : public Connector
   void putErrorData(QProcess::ProcessError err);
   void putFinishedData(int exit_code,QProcess::ExitStatus exit_status);
   void putCollectGarbageData();
+  void stopErrorData(QProcess::ProcessError err);
+  void stopFinishedData(int exit_code,QProcess::ExitStatus exit_status);
 
  private:
   void RotateMediaFile();
@@ -67,6 +70,8 @@ class HlsConnector : public Connector
   QProcess *hls_put_process;
   QStringList hls_put_args;
   QTimer *hls_put_garbage_timer;
+  QProcess *hls_stop_process;
+  QStringList hls_stop_args;
 };
 
 
