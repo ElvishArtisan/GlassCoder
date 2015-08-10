@@ -123,7 +123,7 @@ void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
     fprintf(hls_playlist_handle,"#EXT-X-VERSION:%d\n",HLS_VERSION);
     fprintf(hls_playlist_handle,"#EXT-X-MEDIA-SEQUENCE:0\n");
     fprintf(hls_playlist_handle,"#EXT-X-ALLOW-CACHE:NO\n");
-    fprintf(hls_playlist_handle,"#EXT-X-PLAYLIST-TYPE:VOD\n");
+    fprintf(hls_playlist_handle,"#EXT-X-PLAYLIST-TYPE:EVENT\n");
     fflush(hls_playlist_handle);
   }
   else {

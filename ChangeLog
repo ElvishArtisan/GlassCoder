@@ -176,3 +176,5 @@
 2015-08-10 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented MPEG-2 elemental stream timestamps for HLS streams
 	in 'src/hlsconnector.cpp'.
+2015-08-10 Fred Gleason <fredg@paravelsystems.com>
+	* Enabled live streaming mode in 'src/hlsconnector.cpp'.
