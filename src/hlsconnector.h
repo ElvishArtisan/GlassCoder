@@ -64,6 +64,7 @@ class HlsConnector : public Connector
   FILE *hls_playlist_handle;
   int hls_sequence_number;
   QString hls_media_filename;
+  QString hls_media_killname;
   FILE *hls_media_handle;
   uint64_t hls_media_frames;
   uint64_t hls_total_media_frames;

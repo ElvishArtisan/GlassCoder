@@ -116,7 +116,6 @@ void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
   // Create playlist file
   //
   hls_playlist_filename=hls_temp_dir->path()+"/"+hls_put_basename+".m3u8";
-  //  printf("playlist: %s\n",(const char *)hls_playlist_filename.toAscii());
   if((hls_playlist_handle=fopen(hls_playlist_filename.toUtf8(),"w"))!=NULL) {
     fprintf(hls_playlist_handle,"#EXTM3U\n");
     fprintf(hls_playlist_handle,"#EXT-X-TARGETDURATION:%d\n",HLS_SEGMENT_SIZE);
@@ -196,6 +195,7 @@ void HlsConnector::putFinishedData(int exit_code,
     syslog(LOG_WARNING,"curl(1) returned exit code: %d, cmd: \"curl %s\"",
 	   exit_code,(const char *)hls_put_args.join(" ").toUtf8());
   }
+  hls_temp_dir->remove(hls_media_killname);
   hls_put_garbage_timer->start(0);
 }
 
@@ -281,6 +281,7 @@ void HlsConnector::RotateMediaFile()
   //
   hls_sequence_number++;
   hls_media_frames=0;
+  hls_media_killname=hls_media_filename;
   hls_media_filename=GetMediaFilename(hls_sequence_number);
   if((hls_media_handle=
       fopen((hls_temp_dir->path()+"/"+hls_media_filename).toUtf8(),"w"))==
