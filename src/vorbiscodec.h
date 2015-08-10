@@ -2,7 +2,7 @@
 //
 // Codec class for OggVorbis
 //
-//   (C) Copyright 2014 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -36,6 +36,7 @@ class VorbisCodec : public Codec
   ~VorbisCodec();
   QString contentType() const;
   unsigned pcmFrames() const;
+  QString defaultExtension() const;
   bool startCodec();
 
  protected:

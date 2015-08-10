@@ -242,6 +242,18 @@ void Connector::setStreamPublic(bool state)
 }
 
 
+QString Connector::extension() const
+{
+  return conn_extension;
+}
+
+
+void Connector::setExtension(const QString &str)
+{
+  conn_extension=str;
+}
+
+
 void Connector::connectToServer(const QString &hostname,uint16_t port)
 {
   conn_host_hostname=hostname;

@@ -2,7 +2,7 @@
 //
 // Codec class for MPEG-1 Layer 2
 //
-//   (C) Copyright 2014 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -24,10 +24,7 @@ MpegL2Codec::MpegL2Codec(Ringbuffer *ring,QObject *parent)
   : Codec(Codec::TypeMpegL3,ring,parent)
 {
 #ifdef HAVE_TWOLAME
-  /*
-  l3_lameopts=NULL;
-  l3_lame_handle=NULL;
-  */
+  twolame_handle=NULL;
 #endif  // HAVE_TWOLAME
 }
 
@@ -41,6 +38,12 @@ QString MpegL2Codec::contentType() const
 unsigned MpegL2Codec::pcmFrames() const
 {
   return 1152;
+}
+
+
+QString MpegL2Codec::defaultExtension() const
+{
+  return QString("mp2");
 }
 
 

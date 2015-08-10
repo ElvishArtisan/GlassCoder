@@ -2,7 +2,7 @@
 //
 // Codec class for MPEG-4 Advanced Audio Coding High Efficiency Profile
 //
-//   (C) Copyright 2014 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -46,6 +46,12 @@ QString HeAacCodec::contentType() const
 unsigned HeAacCodec::pcmFrames() const
 {
   return heaac_input_samples/channels();
+}
+
+
+QString HeAacCodec::defaultExtension() const
+{
+  return QString("aac");
 }
 
 

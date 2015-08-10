@@ -69,6 +69,8 @@ class Connector : public QObject
   void setStreamGenre(const QString &str);
   bool streamPublic() const;
   void setStreamPublic(bool state);
+  QString extension() const;
+  void setExtension(const QString &str);
   virtual void connectToServer(const QString &hostname,uint16_t port);
   virtual int64_t writeData(int frames,const unsigned char *data,int64_t len);
   static QString serverTypeText(Connector::ServerType);
@@ -111,6 +113,7 @@ class Connector : public QObject
   QString conn_stream_aim;
   QString conn_stream_genre;
   bool conn_stream_public;
+  QString conn_extension;
   QTimer *conn_data_timer;
   QTimer *conn_watchdog_timer;
   bool conn_watchdog_active;

@@ -32,6 +32,9 @@ HlsConnector::HlsConnector(QObject *parent)
   hls_sequence_number=0;
   hls_media_frames=0;
 
+  //
+  // Create working directory
+  //
   char tempdir[PATH_MAX];
 
   strncpy(tempdir,"/tmp",PATH_MAX);
@@ -45,11 +48,22 @@ HlsConnector::HlsConnector(QObject *parent)
     exit(256);
   }
   hls_temp_dir=new QDir(tempdir);
+  syslog(LOG_DEBUG,"HlsConnector: using temporary directory: %s",
+	 (const char *)hls_temp_dir->path().toUtf8());
+
+  //
+  // Garbage Collector Timer
+  //
+  hls_put_garbage_timer=new QTimer(this);
+  hls_put_garbage_timer->setSingleShot(true);
+  connect(hls_put_garbage_timer,SIGNAL(timeout()),
+	  this,SLOT(putCollectGarbageData()));
 }
 
 
 HlsConnector::~HlsConnector()
 {
+  delete hls_put_garbage_timer;
   rmdir(hls_temp_dir->path().toAscii());
   delete hls_temp_dir;
 }
@@ -61,27 +75,61 @@ Connector::ServerType HlsConnector::serverType() const
 }
 
 
-void HlsConnector::connectToServer(const QString &hostname,uint16_t port)
+void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
 {
+  //
+  // ID3 tag (see HTTP Live Streaming Draft sec. 4)
+  //
+  uint8_t id3_header[HLS_ID3_HEADER_SIZE]= 
+    {0x49,0x44,0x33,0x04,0x00,0x00,0x00,0x00,
+     0x00,0x3F,0x50,0x52,0x49,0x56,0x00,0x00,
+     0x00,0x35,0x00,0x00,0x63,0x6F,0x6D,0x2E,
+     0x61,0x70,0x70,0x6C,0x65,0x2E,0x73,0x74,
+     0x72,0x65,0x61,0x6D,0x69,0x6E,0x67,0x2E,
+     0x74,0x72,0x61,0x6E,0x73,0x70,0x6F,0x72,
+     0x74,0x53,0x74,0x72,0x65,0x61,0x6D,0x54,
+     0x69,0x6D,0x65,0x73,0x74,0x61,0x6D,0x70,
+     0x00,0x00,0x00,0x00,0x00,0x00,0x0D,0xBB,
+     0xA0};
+
+  //
+  // Calculate publish point info
+  //
+  QStringList f0=serverMountpoint().split("/",QString::SkipEmptyParts);
+  hls_put_basename=f0[f0.size()-1];
+  hls_put_directory="";
+  for(int i=0;i<f0.size()-1;i++) {
+    hls_put_directory+="/";
+    hls_put_directory+=f0[i];
+  }
+  //  printf("dir: |%s|  base: |%s|\n",(const char *)hls_put_directory.toUtf8(),
+  //	 (const char *)hls_put_basename.toUtf8());
+
   //
   // Create playlist file
   //
-  hls_playlist_filename=hls_temp_dir->path()+"/"+serverMountpoint()+".m3u8";
+  hls_playlist_filename=hls_temp_dir->path()+"/"+hls_put_basename+".m3u8";
   printf("playlist: %s\n",(const char *)hls_playlist_filename.toAscii());
   if((hls_playlist_handle=fopen(hls_playlist_filename.toUtf8(),"w"))!=NULL) {
     fprintf(hls_playlist_handle,"#EXTM3U\n");
     fprintf(hls_playlist_handle,"#EXT-X-TARGETDURATION:%d\n",HLS_SEGMENT_SIZE);
     fprintf(hls_playlist_handle,"#EXT-X-VERSION:%d\n",HLS_VERSION);
     fprintf(hls_playlist_handle,"#EXT-X-MEDIA-SEQUENCE:0\n");
+    fprintf(hls_playlist_handle,"#EXT-X-ALLOW-CACHE:NO\n");
     fprintf(hls_playlist_handle,"#EXT-X-PLAYLIST-TYPE:VOD\n");
     fflush(hls_playlist_handle);
+  }
+  else {
+    syslog(LOG_ERR,"HlsConnector: unable to create playlist file \"%s\" [%s]",
+	   (const char *)hls_playlist_filename.toUtf8(),
+	   strerror(errno));
+    exit(256);
   }
 
   //
   // Create initial media file
   //
-  hls_media_filename=
-    QString().sprintf("fileSequence%d.mp3",hls_sequence_number);
+  hls_media_filename=GetMediaFilename(hls_sequence_number);
   if((hls_media_handle=
       fopen((hls_temp_dir->path()+"/"+hls_media_filename).toUtf8(),"w"))==
      NULL) {
@@ -90,12 +138,13 @@ void HlsConnector::connectToServer(const QString &hostname,uint16_t port)
 	   strerror(errno));
     exit(0);
   }
+
+  //
+  // Write ID3 tag
+  //
+  fwrite(id3_header,1,HLS_ID3_HEADER_SIZE,hls_media_handle);
+
   setConnected(true);
-}
-
-
-void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
-{
 }
 
 
@@ -115,20 +164,79 @@ int64_t HlsConnector::writeDataConnector(int frames,const unsigned char *data,
 }
 
 
+void HlsConnector::putErrorData(QProcess::ProcessError err)
+{
+  syslog(LOG_ERR,"curl(1) process error: %d, cmd: \"curl %s\"",err,
+	 (const char *)hls_put_args.join(" ").toUtf8());
+
+  exit(256);
+}
+
+
+void HlsConnector::putFinishedData(int exit_code,
+				   QProcess::ExitStatus exit_status)
+{
+  if(exit_status==QProcess::CrashExit) {
+    syslog(LOG_ERR,"curl(1) process crashed, cmd: \"curl %s\"",
+	   (const char *)hls_put_args.join(" ").toUtf8());
+    exit(256);
+  }
+  if(exit_code!=0) {
+    syslog(LOG_WARNING,"curl(1) returned exit code: %d, cmd: \"curl %s\"",
+	   exit_code,(const char *)hls_put_args.join(" ").toUtf8());
+  }
+  hls_put_garbage_timer->start(0);
+}
+
+
+void HlsConnector::putCollectGarbageData()
+{
+  delete hls_put_process;
+  hls_put_process=NULL;
+}
+
+
 void HlsConnector::RotateMediaFile()
 {
-  fclose(hls_media_handle);
-  fprintf(hls_playlist_handle,"EXTINF:%7.5lf,\n",
-	  (double)hls_media_frames/(double)audioSamplerate());
-  fprintf(hls_playlist_handle,"fileSequence%d.mp3\n",hls_sequence_number);
-  fflush(hls_playlist_handle);
   //
-  // FIXME: Signal upload layer here!!!
+  // Update working files
+  //
+  fclose(hls_media_handle);
+  fprintf(hls_playlist_handle,"#EXTINF:%7.5lf,\n",
+	  (double)hls_media_frames/(double)audioSamplerate());
+  fprintf(hls_playlist_handle,"%s\n",(const char *)hls_media_filename.toUtf8());
+  fflush(hls_playlist_handle);
+
+  //
+  // Upload to server
+  //
+  if(hls_put_process==NULL) {
+    hls_put_args.clear();
+    hls_put_args.push_back("-T");
+    hls_put_args.push_back(hls_temp_dir->path()+"/"+hls_media_filename);
+    hls_put_args.
+      push_back("http://"+hostHostname()+QString().sprintf(":%u",hostPort())+
+		hls_put_directory+"/");
+    hls_put_args.push_back("-T");
+    hls_put_args.push_back(hls_playlist_filename);
+    hls_put_args.push_back("http://"+hostHostname()+hls_put_directory+"/");
+    hls_put_process=new QProcess(this);
+    connect(hls_put_process,SIGNAL(error(QProcess::ProcessError)),
+	    this,SLOT(putErrorData(QProcess::ProcessError)));
+    connect(hls_put_process,SIGNAL(finished(int,QProcess::ExitStatus)),
+	    this,SLOT(putFinishedData(int,QProcess::ExitStatus)));
+    hls_put_process->start("curl",hls_put_args);
+  }
+  else {
+    syslog(LOG_WARNING,"HLS PUT overrun");
+  }
+
+  //
+  // Initialize for next segment
   //
   hls_sequence_number++;
   hls_media_frames=0;
-  hls_media_filename=
-    QString().sprintf("fileSequence%d.mp3",hls_sequence_number);
+  hls_media_filename=GetMediaFilename(hls_sequence_number);
   if((hls_media_handle=
       fopen((hls_temp_dir->path()+"/"+hls_media_filename).toUtf8(),"w"))==
      NULL) {
@@ -136,4 +244,11 @@ void HlsConnector::RotateMediaFile()
 	   (const char *)(hls_temp_dir->path()+"/"+hls_media_filename).toUtf8(),
 	   strerror(errno));
   }
+}
+
+
+QString HlsConnector::GetMediaFilename(int seqno)
+{
+  return "fileSequence"+QString().sprintf("%d.",seqno)+extension();
+  //  return hls_put_basename+QString().sprintf("%d.",seqno)+extension();
 }

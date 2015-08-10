@@ -40,6 +40,12 @@ unsigned OpusCodec::pcmFrames() const
 }
 
 
+QString OpusCodec::defaultExtension() const
+{
+  return QString("ogg");
+}
+
+
 bool OpusCodec::startCodec()
 {
 #ifdef HAVE_OPUS

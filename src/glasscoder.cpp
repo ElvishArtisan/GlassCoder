@@ -304,6 +304,7 @@ void MainObject::StartServerConnection()
   sir_connector->setServerUsername(server_username);
   sir_connector->setServerPassword(server_password);
   sir_connector->setContentType(sir_codec->contentType());
+  sir_connector->setExtension(sir_codec->defaultExtension());
   sir_connector->setAudioBitrate(audio_bitrate);
   sir_connector->setAudioChannels(audio_channels);
   sir_connector->setAudioSamplerate(audio_samplerate);

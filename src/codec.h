@@ -56,6 +56,7 @@ class Codec : public QObject
   void setStreamSamplerate(unsigned rate);
   virtual QString contentType() const=0;
   virtual unsigned pcmFrames() const=0;
+  virtual QString defaultExtension() const=0;
   virtual bool start();
   static QString codecTypeText(Codec::Type type);
 

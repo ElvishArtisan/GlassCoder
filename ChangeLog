@@ -167,3 +167,5 @@
 2015-08-07 Fred Gleason <fredg@paravelsystems.com>
 	* Added a connector for HLS/HTTP streaming in 'src/hlsconnector.cpp'
 	and 'src/hlsconnector.h'.
+2015-08-10 Fred Gleason <fredg@paravelsystems.com>
+	* Added code for stream distribution via http PUT.
