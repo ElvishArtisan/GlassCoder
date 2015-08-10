@@ -20,7 +20,7 @@
 
 #include <syslog.h>
 
-#include <QtCore/QStringList>
+#include <QStringList>
 
 #include "iceconnector.h"
 

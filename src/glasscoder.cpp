@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <syslog.h>
 
-#include <QtCore/QCoreApplication>
+#include <QCoreApplication>
 
 #include "cmdswitch.h"
 #include "codecfactory.h"

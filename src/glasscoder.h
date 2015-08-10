@@ -23,8 +23,8 @@
 
 #include <stdint.h>
 
-#include <QtCore/QObject>
-#include <QtCore/QTimer>
+#include <QObject>
+#include <QTimer>
 
 #include <jack/jack.h>
 

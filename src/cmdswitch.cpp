@@ -2,9 +2,7 @@
 //
 // Process Command-Line Switches
 //
-//   (C) Copyright 2012 Fred Gleason <fredg@paravelsystems.com>
-//
-//      $Id: cmdswitch.cpp,v 1.1 2014/02/18 20:16:45 cvs Exp $
+//   (C) Copyright 2012-2015 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as

@@ -2,9 +2,7 @@
 //
 // Class for reading INI configuration files.
 //
-// (C) Copyright 2013 Fred Gleason <fredg@paravelsystems.com>
-//
-//    $Id: profile.h,v 1.1 2014/02/18 20:16:46 cvs Exp $
+// (C) Copyright 2002-2015 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU Library General Public License 
@@ -25,9 +23,9 @@
 
 #include <vector>
 
-#include <QtCore/QString>
-#include <QtCore/QTime>
-#include <QtNetwork/QHostAddress>
+#include <QHostAddress>
+#include <QString>
+#include <QTime>
 
 class ProfileLine
 {

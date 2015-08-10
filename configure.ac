@@ -4,9 +4,7 @@ dnl Autoconf configuration
 dnl
 dnl Use autoconf to process this into a configure script
 dnl
-dnl   (C) Copyright 2014 Fred Gleason <fredg@paravelsystems.com>
-dnl
-dnl      $Id: configure.ac,v 1.2 2014/02/18 20:16:45 cvs Exp $
+dnl   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
 dnl
 dnl   This program is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License version 2 as
@@ -74,7 +72,7 @@ AC_ARG_ENABLE(vorbis,[  --disable-vorbis        disable Ogg Vorbis support],
 #
 # Check for Qt (Mandatory)
 #
-AC_CHECK_HEADER(QtCore/QtCore,[],[AC_MSG_ERROR([*** Qt4 not found ***])])
+PKG_CHECK_MODULES(QT4,QtCore QtNetwork,[],[AC_MSG_ERROR([*** Qt4 not found ***])])
 AC_CHECK_PROG(MOC_NAME,moc-qt4,[moc-qt4],[moc])
 AC_SUBST(MOC,$MOC_NAME)
 

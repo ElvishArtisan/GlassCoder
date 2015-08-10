@@ -171,3 +171,6 @@
 	* Added code for stream distribution via http PUT.
 2015-08-10 Fred Gleason <fredg@paravelsystems.com>
 	* Added stop mechanism for connectors.
+2015-08-10 Fred Gleason <fredg@paravelsystems.com>
+	* Refactored build system to allow co-existence with Qt5.
+

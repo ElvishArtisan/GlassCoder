@@ -2,7 +2,7 @@
 //
 // Abstract base class for streaming server source connections.
 //
-//   (C) Copyright 2014 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -23,10 +23,10 @@
 
 #include <stdint.h>
 
-#include <QtCore/QObject>
-#include <QtCore/QString>
-#include <QtCore/QTimer>
-#include <QtNetwork/QTcpSocket>
+#include <QObject>
+#include <QString>
+#include <QTcpSocket>
+#include <QTimer>
 
 #define RINGBUFFER_SERVICE_INTERVAL 50
 

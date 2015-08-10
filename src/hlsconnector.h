@@ -27,10 +27,10 @@
 
 #include <stdio.h>
 
-#include <QtCore/QDir>
-#include <QtCore/QStringList>
-#include <QtCore/QProcess>
-#include <QtCore/QTimer>
+#include <QDir>
+#include <QProcess>
+#include <QStringList>
+#include <QTimer>
 
 #include "connector.h"
 
