@@ -8,7 +8,8 @@ glasscoder [OPTIONS]
 .SH DESCRIPTION
 \fBGlasscoder\fP is an audio encoder that uses the JACK Audio Connection Kit.
 It is capable of sending live streams using a variety of formats to an Icecast
-or Shoutcast audio streaming server.
+or Shoutcast audio streaming server as well as generating HTTP Live Streams
+[HLS].
 
 \fBGlasscoder\fP has no GUI or configuration file components at all; its
 sole 'user interface' is its command-line invocation.
@@ -170,6 +171,11 @@ There is no default value.  This setting is ignored by Shoutcast v2 servers.
 .TP
 .B --version
 Output version information and exit.
+
+.SH NOTES
+HTTP Live Streams [HLS] require support for the HTTP PUT and DELETE methods
+on the publishing web server.  See the GlassCoder documentation directory
+for a sample configuration for the Apache Web Server.
 
 .SH AUTHOR
 Fred Gleason <fredg@paravelsystems.com>

@@ -192,3 +192,6 @@
 2015-08-11 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented support for HTTP Basic authentication in
 	'src/hlsconnector.cpp' and 'src/hlsconnector.h'.
+2015-08-11 Fred Gleason <fredg@paravelsystems.com>
+	* Added a sample HLS publishing configuration for Apache in
+	'conf/httpd/'.

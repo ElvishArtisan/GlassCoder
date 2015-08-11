@@ -32,11 +32,11 @@ BuildRoot: /var/tmp/%{name}-@VERSION@
 Requires: curl
 
 %description
-Glasscoder is a live media encoder intended for use with Shoutcast and Icecast
-streaming servers.  It uses the JACK Audio Connection Kit for audio input
-and is capable of generating live audio streams in a vairety of formats.
-It is controlled completely from the command-line, with no configuration
-files or GUI required.
+Glasscoder is a live media encoder intended for use with Shoutcast, Icecast
+streaming servers as well as HTTP Live Streams [HLS].  It uses the JACK
+Audio Connection Kit for audio input and is capable of generating live
+audio streams in a variety of formats. It is controlled completely from the
+command-line, with no configuration files or GUI required.
 
 
 %prep
@@ -46,7 +46,7 @@ files or GUI required.
 
 
 %build
-./configure --prefix=/usr
+%configure
 make
 
 
@@ -70,11 +70,15 @@ rm -rf $RPM_BUILD_ROOT
 %doc COPYING 
 %doc NEWS 
 %doc README 
-
+%doc conf/httpd/hls.conf
+%doc conf/httpd/hls_methods.pl
+%doc conf/httpd/hls.passwd
+%doc conf/httpd/README.httpd
 
 %changelog
 * Tue Aug 11 2015 Fred Gleason <fredg@paravelsystems.com>
 -- Added a curl(1) dependency.
+-- Added HLS httpd example configuration.
 * Thu Jun 10 2014 Fred Gleason <fredg@paravelsystems.com>
 -- Removed the 'libshout-devel' and 'lame-devel' build dependencies.
 * Tue Feb 18 2014 Fred Gleason <fredg@paravelsystems.com>

@@ -208,6 +208,8 @@ else
 fi 
 
 AC_CONFIG_FILES([ \
+    conf/Makefile \
+    conf/httpd/Makefile \
     docs/Makefile \
     src/Makefile \
     glasscoder.spec \

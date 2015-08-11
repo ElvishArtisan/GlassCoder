@@ -1,0 +1,17 @@
+                   README for Apache HLS Configuration
+
+The files in this directory are for a basic HTTP Live Streaming (HLS)
+setup on Apache.  They should be installed as follows:
+
+Apache configuration directory:
+
+       hls.conf
+       hls.passwd
+
+The 'hls.passwd' file will need at least one password entry added to it
+to allow GlassCoder's HLS streaming connector to upload files.  See the
+htpasswd(1) man page for details.
+
+Apache cgi-bin directory:
+
+       hls_methods.pl
