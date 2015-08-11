@@ -184,3 +184,6 @@
 	* Added a 'EXT-X-START' tag to the playlist for HLS streaming in
 	'src/hlsconnector.cpp'.
 	* Incremented 'HLS_VERSION' to 6 in 'src/hlsconnector.h'.
+2015-08-11 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented garbage collection for stale media segments in
+	HLS streaming in 'src/hlsconnector.cpp' and 'src/hlsconnector.h'.

@@ -23,9 +23,12 @@
 
 #define HLS_SEGMENT_SIZE 10
 #define HLS_VERSION 6
+#define HLS_MINIMUM_SEGMENT_QUAN 4
 #define HLS_ID3_HEADER_SIZE 73
 
 #include <stdio.h>
+
+#include <map>
 
 #include <QDir>
 #include <QProcess>
@@ -52,17 +55,23 @@ class HlsConnector : public Connector
   void putErrorData(QProcess::ProcessError err);
   void putFinishedData(int exit_code,QProcess::ExitStatus exit_status);
   void putCollectGarbageData();
+  void deleteErrorData(QProcess::ProcessError err);
+  void deleteFinishedData(int exit_code,QProcess::ExitStatus exit_status);
+  void deleteCollectGarbageData();
   void stopErrorData(QProcess::ProcessError err);
   void stopFinishedData(int exit_code,QProcess::ExitStatus exit_status);
 
  private:
   void RotateMediaFile();
+  void WritePlaylistFile();
   QString GetMediaFilename(int seqno);
   void GetStreamTimestamp(uint8_t *bytes,uint64_t frames);
   QDir *hls_temp_dir;
   QString hls_playlist_filename;
-  FILE *hls_playlist_handle;
-  int hls_sequence_number;
+  int hls_sequence_head;
+  int hls_sequence_back;
+  std::map<int,double> hls_media_durations;
+  std::map<int,uint64_t> hls_media_killtimes;
   QString hls_media_filename;
   QString hls_media_killname;
   FILE *hls_media_handle;
@@ -73,6 +82,11 @@ class HlsConnector : public Connector
   QProcess *hls_put_process;
   QStringList hls_put_args;
   QTimer *hls_put_garbage_timer;
+
+  QProcess *hls_delete_process;
+  QStringList hls_delete_args;
+  QTimer *hls_delete_garbage_timer;
+
   QProcess *hls_stop_process;
   QStringList hls_stop_args;
 };
