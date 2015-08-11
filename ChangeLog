@@ -189,3 +189,6 @@
 	HLS streaming in 'src/hlsconnector.cpp' and 'src/hlsconnector.h'
 2015-08-11 Fred Gleason <fredg@paravelsystems.com>
 	* Added a curl(1) dependency in 'glasscoder.spec.in'.
+2015-08-11 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented support for HTTP Basic authentication in
+	'src/hlsconnector.cpp' and 'src/hlsconnector.h'.

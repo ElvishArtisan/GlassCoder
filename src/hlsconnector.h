@@ -66,6 +66,7 @@ class HlsConnector : public Connector
   void WritePlaylistFile();
   QString GetMediaFilename(int seqno);
   void GetStreamTimestamp(uint8_t *bytes,uint64_t frames);
+  void AddCurlAuthArgs(QStringList *arglist);
   QDir *hls_temp_dir;
   QString hls_playlist_filename;
   int hls_sequence_head;
@@ -82,11 +83,9 @@ class HlsConnector : public Connector
   QProcess *hls_put_process;
   QStringList hls_put_args;
   QTimer *hls_put_garbage_timer;
-
   QProcess *hls_delete_process;
   QStringList hls_delete_args;
   QTimer *hls_delete_garbage_timer;
-
   QProcess *hls_stop_process;
   QStringList hls_stop_args;
 };
