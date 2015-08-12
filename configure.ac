@@ -163,19 +163,6 @@ AC_SUBST(ARCH,$ar_gcc_arch)
 #
 AR_GET_DISTRO()
 AC_SUBST(DISTRO,$ar_gcc_distro)
-if test $ar_gcc_distro = suse ; then
-  AC_SUBST(DIST_VER,"")
-  AC_SUBST(DEBUG_RPM,"no")
-else
-  DISTRO_MAJOR_VER=`echo $ar_distro_version | awk 'split($1,fields,".") {print fields[[1]]}'`
-  if test $DISTRO_MAJOR_VER -ge 6 ; then
-    AC_SUBST(DIST_VER,".el$DISTRO_MAJOR_VER")
-    AC_SUBST(DEBUG_RPM,"yes")
-  else
-    AC_SUBST(DIST_VER,"")
-    AC_SUBST(DEBUG_RPM,"no")
-  fi
-fi
 
 #
 # Linux vs. OS X Setup

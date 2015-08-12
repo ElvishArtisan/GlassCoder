@@ -195,3 +195,5 @@
 2015-08-11 Fred Gleason <fredg@paravelsystems.com>
 	* Added a sample HLS publishing configuration for Apache in
 	'conf/httpd/'.
+2015-08-12 Fred Gleason <fredg@paravelsystems.com>
+	* Removed useless distro detection code in 'configure.ac'.
