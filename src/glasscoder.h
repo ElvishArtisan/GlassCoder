@@ -23,6 +23,8 @@
 
 #include <stdint.h>
 
+#include <vector>
+
 #include <QObject>
 #include <QTimer>
 
@@ -47,14 +49,14 @@ class MainObject : public QObject
   MainObject(QObject *parent=0);
 
  private slots:
-  void encodeData();
+  void connectorStoppedData();
   void exitTimerData();
 
  private:
   //
   // Arguments
   //
-  unsigned audio_bitrate;
+  std::vector<unsigned> audio_bitrate;
   unsigned audio_channels;
   Codec::Type audio_format;
   double audio_quality;
@@ -82,25 +84,28 @@ class MainObject : public QObject
   jack_client_t *sir_jack_client;
   jack_nframes_t sir_jack_sample_rate;
   jack_port_t *sir_jack_ports[MAX_AUDIO_CHANNELS];
-  Ringbuffer *sir_ringbuffer;
+  std::vector<Ringbuffer *> sir_ringbuffers;
   friend int JackProcess(jack_nframes_t nframes, void *arg);
 
   //
   // Server Connection
   //
-  void StartServerConnection();
-  Connector *sir_connector;
+  void StartServerConnection(const QString &mntpt="");
+  std::vector<Connector *> sir_connectors;
 
   //
   // Codec
   //
   bool StartCodec();
-  Codec *sir_codec;
+  std::vector<Codec *> sir_codecs;
 
   //
   // Miscelaneous
   //
+  bool StartSingleStream();
+  bool StartMultiStream();
   QTimer *sir_exit_timer;
+  unsigned sir_exit_count;
 };
 
 

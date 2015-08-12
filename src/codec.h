@@ -22,6 +22,7 @@
 #define CODEC_H
 
 #include <queue>
+#include <vector>
 
 #include <dlfcn.h>
 #include <syslog.h>

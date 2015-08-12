@@ -56,7 +56,9 @@ int JackProcess(jack_nframes_t nframes, void *arg)
   //
   // Write It
   //
-  obj->sir_ringbuffer->write(cb_interleave_buffer,nframes);
+  for(i=0;i<obj->sir_ringbuffers.size();i++) {
+    obj->sir_ringbuffers[i]->write(cb_interleave_buffer,nframes);
+  }
 
   return 0;
 }
@@ -68,9 +70,16 @@ bool MainObject::StartJack()
   jack_status_t jackstat=JackFailure;
 
   //
-  // Create Ringbuffer
+  // Create Ringbuffers
   //
-  sir_ringbuffer=new Ringbuffer(RINGBUFFER_SIZE,audio_channels);
+  if(audio_bitrate.size()==0) {   // For VBR modes
+    sir_ringbuffers.push_back(new Ringbuffer(RINGBUFFER_SIZE,audio_channels));
+  }
+  else {
+    for(unsigned i=0;i<audio_bitrate.size();i++) {
+      sir_ringbuffers.push_back(new Ringbuffer(RINGBUFFER_SIZE,audio_channels));
+    }
+  }
 
   //
   // Connect to JACK Instance

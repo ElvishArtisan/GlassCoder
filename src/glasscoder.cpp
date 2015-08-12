@@ -50,7 +50,7 @@ MainObject::MainObject(QObject *parent)
   : QObject(parent)
 {
   bool ok=false;
-  audio_bitrate=0;
+  sir_exit_count=0;
   audio_channels=MAX_AUDIO_CHANNELS;
   audio_format=Codec::TypeVorbis;
   audio_quality=-1.0;
@@ -69,14 +69,18 @@ MainObject::MainObject(QObject *parent)
   stream_irc="";
   stream_icq="";
   stream_aim="";
+  unsigned num;
 
   CmdSwitch *cmd=
     new CmdSwitch(qApp->argc(),qApp->argv(),"glasscoder",GLASSCODER_USAGE);
   openlog("glasscoder",LOG_PERROR,LOG_DAEMON);
   for(unsigned i=0;i<cmd->keys();i++) {
     if(cmd->key(i)=="--audio-bitrate") {
-      audio_bitrate=cmd->value(i).toUInt(&ok);
-      if(!ok) {
+      num=cmd->value(i).toUInt(&ok);
+      if(ok) {
+	audio_bitrate.push_back(num);
+      }
+      else {
 	syslog(LOG_ERR,"invalid --audio-bitrate value");
 	exit(256);
       }
@@ -250,7 +254,7 @@ MainObject::MainObject(QObject *parent)
     syslog(LOG_ERR,"missing --server-hostname parameter");
     exit(256);
   }
-  if((audio_quality>=0.0)&&(audio_bitrate>0)) {
+  if((audio_quality>=0.0)&&(audio_bitrate.size()>0)) {
     syslog(LOG_ERR,
 	   "--audio-quality and --audio-bitrate are mutually exclusive");
     exit(256);
@@ -259,26 +263,30 @@ MainObject::MainObject(QObject *parent)
     syslog(LOG_ERR,"mountpoint not specified");
     exit(256);
   }
+  printf("size: %lu  type: %u\n",audio_bitrate.size(),server_type);
+  if((audio_bitrate.size()>1)&&(server_type!=Connector::HlsServer)) {
+    syslog(LOG_ERR,"only HLS streams can have multiple bitrates");
+    exit(256);
+  }
 
-  if((audio_quality<0.0)&&(audio_bitrate==0)) {
-    audio_bitrate=DEFAULT_AUDIO_BITRATE;
+  if((audio_quality<0.0)&&(audio_bitrate.size()==0)) {
+    audio_bitrate.push_back(DEFAULT_AUDIO_BITRATE);
   }
 
   if(!StartJack()) {
     exit(256);
   }
 
-  //
-  // Initialize Encoder
-  //
-  if(!StartCodec()) {
-    exit(256);
+  if(audio_bitrate.size()>1) {
+    if(!StartMultiStream()) {
+      exit(256);
+    }
   }
-
-  //
-  // Start Server Connection
-  //
-  StartServerConnection();
+  else {
+    if(!StartSingleStream()) {
+      exit(256);
+    }
+  }
 
   //
   // Set Signals
@@ -291,71 +299,126 @@ MainObject::MainObject(QObject *parent)
 }
 
 
-void MainObject::encodeData()
+void MainObject::connectorStoppedData()
 {
-  sir_codec->encode(sir_connector);
+  if(++sir_exit_count==sir_connectors.size()) {
+    exit(0);
+  }
 }
 
 
 void MainObject::exitTimerData()
 {
   if(glasscoder_exiting) {
-    sir_connector->stop();
+    for(unsigned i=0;i<sir_connectors.size();i++) {
+      sir_connectors[i]->stop();
+    }
   }
 }
 
 
 bool MainObject::StartCodec()
 {
-  if((sir_codec=CodecFactory(audio_format,sir_ringbuffer,this))==NULL) {
+  Codec *codec;
+
+  if((codec=
+    CodecFactory(audio_format,sir_ringbuffers[sir_codecs.size()],this))==NULL) {
     syslog(LOG_ERR,"unsupported codec type \"%s\"",
 	   (const char *)Codec::codecTypeText(Codec::TypeMpegL3).toUtf8());
     return false;
   }
-  sir_codec->setBitrate(audio_bitrate);
-  sir_codec->setChannels(audio_channels);
-  sir_codec->setQuality(audio_quality);
-  sir_codec->setSourceSamplerate(jack_get_sample_rate(sir_jack_client));
-  sir_codec->setStreamSamplerate(audio_samplerate);
+  if(audio_bitrate.size()>0) {
+    codec->setBitrate(audio_bitrate[sir_codecs.size()]);
+  }
+  else {
+    codec->setBitrate(0);
+  }
+  codec->setChannels(audio_channels);
+  codec->setQuality(audio_quality);
+  codec->setSourceSamplerate(jack_get_sample_rate(sir_jack_client));
+  codec->setStreamSamplerate(audio_samplerate);
 
-  return sir_codec->start();
+  sir_codecs.push_back(codec);
+
+  return sir_codecs.back()->start();
 }
 
 
-void MainObject::StartServerConnection()
+void MainObject::StartServerConnection(const QString &mntpt)
 {
+  Connector *conn;
+
   //
   // Create Connector Instance
   //
-  sir_connector=ConnectorFactory(server_type,this);
-  connect(sir_connector,SIGNAL(dataRequested(Connector *)),
-	  sir_codec,SLOT(encode(Connector *)));
-  connect(sir_connector,SIGNAL(stopped()),qApp,SLOT(quit()));
-  sir_codec->setCompleteFrames(server_type==Connector::HlsServer);
+  conn=ConnectorFactory(server_type,this);
+  connect(conn,SIGNAL(dataRequested(Connector *)),
+	  sir_codecs[sir_connectors.size()],SLOT(encode(Connector *)));
+  connect(conn,SIGNAL(stopped()),this,SLOT(connectorStoppedData()));
+  sir_codecs[sir_connectors.size()]->
+    setCompleteFrames(server_type==Connector::HlsServer);
 
   //
   // Set Configuration
   //
-  sir_connector->setServerMountpoint(server_mountpoint);
-  sir_connector->setServerUsername(server_username);
-  sir_connector->setServerPassword(server_password);
-  sir_connector->setContentType(sir_codec->contentType());
-  sir_connector->setExtension(sir_codec->defaultExtension());
-  sir_connector->setAudioBitrate(audio_bitrate);
-  sir_connector->setAudioChannels(audio_channels);
-  sir_connector->setAudioSamplerate(audio_samplerate);
-  sir_connector->setStreamDescription(stream_description);
-  sir_connector->setStreamGenre(stream_genre);
-  sir_connector->setStreamName(stream_name);
-  sir_connector->setStreamUrl(stream_url);
-  sir_connector->setStreamIrc(stream_irc);
-  sir_connector->setStreamIcq(stream_icq);
-  sir_connector->setStreamAim(stream_aim);
+  if(mntpt.isEmpty()) {
+    conn->setServerMountpoint(server_mountpoint);
+  }
+  else {
+    conn->setServerMountpoint(mntpt);
+  }
+  conn->setServerUsername(server_username);
+  conn->setServerPassword(server_password);
+  conn->setContentType(sir_codecs[sir_connectors.size()]->contentType());
+  conn->setExtension(sir_codecs[sir_connectors.size()]->defaultExtension());
+  if(audio_bitrate.size()>0) {
+    conn->setAudioBitrate(audio_bitrate[sir_connectors.size()]);
+  }
+  else {
+    conn->setAudioBitrate(0);
+  }
+  conn->setAudioChannels(audio_channels);
+  conn->setAudioSamplerate(audio_samplerate);
+  conn->setStreamDescription(stream_description);
+  conn->setStreamGenre(stream_genre);
+  conn->setStreamName(stream_name);
+  conn->setStreamUrl(stream_url);
+  conn->setStreamIrc(stream_irc);
+  conn->setStreamIcq(stream_icq);
+  conn->setStreamAim(stream_aim);
 
   //
   // Open the server connection
   //
-  sir_connector->connectToServer(server_hostname,server_port);
+  sir_connectors.push_back(conn);
+  sir_connectors.back()->connectToServer(server_hostname,server_port);
+}
+
+
+bool MainObject::StartSingleStream()
+{
+  if(!StartCodec()) {
+    return false;
+  }
+  StartServerConnection();
+
+  return true;
+}
+
+
+bool MainObject::StartMultiStream()
+{
+  for(unsigned i=0;i<audio_bitrate.size();i++) {
+    if(!StartCodec()) {
+      return false;
+    }
+  }
+  for(unsigned i=0;i<audio_bitrate.size();i++) {
+    StartServerConnection(server_mountpoint+
+			  QString().sprintf("-%u",audio_bitrate[i]));
+  }
+
+  return true;
 }
 
 

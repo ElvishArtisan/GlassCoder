@@ -200,3 +200,5 @@
 2015-08-12 Fred Gleason <fredg@paravelsystems.com>
 	* Added 'Codec::completeFrames()' and 'Codec::setCompleteFrames()'
 	methods in 'src/codec.cpp' and 'src/codec.h'.
+2015-08-12 Fred Gleason <fredg@paravelsystems.com>
+	* Added support for multi-rate HLS streams.
