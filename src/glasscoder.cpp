@@ -344,19 +344,21 @@ bool MainObject::StartCodec()
 }
 
 
-void MainObject::StartServerConnection(const QString &mntpt)
+void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
 {
   Connector *conn;
 
   //
   // Create Connector Instance
   //
-  conn=ConnectorFactory(server_type,this);
-  connect(conn,SIGNAL(dataRequested(Connector *)),
-	  sir_codecs[sir_connectors.size()],SLOT(encode(Connector *)));
-  connect(conn,SIGNAL(stopped()),this,SLOT(connectorStoppedData()));
-  sir_codecs[sir_connectors.size()]->
-    setCompleteFrames(server_type==Connector::HlsServer);
+  conn=ConnectorFactory(server_type,is_top,this);
+  if(!is_top) {
+    connect(conn,SIGNAL(dataRequested(Connector *)),
+	    sir_codecs[sir_connectors.size()],SLOT(encode(Connector *)));
+    connect(conn,SIGNAL(stopped()),this,SLOT(connectorStoppedData()));
+    sir_codecs[sir_connectors.size()]->
+      setCompleteFrames(server_type==Connector::HlsServer);
+  }
 
   //
   // Set Configuration
@@ -369,13 +371,21 @@ void MainObject::StartServerConnection(const QString &mntpt)
   }
   conn->setServerUsername(server_username);
   conn->setServerPassword(server_password);
-  conn->setContentType(sir_codecs[sir_connectors.size()]->contentType());
-  conn->setExtension(sir_codecs[sir_connectors.size()]->defaultExtension());
-  if(audio_bitrate.size()>0) {
-    conn->setAudioBitrate(audio_bitrate[sir_connectors.size()]);
+  if(is_top) {
+    conn->setAudioBitrates(&audio_bitrate);
+    conn->setFormatIdentifier(sir_codecs[0]->formatIdentifier());
   }
   else {
-    conn->setAudioBitrate(0);
+    conn->setContentType(sir_codecs[sir_connectors.size()]->contentType());
+    conn->setExtension(sir_codecs[sir_connectors.size()]->defaultExtension());
+    conn->setFormatIdentifier(sir_codecs[sir_connectors.size()]->
+			      formatIdentifier());
+    if(audio_bitrate.size()>0) {
+      conn->setAudioBitrate(audio_bitrate[sir_connectors.size()]);
+    }
+    else {
+      conn->setAudioBitrate(0);
+    }
   }
   conn->setAudioChannels(audio_channels);
   conn->setAudioSamplerate(audio_samplerate);
@@ -408,15 +418,23 @@ bool MainObject::StartSingleStream()
 
 bool MainObject::StartMultiStream()
 {
+  //
+  // Media streams
+  //
   for(unsigned i=0;i<audio_bitrate.size();i++) {
     if(!StartCodec()) {
       return false;
     }
   }
   for(unsigned i=0;i<audio_bitrate.size();i++) {
-    StartServerConnection(server_mountpoint+
-			  QString().sprintf("-%u",audio_bitrate[i]));
+    StartServerConnection(Connector::subMountpointName(server_mountpoint,
+						       audio_bitrate[i]));
   }
+
+  //
+  // Top-level playlist
+  //
+  StartServerConnection(server_mountpoint,true);
 
   return true;
 }

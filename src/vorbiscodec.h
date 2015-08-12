@@ -37,6 +37,7 @@ class VorbisCodec : public Codec
   QString contentType() const;
   unsigned pcmFrames() const;
   QString defaultExtension() const;
+  QString formatIdentifier() const;
   bool startCodec();
 
  protected:

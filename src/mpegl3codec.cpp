@@ -48,6 +48,12 @@ QString MpegL3Codec::defaultExtension() const
 }
 
 
+QString MpegL3Codec::formatIdentifier() const
+{
+  return QString();
+}
+
+
 bool MpegL3Codec::startCodec()
 {
 #ifdef HAVE_LAME

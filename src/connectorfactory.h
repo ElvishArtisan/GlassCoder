@@ -23,7 +23,8 @@
 
 #include "connector.h"
 
-Connector *ConnectorFactory(Connector::ServerType type,QObject *parent=0);
+Connector *ConnectorFactory(Connector::ServerType type,bool is_top,
+			    QObject *parent=0);
 
 
 #endif  // CONNECTORFACTORY_H

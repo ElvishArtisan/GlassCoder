@@ -47,6 +47,12 @@ QString MpegL2Codec::defaultExtension() const
 }
 
 
+QString MpegL2Codec::formatIdentifier() const
+{
+  return QString();
+}
+
+
 bool MpegL2Codec::startCodec()
 {
 #ifdef HAVE_TWOLAME

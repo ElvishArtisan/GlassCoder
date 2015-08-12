@@ -55,6 +55,12 @@ QString VorbisCodec::defaultExtension() const
 }
 
 
+QString VorbisCodec::formatIdentifier() const
+{
+  return QString();
+}
+
+
 bool VorbisCodec::startCodec()
 {
 #ifdef HAVE_VORBIS

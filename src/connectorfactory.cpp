@@ -23,13 +23,14 @@
 #include "icyconnector.h"
 #include "connectorfactory.h"
 
-Connector *ConnectorFactory(Connector::ServerType type,QObject *parent)
+Connector *ConnectorFactory(Connector::ServerType type,bool is_top,
+			    QObject *parent)
 {
   Connector *conn=NULL;
 
   switch(type) {
   case Connector::HlsServer:
-    conn=new HlsConnector(parent);
+    conn=new HlsConnector(is_top,parent);
     break;
 
   case Connector::Shoutcast1Server:

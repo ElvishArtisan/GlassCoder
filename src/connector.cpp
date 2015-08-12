@@ -20,6 +20,8 @@
 
 #include <syslog.h>
 
+#include <QStringList>
+
 #include "connector.h"
 
 Connector::Connector(QObject *parent)
@@ -31,7 +33,7 @@ Connector::Connector(QObject *parent)
   conn_content_type="";
   conn_audio_channels=2;
   conn_audio_samplerate=44100;
-  conn_audio_bitrate=128;
+  conn_audio_bitrates.push_back(128);
   conn_stream_name="no name";
   conn_stream_description="unknown";
   conn_stream_url="";
@@ -141,13 +143,29 @@ void Connector::setAudioSamplerate(unsigned rate)
 
 unsigned Connector::audioBitrate() const
 {
-  return conn_audio_bitrate;
+  return conn_audio_bitrates[0];
 }
 
 
 void Connector::setAudioBitrate(unsigned rate)
 {
-  conn_audio_bitrate=rate;
+  conn_audio_bitrates.clear();
+  conn_audio_bitrates.push_back(rate);
+}
+
+
+std::vector<unsigned> *Connector::audioBitrates()
+{
+  return &conn_audio_bitrates;
+}
+
+
+void Connector::setAudioBitrates(std::vector<unsigned> *rates)
+{
+  conn_audio_bitrates.clear();
+  for(unsigned i=0;i<rates->size();i++) {
+    conn_audio_bitrates.push_back(rates->at(i));
+  }
 }
 
 
@@ -259,6 +277,18 @@ void Connector::setExtension(const QString &str)
 }
 
 
+QString Connector::formatIdentifier() const
+{
+  return conn_format_identifier;
+}
+
+
+void Connector::setFormatIdentifier(const QString &str)
+{
+  conn_format_identifier=str;
+}
+
+
 void Connector::connectToServer(const QString &hostname,uint16_t port)
 {
   conn_host_hostname=hostname;
@@ -305,6 +335,34 @@ QString Connector::serverTypeText(Connector::ServerType type)
   }
 
   return ret;
+}
+
+
+QString Connector::subMountpointName(const QString &mntpt,unsigned bitrate)
+{
+  QStringList f0=mntpt.split(".");
+  int offset=0;
+
+  if((f0[f0.size()-1]=="m3u")||(f0[f0.size()-1]=="m3u8")) {
+    offset=1;
+  }
+  f0.insert(f0.begin()+f0.size()-offset,QString().sprintf("%u",bitrate));
+  return f0.join(".");
+}
+
+
+QString Connector::pathPart(const QString &fullpath)
+{
+  QStringList f0=fullpath.split("/");
+  f0.erase(f0.begin()+f0.size()-1);
+  return f0.join("/");
+}
+
+
+QString Connector::basePart(const QString &fullpath)
+{
+  QStringList f0=fullpath.split("/");
+  return f0[f0.size()-1];
 }
 
 

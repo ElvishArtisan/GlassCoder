@@ -55,6 +55,15 @@ QString HeAacCodec::defaultExtension() const
 }
 
 
+QString HeAacCodec::formatIdentifier() const
+{
+  //
+  // See RFC 6381
+  //
+  return QString("mp4a");
+}
+
+
 bool HeAacCodec::startCodec()
 {
 #ifdef HAVE_AACPLUS

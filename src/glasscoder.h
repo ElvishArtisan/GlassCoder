@@ -90,7 +90,7 @@ class MainObject : public QObject
   //
   // Server Connection
   //
-  void StartServerConnection(const QString &mntpt="");
+  void StartServerConnection(const QString &mntpt="",bool is_top=false);
   std::vector<Connector *> sir_connectors;
 
   //

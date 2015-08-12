@@ -46,6 +46,12 @@ QString OpusCodec::defaultExtension() const
 }
 
 
+QString OpusCodec::formatIdentifier() const
+{
+  return QString();
+}
+
+
 bool OpusCodec::startCodec()
 {
 #ifdef HAVE_OPUS

@@ -41,7 +41,7 @@ class HlsConnector : public Connector
 {
   Q_OBJECT;
  public:
-  HlsConnector(QObject *parent=0);
+  HlsConnector(bool is_top,QObject *parent=0);
   ~HlsConnector();
   Connector::ServerType serverType() const;
   void stop();
@@ -64,9 +64,11 @@ class HlsConnector : public Connector
  private:
   void RotateMediaFile();
   void WritePlaylistFile();
+  void WriteTopPlaylistFile();
   QString GetMediaFilename(int seqno);
   void GetStreamTimestamp(uint8_t *bytes,uint64_t frames);
   void AddCurlAuthArgs(QStringList *arglist);
+  bool hls_is_top;
   QDir *hls_temp_dir;
   QString hls_playlist_filename;
   int hls_sequence_head;

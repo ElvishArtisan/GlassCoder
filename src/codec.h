@@ -60,6 +60,7 @@ class Codec : public QObject
   virtual QString contentType() const=0;
   virtual unsigned pcmFrames() const=0;
   virtual QString defaultExtension() const=0;
+  virtual QString formatIdentifier() const=0;
   virtual bool start();
   static QString codecTypeText(Codec::Type type);
 

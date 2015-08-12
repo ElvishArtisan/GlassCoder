@@ -26,9 +26,10 @@
 
 #include "hlsconnector.h"
 
-HlsConnector::HlsConnector(QObject *parent)
+HlsConnector::HlsConnector(bool is_top,QObject *parent)
   : Connector(parent)
 {
+  hls_is_top=is_top;
   hls_sequence_head=0;
   hls_sequence_back=0;
   hls_media_frames=0;
@@ -99,27 +100,29 @@ void HlsConnector::stop()
 			  hostHostname()+QString().sprintf(":%u",hostPort())+
 			  hls_put_directory+"/"+hls_put_basename);
 
-  //
-  // Current Media Segments
-  //
-  for(int i=hls_sequence_head;i<=hls_sequence_back;i++) {
-    hls_stop_args.push_back("-X");
-    hls_stop_args.push_back("DELETE");
-    hls_stop_args.push_back("http://"+hostHostname()+hls_put_directory+"/"+
-			    GetMediaFilename(i));
-  }
+  if(!hls_is_top) {
+    //
+    // Current Media Segments
+    //
+    for(int i=hls_sequence_head;i<=hls_sequence_back;i++) {
+      hls_stop_args.push_back("-X");
+      hls_stop_args.push_back("DELETE");
+      hls_stop_args.push_back("http://"+hostHostname()+hls_put_directory+"/"+
+			      GetMediaFilename(i));
+    }
 
-  //
-  // Expired Media Segments
-  //
-  std::map<int,uint64_t>::iterator ci=hls_media_killtimes.begin();
-  while(ci!=hls_media_killtimes.end()) {
-    hls_stop_args.push_back("-X");
-    hls_stop_args.push_back("DELETE");
-    hls_stop_args.
-      push_back("http://"+hostHostname()+hls_put_directory+"/"+
-		GetMediaFilename(ci->first));
-    hls_media_killtimes.erase(ci++);
+    //
+    // Expired Media Segments
+    //
+    std::map<int,uint64_t>::iterator ci=hls_media_killtimes.begin();
+    while(ci!=hls_media_killtimes.end()) {
+      hls_stop_args.push_back("-X");
+      hls_stop_args.push_back("DELETE");
+      hls_stop_args.
+	push_back("http://"+hostHostname()+hls_put_directory+"/"+
+		  GetMediaFilename(ci->first));
+      hls_media_killtimes.erase(ci++);
+    }
   }
 
   //
@@ -156,25 +159,51 @@ void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
   //
   hls_playlist_filename=hls_temp_dir->path()+"/"+hls_put_basename;
 
-  //
-  // Create initial media file
-  //
-  hls_media_filename=GetMediaFilename(hls_sequence_back);
-  if((hls_media_handle=
-      fopen((hls_temp_dir->path()+"/"+hls_media_filename).toUtf8(),"w"))==
-     NULL) {
-    syslog(LOG_WARNING,"unable to write media data to \"%s\" [%s]",
-	   (const char *)(hls_temp_dir->path()+"/"+hls_media_filename).toUtf8(),
-	   strerror(errno));
+  if(hls_is_top) {
+    WriteTopPlaylistFile();
+    if(hls_put_process==NULL) {
+      hls_put_args.clear();
+      AddCurlAuthArgs(&hls_put_args);
+      hls_put_args.push_back("--write-out");
+      hls_put_args.push_back("%{http_code}");
+      hls_put_args.push_back("--silent");
+      hls_put_args.push_back("--output");
+      hls_put_args.push_back("/dev/null");
+      hls_put_args.push_back("-T");
+      hls_put_args.push_back(hls_playlist_filename);
+      hls_put_args.push_back("http://"+hostHostname()+hls_put_directory+"/");
+      hls_put_process=new QProcess(this);
+      connect(hls_put_process,SIGNAL(error(QProcess::ProcessError)),
+	      this,SLOT(putErrorData(QProcess::ProcessError)));
+      connect(hls_put_process,SIGNAL(finished(int,QProcess::ExitStatus)),
+	      this,SLOT(putFinishedData(int,QProcess::ExitStatus)));
+      hls_put_process->start("curl",hls_put_args);
   }
+  else {
+    syslog(LOG_WARNING,"curl(1) command overrun");
+  }
+  }
+  else {
+    //
+    // Create initial media file
+    //
+    hls_media_filename=GetMediaFilename(hls_sequence_back);
+    if((hls_media_handle=
+	fopen((hls_temp_dir->path()+"/"+hls_media_filename).toUtf8(),"w"))==
+       NULL) {
+      syslog(LOG_WARNING,"unable to write media data to \"%s\" [%s]",
+	     (const char *)(hls_temp_dir->path()+"/"+
+			    hls_media_filename).toUtf8(),strerror(errno));
+    }
 
-  //
-  // Write ID3 tag
-  //
-  uint8_t id3_header[HLS_ID3_HEADER_SIZE];
-  hls_total_media_frames=HLS_SEGMENT_SIZE*audioSamplerate();
-  GetStreamTimestamp(id3_header,hls_total_media_frames);
-  fwrite(id3_header,1,HLS_ID3_HEADER_SIZE,hls_media_handle);
+    //
+    // Write ID3 tag
+    //
+    uint8_t id3_header[HLS_ID3_HEADER_SIZE];
+    hls_total_media_frames=HLS_SEGMENT_SIZE*audioSamplerate();
+    GetStreamTimestamp(id3_header,hls_total_media_frames);
+    fwrite(id3_header,1,HLS_ID3_HEADER_SIZE,hls_media_handle);
+  }
 
   setConnected(true);
 }
@@ -228,7 +257,9 @@ void HlsConnector::putFinishedData(int exit_code,
 	     code,(const char *)hls_put_args.join(" ").toUtf8());
     }
   }
-  hls_temp_dir->remove(hls_media_killname);
+  if(!hls_is_top) {
+    hls_temp_dir->remove(hls_media_killname);
+  }
   hls_put_garbage_timer->start(0);
 }
 
@@ -432,6 +463,32 @@ void HlsConnector::WritePlaylistFile()
   for(int i=hls_sequence_head;i<=hls_sequence_back;i++) {
     fprintf(f,"#EXTINF:%7.5lf,\n%s\n",
 	    hls_media_durations[i],(const char *)GetMediaFilename(i).toUtf8());
+  }
+  fclose(f);
+}
+
+
+void HlsConnector::WriteTopPlaylistFile()
+{
+  FILE *f=NULL;
+
+  if((f=fopen(hls_playlist_filename.toUtf8(),"w"))==NULL) {
+    syslog(LOG_ERR,"unable to write playlist data to \"%s\" [%s]",
+	   (const char *)(hls_temp_dir->path()+"/"+
+			  hls_playlist_filename).toUtf8(),strerror(errno));
+    exit(256);
+  }
+  fprintf(f,"#EXTM3U\n");
+  fprintf(f,"#EXT-X-VERSION:%d\n",HLS_VERSION);
+  for(unsigned i=0;i<audioBitrates()->size();i++) {
+    QString str=
+      QString().sprintf("#EXT-X-STREAM-INF:BANDWIDTH=%u,RESOLUTION=0x0",
+			1000*audioBitrates()->at(i));
+    if(!formatIdentifier().isEmpty()) {
+      str+=",CODECS=\""+formatIdentifier()+"\"";
+    }
+    fprintf(f,"%s\n",(const char *)str.toUtf8());
+    fprintf(f,"%s.m3u8\n",(const char *)Connector::basePart(Connector::subMountpointName(serverMountpoint(),audioBitrates()->at(i))).toUtf8());
   }
   fclose(f);
 }

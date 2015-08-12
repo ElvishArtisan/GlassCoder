@@ -55,6 +55,15 @@ QString AacCodec::defaultExtension() const
 }
 
 
+QString AacCodec::formatIdentifier() const
+{
+  //
+  // See RFC 6381
+  //
+  return QString("mp4a");
+}
+
+
 bool AacCodec::startCodec()
 {
 #ifdef HAVE_FAAC

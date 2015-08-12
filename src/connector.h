@@ -23,6 +23,8 @@
 
 #include <stdint.h>
 
+#include <vector>
+
 #include <QObject>
 #include <QString>
 #include <QTcpSocket>
@@ -53,6 +55,8 @@ class Connector : public QObject
   void setAudioSamplerate(unsigned rate);
   unsigned audioBitrate() const;
   void setAudioBitrate(unsigned rate);
+  std::vector<unsigned> *audioBitrates();
+  void setAudioBitrates(std::vector<unsigned> *rates);
   QString streamName() const;
   void setStreamName(const QString &str);
   QString streamDescription() const;
@@ -71,10 +75,15 @@ class Connector : public QObject
   void setStreamPublic(bool state);
   QString extension() const;
   void setExtension(const QString &str);
+  QString formatIdentifier() const;
+  void setFormatIdentifier(const QString &str);
   virtual void connectToServer(const QString &hostname,uint16_t port);
   virtual int64_t writeData(int frames,const unsigned char *data,int64_t len);
   virtual void stop();
   static QString serverTypeText(Connector::ServerType);
+  static QString subMountpointName(const QString &mntpt,unsigned bitrate);
+  static QString pathPart(const QString &fullpath);
+  static QString basePart(const QString &fullpath);
   static QString urlEncode(const QString &str);
   static QString urlDecode(const QString &str);
   static QString base64Encode(const QString &str);
@@ -107,7 +116,8 @@ class Connector : public QObject
   QString conn_content_type;
   unsigned conn_audio_channels;
   unsigned conn_audio_samplerate;
-  unsigned conn_audio_bitrate;
+  //unsigned conn_audio_bitrate;
+  std::vector<unsigned> conn_audio_bitrates;
   QString conn_stream_name;
   QString conn_stream_description;
   QString conn_stream_url;
@@ -117,6 +127,7 @@ class Connector : public QObject
   QString conn_stream_genre;
   bool conn_stream_public;
   QString conn_extension;
+  QString conn_format_identifier;
   QTimer *conn_data_timer;
   QTimer *conn_watchdog_timer;
   bool conn_watchdog_active;
