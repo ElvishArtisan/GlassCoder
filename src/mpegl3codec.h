@@ -80,6 +80,8 @@ class MpegL3Codec : public Codec
   int (*lame_set_bWriteVbrTag)(lame_global_flags *, int);
   int (*lame_set_VBR)(lame_global_flags *, vbr_mode);
   int (*lame_set_VBR_quality)(lame_global_flags *, float);
+  int (*lame_set_disable_reservoir)(lame_global_flags *,int);
+  int (*lame_get_disable_reservoir)(const lame_global_flags *);
 #endif  // HAVE_LAME
 };
 

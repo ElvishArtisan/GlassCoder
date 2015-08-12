@@ -331,6 +331,7 @@ void MainObject::StartServerConnection()
   connect(sir_connector,SIGNAL(dataRequested(Connector *)),
 	  sir_codec,SLOT(encode(Connector *)));
   connect(sir_connector,SIGNAL(stopped()),qApp,SLOT(quit()));
+  sir_codec->setCompleteFrames(server_type==Connector::HlsServer);
 
   //
   // Set Configuration

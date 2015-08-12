@@ -28,6 +28,7 @@ Codec::Codec(Codec::Type type,Ringbuffer *ring,QObject *parent)
   codec_quality=0.5;
   codec_source_samplerate=48000;
   codec_stream_samplerate=48000;
+  codec_complete_frames=false;
   codec_ring2=NULL;
 }
 
@@ -103,6 +104,18 @@ unsigned Codec::streamSamplerate() const
 void Codec::setStreamSamplerate(unsigned rate)
 {
   codec_stream_samplerate=rate;
+}
+
+
+bool Codec::completeFrames() const
+{
+  return codec_complete_frames;
+}
+
+
+void Codec::setCompleteFrames(bool state)
+{
+  codec_complete_frames=state;
 }
 
 

@@ -102,6 +102,10 @@ bool MpegL3Codec::startCodec()
   *(void **)(&lame_set_VBR)=dlsym(l3_lame_handle,"lame_set_VBR");
   *(void **)(&lame_set_VBR_quality)=
     dlsym(l3_lame_handle,"lame_set_VBR_quality");
+  *(void **)(&lame_set_disable_reservoir)=
+    dlsym(l3_lame_handle,"lame_set_disable_reservoir");
+  *(void **)(&lame_get_disable_reservoir)=
+    dlsym(l3_lame_handle,"lame_get_disable_reservoir");
   if(lame_encode_buffer_ieee_float==NULL) {  // Earlier versions of LAME didn't include this!
     return false;
   }
@@ -125,6 +129,9 @@ bool MpegL3Codec::startCodec()
   if((l3_lameopts=lame_init())==NULL) {
     syslog(LOG_ERR,"unable to initialize MP3 encoder");
     return false;
+  }
+  if(completeFrames()) {
+    lame_set_disable_reservoir(l3_lameopts,1);
   }
   lame_set_mode(l3_lameopts,mpeg_mode);
   lame_set_num_channels(l3_lameopts,channels());

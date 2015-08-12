@@ -54,6 +54,8 @@ class Codec : public QObject
   void setSourceSamplerate(unsigned rate);
   unsigned streamSamplerate() const;
   void setStreamSamplerate(unsigned rate);
+  bool completeFrames() const;
+  void setCompleteFrames(bool state);
   virtual QString contentType() const=0;
   virtual unsigned pcmFrames() const=0;
   virtual QString defaultExtension() const=0;
@@ -76,6 +78,7 @@ class Codec : public QObject
   double codec_quality;
   unsigned codec_source_samplerate;
   unsigned codec_stream_samplerate;
+  bool codec_complete_frames;
   SRC_STATE *codec_src_state;
   SRC_DATA *codec_src_data;
   float *codec_pcm_in;
