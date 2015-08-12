@@ -204,3 +204,6 @@
 	* Added support for multi-rate HLS streams.
 2015-08-12 Fred Gleason <fredg@paravelsystems.com>
 	* Added support for Master Playlists for multi-rate HLS streams.
+2015-08-12 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/heaccodec.cpp' that threw a segfault when
+	specifying a non-supported stream bitrate.

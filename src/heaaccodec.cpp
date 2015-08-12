@@ -85,6 +85,12 @@ bool HeAacCodec::startCodec()
     syslog(LOG_ERR,"unsupported channel count");
     return false;
   }
+  if(((streamSamplerate()==32000)&&(bitrate()!=32))|| 
+     ((bitrate()!=32)&&(bitrate()!=48)&&(bitrate()!=56)&&
+      (bitrate()!=64)&&(bitrate()!=96)&&(bitrate()!=128))) {
+    syslog(LOG_ERR,"unsupported stream bit rate");
+    return false;
+  }
 
   //
   // Load Library
