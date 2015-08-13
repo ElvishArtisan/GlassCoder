@@ -32,9 +32,9 @@
 #include <QObject>
 
 #include "connector.h"
+#include "glasslimits.h"
 #include "ringbuffer.h"
 
-#define MAX_AUDIO_CHANNELS 2
 #define MAX_AUDIO_BUFFER 4096
 
 class Codec : public QObject

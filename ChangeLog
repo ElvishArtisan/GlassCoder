@@ -207,3 +207,7 @@
 2015-08-12 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/heaccodec.cpp' that threw a segfault when
 	specifying a non-supported stream bitrate.
+2015-08-13 Fred Gleason <fredg@paravelsystems.com>
+	* Refactored the JACK audio source to use an abstract class-based
+	design.
+	* Swallowed the Jack_ringbuffer_* routines from Jack2.

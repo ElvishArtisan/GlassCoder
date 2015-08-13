@@ -25,6 +25,7 @@
 
 #include <QCoreApplication>
 
+#include "audiodevicefactory.h"
 #include "cmdswitch.h"
 #include "codecfactory.h"
 #include "connectorfactory.h"
@@ -55,8 +56,6 @@ MainObject::MainObject(QObject *parent)
   audio_format=Codec::TypeVorbis;
   audio_quality=-1.0;
   audio_samplerate=DEFAULT_AUDIO_SAMPLERATE;
-  jack_server_name="";
-  jack_client_name=DEFAULT_JACK_CLIENT_NAME;
   server_type=Connector::Icecast2Server;
   server_hostname="";
   server_mountpoint="";
@@ -151,14 +150,6 @@ MainObject::MainObject(QObject *parent)
       }
       cmd->setProcessed(i,true);
     }
-    if(cmd->key(i)=="--jack-server-name") {
-      jack_server_name=cmd->value(i);
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--jack-client-name") {
-      jack_client_name=cmd->value(i);
-      cmd->setProcessed(i,true);
-    }
     if(cmd->key(i)=="--server-hostname") {
       server_hostname=cmd->value(i);
       cmd->setProcessed(i,true);
@@ -241,15 +232,23 @@ MainObject::MainObject(QObject *parent)
       cmd->setProcessed(i,true);
     }
     if(!cmd->processed(i)) {
-      syslog(LOG_ERR,"glasscoder: unknown option \"%s\"",
-	      (const char *)cmd->key(i).toAscii());
-      exit(256);
+      device_keys.push_back(cmd->key(i));
+      device_values.push_back(cmd->value(i));
     }
   }
 
   //
   // Sanity Checks
   //
+  for(int i=0;i<device_keys.size();i++) {
+    if(device_keys[i].split("-",QString::SkipEmptyParts)[0]!=
+       AudioDevice::optionKeyword(AudioDevice::Jack)) {
+      syslog(LOG_ERR,"glasscoder: unknown/inappropriate option \"%s\"",
+	      (const char *)device_keys[i].toAscii());
+      exit(256);
+    }
+  }
+
   if(server_hostname.isEmpty()) {
     syslog(LOG_ERR,"missing --server-hostname parameter");
     exit(256);
@@ -273,7 +272,7 @@ MainObject::MainObject(QObject *parent)
     audio_bitrate.push_back(DEFAULT_AUDIO_BITRATE);
   }
 
-  if(!StartJack()) {
+  if(!StartAudioDevice()) {
     exit(256);
   }
 
@@ -317,6 +316,43 @@ void MainObject::exitTimerData()
 }
 
 
+bool MainObject::StartAudioDevice()
+{
+  //
+  // Create Ringbuffers
+  //
+  if(audio_bitrate.size()==0) {   // For VBR modes
+    sir_ringbuffers.push_back(new Ringbuffer(RINGBUFFER_SIZE,audio_channels));
+  }
+  else {
+    for(unsigned i=0;i<audio_bitrate.size();i++) {
+      sir_ringbuffers.push_back(new Ringbuffer(RINGBUFFER_SIZE,audio_channels));
+    }
+  }
+
+  //
+  // Start Audio Device
+  //
+  QString err;
+  if((sir_audio_device=
+      AudioDeviceFactory(AudioDevice::Jack,audio_channels,audio_samplerate,
+			 &sir_ringbuffers,this))==NULL) {
+    syslog(LOG_ERR,"%s devices not supported",(const char *)AudioDevice::deviceTypeText(AudioDevice::Jack).toUtf8());
+    exit(256);
+  }
+  if(!sir_audio_device->processOptions(&err,device_keys,device_values)) {
+    syslog(LOG_ERR,"glasscoder: %s",(const char *)err.toUtf8());
+    exit(256);
+  }
+  if(!sir_audio_device->start()) {
+    syslog(LOG_ERR,"unable to start %s device",(const char *)AudioDevice::deviceTypeText(AudioDevice::Jack).toUtf8());
+    exit(256);
+  }
+
+  return true;
+}
+
+
 bool MainObject::StartCodec()
 {
   Codec *codec;
@@ -335,7 +371,7 @@ bool MainObject::StartCodec()
   }
   codec->setChannels(audio_channels);
   codec->setQuality(audio_quality);
-  codec->setSourceSamplerate(jack_get_sample_rate(sir_jack_client));
+  codec->setSourceSamplerate(sir_audio_device->deviceSamplerate());
   codec->setStreamSamplerate(audio_samplerate);
 
   sir_codecs.push_back(codec);

@@ -26,20 +26,15 @@
 #include <vector>
 
 #include <QObject>
+#include <QStringList>
 #include <QTimer>
 
-#include <jack/jack.h>
-
+#include "audiodevice.h"
 #include "codec.h"
 #include "connector.h"
+#include "glasslimits.h"
 #include "ringbuffer.h"
 
-#define DEFAULT_JACK_CLIENT_NAME "glasscoder"
-#define DEFAULT_SERVER_PORT 8000
-#define DEFAULT_SERVER_USERNAME "source"
-#define DEFAULT_AUDIO_BITRATE 128
-#define DEFAULT_AUDIO_SAMPLERATE 44100
-#define RINGBUFFER_SIZE 262144
 #define GLASSCODER_USAGE "[options]\n"
 
 class MainObject : public QObject
@@ -74,18 +69,15 @@ class MainObject : public QObject
   QString server_password;
   uint16_t server_port;
   QString server_username;
+  QStringList device_keys;
+  QStringList device_values;
 
   //
-  // Jack
+  // Audio Device
   //
-  bool StartJack();
-  QString jack_server_name;
-  QString jack_client_name;
-  jack_client_t *sir_jack_client;
-  jack_nframes_t sir_jack_sample_rate;
-  jack_port_t *sir_jack_ports[MAX_AUDIO_CHANNELS];
+  bool StartAudioDevice();
   std::vector<Ringbuffer *> sir_ringbuffers;
-  friend int JackProcess(jack_nframes_t nframes, void *arg);
+  AudioDevice *sir_audio_device;
 
   //
   // Server Connection

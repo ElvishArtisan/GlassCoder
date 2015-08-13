@@ -66,6 +66,9 @@ AC_ARG_ENABLE(aacplus,[  --disable-aacplus       disable MPEG-4 HE-AAC+ support]
 	      [AACPLUS_DISABLED=yes],[]) 
 AC_ARG_ENABLE(vorbis,[  --disable-vorbis        disable Ogg Vorbis support],
 	      [VORBIS_DISABLED=yes],[]) 
+AC_ARG_ENABLE(jack,[  --disable-jack          disable JACK sound support],
+		      [JACK_DISABLED=yes],[])
+
 #AC_ARG_ENABLE(opus,[  --disable-opus          disable Opus support],
 #	      [OPUS_DISABLED=yes],[]) 
 
@@ -77,9 +80,21 @@ AC_CHECK_PROG(MOC_NAME,moc-qt4,[moc-qt4],[moc])
 AC_SUBST(MOC,$MOC_NAME)
 
 #
-# Check for Jack Audio Connection Kit (Mandatory)
+# Check for Jack Audio Connection Kit
 #
-AC_CHECK_HEADER(jack/jack.h,[],[AC_MSG_ERROR([*** JACK not found ***])])
+AC_CHECK_HEADER(jack/jack.h,[JACK_FOUND=y],[])
+if test $JACK_FOUND ; then
+  if test -z $JACK_DISABLED ; then
+    AC_DEFINE(JACK,yes)
+    AC_SUBST(LIBJACK,-ljack)
+    USING_JACK=yes
+  else 
+    AC_SUBST(LIBJACK,"")
+  fi
+else 
+  AC_SUBST(LIBJACK,"")
+fi
+
 
 #
 # Check for Secret Rabbit Code (Mandatory)
@@ -237,6 +252,13 @@ if test -z $USING_VORBIS ; then
 AC_MSG_NOTICE("|     Ogg Vorbis (via libogg and libvorbis) ... No    |")
 else
 AC_MSG_NOTICE("|     Ogg Vorbis (via libogg and libvorbis) ... Yes   |")
+fi
+AC_MSG_NOTICE("|                                                     |")
+AC_MSG_NOTICE("| Audio Sources:                                      |")
+if test -z $USING_JACK ; then
+AC_MSG_NOTICE("|          Jack Audio Connection Kit (JACK) ... No    |")
+else
+AC_MSG_NOTICE("|          Jack Audio Connection Kit (JACK) ... Yes   |")
 fi
 AC_MSG_NOTICE("|-----------------------------------------------------|")
 AC_MSG_NOTICE()

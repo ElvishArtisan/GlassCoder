@@ -1,6 +1,6 @@
-// jack.cpp
+// jackdevice.cpp
 //
-// Jack Processing Routines for glasscoder(1)
+// Audio source for the Jack Audio Connection Kit
 //
 //   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -18,37 +18,41 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <syslog.h>
 
-#include "glasscoder.h"
+#include "jackdevice.h"
 
+#ifdef JACK
 //
 // JACK Callback
 //
-jack_default_audio_sample_t *cb_buffers[MAX_AUDIO_CHANNELS];
-float cb_interleave_buffer[MAX_AUDIO_CHANNELS*RINGBUFFER_SIZE];
+jack_default_audio_sample_t *jack_cb_buffers[MAX_AUDIO_CHANNELS];
+float jack_cb_interleave_buffer[MAX_AUDIO_CHANNELS*RINGBUFFER_SIZE];
 
 int JackProcess(jack_nframes_t nframes, void *arg)
 {
   static unsigned i;
   static jack_nframes_t j;
-  MainObject *obj=(MainObject *)arg;
+  JackDevice *obj=(JackDevice *)arg;
 
   //
   // Get Buffers
   //
-  for(i=0;i<obj->audio_channels;i++) {
-    cb_buffers[i]=(jack_default_audio_sample_t *)
-      jack_port_get_buffer(obj->sir_jack_ports[i],nframes);
+  for(i=0;i<obj->channels();i++) {
+    jack_cb_buffers[i]=(jack_default_audio_sample_t *)
+      jack_port_get_buffer(obj->jack_jack_ports[i],nframes);
   }
 
   //
   // Interleave Channels
   //
-  for(i=0;i<obj->audio_channels;i++) {
-    if(cb_buffers[i]!=NULL) {
+  for(i=0;i<obj->channels();i++) {
+    if(jack_cb_buffers[i]!=NULL) {
       for(j=0;j<nframes;j++) {
-	cb_interleave_buffer[obj->audio_channels*j+i]=(float)cb_buffers[i][j];
+	jack_cb_interleave_buffer[obj->channels()*j+i]=
+	  (float)jack_cb_buffers[i][j];
       }
     }
   }
@@ -56,44 +60,70 @@ int JackProcess(jack_nframes_t nframes, void *arg)
   //
   // Write It
   //
-  for(i=0;i<obj->sir_ringbuffers.size();i++) {
-    obj->sir_ringbuffers[i]->write(cb_interleave_buffer,nframes);
+  for(i=0;i<obj->ringBufferQuantity();i++) {
+    obj->ringBuffer(i)->write(jack_cb_interleave_buffer,nframes);
   }
 
   return 0;
 }
+#endif  // JACK
 
 
-bool MainObject::StartJack()
+JackDevice::JackDevice(unsigned chans,unsigned samprate,
+		       std::vector<Ringbuffer *> *rings,QObject *parent)
+  : AudioDevice(chans,samprate,rings,parent)
 {
-  jack_options_t jackopts=JackNullOption;
-  jack_status_t jackstat=JackFailure;
+  jack_server_name="";
+  jack_client_name=DEFAULT_JACK_CLIENT_NAME;
+}
 
-  //
-  // Create Ringbuffers
-  //
-  if(audio_bitrate.size()==0) {   // For VBR modes
-    sir_ringbuffers.push_back(new Ringbuffer(RINGBUFFER_SIZE,audio_channels));
-  }
-  else {
-    for(unsigned i=0;i<audio_bitrate.size();i++) {
-      sir_ringbuffers.push_back(new Ringbuffer(RINGBUFFER_SIZE,audio_channels));
+
+JackDevice::~JackDevice()
+{
+}
+
+
+bool JackDevice::processOptions(QString *err,const QStringList &keys,
+				const QStringList &values)
+{
+  for(int i=0;i<keys.size();i++) {
+    bool processed=false;
+    if(keys[i]=="--jack-server-name") {
+      jack_server_name=values[i];
+      processed=true;
+    }
+    if(keys[i]=="--jack-client-name") {
+      jack_client_name=values[i];
+      processed=true;
+    }
+    if(!processed) {
+      *err=tr("unrecognized option")+" "+keys[i]+"\"";
+      return false;
     }
   }
+  return true;
+}
+
+
+bool JackDevice::start()
+{
+#ifdef JACK
+  jack_options_t jackopts=JackNullOption;
+  jack_status_t jackstat=JackFailure;
 
   //
   // Connect to JACK Instance
   //
   if(jack_server_name.isEmpty()) {
-    sir_jack_client=
+    jack_jack_client=
       jack_client_open(jack_client_name.toAscii(),jackopts,&jackstat);
   }
   else {
-    sir_jack_client=
+    jack_jack_client=
       jack_client_open(jack_client_name.toAscii(),jackopts,&jackstat,
 		       (const char *)jack_server_name.toAscii());
   }
-  if(sir_jack_client==NULL) {
+  if(jack_jack_client==NULL) {
     if((jackstat&JackInvalidOption)!=0) {
       syslog(LOG_ERR,"invalid or unsupported JACK option");
     }
@@ -131,27 +161,36 @@ bool MainObject::StartJack()
     syslog(LOG_ERR,"no connection to JACK server");
     return false;
   }
-  jack_set_process_callback(sir_jack_client,JackProcess,this);
+  jack_set_process_callback(jack_jack_client,JackProcess,this);
 
   //
   // Join the Graph
   //
-  if(jack_activate(sir_jack_client)) {
+  if(jack_activate(jack_jack_client)) {
     syslog(LOG_ERR,"unable to join JACK graph");
     return false;
   }
-  sir_jack_sample_rate=jack_get_sample_rate(sir_jack_client);
+  jack_jack_sample_rate=jack_get_sample_rate(jack_jack_client);
 
   //
   // Register Ports
   //
-  for(unsigned i=0;i<audio_channels;i++) {
+  for(unsigned i=0;i<channels();i++) {
     QString name=QString().sprintf("input_%d",i+1);
-    sir_jack_ports[i]=
-      jack_port_register(sir_jack_client,name.toAscii(),JACK_DEFAULT_AUDIO_TYPE,
+    jack_jack_ports[i]=
+      jack_port_register(jack_jack_client,name.toAscii(),JACK_DEFAULT_AUDIO_TYPE,
 			 JackPortIsInput|JackPortIsTerminal,0);
   }
-  syslog(LOG_DEBUG,"connected to JACK, sample rate = %u",sir_jack_sample_rate);
+  syslog(LOG_DEBUG,"connected to JACK, sample rate = %u",jack_jack_sample_rate);
 
   return true;
+
+#endif  // JACK
+  return false;
+}
+
+
+unsigned JackDevice::deviceSamplerate() const
+{
+  return jack_jack_sample_rate;
 }

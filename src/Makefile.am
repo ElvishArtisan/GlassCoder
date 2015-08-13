@@ -31,17 +31,20 @@ moc_%.cpp:	%.h
 bin_PROGRAMS = glasscoder
 
 dist_glasscoder_SOURCES = aaccodec.cpp aaccodec.h\
+                          audiodevice.cpp audiodevice.h\
+                          audiodevicefactory.cpp audiodevicefactory.h\
                           cmdswitch.cpp cmdswitch.h\
                           codec.cpp codec.h\
                           codecfactory.cpp codecfactory.h\
                           connector.cpp connector.h\
                           connectorfactory.cpp connectorfactory.h\
                           glasscoder.cpp glasscoder.h\
+                          glasslimits.h\
                           heaaccodec.cpp heaaccodec.h\
                           hlsconnector.cpp hlsconnector.h\
                           iceconnector.cpp iceconnector.h\
                           icyconnector.cpp icyconnector.h\
-                          jack.cpp\
+                          jackdevice.cpp jackdevice.h\
                           mpegl2codec.cpp mpegl2codec.h\
                           mpegl3codec.cpp mpegl3codec.h\
                           opuscodec.cpp opuscodec.h\
@@ -50,6 +53,7 @@ dist_glasscoder_SOURCES = aaccodec.cpp aaccodec.h\
                           vorbiscodec.cpp vorbiscodec.h
 
 nodist_glasscoder_SOURCES = moc_aaccodec.cpp\
+                            moc_audiodevice.cpp\
                             moc_codec.cpp\
                             moc_connector.cpp\
                             moc_glasscoder.cpp\
@@ -57,12 +61,13 @@ nodist_glasscoder_SOURCES = moc_aaccodec.cpp\
                             moc_hlsconnector.cpp\
                             moc_iceconnector.cpp\
                             moc_icyconnector.cpp\
+                            moc_jackdevice.cpp\
                             moc_mpegl2codec.cpp\
                             moc_mpegl3codec.cpp\
                             moc_opuscodec.cpp\
                             moc_vorbiscodec.cpp
 
-glasscoder_LDADD = @SIRLIBS@
+glasscoder_LDADD = @SIRLIBS@ @LIBJACK@
 glasscoder_LDFLAGS = @SIRFLAGS@
 
 CLEANFILES = *~\
