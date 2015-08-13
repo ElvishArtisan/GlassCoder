@@ -32,16 +32,19 @@ class AudioDevice : public QObject
 {
   Q_OBJECT;
  public:
-  enum DeviceType {Jack=0};
+  enum DeviceType {Jack=0,File=1};
   AudioDevice(unsigned chans,unsigned samprate,
 	      std::vector<Ringbuffer *> *rings,QObject *parent=0);
   ~AudioDevice();
   virtual bool processOptions(QString *err,const QStringList &keys,
 			      const QStringList &values)=0;
-  virtual bool start()=0;
+  virtual bool start(QString *err)=0;
   virtual unsigned deviceSamplerate() const;
   static QString deviceTypeText(AudioDevice::DeviceType type);
   static QString optionKeyword(AudioDevice::DeviceType type);
+
+ signals:
+  void hasStopped();
 
  protected:
   unsigned ringBufferQuantity() const;

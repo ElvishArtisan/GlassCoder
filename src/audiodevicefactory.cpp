@@ -18,6 +18,7 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include "filedevice.h"
 #include "jackdevice.h"
 #include "audiodevicefactory.h"
 
@@ -29,6 +30,10 @@ AudioDevice *AudioDeviceFactory(AudioDevice::DeviceType type,
   AudioDevice *dev=NULL;
 
   switch(type) {
+  case AudioDevice::File:
+    dev=new FileDevice(chans,samprate,rings,parent);
+    break;
+
   case AudioDevice::Jack:
     dev=new JackDevice(chans,samprate,rings,parent);
     break;

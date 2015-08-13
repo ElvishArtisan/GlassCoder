@@ -46,6 +46,10 @@ QString AudioDevice::deviceTypeText(AudioDevice::DeviceType type)
   QString ret=tr("Unknown Device");
 
   switch(type) {
+  case AudioDevice::File:
+    ret=tr("File Streaming");
+    break;
+
   case AudioDevice::Jack:
     ret=tr("JACK Audio Connection Kit");
     break;
@@ -60,6 +64,10 @@ QString AudioDevice::optionKeyword(AudioDevice::DeviceType type)
   QString ret;
 
   switch(type) {
+  case AudioDevice::File:
+    ret="file";
+    break;
+
   case AudioDevice::Jack:
     ret="jack";
     break;

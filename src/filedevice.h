@@ -1,6 +1,6 @@
-// jackdevice.h
+// filedevice.h
 //
-// Audio source for the Jack Audio Connection Kit
+// Audio source for streaming direct from a file.
 //
 //   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -18,42 +18,50 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef JACKDEVICE_H
-#define JACKDEVICE_H
+#ifndef FILEDEVICE_H
+#define FILEDEVICE_H
 
-#ifdef JACK
-#include <jack/jack.h>
-#endif  // JACK
+#include <stdio.h>
 
+#include <vector>
+
+#include <QObject>
 #include <QString>
+#include <QStringList>
+#include <QTimer>
+
+#ifdef SNDFILE
+#include <sndfile.h>
+#endif  // SNDFILE
 
 #include "audiodevice.h"
-#include "glasslimits.h"
+#include "ringbuffer.h"
 
-#define DEFAULT_JACK_CLIENT_NAME "glasscoder"
+#define SNDFILE_BUFFER_SIZE 1024
 
-class JackDevice : public AudioDevice
+class FileDevice : public AudioDevice
 {
   Q_OBJECT;
  public:
-  JackDevice(unsigned chans,unsigned samprate,
+  FileDevice(unsigned chans,unsigned samprate,
 	     std::vector<Ringbuffer *> *rings,QObject *parent=0);
-  ~JackDevice();
+  ~FileDevice();
   bool processOptions(QString *err,const QStringList &keys,
 		      const QStringList &values);
   bool start(QString *err);
   unsigned deviceSamplerate() const;
-  
+
+ private slots:
+  void readTimerData();
+
  private:
-#ifdef JACK
-  QString jack_server_name;
-  QString jack_client_name;
-  jack_client_t *jack_jack_client;
-  jack_nframes_t jack_jack_sample_rate;
-  jack_port_t *jack_jack_ports[MAX_AUDIO_CHANNELS];
-  friend int JackProcess(jack_nframes_t nframes, void *arg);
-#endif  // JACK
+#ifdef SNDFILE
+  QString file_name;
+  SNDFILE *file_sndfile;
+  SF_INFO file_sfinfo;
+  QTimer *file_read_timer;
+#endif  // SNDFILE
 };
 
 
-#endif  // JACKDEVICE_H
+#endif  // FILEDEVICE_H

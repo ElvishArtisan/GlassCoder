@@ -27,6 +27,25 @@ The number of audio channels to use.  Valid values are \fI1\fP or \fI2\fP.
 Default value is \fP2\fP.
 
 .TP
+.B --audio-device=<\fItype\fP>
+The type of audio device to use.  The default value is \fBJACK\fP. See the
+\fBDEVICE OPTIONS\fP section (below) for the options appropriate for each
+audio device type.  Valid values are:
+.RS
+
+.TP
+\fBFILE\fP
+Stream directly from a file.
+.RE
+.RS
+
+.TP
+\fBJACK\fP
+The Jack Audio Connection Kit.
+.RE
+
+
+.TP
 .B --audio-format=<\fIfmt\fP>
 The audio encoding format to use.  The default value is \fBVORBIS\fP.  Valid
 <\fIfmt\fP> values are:
@@ -76,14 +95,6 @@ this rate.  Default value is 44100.
 .TP
 .B --help
 Print a short usage message and exit.
-
-.TP
-.B --jack-server-name=<\fIname\fP>
-The name of the JACK server instance to use.
-
-.TP
-.B --jack-client-name=<\fIname\fP>
-The client name to use.  Default is 'glasscoder'.
 
 .TP
 .B --server-hostname=<\fIhostname\fP>
@@ -171,6 +182,29 @@ There is no default value.  This setting is ignored by Shoutcast v2 servers.
 .TP
 .B --version
 Output version information and exit.
+
+.SH DEVICE OPTIONS
+
+.TP
+.B Direct File Streaming (--audio-device=FILE)
+
+.TP
+.B --file-name=<\fIname\fP>
+The name of the file to stream.
+
+
+.TP
+.B The Jack Audio Connection Kit (--audio-device=JACK)
+
+.TP
+.B --jack-server-name=<\fIname\fP>
+The name of the JACK server instance to use.
+
+.TP
+.B --jack-client-name=<\fIname\fP>
+The client name to use.  Default is 'glasscoder'.
+
+
 
 .SH NOTES
 HTTP Live Streams [HLS] require support for the HTTP PUT and DELETE methods

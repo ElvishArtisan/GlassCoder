@@ -86,6 +86,7 @@ JackDevice::~JackDevice()
 bool JackDevice::processOptions(QString *err,const QStringList &keys,
 				const QStringList &values)
 {
+#ifdef JACK
   for(int i=0;i<keys.size();i++) {
     bool processed=false;
     if(keys[i]=="--jack-server-name") {
@@ -102,10 +103,14 @@ bool JackDevice::processOptions(QString *err,const QStringList &keys,
     }
   }
   return true;
+#else
+  *err=tr("device not supported");
+  return false;
+#endif
 }
 
 
-bool JackDevice::start()
+bool JackDevice::start(QString *err)
 {
 #ifdef JACK
   jack_options_t jackopts=JackNullOption;
@@ -125,40 +130,40 @@ bool JackDevice::start()
   }
   if(jack_jack_client==NULL) {
     if((jackstat&JackInvalidOption)!=0) {
-      syslog(LOG_ERR,"invalid or unsupported JACK option");
+      *err=tr("invalid or unsupported JACK option");
     }
     if((jackstat&JackServerError)!=0) {
-      syslog(LOG_ERR,"communication error with the JACK server");
+      *err=tr("communication error with the JACK server");
     }
     if((jackstat&JackNoSuchClient)!=0) {
-      syslog(LOG_ERR,"requested JACK client does not exist");
+      *err=tr("requested JACK client does not exist");
     }
     if((jackstat&JackLoadFailure)!=0) {
-      syslog(LOG_ERR,"unable to load internal JACK client");
+      *err=tr("unable to load internal JACK client");
     }
     if((jackstat&JackInitFailure)!=0) {
-      syslog(LOG_ERR,"unable to initialize JACK client");
+      *err=tr("unable to initialize JACK client");
     }
     if((jackstat&JackShmFailure)!=0) {
-      syslog(LOG_ERR,"unable to access JACK shared memory");
+      *err=tr("unable to access JACK shared memory");
     }
     if((jackstat&JackVersionError)!=0) {
-      syslog(LOG_ERR,"JACK protocol version mismatch");
+      *err=tr("JACK protocol version mismatch");
     }
     if((jackstat&JackServerStarted)!=0) {
-      syslog(LOG_ERR,"JACK server started");
+      *err=tr("JACK server started");
     }
     if((jackstat&JackServerFailed)!=0) {
       fprintf (stderr, "unable to communication with JACK server\n");
-      syslog(LOG_ERR,"unable to communicate with JACK server");
+      *err=tr("unable to communicate with JACK server");
     }
     if((jackstat&JackNameNotUnique)!=0) {
-      syslog(LOG_ERR,"JACK client name not unique");
+      *err=tr("JACK client name not unique");
     }
     if((jackstat&JackFailure)!=0) {
-      syslog(LOG_ERR,"JACK general failure");
+      *err=tr("JACK general failure");
     }
-    syslog(LOG_ERR,"no connection to JACK server");
+    *err=tr("no connection to JACK server");
     return false;
   }
   jack_set_process_callback(jack_jack_client,JackProcess,this);
@@ -167,7 +172,7 @@ bool JackDevice::start()
   // Join the Graph
   //
   if(jack_activate(jack_jack_client)) {
-    syslog(LOG_ERR,"unable to join JACK graph");
+    *err=tr("unable to join JACK graph");
     return false;
   }
   jack_jack_sample_rate=jack_get_sample_rate(jack_jack_client);

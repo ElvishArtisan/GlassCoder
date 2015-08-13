@@ -211,3 +211,6 @@
 	* Refactored the JACK audio source to use an abstract class-based
 	design.
 	* Swallowed the Jack_ringbuffer_* routines from Jack2.
+2015-08-13 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'FileDevice' audio source. in 'src/filedevice.cpp' and
+	'src/filedevice.h'.

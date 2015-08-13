@@ -44,6 +44,7 @@ class MainObject : public QObject
   MainObject(QObject *parent=0);
 
  private slots:
+  void audioDeviceStoppedData();
   void connectorStoppedData();
   void exitTimerData();
 
@@ -52,6 +53,7 @@ class MainObject : public QObject
   // Arguments
   //
   std::vector<unsigned> audio_bitrate;
+  AudioDevice::DeviceType audio_device;
   unsigned audio_channels;
   Codec::Type audio_format;
   double audio_quality;

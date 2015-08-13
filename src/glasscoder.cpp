@@ -52,6 +52,7 @@ MainObject::MainObject(QObject *parent)
 {
   bool ok=false;
   sir_exit_count=0;
+  audio_device=DEFAULT_AUDIO_DEVICE;
   audio_channels=MAX_AUDIO_CHANNELS;
   audio_format=Codec::TypeVorbis;
   audio_quality=-1.0;
@@ -92,6 +93,18 @@ MainObject::MainObject(QObject *parent)
 	exit(256);
       }
       cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--audio-device") {
+      if(cmd->value(i).toLower()=="file") {
+	audio_device=AudioDevice::File;
+	cmd->setProcessed(i,true);
+      }
+      else {
+	if(cmd->value(i).toLower()=="jack") {
+	  audio_device=AudioDevice::Jack;
+	  cmd->setProcessed(i,true);
+	}
+      }
     }
     if(cmd->key(i)=="--audio-format") {
       if(cmd->value(i).toLower()=="mp2") {
@@ -242,7 +255,7 @@ MainObject::MainObject(QObject *parent)
   //
   for(int i=0;i<device_keys.size();i++) {
     if(device_keys[i].split("-",QString::SkipEmptyParts)[0]!=
-       AudioDevice::optionKeyword(AudioDevice::Jack)) {
+       AudioDevice::optionKeyword(audio_device)) {
       syslog(LOG_ERR,"glasscoder: unknown/inappropriate option \"%s\"",
 	      (const char *)device_keys[i].toAscii());
       exit(256);
@@ -298,6 +311,12 @@ MainObject::MainObject(QObject *parent)
 }
 
 
+void MainObject::audioDeviceStoppedData()
+{
+  glasscoder_exiting=true;
+}
+
+
 void MainObject::connectorStoppedData()
 {
   if(++sir_exit_count==sir_connectors.size()) {
@@ -335,17 +354,19 @@ bool MainObject::StartAudioDevice()
   //
   QString err;
   if((sir_audio_device=
-      AudioDeviceFactory(AudioDevice::Jack,audio_channels,audio_samplerate,
+      AudioDeviceFactory(audio_device,audio_channels,audio_samplerate,
 			 &sir_ringbuffers,this))==NULL) {
-    syslog(LOG_ERR,"%s devices not supported",(const char *)AudioDevice::deviceTypeText(AudioDevice::Jack).toUtf8());
+    syslog(LOG_ERR,"%s devices not supported",(const char *)AudioDevice::deviceTypeText(audio_device).toUtf8());
     exit(256);
   }
+  connect(sir_audio_device,SIGNAL(hasStopped()),
+	  this,SLOT(audioDeviceStoppedData()));
   if(!sir_audio_device->processOptions(&err,device_keys,device_values)) {
-    syslog(LOG_ERR,"glasscoder: %s",(const char *)err.toUtf8());
+    syslog(LOG_ERR,"%s",(const char *)err.toUtf8());
     exit(256);
   }
-  if(!sir_audio_device->start()) {
-    syslog(LOG_ERR,"unable to start %s device",(const char *)AudioDevice::deviceTypeText(AudioDevice::Jack).toUtf8());
+  if(!sir_audio_device->start(&err)) {
+    syslog(LOG_ERR,"%s",(const char *)err.toUtf8());
     exit(256);
   }
 

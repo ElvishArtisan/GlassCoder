@@ -66,6 +66,8 @@ AC_ARG_ENABLE(aacplus,[  --disable-aacplus       disable MPEG-4 HE-AAC+ support]
 	      [AACPLUS_DISABLED=yes],[]) 
 AC_ARG_ENABLE(vorbis,[  --disable-vorbis        disable Ogg Vorbis support],
 	      [VORBIS_DISABLED=yes],[]) 
+AC_ARG_ENABLE(file,[  --disable-file          disable FILE sound support],
+		      [SNDFILE_DISABLED=yes],[])
 AC_ARG_ENABLE(jack,[  --disable-jack          disable JACK sound support],
 		      [JACK_DISABLED=yes],[])
 
@@ -95,6 +97,16 @@ else
   AC_SUBST(LIBJACK,"")
 fi
 
+#
+# Check for libsndfile (needed for FILE support)
+#
+PKG_CHECK_MODULES(SNDFILE,sndfile,[SNDFILE_FOUND=y],[])
+if test $SNDFILE_FOUND ; then
+  if test -z $SNDFILE_DISABLED ; then
+    AC_DEFINE(SNDFILE,yes)
+    USING_SNDFILE=yes
+  fi
+fi
 
 #
 # Check for Secret Rabbit Code (Mandatory)
@@ -255,6 +267,11 @@ AC_MSG_NOTICE("|     Ogg Vorbis (via libogg and libvorbis) ... Yes   |")
 fi
 AC_MSG_NOTICE("|                                                     |")
 AC_MSG_NOTICE("| Audio Sources:                                      |")
+if test -z $USING_SNDFILE ; then
+AC_MSG_NOTICE("|                     File Streaming (FILE) ... No    |")
+else
+AC_MSG_NOTICE("|                     File Streaming (FILE) ... Yes   |")
+fi
 if test -z $USING_JACK ; then
 AC_MSG_NOTICE("|          Jack Audio Connection Kit (JACK) ... No    |")
 else
