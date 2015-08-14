@@ -18,6 +18,7 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include "alsadevice.h"
 #include "filedevice.h"
 #include "jackdevice.h"
 #include "audiodevicefactory.h"
@@ -30,12 +31,25 @@ AudioDevice *AudioDeviceFactory(AudioDevice::DeviceType type,
   AudioDevice *dev=NULL;
 
   switch(type) {
+  case AudioDevice::Alsa:
+#ifdef ALSA
+    dev=new AlsaDevice(chans,samprate,rings,parent);
+#endif  // ALSA
+    break;
+
   case AudioDevice::File:
+#ifdef SNDFILE
     dev=new FileDevice(chans,samprate,rings,parent);
+#endif  // SNDFILE
     break;
 
   case AudioDevice::Jack:
+#ifdef JACK
     dev=new JackDevice(chans,samprate,rings,parent);
+#endif  // JACK
+    break;
+
+  case AudioDevice::LastType:
     break;
   }
 

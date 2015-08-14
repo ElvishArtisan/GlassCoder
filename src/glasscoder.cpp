@@ -95,13 +95,10 @@ MainObject::MainObject(QObject *parent)
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--audio-device") {
-      if(cmd->value(i).toLower()=="file") {
-	audio_device=AudioDevice::File;
-	cmd->setProcessed(i,true);
-      }
-      else {
-	if(cmd->value(i).toLower()=="jack") {
-	  audio_device=AudioDevice::Jack;
+      for(unsigned j=0;j<AudioDevice::LastType;j++) {
+	if(cmd->value(i).toLower()==
+	   AudioDevice::optionKeyword((AudioDevice::DeviceType)j)) {
+	  audio_device=(AudioDevice::DeviceType)j;
 	  cmd->setProcessed(i,true);
 	}
       }

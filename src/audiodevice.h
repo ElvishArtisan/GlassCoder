@@ -32,7 +32,8 @@ class AudioDevice : public QObject
 {
   Q_OBJECT;
  public:
-  enum DeviceType {Jack=0,File=1};
+  enum DeviceType {Jack=0,File=1,Alsa=2,LastType=3};
+  enum Format {FLOAT=0,S16_LE=1,S32_LE=2,LastFormat=3};
   AudioDevice(unsigned chans,unsigned samprate,
 	      std::vector<Ringbuffer *> *rings,QObject *parent=0);
   ~AudioDevice();
@@ -42,6 +43,7 @@ class AudioDevice : public QObject
   virtual unsigned deviceSamplerate() const;
   static QString deviceTypeText(AudioDevice::DeviceType type);
   static QString optionKeyword(AudioDevice::DeviceType type);
+  static QString formatString(AudioDevice::Format fmt);
 
  signals:
   void hasStopped();
@@ -52,7 +54,9 @@ class AudioDevice : public QObject
   unsigned channels() const;
   unsigned samplerate() const;
   void remixChannels(float *pcm_out,unsigned chans_out,
-		     float *pcm_in,unsigned chans_in,unsigned frames); 
+		     float *pcm_in,unsigned chans_in,unsigned nframes); 
+  void convertToFloat(float *pcm_out,const void *pcm_in,Format fmt_in,
+		      unsigned nframes,unsigned chans);
 
  private:
   std::vector<Ringbuffer *> *audio_rings;

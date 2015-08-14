@@ -34,6 +34,12 @@ audio device type.  Valid values are:
 .RS
 
 .TP
+\fBALSA\fP
+The Advanced Linux Sound Architecture.
+.RE
+.RS
+
+.TP
 \fBFILE\fP
 Stream directly from a file.
 .RE
@@ -184,6 +190,14 @@ There is no default value.  This setting is ignored by Shoutcast v2 servers.
 Output version information and exit.
 
 .SH DEVICE OPTIONS
+
+.TP
+.B Advanced Linux Sound Architecture (--audio-device=ALSA)
+
+.TP
+.B --alsa-device=<\fIdev\fP>
+The name of the ALSA device to use.  If no \fB--audio-device\fP option is given,
+then the \fBhw:0\fP device will be used.
 
 .TP
 .B Direct File Streaming (--audio-device=FILE)

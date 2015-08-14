@@ -66,6 +66,8 @@ AC_ARG_ENABLE(aacplus,[  --disable-aacplus       disable MPEG-4 HE-AAC+ support]
 	      [AACPLUS_DISABLED=yes],[]) 
 AC_ARG_ENABLE(vorbis,[  --disable-vorbis        disable Ogg Vorbis support],
 	      [VORBIS_DISABLED=yes],[]) 
+AC_ARG_ENABLE(alsa,[  --disable-alsa          disable ALSA sound support],
+		      [ALSA_DISABLED=yes],[])
 AC_ARG_ENABLE(file,[  --disable-file          disable FILE sound support],
 		      [SNDFILE_DISABLED=yes],[])
 AC_ARG_ENABLE(jack,[  --disable-jack          disable JACK sound support],
@@ -105,6 +107,17 @@ if test $SNDFILE_FOUND ; then
   if test -z $SNDFILE_DISABLED ; then
     AC_DEFINE(SNDFILE,yes)
     USING_SNDFILE=yes
+  fi
+fi
+
+#
+# Check for ALSA
+#
+PKG_CHECK_MODULES(ALSA,alsa,[ALSA_FOUND=y],[])
+if test $ALSA_FOUND ; then
+  if test -z $ALSA_DISABLED ; then
+    AC_DEFINE(ALSA,yes)
+    USING_ALSA=yes
   fi
 fi
 
@@ -267,6 +280,11 @@ AC_MSG_NOTICE("|     Ogg Vorbis (via libogg and libvorbis) ... Yes   |")
 fi
 AC_MSG_NOTICE("|                                                     |")
 AC_MSG_NOTICE("| Audio Sources:                                      |")
+if test -z $USING_ALSA ; then
+AC_MSG_NOTICE("|  Advanced Linux Sound Architecture (ALSA) ... No    |")
+else
+AC_MSG_NOTICE("|  Advanced Linux Sound Architecture (ALSA) ... Yes   |")
+fi
 if test -z $USING_SNDFILE ; then
 AC_MSG_NOTICE("|                     File Streaming (FILE) ... No    |")
 else

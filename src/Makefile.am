@@ -20,7 +20,7 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing @QT4_CFLAGS@ @SNDFILE_CFLAGS@
+AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing @QT4_CFLAGS@ @SNDFILE_CFLAGS@ @ALSA_CFLAGS@
 MOC = @QT4_MOC@
 
 # The dependency for qt's Meta Object Compiler (moc)
@@ -31,6 +31,7 @@ moc_%.cpp:	%.h
 bin_PROGRAMS = glasscoder
 
 dist_glasscoder_SOURCES = aaccodec.cpp aaccodec.h\
+                          alsadevice.cpp alsadevice.h\
                           audiodevice.cpp audiodevice.h\
                           audiodevicefactory.cpp audiodevicefactory.h\
                           cmdswitch.cpp cmdswitch.h\
@@ -54,6 +55,7 @@ dist_glasscoder_SOURCES = aaccodec.cpp aaccodec.h\
                           vorbiscodec.cpp vorbiscodec.h
 
 nodist_glasscoder_SOURCES = moc_aaccodec.cpp\
+                            moc_alsadevice.cpp\
                             moc_audiodevice.cpp\
                             moc_codec.cpp\
                             moc_connector.cpp\
@@ -69,7 +71,7 @@ nodist_glasscoder_SOURCES = moc_aaccodec.cpp\
                             moc_opuscodec.cpp\
                             moc_vorbiscodec.cpp
 
-glasscoder_LDADD = @SIRLIBS@ @LIBJACK@ @SNDFILE_LIBS@
+glasscoder_LDADD = @SIRLIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ -lpthread
 glasscoder_LDFLAGS = @SIRFLAGS@
 
 CLEANFILES = *~\

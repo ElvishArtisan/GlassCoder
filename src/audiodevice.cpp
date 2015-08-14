@@ -21,6 +21,8 @@
 #include <string.h>
 #include <syslog.h>
 
+#include <samplerate.h>
+
 #include "audiodevice.h"
 
 AudioDevice::AudioDevice(unsigned chans,unsigned samprate,
@@ -49,12 +51,19 @@ QString AudioDevice::deviceTypeText(AudioDevice::DeviceType type)
   QString ret=tr("Unknown Device");
 
   switch(type) {
+  case AudioDevice::Alsa:
+    ret=tr("Advanced Linux Sound Architecture (ALSA)");
+    break;
+
   case AudioDevice::File:
     ret=tr("File Streaming");
     break;
 
   case AudioDevice::Jack:
     ret=tr("JACK Audio Connection Kit");
+    break;
+
+  case AudioDevice::LastType:
     break;
   }
 
@@ -67,12 +76,44 @@ QString AudioDevice::optionKeyword(AudioDevice::DeviceType type)
   QString ret;
 
   switch(type) {
+  case AudioDevice::Alsa:
+    ret="alsa";
+    break;
+
   case AudioDevice::File:
     ret="file";
     break;
 
   case AudioDevice::Jack:
     ret="jack";
+    break;
+
+  case AudioDevice::LastType:
+    break;
+  }
+
+  return ret;
+}
+
+
+QString AudioDevice::formatString(AudioDevice::Format fmt)
+{
+  QString ret="UNKNOWN";
+
+  switch(fmt) {
+  case AudioDevice::FLOAT:
+    ret="FLOAT";
+    break;
+
+  case AudioDevice::S16_LE:
+    ret="S16_LE";
+    break;
+
+  case AudioDevice::S32_LE:
+    ret="S32_LE";
+    break;
+
+  case AudioDevice::LastFormat:
     break;
   }
 
@@ -104,22 +145,22 @@ unsigned AudioDevice::samplerate() const
 }
 
 
-void AudioDevice::remixChannels(float *pcm_out,unsigned chans_out,
-				float *pcm_in,unsigned chans_in,unsigned frames)
+void AudioDevice::remixChannels(float *pcm_out,unsigned chans_out,float *pcm_in,
+				unsigned chans_in,unsigned nframes)
 {
   if(chans_out==chans_in) {
-    memcpy(pcm_out,pcm_in,frames*chans_in*sizeof(float));
+    memcpy(pcm_out,pcm_in,nframes*chans_in*sizeof(float));
     return;
   }
   if((chans_in==1)&&(chans_out==2)) {
-    for(unsigned i=0;i<frames;i++) {
+    for(unsigned i=0;i<nframes;i++) {
       pcm_out[2*i]=pcm_in[i];
       pcm_out[2*i+1]=pcm_in[i];
     }
     return;
   }
   if((chans_in==2)&&(chans_out==1)) {
-    for(unsigned i=0;i<frames;i++) {
+    for(unsigned i=0;i<nframes;i++) {
       pcm_out[i]=(pcm_in[2*i]+pcm_in[2*i+1])/2.0;
     }
     return;
@@ -127,4 +168,25 @@ void AudioDevice::remixChannels(float *pcm_out,unsigned chans_out,
   syslog(LOG_ERR,"invalid channel remix: chans_in: %d  chans_out: %d",
 	 chans_in,chans_out);
   exit(256);
+}
+
+
+void AudioDevice::convertToFloat(float *pcm_out,const void *pcm_in,
+				 Format fmt_in,unsigned nframes,unsigned chans)
+{
+  switch(fmt_in) {
+  case AudioDevice::FLOAT:
+    break;
+
+  case AudioDevice::S16_LE:
+    src_short_to_float_array((const short *)pcm_in,pcm_out,nframes*chans);
+    break;
+
+  case AudioDevice::S32_LE:
+    src_int_to_float_array((const int *)pcm_in,pcm_out,nframes*chans);
+    break;
+
+  case AudioDevice::LastFormat:
+    break;
+  }
 }
