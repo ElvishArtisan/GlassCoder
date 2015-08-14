@@ -80,8 +80,9 @@ bool FileDevice::start(QString *err)
     *err=sf_strerror(file_sndfile);
     return false;
   }
-  if(file_sfinfo.channels!=(int)channels()) {  // FIXME: support mixed channels
-    *err=tr("channels in source file do not match");
+
+  if(file_sfinfo.channels>MAX_AUDIO_CHANNELS) {
+    *err=tr("unsupported channel count");
     sf_close(file_sndfile);
     return false;
   }
@@ -107,10 +108,16 @@ unsigned FileDevice::deviceSamplerate() const
 void FileDevice::readTimerData()
 {
 #ifdef SNDFILE
-  float pcm[SNDFILE_BUFFER_SIZE*MAX_AUDIO_CHANNELS];
+  float pcm1[SNDFILE_BUFFER_SIZE*MAX_AUDIO_CHANNELS];
+  float pcm2[SNDFILE_BUFFER_SIZE*MAX_AUDIO_CHANNELS];
+  float *pcm=pcm1;
   sf_count_t nframes;
 
-  if((nframes=sf_readf_float(file_sndfile,pcm,SNDFILE_BUFFER_SIZE))>0) {
+  if((nframes=sf_readf_float(file_sndfile,pcm1,SNDFILE_BUFFER_SIZE))>0) {
+    if(file_sfinfo.channels!=(int)channels()) {
+      remixChannels(pcm2,channels(),pcm1,file_sfinfo.channels,nframes);
+      pcm=pcm2;
+    }
     for(unsigned i=0;i<ringBufferQuantity();i++) {
       ringBuffer(i)->write(pcm,nframes);
     }

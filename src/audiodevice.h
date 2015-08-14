@@ -51,6 +51,8 @@ class AudioDevice : public QObject
   Ringbuffer *ringBuffer(unsigned n);
   unsigned channels() const;
   unsigned samplerate() const;
+  void remixChannels(float *pcm_out,unsigned chans_out,
+		     float *pcm_in,unsigned chans_in,unsigned frames); 
 
  private:
   std::vector<Ringbuffer *> *audio_rings;

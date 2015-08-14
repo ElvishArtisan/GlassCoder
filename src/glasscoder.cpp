@@ -275,7 +275,6 @@ MainObject::MainObject(QObject *parent)
     syslog(LOG_ERR,"mountpoint not specified");
     exit(256);
   }
-  printf("size: %lu  type: %u\n",audio_bitrate.size(),server_type);
   if((audio_bitrate.size()>1)&&(server_type!=Connector::HlsServer)) {
     syslog(LOG_ERR,"only HLS streams can have multiple bitrates");
     exit(256);

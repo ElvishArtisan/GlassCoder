@@ -18,6 +18,9 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <string.h>
+#include <syslog.h>
+
 #include "audiodevice.h"
 
 AudioDevice::AudioDevice(unsigned chans,unsigned samprate,
@@ -98,4 +101,30 @@ unsigned AudioDevice::channels() const
 unsigned AudioDevice::samplerate() const
 {
   return audio_samplerate;
+}
+
+
+void AudioDevice::remixChannels(float *pcm_out,unsigned chans_out,
+				float *pcm_in,unsigned chans_in,unsigned frames)
+{
+  if(chans_out==chans_in) {
+    memcpy(pcm_out,pcm_in,frames*chans_in*sizeof(float));
+    return;
+  }
+  if((chans_in==1)&&(chans_out==2)) {
+    for(unsigned i=0;i<frames;i++) {
+      pcm_out[2*i]=pcm_in[i];
+      pcm_out[2*i+1]=pcm_in[i];
+    }
+    return;
+  }
+  if((chans_in==2)&&(chans_out==1)) {
+    for(unsigned i=0;i<frames;i++) {
+      pcm_out[i]=(pcm_in[2*i]+pcm_in[2*i+1])/2.0;
+    }
+    return;
+  }
+  syslog(LOG_ERR,"invalid channel remix: chans_in: %d  chans_out: %d",
+	 chans_in,chans_out);
+  exit(256);
 }

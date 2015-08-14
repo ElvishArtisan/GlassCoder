@@ -214,3 +214,6 @@
 2015-08-13 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'FileDevice' audio source. in 'src/filedevice.cpp' and
 	'src/filedevice.h'.
+2015-08-13 Fred Gleason <fredg@paravelsystems.com>
+	* Added an 'AudioDevice::remixChannels()' method in
+	'src/audiodevice.cpp' and 'src/audiodevice.h'.
