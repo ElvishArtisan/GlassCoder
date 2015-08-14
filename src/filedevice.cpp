@@ -62,8 +62,10 @@ bool FileDevice::processOptions(QString *err,const QStringList &keys,
     }
   }
   if(file_name.isEmpty()) {
-    *err=tr("you must specify a filename with \"--file-name\"");
-    return false;
+    char filename[256];
+
+    scanf("%255s",filename);
+    file_name=filename;
   }
   return true;
 #else

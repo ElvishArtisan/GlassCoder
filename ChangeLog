@@ -217,3 +217,6 @@
 2015-08-13 Fred Gleason <fredg@paravelsystems.com>
 	* Added an 'AudioDevice::remixChannels()' method in
 	'src/audiodevice.cpp' and 'src/audiodevice.h'.
+2015-08-13 Fred Gleason <fredg@paravelsystems.com>
+	* Added support for reading the filename from standard input for the
+	FILE source in 'src/filedevice.cpp'.
