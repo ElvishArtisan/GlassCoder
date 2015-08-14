@@ -178,10 +178,11 @@ bool AlsaDevice::start(QString *err)
   if(alsa_period_quantity!=ALSA_PERIOD_QUANTITY) {
     syslog(LOG_DEBUG,"using ALSA period quantity of %u",alsa_period_quantity);
   }
-  alsa_buffer_size=ALSA_PERIOD_SIZE*alsa_period_quantity;
+  //  alsa_buffer_size=ALSA_PERIOD_SIZE*alsa_period_quantity;
+  alsa_buffer_size=alsa_samplerate/2;
   snd_pcm_hw_params_set_buffer_size_near(alsa_pcm,hwparams,&alsa_buffer_size);
-  if(alsa_buffer_size!=ALSA_PERIOD_SIZE) {
-    syslog(LOG_DEBUG,"using ALSA period size of %lu",alsa_buffer_size);
+  if(alsa_buffer_size!=(alsa_samplerate/2)) {
+    syslog(LOG_DEBUG,"using ALSA buffer size of %lu",alsa_buffer_size);
   }
 
   //
@@ -189,6 +190,7 @@ bool AlsaDevice::start(QString *err)
   //
   if((aerr=snd_pcm_hw_params(alsa_pcm,hwparams))<0) {
     *err=tr("ALSA device error 1")+": "+snd_strerror(aerr);
+    printf("err: %d\n",aerr);
     return false;
   }
   alsa_pcm_buffer=new float[alsa_buffer_size*alsa_channels];

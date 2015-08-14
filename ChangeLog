@@ -223,3 +223,6 @@
 2015-08-13 Fred Gleason <fredg@paravelsystems.com>
 	* Added an 'AlsaDevice' audio source in 'src/alsadevice.cpp' and
 	'src/alsadevice.h'.
+2015-08-13 Fred Gleason <fredg@paravelsystems.com>
+	* Tweaked the values for buffer size in 'src/alsadevice.cpp' and
+	'src/alsadevice.h'.

@@ -30,7 +30,6 @@
 
 #define ALSA_DEFAULT_DEVICE "plughw:0"
 #define ALSA_PERIOD_QUANTITY 4
-#define ALSA_PERIOD_SIZE 1024
 class AlsaDevice : public AudioDevice
 {
   Q_OBJECT;
