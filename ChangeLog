@@ -229,3 +229,6 @@
 2015-08-16 Fred Gleason <fredg@paravelsystems.com>
 	* Added an 'AsiHpiDevice' audio source in 'src/asihpidevice.cpp' and
 	'src/asihpidevice.h'.
+2015-08-17 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/asihpidevice.cpp' that broke processing of the
+	'--asihpi-adapter-index' and '--asihpi-input-index' switches.

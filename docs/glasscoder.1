@@ -40,6 +40,12 @@ The Advanced Linux Sound Architecture.
 .RS
 
 .TP
+\fBASIHPI\fP
+AudioScience HPI.
+.RE
+.RS
+
+.TP
 \fBFILE\fP
 Stream directly from a file.
 .RE
@@ -198,6 +204,17 @@ Output version information and exit.
 .B --alsa-device=<\fIdev\fP>
 The name of the ALSA device to use.  If no \fB--audio-device\fP option is given,
 then the \fBhw:0\fP device will be used.
+
+.TP
+.B AudioScience HPI (--audio-device=ASIHPI)
+
+.TP
+.B --asihpi-adapter-index=<\fIindex\fP>
+The index number of the audio adapter to use/
+
+.TP
+.B --asihpi-input-index=<\fIindex\fP>
+The number of the input audio stream to use on the specified adapter.
 
 .TP
 .B Direct File Streaming (--audio-device=FILE)

@@ -20,6 +20,8 @@
 
 #include <string.h>
 
+#include <stdio.h>
+
 #include "asihpidevice.h"
 
 AsiHpiDevice::AsiHpiDevice(unsigned chans,unsigned samprate,
@@ -55,12 +57,13 @@ bool AsiHpiDevice::processOptions(QString *err,const QStringList &keys,
   for(int i=0;i<keys.size();i++) {
     bool processed=false;
     bool ok=false;
-    if(keys[i]=="--asihpi-index") {
+    if(keys[i]=="--asihpi-adapter-index") {
       asihpi_adapter_index=values[i].toUInt(&ok)-1;
       if((!ok)||(asihpi_adapter_index>=HPI_MAX_ADAPTERS)) {
-	*err=tr("invalid")+" --asihpi-index "+tr("argument");
+	*err=tr("invalid")+" --asihpi-adapter-index "+tr("argument");
 	return false;
       }
+      processed=true;
     }
     if(keys[i]=="--asihpi-input-index") {
       asihpi_input_index=values[i].toUInt(&ok)-1;
@@ -68,6 +71,7 @@ bool AsiHpiDevice::processOptions(QString *err,const QStringList &keys,
 	*err=tr("invalid")+" --asihpi-input-index "+tr("argument");
 	return false;
       }
+      processed=true;
     }
     if(!processed) {
       *err=tr("unrecognized option")+" "+keys[i]+"\"";
