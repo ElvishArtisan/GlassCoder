@@ -28,6 +28,16 @@ OpusCodec::OpusCodec(Ringbuffer *ring,QObject *parent)
 }
 
 
+bool OpusCodec::isAvailable() const
+{
+#ifdef HAVE_OPUS
+  return dlopen("libopus.so",RTLD_LAZY)!=NULL;
+#else
+  return false;
+#endif  // HAVE_OPUS
+}
+
+
 QString OpusCodec::contentType() const
 {
   return "audio/ogg";
@@ -108,7 +118,7 @@ void OpusCodec::encodeData(Connector *conn,const float *pcm,int frames)
     conn->writeData(frames,data,s);
   }
   else {
-    printf("n: %d\n",s);
+    syslog(LOG_WARNING,"opus encoding error %d",s);
   }
 #endif  // HAVE_OPUS
 }

@@ -34,6 +34,7 @@ class VorbisCodec : public Codec
  public:
   VorbisCodec(Ringbuffer *ring,QObject *parent=0);
   ~VorbisCodec();
+  bool isAvailable() const;
   QString contentType() const;
   unsigned pcmFrames() const;
   QString defaultExtension() const;

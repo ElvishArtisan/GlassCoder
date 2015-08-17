@@ -33,6 +33,7 @@ class AacCodec : public Codec
  public:
   AacCodec(Ringbuffer *ring,QObject *parent=0);
   ~AacCodec();
+  bool isAvailable() const;
   QString contentType() const;
   unsigned pcmFrames() const;
   QString defaultExtension() const;

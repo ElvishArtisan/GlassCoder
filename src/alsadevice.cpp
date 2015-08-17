@@ -152,7 +152,6 @@ bool AlsaDevice::start(QString *err)
       return false;
     }
   }
-  //  printf("format: %s\n",(const char *)AudioDevice::formatString(alsa_format).toUtf8());
 
   //
   // Sample Rate
@@ -193,7 +192,6 @@ bool AlsaDevice::start(QString *err)
   //
   if((aerr=snd_pcm_hw_params(alsa_pcm,hwparams))<0) {
     *err=tr("ALSA device error 1")+": "+snd_strerror(aerr);
-    printf("err: %d\n",aerr);
     return false;
   }
   alsa_pcm_buffer=new float[alsa_buffer_size*alsa_channels];

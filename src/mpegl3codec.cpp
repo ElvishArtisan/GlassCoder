@@ -30,6 +30,16 @@ MpegL3Codec::MpegL3Codec(Ringbuffer *ring,QObject *parent)
 }
 
 
+bool MpegL3Codec::isAvailable() const
+{
+#ifdef HAVE_LAME
+  return dlopen("libmp3lame.so",RTLD_LAZY)!=NULL;
+#else
+  return false;
+#endif  // HAVE_LAME
+}
+
+
 QString MpegL3Codec::contentType() const
 {
   return "audio/mpeg";

@@ -185,7 +185,44 @@ QString Codec::codecTypeText(Codec::Type type)
 
   case Codec::TypeLast:
     break;
- }
+  }
+
+  return ret;
+}
+
+
+QString Codec::optionKeyword(Codec::Type type)
+{
+  QString ret;
+
+  switch(type) {
+  case Codec::TypeMpegL2:
+    ret="mp2";
+    break;
+ 
+  case Codec::TypeMpegL3:
+    ret="mp3";
+    break;
+ 
+  case Codec::TypeAac:
+    ret="aac";
+    break;
+
+  case Codec::TypeHeAac:
+    ret="aacp";
+    break;
+
+  case Codec::TypeVorbis:
+    ret="vorbis";
+    break;
+
+  case Codec::TypeOpus:
+    ret="opus";
+    break;
+
+  case Codec::TypeLast:
+    break;
+  }
 
   return ret;
 }

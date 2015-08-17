@@ -97,7 +97,6 @@ void IcyConnector::socketReadyReadData()
 
   while((n=icy_socket->read(data,1500))>0) {
     data[n]=0;
-    //    printf("recvd %ld bytes: |%s|\n",n,data);
     for(int64_t i=0;i<n;i++) {
       switch(0xFF&data[i]) {
       case 10:

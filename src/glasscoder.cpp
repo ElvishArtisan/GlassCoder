@@ -69,6 +69,7 @@ MainObject::MainObject(QObject *parent)
   stream_irc="";
   stream_icq="";
   stream_aim="";
+  list_codecs=false;
   list_devices=false;
   unsigned num;
 
@@ -159,6 +160,10 @@ MainObject::MainObject(QObject *parent)
 	syslog(LOG_ERR,"invalid --audio-samplerate value");
 	exit(256);
       }
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--list-codecs") {
+      list_codecs=true;
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--list-devices") {
@@ -252,6 +257,13 @@ MainObject::MainObject(QObject *parent)
     }
   }
 
+  //
+  // Resource Enumerations
+  //
+  if(list_codecs) {
+    ListCodecs();
+    exit(0);
+  }
   if(list_devices) {
     ListDevices();
     exit(0);
@@ -500,6 +512,17 @@ bool MainObject::StartMultiStream()
   StartServerConnection(server_mountpoint,true);
 
   return true;
+}
+
+
+void MainObject::ListCodecs()
+{
+  for(int i=0;i<Codec::TypeLast;i++) {
+    if(CodecFactory((Codec::Type)i,NULL,this)->isAvailable()) {
+      printf("%s\n",
+	     (const char *)Codec::optionKeyword((Codec::Type)i).toUtf8());
+    }
+  }
 }
 
 

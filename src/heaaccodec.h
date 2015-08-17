@@ -33,6 +33,7 @@ class HeAacCodec : public Codec
  public:
   HeAacCodec(Ringbuffer *ring,QObject *parent=0);
   ~HeAacCodec();
+  bool isAvailable() const;
   QString contentType() const;
   unsigned pcmFrames() const;
   QString defaultExtension() const;

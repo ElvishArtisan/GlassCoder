@@ -32,6 +32,7 @@ class OpusCodec : public Codec
   Q_OBJECT;
  public:
   OpusCodec(Ringbuffer *ring,QObject *parent=0);
+  bool isAvailable() const;
   QString contentType() const;
   unsigned pcmFrames() const;
   QString defaultExtension() const;

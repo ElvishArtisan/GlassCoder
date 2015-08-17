@@ -37,6 +37,16 @@ VorbisCodec::~VorbisCodec()
 }
 
 
+bool VorbisCodec::isAvailable() const
+{
+#ifdef HAVE_VORBIS
+  return dlopen("libvorbisenc.so",RTLD_LAZY)!=NULL;
+#else
+  return false;
+#endif  // HAVE_VORBIS
+}
+
+
 QString VorbisCodec::contentType() const
 {
   return "audio/ogg";

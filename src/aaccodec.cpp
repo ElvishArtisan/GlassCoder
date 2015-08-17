@@ -37,6 +37,16 @@ AacCodec::~AacCodec()
 }
 
 
+bool AacCodec::isAvailable() const
+{
+#ifdef HAVE_FAAC
+  return dlopen("libfaac.so",RTLD_LAZY)!=NULL;
+#else
+  return false;
+#endif  // HAVE_FAAC
+}
+
+
 QString AacCodec::contentType() const
 {
   return "audio/aac";
@@ -137,9 +147,7 @@ void AacCodec::encodeData(Connector *conn,const float *pcm,int frames)
     conn->writeData(frames,aac_buffer,s);
   }
   else {
-    if(s<0) {
-      printf("s: %d\n",s);
-    }
+    syslog(LOG_WARNING,"aac encoding error %d",s);
   }
 #endif  // HAVE_FAAC
 }

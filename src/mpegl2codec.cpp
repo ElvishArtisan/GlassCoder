@@ -29,6 +29,16 @@ MpegL2Codec::MpegL2Codec(Ringbuffer *ring,QObject *parent)
 }
 
 
+bool MpegL2Codec::isAvailable() const
+{
+#ifdef HAVE_TWOLAME
+  return dlopen("libtwolame.so",RTLD_LAZY)!=NULL;
+#else
+  return false;
+#endif  // HAVE_TWOLAME
+}
+
+
 QString MpegL2Codec::contentType() const
 {
   return "audio/mpeg";

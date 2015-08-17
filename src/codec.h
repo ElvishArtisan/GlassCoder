@@ -41,8 +41,8 @@ class Codec : public QObject
 {
   Q_OBJECT;
  public:
-  enum Type {TypeMpegL2=0,TypeMpegL3=1,TypeAac=2,TypeHeAac=3,TypeVorbis=4,
-	     TypeOpus=5,TypeLast=6};
+  enum Type {TypeAac=0,TypeHeAac=1,TypeMpegL2=2,TypeMpegL3=3,TypeVorbis=4,
+	     TypeOpus=6,TypeLast=5};
   Codec(Codec::Type type,Ringbuffer *ring,QObject *parent=0);
   ~Codec();
   unsigned bitrate() const;
@@ -57,12 +57,14 @@ class Codec : public QObject
   void setStreamSamplerate(unsigned rate);
   bool completeFrames() const;
   void setCompleteFrames(bool state);
+  virtual bool isAvailable() const=0;
   virtual QString contentType() const=0;
   virtual unsigned pcmFrames() const=0;
   virtual QString defaultExtension() const=0;
   virtual QString formatIdentifier() const=0;
   virtual bool start();
   static QString codecTypeText(Codec::Type type);
+  static QString optionKeyword(Codec::Type type);
 
  public slots:
   virtual void encode(Connector *conn);

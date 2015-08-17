@@ -32,6 +32,7 @@ class MpegL2Codec : public Codec
   Q_OBJECT;
  public:
   MpegL2Codec(Ringbuffer *ring,QObject *parent=0);
+  bool isAvailable() const;
   QString contentType() const;
   unsigned pcmFrames() const;
   QString defaultExtension() const;

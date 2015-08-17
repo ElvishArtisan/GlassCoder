@@ -37,6 +37,16 @@ HeAacCodec::~HeAacCodec()
 }
 
 
+bool HeAacCodec::isAvailable() const
+{
+#ifdef HAVE_AACPLUS
+  return dlopen("libaacplus.so",RTLD_LAZY)!=NULL;
+#else
+  return false;
+#endif  // HAVE_AACPLUS
+}
+
+
 QString HeAacCodec::contentType() const
 {
   return "audio/aacp";
@@ -151,9 +161,7 @@ void HeAacCodec::encodeData(Connector *conn,const float *pcm,int frames)
     conn->writeData(frames,heaac_buffer,s);
   }
   else {
-    if(s<0) {
-      printf("s: %d\n",s);
-    }
+    syslog(LOG_WARNING,"aacplus encoding error %d",s);
   }
 #endif  // HAVE_AACPLUS
 }
