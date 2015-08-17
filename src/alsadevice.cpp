@@ -21,9 +21,11 @@
 #include <syslog.h>
 
 #include "alsadevice.h"
+#include "glasslimits.h"
 
 void *AlsaCallback(void *ptr)
 {
+#ifdef ALSA
   static AlsaDevice *dev=(AlsaDevice *)ptr;
   static int n;
   static float pcm1[32768];
@@ -60,6 +62,7 @@ void *AlsaCallback(void *ptr)
       }
     }
   }
+#endif  // ALSA
   return NULL;
 }
 
@@ -228,6 +231,6 @@ unsigned AlsaDevice::deviceSamplerate() const
 #ifdef ALSA
   return alsa_samplerate;
 #else
-  return DEFAULT_SAMPLERATE;
+  return DEFAULT_AUDIO_SAMPLERATE;
 #endif  // ALSA
 }

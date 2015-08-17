@@ -69,6 +69,7 @@ MainObject::MainObject(QObject *parent)
   stream_irc="";
   stream_icq="";
   stream_aim="";
+  list_devices=false;
   unsigned num;
 
   CmdSwitch *cmd=
@@ -160,6 +161,10 @@ MainObject::MainObject(QObject *parent)
       }
       cmd->setProcessed(i,true);
     }
+    if(cmd->key(i)=="--list-devices") {
+      list_devices=true;
+      cmd->setProcessed(i,true);
+    }
     if(cmd->key(i)=="--server-hostname") {
       server_hostname=cmd->value(i);
       cmd->setProcessed(i,true);
@@ -245,6 +250,11 @@ MainObject::MainObject(QObject *parent)
       device_keys.push_back(cmd->key(i));
       device_values.push_back(cmd->value(i));
     }
+  }
+
+  if(list_devices) {
+    ListDevices();
+    exit(0);
   }
 
   //
@@ -490,6 +500,16 @@ bool MainObject::StartMultiStream()
   StartServerConnection(server_mountpoint,true);
 
   return true;
+}
+
+
+void MainObject::ListDevices()
+{
+  for(int i=0;i<AudioDevice::LastType;i++) {
+    if(AudioDeviceFactory((AudioDevice::DeviceType)i,2,48000,NULL,this)!=NULL) {
+      printf("%s\n",(const char *)AudioDevice::optionKeyword((AudioDevice::DeviceType)i).toUtf8());
+    }
+  }
 }
 
 

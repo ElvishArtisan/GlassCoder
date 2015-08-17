@@ -73,6 +73,7 @@ class MainObject : public QObject
   QString server_username;
   QStringList device_keys;
   QStringList device_values;
+  bool list_devices;
 
   //
   // Audio Device
@@ -98,6 +99,7 @@ class MainObject : public QObject
   //
   bool StartSingleStream();
   bool StartMultiStream();
+  void ListDevices();
   QTimer *sir_exit_timer;
   unsigned sir_exit_count;
 };

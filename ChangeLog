@@ -232,3 +232,6 @@
 2015-08-17 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/asihpidevice.cpp' that broke processing of the
 	'--asihpi-adapter-index' and '--asihpi-input-index' switches.
+2015-08-17 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented the '--list-devices' switch in 'src/glasscoder.cpp'
+	and 'src/glasscoder.h'.

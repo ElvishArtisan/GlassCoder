@@ -22,12 +22,13 @@
 #include <stdlib.h>
 #include <syslog.h>
 
+#include "glasslimits.h"
 #include "jackdevice.h"
 
-#ifdef JACK
 //
 // JACK Callback
 //
+#ifdef JACK
 jack_default_audio_sample_t *jack_cb_buffers[MAX_AUDIO_CHANNELS];
 float jack_cb_interleave_buffer[MAX_AUDIO_CHANNELS*RINGBUFFER_SIZE];
 
@@ -73,8 +74,10 @@ JackDevice::JackDevice(unsigned chans,unsigned samprate,
 		       std::vector<Ringbuffer *> *rings,QObject *parent)
   : AudioDevice(chans,samprate,rings,parent)
 {
+#ifdef JACK
   jack_server_name="";
   jack_client_name=DEFAULT_JACK_CLIENT_NAME;
+#endif  // JACK
 }
 
 
@@ -106,7 +109,7 @@ bool JackDevice::processOptions(QString *err,const QStringList &keys,
 #else
   *err=tr("device not supported");
   return false;
-#endif
+#endif  // JACK
 }
 
 
@@ -197,5 +200,9 @@ bool JackDevice::start(QString *err)
 
 unsigned JackDevice::deviceSamplerate() const
 {
+#ifdef JACK
   return jack_jack_sample_rate;
+#else
+  return DEFAULT_AUDIO_SAMPLERATE;
+#endif  // JACK
 }

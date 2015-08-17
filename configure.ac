@@ -129,7 +129,7 @@ fi
 #
 # Check for ALSA
 #
-PKG_CHECK_MODULES(ALSA,alsa,[ALSA_FOUND=y],[])
+PKG_CHECK_MODULES(ALSA,alsa,[ALSA_FOUND=y],[PKGCONFIG_FAILED=y])
 if test $ALSA_FOUND ; then
   if test -z $ALSA_DISABLED ; then
     AC_DEFINE(ALSA,yes)
@@ -224,11 +224,11 @@ AC_SUBST(DISTRO,$ar_gcc_distro)
 # Linux vs. OS X Setup
 #
 if test $ar_gcc_os = "darwin10" ; then
-  AC_SUBST(SIRLIBS,"-lsamplerate -ljack")
+  AC_SUBST(SIRLIBS,"-lsamplerate")
   AC_SUBST(SIRFLAGS,"-framework QtCore -framework QtNetwork")
   AC_DEFINE(OSX)
 else
-  AC_SUBST(SIRLIBS,"-lsamplerate -ljack -ldl -lQtCore -lQtNetwork")
+  AC_SUBST(SIRLIBS,"-lsamplerate -ldl -lQtCore -lQtNetwork")
   AC_SUBST(SIRFLAGS,"")
   AC_DEFINE(LINUX)
 fi
