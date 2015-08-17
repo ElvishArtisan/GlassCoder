@@ -68,6 +68,8 @@ AC_ARG_ENABLE(vorbis,[  --disable-vorbis        disable Ogg Vorbis support],
 	      [VORBIS_DISABLED=yes],[]) 
 AC_ARG_ENABLE(alsa,[  --disable-alsa          disable ALSA sound support],
 		      [ALSA_DISABLED=yes],[])
+AC_ARG_ENABLE(asihpi,[  --disable-asihpi        disable AudioScience HPI sound support],
+		      [ASIHPI_DISABLED=yes],[])
 AC_ARG_ENABLE(file,[  --disable-file          disable FILE sound support],
 		      [SNDFILE_DISABLED=yes],[])
 AC_ARG_ENABLE(jack,[  --disable-jack          disable JACK sound support],
@@ -107,6 +109,20 @@ if test $SNDFILE_FOUND ; then
   if test -z $SNDFILE_DISABLED ; then
     AC_DEFINE(SNDFILE,yes)
     USING_SNDFILE=yes
+  fi
+fi
+
+#
+# Check for AudioScience HPI
+#
+AC_CHECK_HEADER(asihpi/hpi.h,[ASIHPI_FOUND=yes],[])
+if test $ASIHPI_FOUND ; then
+  if test -z $ASIHPI_DISABLED ; then
+    AC_DEFINE(ASIHPI,yes)
+    AC_SUBST(ASIHPI_LIBS,-lhpi)
+    USING_ASIHPI=yes
+  else
+    AC_SUBST(ASIHPI_LIBS,"")
   fi
 fi
 
@@ -284,6 +300,11 @@ if test -z $USING_ALSA ; then
 AC_MSG_NOTICE("|  Advanced Linux Sound Architecture (ALSA) ... No    |")
 else
 AC_MSG_NOTICE("|  Advanced Linux Sound Architecture (ALSA) ... Yes   |")
+fi
+if test -z $USING_ASIHPI ; then
+AC_MSG_NOTICE("|                 AudioScience HPI (ASIHPI) ... No    |")
+else
+AC_MSG_NOTICE("|                 AudioScience HPI (ASIHPI) ... Yes   |")
 fi
 if test -z $USING_SNDFILE ; then
 AC_MSG_NOTICE("|                     File Streaming (FILE) ... No    |")

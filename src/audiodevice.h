@@ -32,7 +32,7 @@ class AudioDevice : public QObject
 {
   Q_OBJECT;
  public:
-  enum DeviceType {Jack=0,File=1,Alsa=2,LastType=3};
+  enum DeviceType {Jack=0,File=1,Alsa=2,AsiHpi=3,LastType=4};
   enum Format {FLOAT=0,S16_LE=1,S32_LE=2,LastFormat=3};
   AudioDevice(unsigned chans,unsigned samprate,
 	      std::vector<Ringbuffer *> *rings,QObject *parent=0);

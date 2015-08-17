@@ -32,6 +32,7 @@ bin_PROGRAMS = glasscoder
 
 dist_glasscoder_SOURCES = aaccodec.cpp aaccodec.h\
                           alsadevice.cpp alsadevice.h\
+                          asihpidevice.cpp asihpidevice.h\
                           audiodevice.cpp audiodevice.h\
                           audiodevicefactory.cpp audiodevicefactory.h\
                           cmdswitch.cpp cmdswitch.h\
@@ -56,6 +57,7 @@ dist_glasscoder_SOURCES = aaccodec.cpp aaccodec.h\
 
 nodist_glasscoder_SOURCES = moc_aaccodec.cpp\
                             moc_alsadevice.cpp\
+                            moc_asihpidevice.cpp\
                             moc_audiodevice.cpp\
                             moc_codec.cpp\
                             moc_connector.cpp\
@@ -71,7 +73,7 @@ nodist_glasscoder_SOURCES = moc_aaccodec.cpp\
                             moc_opuscodec.cpp\
                             moc_vorbiscodec.cpp
 
-glasscoder_LDADD = @SIRLIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ -lpthread
+glasscoder_LDADD = @SIRLIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ -lpthread
 glasscoder_LDFLAGS = @SIRFLAGS@
 
 CLEANFILES = *~\

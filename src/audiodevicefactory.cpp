@@ -19,6 +19,7 @@
 //
 
 #include "alsadevice.h"
+#include "asihpidevice.h"
 #include "filedevice.h"
 #include "jackdevice.h"
 #include "audiodevicefactory.h"
@@ -35,6 +36,12 @@ AudioDevice *AudioDeviceFactory(AudioDevice::DeviceType type,
 #ifdef ALSA
     dev=new AlsaDevice(chans,samprate,rings,parent);
 #endif  // ALSA
+    break;
+
+  case AudioDevice::AsiHpi:
+#ifdef ASIHPI
+    dev=new AsiHpiDevice(chans,samprate,rings,parent);
+#endif  // ASIHPI
     break;
 
   case AudioDevice::File:

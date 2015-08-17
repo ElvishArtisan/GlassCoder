@@ -55,6 +55,10 @@ QString AudioDevice::deviceTypeText(AudioDevice::DeviceType type)
     ret=tr("Advanced Linux Sound Architecture (ALSA)");
     break;
 
+  case AudioDevice::AsiHpi:
+    ret=tr("AudioScience HPI");
+    break;
+
   case AudioDevice::File:
     ret=tr("File Streaming");
     break;
@@ -78,6 +82,10 @@ QString AudioDevice::optionKeyword(AudioDevice::DeviceType type)
   switch(type) {
   case AudioDevice::Alsa:
     ret="alsa";
+    break;
+
+  case AudioDevice::AsiHpi:
+    ret="asihpi";
     break;
 
   case AudioDevice::File:
