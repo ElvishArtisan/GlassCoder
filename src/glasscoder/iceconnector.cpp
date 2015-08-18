@@ -72,7 +72,7 @@ int64_t IceConnector::writeDataConnector(int frames,const unsigned char *data,
 
 void IceConnector::socketConnectedData()
 {
-  WriteHeader("SOURCE /"+serverMountpoint()+" HTTP/1.0");
+  WriteHeader("SOURCE "+serverMountpoint()+" HTTP/1.0");
   WriteHeader(QString("Authorization: Basic ")+
 	      Connector::base64Encode(serverUsername()+":"+serverPassword()));
   WriteHeader(QString("User-Agent: GlassCoder/")+VERSION);

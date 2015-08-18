@@ -318,7 +318,7 @@ QString Connector::serverTypeText(Connector::ServerType type)
 
   switch(type) {
   case Connector::HlsServer:
-    ret=tr("HLS/HTTP");
+    ret=tr("HTTP Live Streaming (HLS)");
     break;
 
   case Connector::Shoutcast1Server:
@@ -331,6 +331,58 @@ QString Connector::serverTypeText(Connector::ServerType type)
 
   case Connector::Icecast2Server:
     ret=tr("Icecast v2");
+    break;
+
+  case Connector::LastServer:
+    break;
+  }
+
+  return ret;
+}
+
+
+QString Connector::optionKeyword(Connector::ServerType type)
+{
+  QString ret;
+
+  switch(type) {
+  case Connector::HlsServer:
+    ret="hls";
+    break;
+
+  case Connector::Shoutcast1Server:
+    ret="shout1";
+    break;
+
+  case Connector::Shoutcast2Server:
+    ret="shout2";
+    break;
+
+  case Connector::Icecast2Server:
+    ret="icecast2";
+    break;
+
+  case Connector::LastServer:
+    break;
+  }
+
+  return ret;
+}
+
+
+QString Connector::defaultUsername(Connector::ServerType type)
+{
+  QString ret="";
+
+  switch(type) {
+  case Connector::HlsServer:
+  case Connector::Shoutcast1Server:
+  case Connector::Shoutcast2Server:
+  case Connector::LastServer:
+    break;
+
+  case Connector::Icecast2Server:
+    ret="source";
     break;
   }
 

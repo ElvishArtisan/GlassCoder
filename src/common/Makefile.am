@@ -1,6 +1,6 @@
 ## automake.am
 ##
-## Automake.am for GlassCoder src/
+## Automake.am for GlassCoder src/common
 ##
 ##   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
 ##
@@ -20,9 +20,12 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-SUBDIRS = common\
-          glasscoder\
-          glassgui
+EXTRA_DIST = audiodevice.cpp audiodevice.h\
+             cmdswitch.cpp cmdswitch.h\
+             codec.cpp codec.h\
+             connector.cpp connector.h\
+             glasslimits.h\
+             ringbuffer.cpp ringbuffer.h
 
 CLEANFILES = *~\
              *.idb\

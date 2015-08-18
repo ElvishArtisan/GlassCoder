@@ -36,8 +36,8 @@ class Connector : public QObject
 {
   Q_OBJECT;
  public:
-  enum ServerType {Shoutcast1Server=0,Icecast2Server=1,Shoutcast2Server=2,
-		   HlsServer=3};
+  enum ServerType {HlsServer=0,Icecast2Server=1,
+		   Shoutcast1Server=2,Shoutcast2Server=3,LastServer=4};
   Connector(QObject *parent=0);
   ~Connector();
   virtual Connector::ServerType serverType() const=0;
@@ -81,6 +81,8 @@ class Connector : public QObject
   virtual int64_t writeData(int frames,const unsigned char *data,int64_t len);
   virtual void stop();
   static QString serverTypeText(Connector::ServerType);
+  static QString optionKeyword(Connector::ServerType type);
+  static QString defaultUsername(Connector::ServerType type);
   static QString subMountpointName(const QString &mntpt,unsigned bitrate);
   static QString pathPart(const QString &fullpath);
   static QString basePart(const QString &fullpath);

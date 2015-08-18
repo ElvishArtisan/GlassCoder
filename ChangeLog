@@ -237,3 +237,8 @@
 	and 'src/glasscoder.h'.
 	* Implemented the '--list-devices' switch in 'src/glasscoder.cpp'
 	and 'src/glasscoder.h'.
+2015-08-17 Fred Gleason <fredg@paravelsystems.com>
+	* Moved source for glasscoder(1) into 'src/glasscoder/'.
+	* Moved 'src/cmdswitch.cpp' and 'src'/cmdswitch.h' into 'src/common/'.
+2015-08-18 Fred Gleason <fredg@paravelsystems.com>
+	* Stubbed out glassgui(1) in 'src/glassgui/'.

@@ -44,6 +44,9 @@ Connector *ConnectorFactory(Connector::ServerType type,bool is_top,
   case Connector::Icecast2Server:
     conn=new IceConnector(parent);
     break;
+
+  case Connector::LastServer:
+    break;
   }
 
   return conn;

@@ -176,6 +176,9 @@ MainObject::MainObject(QObject *parent)
     }
     if(cmd->key(i)=="--server-mountpoint") {
       server_mountpoint=cmd->value(i);
+      if(server_mountpoint.left(1)!="/") {
+	server_mountpoint="/"+server_mountpoint;
+      }
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--server-password") {

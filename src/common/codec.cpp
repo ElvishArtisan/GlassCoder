@@ -160,7 +160,7 @@ QString Codec::codecTypeText(Codec::Type type)
 
   switch(type) {
   case Codec::TypeMpegL2:
-    ret=tr("MPEG-1 Layer 3");
+    ret=tr("MPEG-1 Layer 2");
     break;
  
   case Codec::TypeMpegL3:

@@ -81,7 +81,7 @@ AC_ARG_ENABLE(jack,[  --disable-jack          disable JACK sound support],
 #
 # Check for Qt (Mandatory)
 #
-PKG_CHECK_MODULES(QT4,QtCore QtNetwork,[],[AC_MSG_ERROR([*** Qt4 not found ***])])
+PKG_CHECK_MODULES(QT4,QtGui QtCore QtNetwork,[],[AC_MSG_ERROR([*** Qt4 not found ***])])
 AC_CHECK_PROG(MOC_NAME,moc-qt4,[moc-qt4],[moc])
 AC_SUBST(MOC,$MOC_NAME)
 
@@ -226,10 +226,14 @@ AC_SUBST(DISTRO,$ar_gcc_distro)
 if test $ar_gcc_os = "darwin10" ; then
   AC_SUBST(SIRLIBS,"-lsamplerate")
   AC_SUBST(SIRFLAGS,"-framework QtCore -framework QtNetwork")
+  AC_SUBST(GUILIBS,"-lsamplerate")
+  AC_SUBST(GUIFLAGS,"-framework QtCore -framework QtGui")
   AC_DEFINE(OSX)
 else
   AC_SUBST(SIRLIBS,"-lsamplerate -ldl -lQtCore -lQtNetwork")
   AC_SUBST(SIRFLAGS,"")
+  AC_SUBST(GUILIBS,"-lsamplerate -lQtCore -lQtGui")
+  AC_SUBST(GUIFLAGS,"")
   AC_DEFINE(LINUX)
 fi
 
@@ -254,10 +258,74 @@ AC_CONFIG_FILES([ \
     conf/Makefile \
     conf/httpd/Makefile \
     docs/Makefile \
+    src/common/Makefile \
+    src/glasscoder/Makefile \
+    src/glassgui/Makefile \
     src/Makefile \
     glasscoder.spec \
     Makefile ])
 AC_OUTPUT()
+
+#
+# Link Common Elements
+#
+rm -f src/glasscoder/audiodevice.cpp
+ln -s ../../src/common/audiodevice.cpp src/glasscoder/audiodevice.cpp
+rm -f src/glasscoder/audiodevice.h
+ln -s ../../src/common/audiodevice.h src/glasscoder/audiodevice.h
+
+rm -f src/glasscoder/cmdswitch.cpp
+ln -s ../../src/common/cmdswitch.cpp src/glasscoder/cmdswitch.cpp
+rm -f src/glasscoder/cmdswitch.h
+ln -s ../../src/common/cmdswitch.h src/glasscoder/cmdswitch.h
+
+rm -f src/glasscoder/codec.cpp
+ln -s ../../src/common/codec.cpp src/glasscoder/codec.cpp
+rm -f src/glasscoder/codec.h
+ln -s ../../src/common/codec.h src/glasscoder/codec.h
+
+rm -f src/glasscoder/connector.cpp
+ln -s ../../src/common/connector.cpp src/glasscoder/connector.cpp
+rm -f src/glasscoder/connector.h
+ln -s ../../src/common/connector.h src/glasscoder/connector.h
+
+rm -f src/glasscoder/ringbuffer.cpp
+ln -s ../../src/common/ringbuffer.cpp src/glasscoder/ringbuffer.cpp
+rm -f src/glasscoder/ringbuffer.h
+ln -s ../../src/common/ringbuffer.h src/glasscoder/ringbuffer.h
+
+rm -f src/glasscoder/glasslimits.h
+ln -s ../../src/common/glasslimits.h src/glasscoder/glasslimits.h
+
+
+rm -f src/glassgui/audiodevice.cpp
+ln -s ../../src/common/audiodevice.cpp src/glassgui/audiodevice.cpp
+rm -f src/glassgui/audiodevice.h
+ln -s ../../src/common/audiodevice.h src/glassgui/audiodevice.h
+
+rm -f src/glassgui/cmdswitch.cpp
+ln -s ../../src/common/cmdswitch.cpp src/glassgui/cmdswitch.cpp
+rm -f src/glassgui/cmdswitch.h
+ln -s ../../src/common/cmdswitch.h src/glassgui/cmdswitch.h
+
+rm -f src/glassgui/codec.cpp
+ln -s ../../src/common/codec.cpp src/glassgui/codec.cpp
+rm -f src/glassgui/codec.h
+ln -s ../../src/common/codec.h src/glassgui/codec.h
+
+rm -f src/glassgui/connector.cpp
+ln -s ../../src/common/connector.cpp src/glassgui/connector.cpp
+rm -f src/glassgui/connector.h
+ln -s ../../src/common/connector.h src/glassgui/connector.h
+
+rm -f src/glassgui/ringbuffer.cpp
+ln -s ../../src/common/ringbuffer.cpp src/glassgui/ringbuffer.cpp
+rm -f src/glassgui/ringbuffer.h
+ln -s ../../src/common/ringbuffer.h src/glassgui/ringbuffer.h
+
+rm -f src/glassgui/glasslimits.h
+ln -s ../../src/common/glasslimits.h src/glassgui/glasslimits.h
+
 
 AC_MSG_NOTICE()
 AC_MSG_NOTICE("|-----------------------------------------------------|")
