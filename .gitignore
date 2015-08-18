@@ -16,3 +16,15 @@ Makefile.in
 missing
 moc_*
 src/glasscoder
+src/glassgui/audiodevice.cpp
+src/glassgui/audiodevice.h
+src/glassgui/cmdswitch.cpp
+src/glassgui/cmdswitch.h
+src/glassgui/codec.cpp
+src/glassgui/codec.h
+src/glassgui/connector.cpp
+src/glassgui/connector.h
+src/glassgui/glassgui
+src/glassgui/glasslimits.h
+src/glassgui/ringbuffer.cpp
+src/glassgui/ringbuffer.h
