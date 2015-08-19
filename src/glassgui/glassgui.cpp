@@ -95,6 +95,8 @@ MainWidget::MainWidget(QWidget *parent)
     gui_server_type_box->
       insertItem(i,Connector::serverTypeText((Connector::ServerType)i),i);
   }
+  connect(gui_server_type_box,SIGNAL(activated(int)),
+	  this,SLOT(serverTypeChanged(int)));
 
   //
   // Server Location
@@ -164,6 +166,68 @@ MainWidget::MainWidget(QWidget *parent)
   gui_codec_bitrate_label->setFont(label_font);
   gui_codec_bitrate_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
   gui_codec_bitrate_box=new ComboBox(this);
+
+  //
+  // Stream Section
+  //
+  gui_stream_label=new QLabel(tr("Stream Metadata Settings"),this);
+  gui_stream_label->setFont(section_font);
+
+  //
+  // Stream Name
+  //
+  gui_stream_name_label=new QLabel(tr("Name")+":",this);
+  gui_stream_name_label->setFont(label_font);
+  gui_stream_name_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  gui_stream_name_edit=new QLineEdit(this);
+
+  //
+  // Stream Description
+  //
+  gui_stream_description_label=new QLabel(tr("Description")+":",this);
+  gui_stream_description_label->setFont(label_font);
+  gui_stream_description_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  gui_stream_description_edit=new QLineEdit(this);
+
+  //
+  // Stream URL
+  //
+  gui_stream_url_label=new QLabel(tr("URL")+":",this);
+  gui_stream_url_label->setFont(label_font);
+  gui_stream_url_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  gui_stream_url_edit=new QLineEdit(this);
+
+  //
+  // Stream Genre
+  //
+  gui_stream_genre_label=new QLabel(tr("Genre")+":",this);
+  gui_stream_genre_label->setFont(label_font);
+  gui_stream_genre_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  gui_stream_genre_edit=new QLineEdit(this);
+
+  //
+  // Stream Icq
+  //
+  gui_stream_icq_label=new QLabel(tr("ICQ ID")+":",this);
+  gui_stream_icq_label->setFont(label_font);
+  gui_stream_icq_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  gui_stream_icq_edit=new QLineEdit(this);
+
+  //
+  // Stream AOL Instant Messager ID
+  //
+  gui_stream_aim_label=new QLabel(tr("AOL IM ID")+":",this);
+  gui_stream_aim_label->setFont(label_font);
+  gui_stream_aim_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  gui_stream_aim_edit=new QLineEdit(this);
+
+  //
+  // Internet Relay Chat ID
+  //
+  gui_stream_irc_label=new QLabel(tr("IRC ID")+":",this);
+  gui_stream_irc_label->setFont(label_font);
+  gui_stream_irc_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  gui_stream_irc_edit=new QLineEdit(this);
 
   //
   // Source Section
@@ -242,7 +306,7 @@ MainWidget::MainWidget(QWidget *parent)
 
 QSize MainWidget::sizeHint() const
 {
-  return QSize(560,600);
+  return QSize(560,800);
 }
 
 
@@ -287,45 +351,77 @@ void MainWidget::resizeEvent(QResizeEvent *e)
   ypos+=23;
 
   gui_server_type_label->setGeometry(10,ypos,110,24);
-  gui_server_type_box->setGeometry(125,ypos,size().width()-135,24);
+  gui_server_type_box->setGeometry(125,ypos,250,24);
   ypos+=26;
 
-  gui_server_location_label->setGeometry(10,ypos,110,24);
-  gui_server_location_edit->setGeometry(125,ypos,size().width()-135,24);
+  gui_server_location_label->setGeometry(10,ypos,145,24);
+  gui_server_location_edit->setGeometry(160,ypos,size().width()-170,24);
   ypos+=26;
 
-  gui_server_username_label->setGeometry(10,ypos,110,24);
-  gui_server_username_edit->setGeometry(125,ypos,size().width()-135,24);
+  gui_server_username_label->setGeometry(10,ypos,145,24);
+  gui_server_username_edit->setGeometry(160,ypos,size().width()-170,24);
   ypos+=26;
 
-  gui_server_password_label->setGeometry(10,ypos,110,24);
-  gui_server_password_edit->setGeometry(125,ypos,size().width()-135,24);
+  gui_server_password_label->setGeometry(10,ypos,145,24);
+  gui_server_password_edit->setGeometry(160,ypos,size().width()-170,24);
   ypos+=35;
 
   gui_codec_label->setGeometry(10,ypos,size().width()-20,24);
   ypos+=23;
 
   gui_codec_type_label->setGeometry(10,ypos,110,24);
-  gui_codec_type_box->setGeometry(125,ypos,size().width()-135,24);
+  gui_codec_type_box->setGeometry(125,ypos,250,24);
   ypos+=26;
 
-  gui_codec_samplerate_label->setGeometry(10,ypos,110,24);
-  gui_codec_samplerate_box->setGeometry(125,ypos,200,24);
+  gui_codec_samplerate_label->setGeometry(10,ypos,145,24);
+  gui_codec_samplerate_box->setGeometry(160,ypos,200,24);
   ypos+=26;
 
-  gui_codec_channels_label->setGeometry(10,ypos,110,24);
-  gui_codec_channels_box->setGeometry(125,ypos,50,24);
+  gui_codec_channels_label->setGeometry(10,ypos,145,24);
+  gui_codec_channels_box->setGeometry(160,ypos,50,24);
   ypos+=26;
 
-  gui_codec_bitrate_label->setGeometry(10,ypos,110,24);
-  gui_codec_bitrate_box->setGeometry(125,ypos,150,24);
+  gui_codec_bitrate_label->setGeometry(10,ypos,145,24);
+  gui_codec_bitrate_box->setGeometry(160,ypos,150,24);
+  ypos+=35;
+
+
+  gui_stream_label->setGeometry(10,ypos,size().width()-20,24);
+  ypos+=23;
+
+  gui_stream_name_label->setGeometry(10,ypos,110,24);
+  gui_stream_name_edit->setGeometry(125,ypos,size().width()-170,24);
+  ypos+=26;
+
+  gui_stream_description_label->setGeometry(10,ypos,110,24);
+  gui_stream_description_edit->setGeometry(125,ypos,size().width()-170,24);
+  ypos+=26;
+
+  gui_stream_url_label->setGeometry(10,ypos,110,24);
+  gui_stream_url_edit->setGeometry(125,ypos,size().width()-170,24);
+  ypos+=26;
+
+  gui_stream_genre_label->setGeometry(10,ypos,110,24);
+  gui_stream_genre_edit->setGeometry(125,ypos,size().width()-170,24);
+  ypos+=26;
+
+  gui_stream_icq_label->setGeometry(10,ypos,110,24);
+  gui_stream_icq_edit->setGeometry(125,ypos,size().width()-170,24);
+  ypos+=26;
+
+  gui_stream_aim_label->setGeometry(10,ypos,110,24);
+  gui_stream_aim_edit->setGeometry(125,ypos,size().width()-170,24);
+  ypos+=26;
+
+  gui_stream_irc_label->setGeometry(10,ypos,110,24);
+  gui_stream_irc_edit->setGeometry(125,ypos,size().width()-170,24);
   ypos+=35;
 
   gui_source_label->setGeometry(10,ypos,size().width()-20,24);
   ypos+=23;
 
   gui_source_type_label->setGeometry(10,ypos,110,20);
-  gui_source_type_box->setGeometry(125,ypos,size().width()-135,24);
+  gui_source_type_box->setGeometry(125,ypos,350,24);
   ypos+=26;
 
   int ypos_base=ypos;
@@ -344,11 +440,11 @@ void MainWidget::resizeEvent(QResizeEvent *e)
   // JACK Controls
   //
   ypos=ypos_base;
-  gui_jack_server_name_label->setGeometry(10,ypos,160,20);
-  gui_jack_server_name_edit->setGeometry(175,ypos,size().width()-275,24);
+  gui_jack_server_name_label->setGeometry(10,ypos,145,20);
+  gui_jack_server_name_edit->setGeometry(160,ypos,size().width()-260,24);
   ypos+=26;
-  gui_jack_client_name_label->setGeometry(10,ypos,160,20);
-  gui_jack_client_name_edit->setGeometry(175,ypos,size().width()-275,24);
+  gui_jack_client_name_label->setGeometry(10,ypos,145,20);
+  gui_jack_client_name_edit->setGeometry(160,ypos,size().width()-260,24);
   ypos+=26;
   
 }
@@ -370,6 +466,7 @@ void MainWidget::startEncodingData()
 	  this,SLOT(processFinishedData(int,QProcess::ExitStatus)));
   MakeServerArgs(&args);
   MakeCodecArgs(&args);
+  MakeStreamArgs(&args);
   MakeSourceArgs(&args);
   gui_process->start("glasscoder",args);
   gui_start_button->disconnect();
@@ -391,9 +488,90 @@ void MainWidget::showCodeData()
   args.push_back("glasscoder");
   MakeServerArgs(&args);
   MakeCodecArgs(&args);
+  MakeStreamArgs(&args);
   MakeSourceArgs(&args);
 
   gui_codeviewer_dialog->exec(args);
+}
+
+
+void MainWidget::serverTypeChanged(int n)
+{
+  Connector::ServerType type=
+    (Connector::ServerType)gui_server_type_box->itemData(n).toInt();
+
+  switch(type) {
+  case Connector::HlsServer:
+    gui_stream_name_label->setEnabled(false);
+    gui_stream_name_edit->setEnabled(false);
+    gui_stream_description_label->setEnabled(false);
+    gui_stream_description_edit->setEnabled(false);
+    gui_stream_url_label->setEnabled(false);
+    gui_stream_url_edit->setEnabled(false);
+    gui_stream_genre_label->setEnabled(false);
+    gui_stream_genre_edit->setEnabled(false);
+    gui_stream_icq_label->setEnabled(false);
+    gui_stream_icq_edit->setEnabled(false);
+    gui_stream_aim_label->setEnabled(false);
+    gui_stream_aim_edit->setEnabled(false);
+    gui_stream_irc_label->setEnabled(false);
+    gui_stream_irc_edit->setEnabled(false);
+    break;
+
+  case Connector::Shoutcast1Server:
+    gui_stream_name_label->setEnabled(true);
+    gui_stream_name_edit->setEnabled(true);
+    gui_stream_description_label->setEnabled(false);
+    gui_stream_description_edit->setEnabled(false);
+    gui_stream_url_label->setEnabled(true);
+    gui_stream_url_edit->setEnabled(true);
+    gui_stream_genre_label->setEnabled(true);
+    gui_stream_genre_edit->setEnabled(true);
+    gui_stream_icq_label->setEnabled(true);
+    gui_stream_icq_edit->setEnabled(true);
+    gui_stream_aim_label->setEnabled(true);
+    gui_stream_aim_edit->setEnabled(true);
+    gui_stream_irc_label->setEnabled(true);
+    gui_stream_irc_edit->setEnabled(true);
+    break;
+
+  case Connector::Shoutcast2Server:
+    gui_stream_name_label->setEnabled(true);
+    gui_stream_name_edit->setEnabled(true);
+    gui_stream_description_label->setEnabled(false);
+    gui_stream_description_edit->setEnabled(false);
+    gui_stream_url_label->setEnabled(false);
+    gui_stream_url_edit->setEnabled(false);
+    gui_stream_genre_label->setEnabled(true);
+    gui_stream_genre_edit->setEnabled(true);
+    gui_stream_icq_label->setEnabled(true);
+    gui_stream_icq_edit->setEnabled(true);
+    gui_stream_aim_label->setEnabled(true);
+    gui_stream_aim_edit->setEnabled(true);
+    gui_stream_irc_label->setEnabled(true);
+    gui_stream_irc_edit->setEnabled(true);
+    break;
+
+  case Connector::Icecast2Server:
+    gui_stream_name_label->setEnabled(true);
+    gui_stream_name_edit->setEnabled(true);
+    gui_stream_description_label->setEnabled(true);
+    gui_stream_description_edit->setEnabled(true);
+    gui_stream_url_label->setEnabled(true);
+    gui_stream_url_edit->setEnabled(true);
+    gui_stream_genre_label->setEnabled(true);
+    gui_stream_genre_edit->setEnabled(true);
+    gui_stream_icq_label->setEnabled(false);
+    gui_stream_icq_edit->setEnabled(false);
+    gui_stream_aim_label->setEnabled(false);
+    gui_stream_aim_edit->setEnabled(false);
+    gui_stream_irc_label->setEnabled(false);
+    gui_stream_irc_edit->setEnabled(false);
+    break;
+
+  case Connector::LastServer:
+    break;
+  }
 }
 
 
@@ -678,6 +856,7 @@ void MainWidget::deviceFinishedData(int exit_code,
     LoadSettings();
     codecTypeChanged(gui_codec_type_box->currentIndex());
     sourceTypeChanged(gui_source_type_box->currentIndex());
+    serverTypeChanged(gui_server_type_box->currentIndex());
   }
   else {
     ProcessError(exit_code,exit_status);
@@ -805,6 +984,32 @@ void MainWidget::MakeCodecArgs(QStringList *args)
 }
 
 
+void MainWidget::MakeStreamArgs(QStringList *args)
+{
+  if(!gui_stream_name_edit->text().isEmpty()) {
+    args->push_back("--stream-name="+gui_stream_name_edit->text());
+  }
+  if(!gui_stream_description_edit->text().isEmpty()) {
+    args->push_back("--stream-description="+gui_stream_description_edit->text());
+  }
+  if(!gui_stream_url_edit->text().isEmpty()) {
+    args->push_back("--stream-url="+gui_stream_url_edit->text());
+  }
+  if(!gui_stream_genre_edit->text().isEmpty()) {
+    args->push_back("--stream-genre="+gui_stream_genre_edit->text());
+  }
+  if(!gui_stream_icq_edit->text().isEmpty()) {
+    args->push_back("--stream-icq="+gui_stream_icq_edit->text());
+  }
+  if(!gui_stream_aim_edit->text().isEmpty()) {
+    args->push_back("--stream-aim="+gui_stream_aim_edit->text());
+  }
+  if(!gui_stream_irc_edit->text().isEmpty()) {
+    args->push_back("--stream-irc="+gui_stream_irc_edit->text());
+  }
+}
+
+
 bool MainWidget::MakeSourceArgs(QStringList *args)
 {
   AudioDevice::DeviceType type=(AudioDevice::DeviceType)
@@ -876,8 +1081,17 @@ void MainWidget::LoadSettings()
       setCurrentItemData(p->intValue("GlassGui","AudioBitrate"));
     gui_source_type_box->
       setCurrentItemData(AudioDevice::deviceType(p->stringValue("GlassGui",
-							      "AudioDevice")));
+	       						"AudioDevice")));
  
+    gui_stream_name_edit->setText(p->stringValue("GlassGui","StreamName"));
+    gui_stream_description_edit->
+      setText(p->stringValue("GlassGui","StreamDescription"));
+    gui_stream_url_edit->setText(p->stringValue("GlassGui","StreamUrl"));
+    gui_stream_genre_edit->setText(p->stringValue("GlassGui","StreamGenre"));
+    gui_stream_icq_edit->setText(p->stringValue("GlassGui","StreamIcq"));
+    gui_stream_aim_edit->setText(p->stringValue("GlassGui","StreamAim"));
+    gui_stream_irc_edit->setText(p->stringValue("GlassGui","StreamIrc"));
+
     gui_file_name_edit->setText(p->stringValue("GlassGui","FileName"));
     delete p;
   }
@@ -916,6 +1130,22 @@ bool MainWidget::SaveSettings()
     fprintf(f,"AudioDevice=%s\n",
 	    (const char *)AudioDevice::optionKeyword((AudioDevice::DeviceType)
 		     gui_source_type_box->currentItemData().toInt()).toUtf8()); 
+
+    fprintf(f,"StreamName=%s\n",
+	    (const char *)gui_stream_name_edit->text().toUtf8());
+    fprintf(f,"StreamDescription=%s\n",
+	    (const char *)gui_stream_description_edit->text().toUtf8());
+    fprintf(f,"StreamUrl=%s\n",
+	    (const char *)gui_stream_url_edit->text().toUtf8());
+    fprintf(f,"StreamGenre=%s\n",
+	    (const char *)gui_stream_genre_edit->text().toUtf8());
+    fprintf(f,"StreamIcq=%s\n",
+	    (const char *)gui_stream_icq_edit->text().toUtf8());
+    fprintf(f,"StreamAim=%s\n",
+	    (const char *)gui_stream_aim_edit->text().toUtf8());
+    fprintf(f,"StreamIrc=%s\n",
+	    (const char *)gui_stream_irc_edit->text().toUtf8());
+
     fprintf(f,"FileName=%s\n",
 	    (const char *)gui_file_name_edit->text().toUtf8());
     fclose(f);

@@ -55,6 +55,7 @@ class MainWidget : public QMainWindow
   void startEncodingData();
   void stopEncodingData();
   void showCodeData();
+  void serverTypeChanged(int n);
   void codecTypeChanged(int n);
   void codecSamplerateChanged(int n);
   void sourceTypeChanged(int n);
@@ -70,6 +71,7 @@ class MainWidget : public QMainWindow
  private:
   bool MakeServerArgs(QStringList *args);
   void MakeCodecArgs(QStringList *args);
+  void MakeStreamArgs(QStringList *args);
   bool MakeSourceArgs(QStringList *args);
   void ProcessError(int exit_code,QProcess::ExitStatus exit_status);
   void LoadSettings();
@@ -98,6 +100,22 @@ class MainWidget : public QMainWindow
   ComboBox *gui_codec_channels_box;
   QLabel *gui_codec_bitrate_label;
   ComboBox *gui_codec_bitrate_box;
+
+  QLabel *gui_stream_label;
+  QLabel *gui_stream_name_label;
+  QLineEdit *gui_stream_name_edit;
+  QLabel *gui_stream_description_label;
+  QLineEdit *gui_stream_description_edit;
+  QLabel *gui_stream_url_label;
+  QLineEdit *gui_stream_url_edit;
+  QLabel *gui_stream_genre_label;
+  QLineEdit *gui_stream_genre_edit;
+  QLabel *gui_stream_icq_label;
+  QLineEdit *gui_stream_icq_edit;
+  QLabel *gui_stream_aim_label;
+  QLineEdit *gui_stream_aim_edit;
+  QLabel *gui_stream_irc_label;
+  QLineEdit *gui_stream_irc_edit;
 
   QLabel *gui_source_label;
   QLabel *gui_source_type_label;

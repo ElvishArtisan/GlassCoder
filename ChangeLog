@@ -250,3 +250,5 @@
 2015-08-19 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented logic to cleanly shutdown the underlying glasscoder(1)
 	process if glassgui(1) is closed with an active encoder process.
+2015-08-19 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Stream Metadata Settings' section to glassgui(1).
