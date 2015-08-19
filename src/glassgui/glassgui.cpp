@@ -95,8 +95,6 @@ MainWidget::MainWidget(QWidget *parent)
     gui_server_type_box->
       insertItem(i,Connector::serverTypeText((Connector::ServerType)i),i);
   }
-  connect(gui_server_type_box,SIGNAL(activated(int)),
-	  this,SLOT(serverTypeChanged(int)));
 
   //
   // Server Location
@@ -215,12 +213,17 @@ MainWidget::MainWidget(QWidget *parent)
   gui_jack_client_name_edit->hide();
 
   //
-  // Process Cleanup Timer
+  // Process Timers
   //
   gui_process_cleanup_timer=new QTimer(this);
   gui_process_cleanup_timer->setSingleShot(true);
   connect(gui_process_cleanup_timer,SIGNAL(timeout()),
 	  this,SLOT(processCollectGarbageData()));
+
+  gui_process_kill_timer=new QTimer(this);
+  gui_process_kill_timer->setSingleShot(true);
+  connect(gui_process_kill_timer,SIGNAL(timeout()),
+	  this,SLOT(processKillData()));
 
   //
   // Get Codec List
@@ -245,10 +248,26 @@ QSize MainWidget::sizeHint() const
 
 void MainWidget::closeEvent(QCloseEvent *e)
 {
+  if(gui_process!=NULL) {
+    if(QMessageBox::question(this,"GlassGui - "+tr("Exiting"),
+			     tr("The encoder is currently running.")+" "+
+			     tr("Close will shut it down.")+"\n\n"+
+			     tr("Proceed?"),QMessageBox::Yes,QMessageBox::No)==
+       QMessageBox::No) {
+      e->ignore();
+      return;
+    }
+    gui_process->terminate();
+    gui_process_kill_timer->start(GLASSGUI_TERMINATE_TIMEOUT);
+    SaveSettings();
+    e->ignore();
+    return;
+  }
   if(!SaveSettings()) {
     QMessageBox::warning(this,"GlassGui - "+tr("Save Error"),
 			 tr("Unable to save configuration!"));
   }
+  e->accept();
 }
 
 
@@ -375,14 +394,6 @@ void MainWidget::showCodeData()
   MakeSourceArgs(&args);
 
   gui_codeviewer_dialog->exec(args);
-}
-
-
-void MainWidget::serverTypeChanged(int n)
-{
-  Connector::ServerType type=(Connector::ServerType)gui_server_type_box->itemData(n).toInt();
-
-  gui_server_username_edit->setText(Connector::defaultUsername(type));
 }
 
 
@@ -678,6 +689,9 @@ void MainWidget::processFinishedData(int exit_code,
 				     QProcess::ExitStatus exit_status)
 {
   if(exit_code==0) {
+    if(gui_process_kill_timer->isActive()) {
+      exit(0);
+    }
     gui_start_button->disconnect();
     connect(gui_start_button,SIGNAL(clicked()),this,SLOT(startEncodingData()));
     gui_start_button->setText(tr("Start"));
@@ -702,6 +716,14 @@ void MainWidget::processCollectGarbageData()
 {
   delete gui_process;
   gui_process=NULL;
+}
+
+
+void MainWidget::processKillData()
+{
+  gui_process->kill();
+  qApp->processEvents();
+  exit(0);
 }
 
 
@@ -739,7 +761,9 @@ bool MainWidget::MakeServerArgs(QStringList *args)
     args->push_back("--server-port="+QString().sprintf("%d",url.port()));
   }
   args->push_back("--server-mountpoint="+url.path());
-  args->push_back("--server-username="+gui_server_username_edit->text());
+  if(!gui_server_username_edit->text().isEmpty()) {
+    args->push_back("--server-username="+gui_server_username_edit->text());
+  }
   if(!gui_server_password_edit->text().isEmpty()) {
     args->push_back("--server-password="+gui_server_password_edit->text());
   }
@@ -867,7 +891,6 @@ bool MainWidget::SaveSettings()
 
   if(CheckSettingsDirectory()) {
     QString basepath=gui_settings_dir->path()+"/"+GLASSGUI_SETTINGS_FILE;
-    printf("basepath: %s\n",(const char *)basepath.toUtf8());
     if((f=fopen((basepath+".tmp").toUtf8(),"w"))==NULL) {
       return false;
     }

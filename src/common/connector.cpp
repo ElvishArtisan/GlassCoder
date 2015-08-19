@@ -384,26 +384,6 @@ Connector::ServerType Connector::serverType(const QString &key)
 }
 
 
-QString Connector::defaultUsername(Connector::ServerType type)
-{
-  QString ret="";
-
-  switch(type) {
-  case Connector::HlsServer:
-  case Connector::Shoutcast1Server:
-  case Connector::Shoutcast2Server:
-  case Connector::LastServer:
-    break;
-
-  case Connector::Icecast2Server:
-    ret="source";
-    break;
-  }
-
-  return ret;
-}
-
-
 QString Connector::subMountpointName(const QString &mntpt,unsigned bitrate)
 {
   QStringList f0=mntpt.split(".");

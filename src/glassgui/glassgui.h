@@ -38,6 +38,7 @@
 #define GLASSGUI_USAGE ""
 #define GLASSGUI_SETTINGS_DIR ".glassgui"
 #define GLASSGUI_SETTINGS_FILE "glassguirc"
+#define GLASSGUI_TERMINATE_TIMEOUT 5000
 
 class MainWidget : public QMainWindow
 {
@@ -54,7 +55,6 @@ class MainWidget : public QMainWindow
   void startEncodingData();
   void stopEncodingData();
   void showCodeData();
-  void serverTypeChanged(int n);
   void codecTypeChanged(int n);
   void codecSamplerateChanged(int n);
   void sourceTypeChanged(int n);
@@ -64,6 +64,7 @@ class MainWidget : public QMainWindow
   void processFinishedData(int exit_code,QProcess::ExitStatus exit_status);
   void processErrorData(QProcess::ProcessError err);
   void processCollectGarbageData();
+  void processKillData();
   void fileSelectName();
 
  private:
@@ -114,6 +115,7 @@ class MainWidget : public QMainWindow
   CodeViewer *gui_codeviewer_dialog;
   QProcess *gui_process;
   QTimer *gui_process_cleanup_timer;
+  QTimer *gui_process_kill_timer;
 
   QDir *gui_settings_dir;
 };
