@@ -30,7 +30,8 @@ moc_%.cpp:	%.h
 
 bin_PROGRAMS = glassgui
 
-dist_glassgui_SOURCES = glassgui.cpp glassgui.h\
+dist_glassgui_SOURCES = codeviewer.cpp codeviewer.h\
+                        glassgui.cpp glassgui.h\
                         segmeter.cpp segmeter.h\
                         stereometer.cpp stereometer.h
 
@@ -41,6 +42,7 @@ nodist_glassgui_SOURCES = audiodevice.cpp audiodevice.h\
                           glasslimits.h\
                           moc_audiodevice.cpp\
                           moc_codec.cpp\
+                          moc_codeviewer.cpp\
                           moc_connector.cpp\
                           moc_glassgui.cpp\
                           moc_segmeter.cpp\

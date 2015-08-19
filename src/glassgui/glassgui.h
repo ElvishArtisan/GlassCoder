@@ -29,7 +29,9 @@
 #include <QPushButton>
 #include <QSpinBox>
 #include <QStringList>
+#include <QTimer>
 
+#include "codeviewer.h"
 #include "stereometer.h"
 
 #define GLASSGUI_USAGE ""
@@ -47,11 +49,13 @@ class MainWidget : public QMainWindow
  private slots:
   void startEncodingData();
   void stopEncodingData();
+  void showCodeData();
   void serverTypeChanged(int n);
   void codecTypeChanged(int n);
   void codecSamplerateChanged(int n);
   void sourceTypeChanged(int n);
   void codecFinishedData(int exit_code,QProcess::ExitStatus exit_status);
+  void checkArgs(const QString &str);
   void deviceFinishedData(int exit_code,QProcess::ExitStatus exit_status);
   void processFinishedData(int exit_code,QProcess::ExitStatus exit_status);
   void processErrorData(QProcess::ProcessError err);
@@ -60,11 +64,12 @@ class MainWidget : public QMainWindow
 
  private:
   bool MakeServerArgs(QStringList *args);
-  bool MakeCodecArgs(QStringList *args);
+  void MakeCodecArgs(QStringList *args);
   bool MakeSourceArgs(QStringList *args);
   void ProcessError(int exit_code,QProcess::ExitStatus exit_status);
   StereoMeter *gui_meter;
   QPushButton *gui_start_button;
+  QPushButton *gui_code_button;
 
   QLabel *gui_server_label;
   QLabel *gui_server_type_label;
@@ -99,7 +104,9 @@ class MainWidget : public QMainWindow
   QLabel *gui_jack_client_name_label;
   QLineEdit *gui_jack_client_name_edit;
 
+  CodeViewer *gui_codeviewer_dialog;
   QProcess *gui_process;
+  QTimer *gui_process_cleanup_timer;
 };
 
 

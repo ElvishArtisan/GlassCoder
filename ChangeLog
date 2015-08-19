@@ -242,3 +242,6 @@
 	* Moved 'src/cmdswitch.cpp' and 'src'/cmdswitch.h' into 'src/common/'.
 2015-08-18 Fred Gleason <fredg@paravelsystems.com>
 	* Stubbed out glassgui(1) in 'src/glassgui/'.
+2015-08-19 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented Start/Stop button functionality in glassgui(1).
+	* Added a 'Show Code' button in glassgui(1).

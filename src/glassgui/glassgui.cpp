@@ -56,13 +56,22 @@ MainWidget::MainWidget(QWidget *parent)
   setMinimumSize(sizeHint());
 
   //
-  // Meter
+  // Dialogs
+  //
+  gui_codeviewer_dialog=new CodeViewer(this);
+
+  //
+  // Meter Section
   //
   gui_meter=new StereoMeter(this);
   gui_start_button=new QPushButton(tr("Start"),this);
   gui_start_button->setFont(section_font);
   connect(gui_start_button,SIGNAL(clicked()),this,SLOT(startEncodingData()));
-  //  gui_start_button->setDisabled(true);
+  gui_start_button->setDisabled(true);
+  gui_code_button=new QPushButton(tr("Show")+"\n"+tr("Code"),this);
+  gui_code_button->setFont(section_font);
+  connect(gui_code_button,SIGNAL(clicked()),this,SLOT(showCodeData()));
+  gui_code_button->setDisabled(true);
 
   //
   // Server Section
@@ -91,6 +100,8 @@ MainWidget::MainWidget(QWidget *parent)
   gui_server_location_label->setFont(label_font);
   gui_server_location_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
   gui_server_location_edit=new QLineEdit(this);
+  connect(gui_server_location_edit,SIGNAL(textEdited(const QString &)),
+	  this,SLOT(checkArgs(const QString &)));
 
   //
   // Server Username
@@ -175,6 +186,8 @@ MainWidget::MainWidget(QWidget *parent)
   gui_file_name_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
   gui_file_name_label->hide();
   gui_file_name_edit=new QLineEdit(this);
+  connect(gui_file_name_edit,SIGNAL(textEdited(const QString &)),
+	  this,SLOT(checkArgs(const QString &)));
   gui_file_name_edit->hide();
   gui_file_select_button=new QPushButton(tr("Select"),this);
   connect(gui_file_select_button,SIGNAL(clicked()),this,SLOT(fileSelectName()));
@@ -195,6 +208,14 @@ MainWidget::MainWidget(QWidget *parent)
   gui_jack_client_name_label->hide();
   gui_jack_client_name_edit=new QLineEdit(this);
   gui_jack_client_name_edit->hide();
+
+  //
+  // Process Cleanup Timer
+  //
+  gui_process_cleanup_timer=new QTimer(this);
+  gui_process_cleanup_timer->setSingleShot(true);
+  connect(gui_process_cleanup_timer,SIGNAL(timeout()),
+	  this,SLOT(processCollectGarbageData()));
 
   //
   // Get Codec List
@@ -223,7 +244,10 @@ void MainWidget::resizeEvent(QResizeEvent *e)
 
   gui_meter->setGeometry(10,10,gui_meter->sizeHint().width(),
 			 gui_meter->sizeHint().height());
-  gui_start_button->setGeometry(gui_meter->sizeHint().width()+20,15,size().width()-gui_meter->sizeHint().width()-30,gui_meter->sizeHint().height()-10);
+  gui_start_button->setGeometry(gui_meter->sizeHint().width()+20,15,
+				2*(size().width()-gui_meter->sizeHint().width()-30)/3-20,gui_meter->sizeHint().height()-10);
+  gui_code_button->setGeometry(gui_meter->sizeHint().width()+10+2*(size().width()-gui_meter->sizeHint().width()-30)/3,15,
+			       (size().width()-gui_meter->sizeHint().width()-30)/3+10,gui_meter->sizeHint().height()-10);
   ypos+=(gui_meter->sizeHint().height()+15);
 
   gui_server_label->setGeometry(10,ypos,size().width()-20,24);
@@ -301,24 +325,42 @@ void MainWidget::startEncodingData()
 {
   QStringList args;
 
-  if(!MakeServerArgs(&args)) {
-    printf("SERVER BAD!\n");
+  if(gui_process!=NULL) {
+    QMessageBox::warning(this,"GlassGui - "+tr("Process Error"),
+			 tr("Process is not in ready state!"));
     return;
   }
-  if(!MakeCodecArgs(&args)) {
-    printf("CODEC BAD!\n");
-    return;
-  }
-  if(!MakeSourceArgs(&args)) {
-    printf("SOURCE BAD!\n");
-    return;
-  }
-  printf("glasscoder %s\n",(const char *)args.join(" ").toUtf8());
+  gui_process=new QProcess(this);
+  connect(gui_process,SIGNAL(error(QProcess::ProcessError)),
+	  this,SLOT(processErrorData(QProcess::ProcessError)));
+  connect(gui_process,SIGNAL(finished(int,QProcess::ExitStatus)),
+	  this,SLOT(processFinishedData(int,QProcess::ExitStatus)));
+  MakeServerArgs(&args);
+  MakeCodecArgs(&args);
+  MakeSourceArgs(&args);
+  gui_process->start("glasscoder",args);
+  gui_start_button->disconnect();
+  connect(gui_start_button,SIGNAL(clicked()),this,SLOT(stopEncodingData()));
+  gui_start_button->setText(tr("Stop"));
 }
 
 
 void MainWidget::stopEncodingData()
 {
+  gui_process->terminate();
+}
+
+
+void MainWidget::showCodeData()
+{
+  QStringList args;
+
+  args.push_back("glasscoder");
+  MakeServerArgs(&args);
+  MakeCodecArgs(&args);
+  MakeSourceArgs(&args);
+
+  gui_codeviewer_dialog->exec(args);
 }
 
 
@@ -578,6 +620,17 @@ void MainWidget::codecFinishedData(int exit_code,
 }
 
 
+void MainWidget::checkArgs(const QString &str)
+{
+  QStringList args;
+  bool state;
+
+  state=MakeServerArgs(&args)&&MakeSourceArgs(&args);
+  gui_start_button->setEnabled(state);
+  gui_code_button->setEnabled(state);
+}
+
+
 void MainWidget::deviceFinishedData(int exit_code,
 				    QProcess::ExitStatus exit_status)
 {
@@ -598,6 +651,7 @@ void MainWidget::deviceFinishedData(int exit_code,
     }
     codecTypeChanged(0);
     sourceTypeChanged(0);
+    gui_process=NULL;
   }
   else {
     ProcessError(exit_code,exit_status);
@@ -609,10 +663,14 @@ void MainWidget::processFinishedData(int exit_code,
 				     QProcess::ExitStatus exit_status)
 {
   if(exit_code==0) {
+    gui_start_button->disconnect();
+    connect(gui_start_button,SIGNAL(clicked()),this,SLOT(startEncodingData()));
+    gui_start_button->setText(tr("Start"));
   }
   else {
     ProcessError(exit_code,exit_status);
   }
+  gui_process_cleanup_timer->start(0);
 }
 
 
@@ -627,6 +685,8 @@ void MainWidget::processErrorData(QProcess::ProcessError err)
 
 void MainWidget::processCollectGarbageData()
 {
+  delete gui_process;
+  gui_process=NULL;
 }
 
 
@@ -673,7 +733,7 @@ bool MainWidget::MakeServerArgs(QStringList *args)
 }
 
 
-bool MainWidget::MakeCodecArgs(QStringList *args)
+void MainWidget::MakeCodecArgs(QStringList *args)
 {
   Codec::Type type=(Codec::Type)
     gui_codec_type_box->itemData(gui_codec_type_box->currentIndex()).toInt();
@@ -703,7 +763,6 @@ bool MainWidget::MakeCodecArgs(QStringList *args)
 		 itemData(gui_codec_bitrate_box->currentIndex()).toUInt()));
     break;
   }
-  return true;
 }
 
 
