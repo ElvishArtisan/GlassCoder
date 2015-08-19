@@ -43,6 +43,7 @@ class AudioDevice : public QObject
   virtual unsigned deviceSamplerate() const;
   static QString deviceTypeText(AudioDevice::DeviceType type);
   static QString optionKeyword(AudioDevice::DeviceType type);
+  static AudioDevice::DeviceType deviceType(const QString &key);
   static QString formatString(AudioDevice::Format fmt);
 
  signals:

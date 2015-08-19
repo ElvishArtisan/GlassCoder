@@ -82,6 +82,7 @@ class Connector : public QObject
   virtual void stop();
   static QString serverTypeText(Connector::ServerType);
   static QString optionKeyword(Connector::ServerType type);
+  static Connector::ServerType serverType(const QString &key);
   static QString defaultUsername(Connector::ServerType type);
   static QString subMountpointName(const QString &mntpt,unsigned bitrate);
   static QString pathPart(const QString &fullpath);

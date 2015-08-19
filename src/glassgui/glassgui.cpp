@@ -18,7 +18,10 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <stdio.h>
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include <QApplication>
 #include <QFileDialog>
@@ -29,6 +32,7 @@
 #include "cmdswitch.h"
 #include "codec.h"
 #include "connector.h"
+#include "profile.h"
 
 #include "glassgui.h"
 
@@ -41,6 +45,7 @@ MainWidget::MainWidget(QWidget *parent)
   }
 
   setWindowTitle(QString("GlassGui v")+VERSION);
+  gui_settings_dir=NULL;
 
   //
   // Fonts
@@ -85,7 +90,7 @@ MainWidget::MainWidget(QWidget *parent)
   gui_server_type_label=new QLabel(tr("Type")+":",this);
   gui_server_type_label->setFont(label_font);
   gui_server_type_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_server_type_box=new QComboBox(this);
+  gui_server_type_box=new ComboBox(this);
   for(int i=0;i<Connector::LastServer;i++) {
     gui_server_type_box->
       insertItem(i,Connector::serverTypeText((Connector::ServerType)i),i);
@@ -132,7 +137,7 @@ MainWidget::MainWidget(QWidget *parent)
   gui_codec_type_label=new QLabel(tr("Type")+":",this);
   gui_codec_type_label->setFont(label_font);
   gui_codec_type_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_codec_type_box=new QComboBox(this);
+  gui_codec_type_box=new ComboBox(this);
   connect(gui_codec_type_box,SIGNAL(activated(int)),
 	  this,SLOT(codecTypeChanged(int)));
 
@@ -142,7 +147,7 @@ MainWidget::MainWidget(QWidget *parent)
   gui_codec_samplerate_label=new QLabel(tr("Sample Rate")+":",this);
   gui_codec_samplerate_label->setFont(label_font);
   gui_codec_samplerate_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_codec_samplerate_box=new QComboBox(this);
+  gui_codec_samplerate_box=new ComboBox(this);
   connect(gui_codec_samplerate_box,SIGNAL(activated(int)),
 	  this,SLOT(codecSamplerateChanged(int)));
 
@@ -152,7 +157,7 @@ MainWidget::MainWidget(QWidget *parent)
   gui_codec_channels_label=new QLabel(tr("Channels")+":",this);
   gui_codec_channels_label->setFont(label_font);
   gui_codec_channels_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_codec_channels_box=new QComboBox(this);
+  gui_codec_channels_box=new ComboBox(this);
 
   //
   // Codec Bitrate
@@ -160,7 +165,7 @@ MainWidget::MainWidget(QWidget *parent)
   gui_codec_bitrate_label=new QLabel(tr("Bit Rate")+":",this);
   gui_codec_bitrate_label->setFont(label_font);
   gui_codec_bitrate_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_codec_bitrate_box=new QComboBox(this);
+  gui_codec_bitrate_box=new ComboBox(this);
 
   //
   // Source Section
@@ -174,7 +179,7 @@ MainWidget::MainWidget(QWidget *parent)
   gui_source_type_label=new QLabel(tr("Type")+":",this);
   gui_source_type_label->setFont(label_font);
   gui_source_type_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_source_type_box=new QComboBox(this);
+  gui_source_type_box=new ComboBox(this);
   connect(gui_source_type_box,SIGNAL(activated(int)),
 	  this,SLOT(sourceTypeChanged(int)));
 
@@ -235,6 +240,15 @@ MainWidget::MainWidget(QWidget *parent)
 QSize MainWidget::sizeHint() const
 {
   return QSize(560,600);
+}
+
+
+void MainWidget::closeEvent(QCloseEvent *e)
+{
+  if(!SaveSettings()) {
+    QMessageBox::warning(this,"GlassGui - "+tr("Save Error"),
+			 tr("Unable to save configuration!"));
+  }
 }
 
 
@@ -649,9 +663,10 @@ void MainWidget::deviceFinishedData(int exit_code,
 	}
       }
     }
-    codecTypeChanged(0);
-    sourceTypeChanged(0);
     gui_process=NULL;
+    LoadSettings();
+    codecTypeChanged(gui_codec_type_box->currentIndex());
+    sourceTypeChanged(gui_source_type_box->currentIndex());
   }
   else {
     ProcessError(exit_code,exit_status);
@@ -809,6 +824,100 @@ void MainWidget::ProcessError(int exit_code,QProcess::ExitStatus exit_status)
 			 "\n\""+msg+"\".");
   }
   exit(256);
+}
+
+
+void MainWidget::LoadSettings()
+{
+  if(CheckSettingsDirectory()) {
+    Profile *p=new Profile();
+    p->setSource(gui_settings_dir->path()+"/"+GLASSGUI_SETTINGS_FILE);
+    gui_server_type_box->
+      setCurrentItemData(Connector::serverType(p->stringValue("GlassGui",
+							      "ServerType")));
+    gui_server_location_edit->
+      setText(p->stringValue("GlassGui","ServerLocation"));
+    gui_server_username_edit->
+      setText(p->stringValue("GlassGui","ServerUsername"));
+    gui_server_password_edit->
+      setText(p->stringValue("GlassGui","ServerPassword"));
+    gui_codec_type_box->
+      setCurrentItemData(Codec::codecType(p->stringValue("GlassGui",
+							 "AudioFormat")));
+    gui_codec_samplerate_box->
+      setCurrentItemData(p->intValue("GlassGui","AudioSamplerate"));
+    gui_codec_channels_box->
+      setCurrentItemData(p->intValue("GlassGui","AudioChannels"));
+    gui_codec_bitrate_box->
+      setCurrentItemData(p->intValue("GlassGui","AudioBitrate"));
+    gui_source_type_box->
+      setCurrentItemData(AudioDevice::deviceType(p->stringValue("GlassGui",
+							      "AudioDevice")));
+ 
+    gui_file_name_edit->setText(p->stringValue("GlassGui","FileName"));
+    delete p;
+  }
+  checkArgs("");
+}
+
+
+bool MainWidget::SaveSettings()
+{
+  FILE *f;
+
+  if(CheckSettingsDirectory()) {
+    QString basepath=gui_settings_dir->path()+"/"+GLASSGUI_SETTINGS_FILE;
+    printf("basepath: %s\n",(const char *)basepath.toUtf8());
+    if((f=fopen((basepath+".tmp").toUtf8(),"w"))==NULL) {
+      return false;
+    }
+    fprintf(f,"[GlassGui]\n");
+    fprintf(f,"ServerType=%s\n",
+	    (const char *)Connector::optionKeyword((Connector::ServerType)
+		   gui_server_type_box->currentItemData().toInt()).toUtf8()); 
+    fprintf(f,"ServerLocation=%s\n",
+	    (const char *)gui_server_location_edit->text().toUtf8());
+    fprintf(f,"ServerUsername=%s\n",
+	    (const char *)gui_server_username_edit->text().toUtf8());
+    fprintf(f,"ServerPassword=%s\n",
+	    (const char *)gui_server_password_edit->text().toUtf8());
+    fprintf(f,"AudioFormat=%s\n",
+	    (const char *)Codec::optionKeyword((Codec::Type)
+	       gui_codec_type_box->currentItemData().toInt()).toUtf8()); 
+    fprintf(f,"AudioSamplerate=%u\n",
+	    gui_codec_samplerate_box->currentItemData().toUInt());
+    fprintf(f,"AudioChannels=%u\n",
+	    gui_codec_channels_box->currentItemData().toUInt());
+    fprintf(f,"AudioBitrate=%u\n",
+	    gui_codec_bitrate_box->currentItemData().toUInt());
+    fprintf(f,"AudioDevice=%s\n",
+	    (const char *)AudioDevice::optionKeyword((AudioDevice::DeviceType)
+		     gui_source_type_box->currentItemData().toInt()).toUtf8()); 
+    fprintf(f,"FileName=%s\n",
+	    (const char *)gui_file_name_edit->text().toUtf8());
+    fclose(f);
+    rename((basepath+".tmp").toUtf8(),basepath.toUtf8());
+  }
+  return true;
+}
+
+
+bool MainWidget::CheckSettingsDirectory()
+{
+  QString path=QString("/")+GLASSGUI_SETTINGS_DIR;
+
+  if(getenv("HOME")!=NULL) {
+    path=QString(getenv("HOME"))+"/"+GLASSGUI_SETTINGS_DIR;
+  }
+  gui_settings_dir=new QDir(path);
+  if(!gui_settings_dir->exists()) {
+    mkdir(path.toUtf8(),
+	  S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH);
+    if(!gui_settings_dir->exists()) {
+      return false;
+    }
+  }
+  return true;
 }
 
 

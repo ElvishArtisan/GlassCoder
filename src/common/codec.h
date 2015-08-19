@@ -65,6 +65,7 @@ class Codec : public QObject
   virtual bool start();
   static QString codecTypeText(Codec::Type type);
   static QString optionKeyword(Codec::Type type);
+  static Codec::Type codecType(const QString &key);
 
  public slots:
   virtual void encode(Connector *conn);

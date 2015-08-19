@@ -104,6 +104,20 @@ QString AudioDevice::optionKeyword(AudioDevice::DeviceType type)
 }
 
 
+AudioDevice::DeviceType AudioDevice::deviceType(const QString &key)
+{
+  AudioDevice::DeviceType ret=AudioDevice::LastType;
+
+  for(int i=0;i<AudioDevice::LastType;i++) {
+    if(optionKeyword((AudioDevice::DeviceType)i)==key.toLower()) {
+      ret=(AudioDevice::DeviceType)i;
+    }
+  }
+
+  return ret;
+}
+
+
 QString AudioDevice::formatString(AudioDevice::Format fmt)
 {
   QString ret="UNKNOWN";

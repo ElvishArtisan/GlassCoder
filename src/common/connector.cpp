@@ -370,6 +370,20 @@ QString Connector::optionKeyword(Connector::ServerType type)
 }
 
 
+Connector::ServerType Connector::serverType(const QString &key)
+{
+  Connector::ServerType ret=Connector::LastServer;
+
+  for(int i=0;i<Connector::LastServer;i++) {
+    if(optionKeyword((Connector::ServerType)i)==key.toLower()) {
+      ret=(Connector::ServerType)i;
+    }
+  }
+
+  return ret;
+}
+
+
 QString Connector::defaultUsername(Connector::ServerType type)
 {
   QString ret="";

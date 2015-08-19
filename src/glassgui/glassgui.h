@@ -21,7 +21,7 @@
 #ifndef GLASSGUI_H
 #define GLASSGUI_H
 
-#include <QComboBox>
+#include <QDir>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMainWindow>
@@ -32,9 +32,12 @@
 #include <QTimer>
 
 #include "codeviewer.h"
+#include "combobox.h"
 #include "stereometer.h"
 
 #define GLASSGUI_USAGE ""
+#define GLASSGUI_SETTINGS_DIR ".glassgui"
+#define GLASSGUI_SETTINGS_FILE "glassguirc"
 
 class MainWidget : public QMainWindow
 {
@@ -44,6 +47,7 @@ class MainWidget : public QMainWindow
   QSize sizeHint() const;
 
  protected:
+  void closeEvent(QCloseEvent *e);
   void resizeEvent(QResizeEvent *e);
 
  private slots:
@@ -67,13 +71,16 @@ class MainWidget : public QMainWindow
   void MakeCodecArgs(QStringList *args);
   bool MakeSourceArgs(QStringList *args);
   void ProcessError(int exit_code,QProcess::ExitStatus exit_status);
+  void LoadSettings();
+  bool SaveSettings();
+  bool CheckSettingsDirectory();
   StereoMeter *gui_meter;
   QPushButton *gui_start_button;
   QPushButton *gui_code_button;
 
   QLabel *gui_server_label;
   QLabel *gui_server_type_label;
-  QComboBox *gui_server_type_box;
+  ComboBox *gui_server_type_box;
   QLabel *gui_server_location_label;
   QLineEdit *gui_server_location_edit;
   QLabel *gui_server_username_label;
@@ -83,17 +90,17 @@ class MainWidget : public QMainWindow
 
   QLabel *gui_codec_label;
   QLabel *gui_codec_type_label;
-  QComboBox *gui_codec_type_box;
+  ComboBox *gui_codec_type_box;
   QLabel *gui_codec_samplerate_label;
-  QComboBox *gui_codec_samplerate_box;
+  ComboBox *gui_codec_samplerate_box;
   QLabel *gui_codec_channels_label;
-  QComboBox *gui_codec_channels_box;
+  ComboBox *gui_codec_channels_box;
   QLabel *gui_codec_bitrate_label;
-  QComboBox *gui_codec_bitrate_box;
+  ComboBox *gui_codec_bitrate_box;
 
   QLabel *gui_source_label;
   QLabel *gui_source_type_label;
-  QComboBox *gui_source_type_box;
+  ComboBox *gui_source_type_box;
 
   QLabel *gui_file_name_label;
   QLineEdit *gui_file_name_edit;
@@ -107,6 +114,8 @@ class MainWidget : public QMainWindow
   CodeViewer *gui_codeviewer_dialog;
   QProcess *gui_process;
   QTimer *gui_process_cleanup_timer;
+
+  QDir *gui_settings_dir;
 };
 
 

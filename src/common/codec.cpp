@@ -228,6 +228,20 @@ QString Codec::optionKeyword(Codec::Type type)
 }
 
 
+Codec::Type Codec::codecType(const QString &key)
+{
+  Codec::Type ret=Codec::TypeLast;
+
+  for(int i=0;i<Codec::TypeLast;i++) {
+    if(optionKeyword((Codec::Type)i)==key.toLower()) {
+      ret=(Codec::Type)i;
+    }
+  }
+
+  return ret;
+}
+
+
 void Codec::encode(Connector *conn)
 {
   int n;
