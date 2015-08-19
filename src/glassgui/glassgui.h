@@ -121,6 +121,9 @@ class MainWidget : public QMainWindow
   QLabel *gui_source_type_label;
   ComboBox *gui_source_type_box;
 
+  QLabel *gui_alsa_device_label;
+  QLineEdit *gui_alsa_device_edit;
+
   QLabel *gui_file_name_label;
   QLineEdit *gui_file_name_edit;
   QPushButton *gui_file_select_button;

@@ -246,6 +246,18 @@ MainWidget::MainWidget(QWidget *parent)
 	  this,SLOT(sourceTypeChanged(int)));
 
   //
+  // ALSA Fields
+  //
+  gui_alsa_device_label=new QLabel(tr("ALSA Device")+":",this);
+  gui_alsa_device_label->setFont(label_font);
+  gui_alsa_device_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  gui_alsa_device_label->hide();
+  gui_alsa_device_edit=new QLineEdit(this);
+  connect(gui_alsa_device_edit,SIGNAL(textEdited(const QString &)),
+	  this,SLOT(checkArgs(const QString &)));
+  gui_alsa_device_edit->hide();
+
+  //
   // FILE Fields
   //
   gui_file_name_label=new QLabel(tr("Filename")+":",this);
@@ -426,6 +438,14 @@ void MainWidget::resizeEvent(QResizeEvent *e)
 
   int ypos_base=ypos;
 
+  //
+  // ALSA Controls
+  //
+  ypos=ypos_base;
+  gui_alsa_device_label->setGeometry(10,ypos,160,20);
+  gui_alsa_device_edit->setGeometry(175,ypos,100,24);
+  ypos+=26;
+  
   //
   // FILE Controls
   //
@@ -748,6 +768,9 @@ void MainWidget::codecSamplerateChanged(int n)
 
 void MainWidget::sourceTypeChanged(int n)
 {
+  gui_alsa_device_label->hide();
+  gui_alsa_device_edit->hide();
+
   gui_file_select_button->hide();
   gui_file_name_label->hide();
   gui_file_name_edit->hide();
@@ -762,6 +785,8 @@ void MainWidget::sourceTypeChanged(int n)
 
   switch(type) {
   case AudioDevice::Alsa:
+    gui_alsa_device_label->show();
+    gui_alsa_device_edit->show();
     break;
 
   case AudioDevice::AsiHpi:
@@ -1018,6 +1043,9 @@ bool MainWidget::MakeSourceArgs(QStringList *args)
 
   switch(type) {
   case AudioDevice::Alsa:
+    if(!gui_alsa_device_edit->text().isEmpty()) {
+      args->push_back("--alsa-device="+gui_alsa_device_edit->text());
+    }
     break;
 
   case AudioDevice::AsiHpi:

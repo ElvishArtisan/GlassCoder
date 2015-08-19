@@ -28,7 +28,7 @@
 
 #include "audiodevice.h"
 
-#define ALSA_DEFAULT_DEVICE "plughw:0"
+#define ALSA_DEFAULT_DEVICE "hw:0"
 #define ALSA_PERIOD_QUANTITY 4
 class AlsaDevice : public AudioDevice
 {
