@@ -272,6 +272,12 @@ MainWidget::MainWidget(QWidget *parent)
   connect(gui_file_select_button,SIGNAL(clicked()),this,SLOT(fileSelectName()));
 
   //
+  // HPI Fields
+  //
+  gui_asihpi_view=new HpiInputListView(this);
+  gui_asihpi_view->hide();
+
+  //
   // JACK Fields
   //
   gui_jack_server_name_label=new QLabel(tr("JACK Server Name")+":",this);
@@ -456,6 +462,12 @@ void MainWidget::resizeEvent(QResizeEvent *e)
   gui_file_name_edit->setGeometry(175,ypos,size().width()-275,24);
   ypos+=26;
   
+  //
+  // ASIHPI Controls
+  //
+  ypos=ypos_base;
+  gui_asihpi_view->setGeometry(125,ypos,350,100);
+
   //
   // JACK Controls
   //
@@ -775,6 +787,8 @@ void MainWidget::sourceTypeChanged(int n)
   gui_file_name_label->hide();
   gui_file_name_edit->hide();
 
+  gui_asihpi_view->hide();
+
   gui_jack_server_name_label->hide();
   gui_jack_server_name_edit->hide();
   gui_jack_client_name_label->hide();
@@ -790,6 +804,7 @@ void MainWidget::sourceTypeChanged(int n)
     break;
 
   case AudioDevice::AsiHpi:
+    gui_asihpi_view->show();
     break;
 
   case AudioDevice::File:
@@ -1049,6 +1064,16 @@ bool MainWidget::MakeSourceArgs(QStringList *args)
     break;
 
   case AudioDevice::AsiHpi:
+    /*
+    if((gui_asihpi_view->selectedAdapterIndex()==0)||
+       (gui_asihpi_view->selectedInputIndex()==0)) {
+      return false;
+    }
+    */
+    args->push_back("--asihpi-adapter-index="+
+		  QString().sprintf("%u",gui_asihpi_view->selectedAdapterIndex()));
+    args->push_back("--asihpi-input-index="+
+		    QString().sprintf("%u",gui_asihpi_view->selectedInputIndex()));
     break;
 
   case AudioDevice::File:

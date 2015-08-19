@@ -33,6 +33,7 @@ bin_PROGRAMS = glassgui
 dist_glassgui_SOURCES = codeviewer.cpp codeviewer.h\
                         combobox.cpp combobox.h\
                         glassgui.cpp glassgui.h\
+                        hpiinputlistview.cpp hpiinputlistview.h\
                         profile.cpp profile.h\
                         segmeter.cpp segmeter.h\
                         stereometer.cpp stereometer.h
@@ -48,6 +49,7 @@ nodist_glassgui_SOURCES = audiodevice.cpp audiodevice.h\
                           moc_combobox.cpp\
                           moc_connector.cpp\
                           moc_glassgui.cpp\
+                          moc_hpiinputlistview.cpp\
                           moc_segmeter.cpp\
                           moc_stereometer.cpp\
                           ringbuffer.cpp ringbuffer.h

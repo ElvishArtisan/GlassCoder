@@ -254,3 +254,7 @@
 	* Added a 'Stream Metadata Settings' section to glassgui(1).
 2015-08-19 Fred Gleason <fredg@paravelsystems.com>
 	* Added an 'ALSA Device' control to GlassGui(1).
+2015-08-19 Fred Gleason <fredg@paravelsystems.com>
+	* Added an HpiInputListView widget in
+	'src/glassgui/hpiinputlistview.cpp' and
+	'src/glassgui/hpiinputlistview.h'.

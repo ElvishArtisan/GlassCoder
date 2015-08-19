@@ -24,6 +24,7 @@
 #include <QDir>
 #include <QLabel>
 #include <QLineEdit>
+#include <QListView>
 #include <QMainWindow>
 #include <QProcess>
 #include <QPushButton>
@@ -33,6 +34,7 @@
 
 #include "codeviewer.h"
 #include "combobox.h"
+#include "hpiinputlistview.h"
 #include "stereometer.h"
 
 #define GLASSGUI_USAGE ""
@@ -127,6 +129,8 @@ class MainWidget : public QMainWindow
   QLabel *gui_file_name_label;
   QLineEdit *gui_file_name_edit;
   QPushButton *gui_file_select_button;
+
+  HpiInputListView *gui_asihpi_view;
 
   QLabel *gui_jack_server_name_label;
   QLineEdit *gui_jack_server_name_edit;

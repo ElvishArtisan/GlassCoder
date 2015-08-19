@@ -1,0 +1,53 @@
+// hpiinputlistview.h
+//
+// List widget for selecting HPI input streams
+//
+//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//
+//   This program is free software; you can redistribute it and/or modify
+//   it under the terms of the GNU General Public License version 2 as
+//   published by the Free Software Foundation.
+//
+//   This program is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
+//
+//   You should have received a copy of the GNU General Public
+//   License along with this program; if not, write to the Free Software
+//   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+
+#ifndef HPIINPUTLISTVIEW_H
+#define HPIINPUTLISTVIEW_H
+
+#include <vector>
+
+#include <QAbstractListModel>
+#include <QListView>
+
+class HpiInputListViewModel : public QAbstractListModel
+{
+ public:
+  HpiInputListViewModel(QObject *parent=0);
+  int rowCount(const QModelIndex &parent=QModelIndex()) const;
+  QVariant data(const QModelIndex &index,int role=Qt::DisplayRole) const;
+
+ private:
+  std::vector<QString> hpi_input_names;
+  std::vector<unsigned> hpi_adapter_indices;
+  std::vector<unsigned> hpi_input_indices;
+};
+
+class HpiInputListView : public QListView
+{
+ public:
+  HpiInputListView(QWidget *parent);
+  unsigned selectedAdapterIndex() const;
+  unsigned selectedInputIndex() const;
+
+ private:
+  HpiInputListViewModel *hpi_model;
+};
+
+#endif  // HPIINPUTLISTVIEW_H
