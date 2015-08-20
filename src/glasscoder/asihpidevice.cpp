@@ -35,6 +35,9 @@ AsiHpiDevice::AsiHpiDevice(unsigned chans,unsigned samprate,
 
   asihpi_read_timer=new QTimer(this);
   connect(asihpi_read_timer,SIGNAL(timeout()),this,SLOT(readData()));
+
+  asihpi_meter_timer=new QTimer(this);
+  connect(asihpi_meter_timer,SIGNAL(timeout()),this,SLOT(meterData()));
 #endif  // ASIHPI
 }
 
@@ -45,6 +48,7 @@ AsiHpiDevice::~AsiHpiDevice()
   if(asihpi_pcm_buffer!=NULL) {
     delete asihpi_pcm_buffer;
   }
+  delete asihpi_meter_timer;
   delete asihpi_read_timer;
 #endif  // ASIHPI
 }
@@ -105,6 +109,16 @@ bool AsiHpiDevice::start(QString *err)
   uint32_t data_recorded=0;
   uint32_t samples_recorded=0;
   uint32_t aux_data_recorded=0;
+
+  //
+  // Open Mixer
+  //
+  if(HpiLog(HPI_MixerOpen(NULL,asihpi_adapter_index,&asihpi_mixer))==0) {
+    if((HpiLog(HPI_MixerGetControl(NULL,asihpi_mixer,0,0,HPI_DESTNODE_ISTREAM,
+      asihpi_input_index,HPI_CONTROL_METER,&asihpi_input_meter)))==0) {
+      asihpi_meter_timer->start(100);
+    }
+  }
 
   //
   // Open Input Stream
@@ -185,6 +199,22 @@ void AsiHpiDevice::readData()
   }
 
 
+#endif  // ASIHPI
+}
+
+
+void AsiHpiDevice::meterData()
+{
+#ifdef ASIHPI
+  short levels[HPI_MAX_CHANNELS];
+  int lvls[MAX_AUDIO_CHANNELS];
+
+  if(HpiLog(HPI_MeterGetRms(NULL,asihpi_input_meter,levels))==0) {
+    for(unsigned i=0;i<MAX_AUDIO_CHANNELS;i++) {
+      lvls[i]=-levels[i]/100;
+    }
+    updateMeterLevels(lvls);
+  }
 #endif  // ASIHPI
 }
 

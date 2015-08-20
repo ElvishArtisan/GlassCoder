@@ -64,6 +64,7 @@ class MainWidget : public QMainWindow
   void codecFinishedData(int exit_code,QProcess::ExitStatus exit_status);
   void checkArgs(const QString &str);
   void deviceFinishedData(int exit_code,QProcess::ExitStatus exit_status);
+  void processReadyReadStandardOutputData();
   void processFinishedData(int exit_code,QProcess::ExitStatus exit_status);
   void processErrorData(QProcess::ProcessError err);
   void processCollectGarbageData();

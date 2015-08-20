@@ -35,6 +35,7 @@
 #include "glasslimits.h"
 #include "ringbuffer.h"
 
+#define GLASSCODER_METER_INTERVAL 50
 #define GLASSCODER_USAGE "[options]\n"
 
 class MainObject : public QObject
@@ -46,6 +47,7 @@ class MainObject : public QObject
  private slots:
   void audioDeviceStoppedData();
   void connectorStoppedData();
+  void meterData();
   void exitTimerData();
 
  private:
@@ -75,6 +77,7 @@ class MainObject : public QObject
   QStringList device_values;
   bool list_codecs;
   bool list_devices;
+  bool meter_data;
 
   //
   // Audio Device
@@ -102,6 +105,7 @@ class MainObject : public QObject
   bool StartMultiStream();
   void ListCodecs();
   void ListDevices();
+  QTimer *sir_meter_timer;
   QTimer *sir_exit_timer;
   unsigned sir_exit_count;
 };

@@ -54,6 +54,14 @@ unsigned AudioDevice::deviceSamplerate() const
 }
 
 
+void AudioDevice::meterLevels(int *lvls) const
+{
+  for(unsigned i=0;i<MAX_AUDIO_CHANNELS;i++) {
+    lvls[i]=audio_meter_levels[i];
+  }
+}
+
+
 QString AudioDevice::deviceTypeText(AudioDevice::DeviceType type)
 {
   QString ret=tr("Unknown Device");
@@ -148,6 +156,14 @@ QString AudioDevice::formatString(AudioDevice::Format fmt)
   }
 
   return ret;
+}
+
+
+void AudioDevice::updateMeterLevels(int *lvls)
+{
+  for(unsigned i=0;i<MAX_AUDIO_CHANNELS;i++) {
+    audio_meter_levels[i]=lvls[i];
+  }
 }
 
 

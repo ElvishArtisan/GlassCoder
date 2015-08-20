@@ -492,6 +492,9 @@ void MainWidget::startEncodingData()
     return;
   }
   gui_process=new QProcess(this);
+  gui_process->setReadChannel(QProcess::StandardOutput);
+  connect(gui_process,SIGNAL(readyReadStandardOutput()),
+	  this,SLOT(processReadyReadStandardOutputData()));
   connect(gui_process,SIGNAL(error(QProcess::ProcessError)),
 	  this,SLOT(processErrorData(QProcess::ProcessError)));
   connect(gui_process,SIGNAL(finished(int,QProcess::ExitStatus)),
@@ -500,6 +503,8 @@ void MainWidget::startEncodingData()
   MakeCodecArgs(&args);
   MakeStreamArgs(&args);
   MakeSourceArgs(&args);
+  args.push_back("--meter-data");
+  printf("%s\n",(const char *)args.join(" ").toUtf8());
   gui_process->start("glasscoder",args);
   gui_start_button->disconnect();
   connect(gui_start_button,SIGNAL(clicked()),this,SLOT(stopEncodingData()));
@@ -900,6 +905,18 @@ void MainWidget::deviceFinishedData(int exit_code,
   }
   else {
     ProcessError(exit_code,exit_status);
+  }
+}
+
+
+void MainWidget::processReadyReadStandardOutputData()
+{
+  char data[1500];
+  int n=0;
+  printf("HERE!\n");
+  if((n=gui_process->read(data,n))>0) {
+    data[n]=0;
+    printf("RECV: %s\n",data);
   }
 }
 

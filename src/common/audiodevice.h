@@ -26,6 +26,7 @@
 #include <QObject>
 #include <QStringList>
 
+#include "glasslimits.h"
 #include "ringbuffer.h"
 
 class AudioDevice : public QObject
@@ -42,6 +43,7 @@ class AudioDevice : public QObject
 			      const QStringList &values)=0;
   virtual bool start(QString *err)=0;
   virtual unsigned deviceSamplerate() const;
+  void meterLevels(int *lvls) const;
   static QString deviceTypeText(AudioDevice::DeviceType type);
   static QString optionKeyword(AudioDevice::DeviceType type);
   static AudioDevice::DeviceType deviceType(const QString &key);
@@ -51,6 +53,7 @@ class AudioDevice : public QObject
   void hasStopped();
 
  protected:
+  void updateMeterLevels(int *lvls);
   unsigned ringBufferQuantity() const;
   Ringbuffer *ringBuffer(unsigned n);
   unsigned channels() const;
@@ -64,6 +67,7 @@ class AudioDevice : public QObject
   std::vector<Ringbuffer *> *audio_rings;
   unsigned audio_channels;
   unsigned audio_samplerate;
+  int audio_meter_levels[MAX_AUDIO_CHANNELS];
 };
 
 

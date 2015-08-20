@@ -50,6 +50,7 @@ class AsiHpiDevice : public AudioDevice
 
  private slots:
   void readData();
+  void meterData();
 
  private:
 #ifdef ASIHPI
@@ -59,8 +60,11 @@ class AsiHpiDevice : public AudioDevice
   uint16_t asihpi_adapter_index;
   uint16_t asihpi_input_index;
   hpi_handle_t asihpi_input_stream;
+  hpi_handle_t asihpi_mixer;
+  hpi_handle_t asihpi_input_meter;
   uint8_t *asihpi_pcm_buffer;
   QTimer *asihpi_read_timer;
+  QTimer *asihpi_meter_timer;
 #endif  // ASIHPI
 };
 

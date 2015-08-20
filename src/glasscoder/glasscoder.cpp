@@ -71,6 +71,7 @@ MainObject::MainObject(QObject *parent)
   stream_aim="";
   list_codecs=false;
   list_devices=false;
+  meter_data=false;
   unsigned num;
 
   CmdSwitch *cmd=
@@ -168,6 +169,10 @@ MainObject::MainObject(QObject *parent)
     }
     if(cmd->key(i)=="--list-devices") {
       list_devices=true;
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--meter-data") {
+      meter_data=true;
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--server-hostname") {
@@ -346,6 +351,15 @@ void MainObject::connectorStoppedData()
 }
 
 
+void MainObject::meterData()
+{
+  int lvls[MAX_AUDIO_CHANNELS];
+
+  sir_audio_device->meterLevels(lvls);
+  printf("%02X%02X\n",lvls[0],lvls[1]);
+}
+
+
 void MainObject::exitTimerData()
 {
   if(glasscoder_exiting) {
@@ -389,6 +403,11 @@ bool MainObject::StartAudioDevice()
   if(!sir_audio_device->start(&err)) {
     syslog(LOG_ERR,"%s",(const char *)err.toUtf8());
     exit(256);
+  }
+  sir_meter_timer=new QTimer(this);
+  connect(sir_meter_timer,SIGNAL(timeout()),this,SLOT(meterData()));
+  if(meter_data) {
+    sir_meter_timer->start(GLASSCODER_METER_INTERVAL);
   }
 
   return true;
