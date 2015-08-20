@@ -50,6 +50,16 @@ AsiHpiDevice::~AsiHpiDevice()
 }
 
 
+bool AsiHpiDevice::isAvailable() const
+{
+  uint32_t index;
+  uint16_t type;
+  bool ret=(HPI_SubSysGetAdapter(NULL,0,&index,&type)==0);
+
+  return ret;
+}
+
+
 bool AsiHpiDevice::processOptions(QString *err,const QStringList &keys,
 				  const QStringList &values)
 {

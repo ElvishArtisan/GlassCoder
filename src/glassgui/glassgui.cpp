@@ -1230,6 +1230,7 @@ bool MainWidget::SaveSettings()
     fclose(f);
     rename((basepath+".tmp").toUtf8(),basepath.toUtf8());
   }
+
   return true;
 }
 

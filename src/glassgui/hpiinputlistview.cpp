@@ -88,6 +88,9 @@ HpiInputListView::HpiInputListView(QWidget *parent)
 
 unsigned HpiInputListView::selectedAdapterIndex() const
 {
+  if(!currentIndex().isValid()) {
+    return 0;
+  }
   return hpi_model->data(currentIndex(),HpiInputListViewModel::AdapterRole).
     toUInt();
 }
@@ -95,6 +98,9 @@ unsigned HpiInputListView::selectedAdapterIndex() const
 
 unsigned HpiInputListView::selectedInputIndex() const
 {
+  if(!currentIndex().isValid()) {
+    return 0;
+  }
   return hpi_model->data(currentIndex(),HpiInputListViewModel::InputRole).
     toUInt();
 }

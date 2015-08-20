@@ -43,6 +43,7 @@ class AsiHpiDevice : public AudioDevice
   AsiHpiDevice(unsigned chans,unsigned samprate,
 	      std::vector<Ringbuffer *> *rings,QObject *parent=0);
   ~AsiHpiDevice();
+  bool isAvailable() const;
   bool processOptions(QString *err,const QStringList &keys,
 		      const QStringList &values);
   bool start(QString *err);

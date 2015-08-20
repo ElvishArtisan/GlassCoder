@@ -37,6 +37,7 @@ class AudioDevice : public QObject
   AudioDevice(unsigned chans,unsigned samprate,
 	      std::vector<Ringbuffer *> *rings,QObject *parent=0);
   ~AudioDevice();
+  virtual bool isAvailable() const;
   virtual bool processOptions(QString *err,const QStringList &keys,
 			      const QStringList &values)=0;
   virtual bool start(QString *err)=0;

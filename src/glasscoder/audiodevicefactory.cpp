@@ -60,5 +60,12 @@ AudioDevice *AudioDeviceFactory(AudioDevice::DeviceType type,
     break;
   }
 
+  if(dev!=NULL) {
+    if(!dev->isAvailable()) {
+      delete dev;
+      dev=NULL;
+    }
+  }
+
   return dev;
 }

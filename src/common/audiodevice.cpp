@@ -18,6 +18,8 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 #include <syslog.h>
 
@@ -37,6 +39,12 @@ AudioDevice::AudioDevice(unsigned chans,unsigned samprate,
 
 AudioDevice::~AudioDevice()
 {
+}
+
+
+bool AudioDevice::isAvailable() const
+{
+  return true;
 }
 
 
@@ -205,6 +213,12 @@ void AudioDevice::convertToFloat(float *pcm_out,const void *pcm_in,
     break;
 
   case AudioDevice::S32_LE:
+    for(unsigned i=0;i<(nframes*chans);i++) {
+      //pcm_out[i]=(float)(((uint32_t *)pcm_in)[i]>>8)/16777216.0;
+      //pcm_out[i]=(float)(((uint32_t *)pcm_in)[i]>>0)/16777216.0;
+      //pcm_out[i]=(float)(((uint32_t *)pcm_in)[i]>>0)/2147483648.0;
+    }
+    printf("nframes: %u  chans: %u\n",nframes,chans);
     src_int_to_float_array((const int *)pcm_in,pcm_out,nframes*chans);
     break;
 
