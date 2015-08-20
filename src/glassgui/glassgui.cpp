@@ -1149,6 +1149,8 @@ void MainWidget::LoadSettings()
     gui_stream_aim_edit->setText(p->stringValue("GlassGui","StreamAim"));
     gui_stream_irc_edit->setText(p->stringValue("GlassGui","StreamIrc"));
 
+    gui_alsa_device_edit->setText(p->stringValue("GlassGui","AlsaDevice"));
+
     gui_asihpi_view->setSelected(p->intValue("GlassGui","AsihpiAdapterIndex"),
 				 p->intValue("GlassGui","AsihpiInputIndex"));
 
@@ -1210,6 +1212,9 @@ bool MainWidget::SaveSettings()
 	    (const char *)gui_stream_aim_edit->text().toUtf8());
     fprintf(f,"StreamIrc=%s\n",
 	    (const char *)gui_stream_irc_edit->text().toUtf8());
+
+    fprintf(f,"AlsaDevice=%s\n",
+	    (const char *)gui_alsa_device_edit->text().toUtf8());
 
     fprintf(f,"AsihpiAdapterIndex=%u\n",
 	    gui_asihpi_view->selectedAdapterIndex());
