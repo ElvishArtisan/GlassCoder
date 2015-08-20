@@ -29,6 +29,7 @@
 class HpiInputListViewModel : public QAbstractListModel
 {
  public:
+  enum UserRole {AdapterRole=Qt::UserRole,InputRole=Qt::UserRole+1};
   HpiInputListViewModel(QObject *parent=0);
   int rowCount(const QModelIndex &parent=QModelIndex()) const;
   QVariant data(const QModelIndex &index,int role=Qt::DisplayRole) const;
@@ -45,6 +46,7 @@ class HpiInputListView : public QListView
   HpiInputListView(QWidget *parent);
   unsigned selectedAdapterIndex() const;
   unsigned selectedInputIndex() const;
+  void setSelected(unsigned adapter,unsigned input);
 
  private:
   HpiInputListViewModel *hpi_model;

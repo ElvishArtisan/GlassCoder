@@ -68,10 +68,10 @@ QVariant HpiInputListViewModel::data(const QModelIndex &index,int role) const
   case Qt::DisplayRole:
     return hpi_input_names[index.row()];
 
-  case Qt::UserRole:
+  case HpiInputListViewModel::AdapterRole:
     return hpi_adapter_indices[index.row()];
 
-  case Qt::UserRole+1:
+  case HpiInputListViewModel::InputRole:
     return hpi_input_indices[index.row()];
   }
   return QVariant();
@@ -88,11 +88,25 @@ HpiInputListView::HpiInputListView(QWidget *parent)
 
 unsigned HpiInputListView::selectedAdapterIndex() const
 {
-  return hpi_model->data(currentIndex(),Qt::UserRole).toUInt();
+  return hpi_model->data(currentIndex(),HpiInputListViewModel::AdapterRole).
+    toUInt();
 }
 
 
 unsigned HpiInputListView::selectedInputIndex() const
 {
-  return hpi_model->data(currentIndex(),Qt::UserRole+1).toUInt();
+  return hpi_model->data(currentIndex(),HpiInputListViewModel::InputRole).
+    toUInt();
+}
+
+
+void HpiInputListView::setSelected(unsigned adapter,unsigned input)
+{
+  for(int i=0;i<model()->rowCount();i++) {
+    QModelIndex index=model()->index(i,0);
+    if((model()->data(index,HpiInputListViewModel::AdapterRole)==adapter)&&
+       (model()->data(index,HpiInputListViewModel::InputRole)==input)) {
+      setCurrentIndex(index);
+    }
+  }
 }

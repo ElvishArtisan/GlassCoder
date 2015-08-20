@@ -1064,12 +1064,10 @@ bool MainWidget::MakeSourceArgs(QStringList *args)
     break;
 
   case AudioDevice::AsiHpi:
-    /*
     if((gui_asihpi_view->selectedAdapterIndex()==0)||
        (gui_asihpi_view->selectedInputIndex()==0)) {
       return false;
     }
-    */
     args->push_back("--asihpi-adapter-index="+
 		  QString().sprintf("%u",gui_asihpi_view->selectedAdapterIndex()));
     args->push_back("--asihpi-input-index="+
@@ -1145,6 +1143,9 @@ void MainWidget::LoadSettings()
     gui_stream_aim_edit->setText(p->stringValue("GlassGui","StreamAim"));
     gui_stream_irc_edit->setText(p->stringValue("GlassGui","StreamIrc"));
 
+    gui_asihpi_view->setSelected(p->intValue("GlassGui","AsihpiAdapterIndex"),
+				 p->intValue("GlassGui","AsihpiInputIndex"));
+
     gui_file_name_edit->setText(p->stringValue("GlassGui","FileName"));
     delete p;
   }
@@ -1198,6 +1199,10 @@ bool MainWidget::SaveSettings()
 	    (const char *)gui_stream_aim_edit->text().toUtf8());
     fprintf(f,"StreamIrc=%s\n",
 	    (const char *)gui_stream_irc_edit->text().toUtf8());
+
+    fprintf(f,"AsihpiAdapterIndex=%u\n",
+	    gui_asihpi_view->selectedAdapterIndex());
+    fprintf(f,"AsihpiInputIndex=%u\n",gui_asihpi_view->selectedInputIndex());
 
     fprintf(f,"FileName=%s\n",
 	    (const char *)gui_file_name_edit->text().toUtf8());
