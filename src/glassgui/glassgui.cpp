@@ -1082,6 +1082,12 @@ bool MainWidget::MakeSourceArgs(QStringList *args)
     break;
 
   case AudioDevice::Jack:
+    if(!gui_jack_server_name_edit->text().isEmpty()) {
+      args->push_back("--jack-server-name="+gui_jack_server_name_edit->text());
+    }
+    if(!gui_jack_client_name_edit->text().isEmpty()) {
+      args->push_back("--jack-client-name="+gui_jack_client_name_edit->text());
+    }
     break;
 
   case AudioDevice::LastType:
@@ -1147,6 +1153,11 @@ void MainWidget::LoadSettings()
 				 p->intValue("GlassGui","AsihpiInputIndex"));
 
     gui_file_name_edit->setText(p->stringValue("GlassGui","FileName"));
+
+    gui_jack_server_name_edit->
+      setText(p->stringValue("GlassGui","JackServerName"));
+    gui_jack_client_name_edit->
+      setText(p->stringValue("GlassGui","JackClientName"));
     delete p;
   }
   checkArgs("");
@@ -1206,6 +1217,11 @@ bool MainWidget::SaveSettings()
 
     fprintf(f,"FileName=%s\n",
 	    (const char *)gui_file_name_edit->text().toUtf8());
+
+    fprintf(f,"JackServerName=%s\n",
+	    (const char *)gui_jack_server_name_edit->text().toUtf8());
+    fprintf(f,"JackClientName=%s\n",
+	    (const char *)gui_jack_client_name_edit->text().toUtf8());
     fclose(f);
     rename((basepath+".tmp").toUtf8(),basepath.toUtf8());
   }
