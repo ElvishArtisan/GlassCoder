@@ -408,7 +408,7 @@ bool MainObject::StartAudioDevice()
   sir_meter_timer=new QTimer(this);
   connect(sir_meter_timer,SIGNAL(timeout()),this,SLOT(meterData()));
   if(meter_data) {
-    sir_meter_timer->start(GLASSCODER_METER_INTERVAL);
+    sir_meter_timer->start(AUDIO_METER_INTERVAL);
   }
 
   return true;

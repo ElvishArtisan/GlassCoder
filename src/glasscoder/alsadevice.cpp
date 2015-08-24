@@ -30,6 +30,8 @@ void *AlsaCallback(void *ptr)
   static int n;
   static float pcm1[32768];
   static float pcm2[32768];
+  static float lvls[MAX_AUDIO_CHANNELS];
+  static unsigned i;
 
   while(1==1) {
     n=snd_pcm_readi(dev->alsa_pcm,dev->alsa_pcm_buffer,
@@ -53,13 +55,19 @@ void *AlsaCallback(void *ptr)
 	for(unsigned i=0;i<dev->ringBufferQuantity();i++) {
 	  dev->ringBuffer(i)->write(pcm1,n);
 	}
+	dev->peakLevels(lvls,pcm1,n,dev->channels());
       }
       else {
 	dev->remixChannels(pcm2,dev->channels(),pcm1,dev->alsa_channels,n);
 	for(unsigned i=0;i<dev->ringBufferQuantity();i++) {
 	  dev->ringBuffer(i)->write(pcm2,n);
 	}
+	dev->peakLevels(lvls,pcm2,n,dev->channels());
       }
+      for(i=0;i<dev->channels();i++) {
+	dev->alsa_meter_avg[i]->addValue(lvls[i]);
+      }
+      dev->setMeterLevels(lvls);
     }
   }
 #endif  // ALSA
@@ -74,6 +82,12 @@ AlsaDevice::AlsaDevice(unsigned chans,unsigned samprate,
 #ifdef ALSA
   alsa_device=ALSA_DEFAULT_DEVICE;
   alsa_pcm_buffer=NULL;
+
+  for(int i=0;i<MAX_AUDIO_CHANNELS;i++) {
+    alsa_meter_avg[i]=new MeterAverage(8);
+  }
+  alsa_meter_timer=new QTimer(this);
+  connect(alsa_meter_timer,SIGNAL(timeout()),this,SLOT(meterData()));
 #endif  // ALSA
 }
 
@@ -81,6 +95,9 @@ AlsaDevice::AlsaDevice(unsigned chans,unsigned samprate,
 AlsaDevice::~AlsaDevice()
 {
 #ifdef ALSA
+  for(int i=0;i<MAX_AUDIO_CHANNELS;i++) {
+    delete alsa_meter_avg[i];
+  }
   if(alsa_pcm_buffer!=NULL) {
     delete alsa_pcm_buffer;
   }
@@ -217,6 +234,8 @@ bool AlsaDevice::start(QString *err)
 
   pthread_create(&alsa_pthread,&pthread_attr,AlsaCallback,this);
 
+  alsa_meter_timer->start(AUDIO_METER_INTERVAL);
+
   return true;
 #else
   return false;
@@ -231,4 +250,15 @@ unsigned AlsaDevice::deviceSamplerate() const
 #else
   return DEFAULT_AUDIO_SAMPLERATE;
 #endif  // ALSA
+}
+
+
+void AlsaDevice::meterData()
+{
+  float lvls[MAX_AUDIO_CHANNELS];
+
+  for(unsigned i=0;i<channels();i++) {
+    lvls[i]=alsa_meter_avg[i]->average();
+  }
+  setMeterLevels(lvls);
 }

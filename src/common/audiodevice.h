@@ -29,6 +29,8 @@
 #include "glasslimits.h"
 #include "ringbuffer.h"
 
+#define AUDIO_METER_INTERVAL 50
+
 class AudioDevice : public QObject
 {
   Q_OBJECT;

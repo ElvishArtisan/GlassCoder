@@ -35,7 +35,6 @@
 #include "glasslimits.h"
 #include "ringbuffer.h"
 
-#define GLASSCODER_METER_INTERVAL 50
 #define GLASSCODER_USAGE "[options]\n"
 
 class MainObject : public QObject
