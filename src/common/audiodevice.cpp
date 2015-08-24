@@ -18,6 +18,7 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <math.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -159,10 +160,28 @@ QString AudioDevice::formatString(AudioDevice::Format fmt)
 }
 
 
-void AudioDevice::updateMeterLevels(int *lvls)
+void AudioDevice::setMeterLevels(float *lvls)
+{
+  for(unsigned i=0;i<MAX_AUDIO_CHANNELS;i++) {
+    audio_meter_levels[i]=(int)(-2000.0*log10f(lvls[i]));
+  }
+}
+
+
+void AudioDevice::setMeterLevels(int *lvls)
 {
   for(unsigned i=0;i<MAX_AUDIO_CHANNELS;i++) {
     audio_meter_levels[i]=lvls[i];
+  }
+}
+
+
+void AudioDevice::updateMeterLevels(int *lvls)
+{
+  for(unsigned i=0;i<MAX_AUDIO_CHANNELS;i++) {
+    if(lvls[i]>audio_meter_levels[i]) {
+      audio_meter_levels[i]=lvls[i];
+    }
   }
 }
 
@@ -240,5 +259,35 @@ void AudioDevice::convertToFloat(float *pcm_out,const void *pcm_in,
 
   case AudioDevice::LastFormat:
     break;
+  }
+}
+
+
+void AudioDevice::peakLevels(float *lvls,const float *pcm,unsigned nframes,
+			     unsigned chans)
+{
+  for(unsigned i=0;i<chans;i++) {
+    lvls[i]=0.0;
+  }
+
+  for(unsigned i=0;i<nframes;i+=chans) {
+    for(unsigned j=0;j<chans;j++) {
+      if(pcm[i+j]>lvls[j]) {
+	lvls[j]=pcm[i+j];
+      }
+    }
+  }
+}
+
+
+void AudioDevice::peakLevels(int *lvls,const float *pcm,unsigned nframes,
+			     unsigned chans)
+{
+  float levels[chans];
+
+  peakLevels(levels,pcm,nframes,chans);
+
+  for(unsigned i=0;i<chans;i++) {
+    lvls[i]=(int)(-2000.0*log10f(levels[i]));
   }
 }

@@ -213,7 +213,7 @@ void AsiHpiDevice::meterData()
     for(unsigned i=0;i<MAX_AUDIO_CHANNELS;i++) {
       lvls[i]=-levels[i];
     }
-    updateMeterLevels(lvls);
+    setMeterLevels(lvls);
   }
 #endif  // ASIHPI
 }

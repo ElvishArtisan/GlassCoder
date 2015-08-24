@@ -46,6 +46,7 @@ dist_glasscoder_SOURCES = aaccodec.cpp aaccodec.h\
                           iceconnector.cpp iceconnector.h\
                           icyconnector.cpp icyconnector.h\
                           jackdevice.cpp jackdevice.h\
+                          meteraverage.cpp meteraverage.h\
                           mpegl2codec.cpp mpegl2codec.h\
                           mpegl3codec.cpp mpegl3codec.h\
                           opuscodec.cpp opuscodec.h\

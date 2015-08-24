@@ -53,6 +53,8 @@ class AudioDevice : public QObject
   void hasStopped();
 
  protected:
+  void setMeterLevels(float *lvls);
+  void setMeterLevels(int *lvls);
   void updateMeterLevels(int *lvls);
   unsigned ringBufferQuantity() const;
   Ringbuffer *ringBuffer(unsigned n);
@@ -62,6 +64,8 @@ class AudioDevice : public QObject
 		     float *pcm_in,unsigned chans_in,unsigned nframes); 
   void convertToFloat(float *pcm_out,const void *pcm_in,Format fmt_in,
 		      unsigned nframes,unsigned chans);
+  void peakLevels(float *lvls,const float *pcm,unsigned nframes,unsigned chans);
+  void peakLevels(int *lvls,const float *pcm,unsigned nframes,unsigned chans);
 
  private:
   std::vector<Ringbuffer *> *audio_rings;

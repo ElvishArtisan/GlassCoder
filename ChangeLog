@@ -277,3 +277,5 @@
 	* Implemented a '--meter-data' switch in for glasscoder(1).
 2015-08-24 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented meter level display in glassgui(1).
+2015-08-24 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented meter level display for the FILE source in glasscoder(1).

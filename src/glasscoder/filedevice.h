@@ -35,6 +35,7 @@
 #endif  // SNDFILE
 
 #include "audiodevice.h"
+#include "meteraverage.h"
 #include "ringbuffer.h"
 
 #define SNDFILE_BUFFER_SIZE 1024
@@ -60,6 +61,7 @@ class FileDevice : public AudioDevice
   SNDFILE *file_sndfile;
   SF_INFO file_sfinfo;
   QTimer *file_read_timer;
+  MeterAverage *file_meter_avg[MAX_AUDIO_CHANNELS];
 #endif  // SNDFILE
 };
 

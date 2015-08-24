@@ -29,6 +29,10 @@ FileDevice::FileDevice(unsigned chans,unsigned samprate,
   file_sndfile=NULL;
   memset(&file_sfinfo,0,sizeof(file_sfinfo));
 
+  for(int i=0;i<MAX_AUDIO_CHANNELS;i++) {
+    file_meter_avg[i]=new MeterAverage(8);
+  }
+
   file_read_timer=new QTimer(this);
   connect(file_read_timer,SIGNAL(timeout()),this,SLOT(readTimerData()));
 #endif  // SNDFILE
@@ -39,6 +43,9 @@ FileDevice::~FileDevice()
 {
 #ifdef SNDFILE
   delete file_read_timer;
+  for(int i=0;i<MAX_AUDIO_CHANNELS;i++) {
+    delete file_meter_avg[i];
+  }
   if(file_sndfile!=NULL) {
     sf_close(file_sndfile);
   }
@@ -88,8 +95,8 @@ bool FileDevice::start(QString *err)
     sf_close(file_sndfile);
     return false;
   }
-
   file_read_timer->start(1000*SNDFILE_BUFFER_SIZE/file_sfinfo.samplerate);
+
   return true;
 #else
   return false;
@@ -114,6 +121,7 @@ void FileDevice::readTimerData()
   float pcm2[SNDFILE_BUFFER_SIZE*MAX_AUDIO_CHANNELS];
   float *pcm=pcm1;
   sf_count_t nframes;
+  float levels[MAX_AUDIO_CHANNELS];
 
   if((nframes=sf_readf_float(file_sndfile,pcm1,SNDFILE_BUFFER_SIZE))>0) {
     if(file_sfinfo.channels!=(int)channels()) {
@@ -123,6 +131,12 @@ void FileDevice::readTimerData()
     for(unsigned i=0;i<ringBufferQuantity();i++) {
       ringBuffer(i)->write(pcm,nframes);
     }
+    peakLevels(levels,pcm,nframes,channels());
+    for(unsigned i=0;i<channels();i++) {
+      file_meter_avg[i]->addValue(levels[i]);
+      levels[i]=file_meter_avg[i]->average();
+    }
+    setMeterLevels(levels);
   }
   else {
     sf_close(file_sndfile);
