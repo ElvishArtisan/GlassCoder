@@ -292,3 +292,5 @@
 2015-08-24 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/glassgui/glassgui.cpp' that broke preservation
 	of codec parameter settings between sessions.
+2015-08-24 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented meter level display for the JACK source in glasscoder(1).

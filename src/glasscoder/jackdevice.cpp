@@ -36,7 +36,8 @@ int JackProcess(jack_nframes_t nframes, void *arg)
 {
   static unsigned i;
   static jack_nframes_t j;
-  JackDevice *obj=(JackDevice *)arg;
+  static JackDevice *obj=(JackDevice *)arg;
+  static float lvls[MAX_AUDIO_CHANNELS];
 
   //
   // Get Buffers
@@ -64,6 +65,10 @@ int JackProcess(jack_nframes_t nframes, void *arg)
   for(i=0;i<obj->ringBufferQuantity();i++) {
     obj->ringBuffer(i)->write(jack_cb_interleave_buffer,nframes);
   }
+  obj->peakLevels(lvls,jack_cb_interleave_buffer,nframes,obj->channels());
+  for(i=0;i<obj->channels();i++) {
+    obj->jack_meter_avg[i]->addValue(lvls[i]);
+  }
 
   return 0;
 }
@@ -77,12 +82,24 @@ JackDevice::JackDevice(unsigned chans,unsigned samprate,
 #ifdef JACK
   jack_server_name="";
   jack_client_name=DEFAULT_JACK_CLIENT_NAME;
+
+  for(int i=0;i<MAX_AUDIO_CHANNELS;i++) {
+    jack_meter_avg[i]=new MeterAverage(8);
+  }
+  jack_meter_timer=new QTimer(this);
+  connect(jack_meter_timer,SIGNAL(timeout()),this,SLOT(meterData()));
 #endif  // JACK
 }
 
 
 JackDevice::~JackDevice()
 {
+#ifdef JACK
+  delete jack_meter_timer;
+  for(int i=0;i<MAX_AUDIO_CHANNELS;i++) {
+    delete jack_meter_avg[i];
+  }
+#endif  // JACK
 }
 
 
@@ -191,6 +208,8 @@ bool JackDevice::start(QString *err)
   }
   syslog(LOG_DEBUG,"connected to JACK, sample rate = %u",jack_jack_sample_rate);
 
+  jack_meter_timer->start(AUDIO_METER_INTERVAL);
+
   return true;
 
 #endif  // JACK
@@ -204,5 +223,19 @@ unsigned JackDevice::deviceSamplerate() const
   return jack_jack_sample_rate;
 #else
   return DEFAULT_AUDIO_SAMPLERATE;
+#endif  // JACK
+}
+
+
+void JackDevice::meterData()
+{
+#ifdef JACK
+  float lvls[MAX_AUDIO_CHANNELS];
+
+  for(unsigned i=0;i<channels();i++) {
+    lvls[i]=jack_meter_avg[i]->average();
+  }
+  setMeterLevels(lvls);
+
 #endif  // JACK
 }

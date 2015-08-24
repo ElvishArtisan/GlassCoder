@@ -163,7 +163,12 @@ QString AudioDevice::formatString(AudioDevice::Format fmt)
 void AudioDevice::setMeterLevels(float *lvls)
 {
   for(unsigned i=0;i<MAX_AUDIO_CHANNELS;i++) {
-    audio_meter_levels[i]=(int)(-2000.0*log10f(lvls[i]));
+    if(lvls[i]==0) {
+      audio_meter_levels[i]=10000;
+    }
+    else {
+      audio_meter_levels[i]=(int)(-2000.0*log10f(lvls[i]));
+    }
   }
 }
 

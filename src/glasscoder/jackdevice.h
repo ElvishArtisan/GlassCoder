@@ -26,9 +26,11 @@
 #endif  // JACK
 
 #include <QString>
+#include <QTimer>
 
 #include "audiodevice.h"
 #include "glasslimits.h"
+#include "meteraverage.h"
 
 #define DEFAULT_JACK_CLIENT_NAME "glasscoder"
 
@@ -43,7 +45,10 @@ class JackDevice : public AudioDevice
 		      const QStringList &values);
   bool start(QString *err);
   unsigned deviceSamplerate() const;
-  
+
+ private slots:
+  void meterData();
+
  private:
 #ifdef JACK
   QString jack_server_name;
@@ -51,6 +56,8 @@ class JackDevice : public AudioDevice
   jack_client_t *jack_jack_client;
   jack_nframes_t jack_jack_sample_rate;
   jack_port_t *jack_jack_ports[MAX_AUDIO_CHANNELS];
+  MeterAverage *jack_meter_avg[MAX_AUDIO_CHANNELS];
+  QTimer *jack_meter_timer;
   friend int JackProcess(jack_nframes_t nframes, void *arg);
 #endif  // JACK
 };
