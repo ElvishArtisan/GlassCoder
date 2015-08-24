@@ -901,9 +901,6 @@ void MainWidget::deviceFinishedData(int exit_code,
     }
     gui_process=NULL;
     LoadSettings();
-    codecTypeChanged(gui_codec_type_box->currentIndex());
-    sourceTypeChanged(gui_source_type_box->currentIndex());
-    serverTypeChanged(gui_server_type_box->currentIndex());
   }
   else {
     ProcessError(exit_code,exit_status);
@@ -1188,8 +1185,10 @@ void MainWidget::LoadSettings()
     gui_codec_type_box->
       setCurrentItemData(Codec::codecType(p->stringValue("GlassGui",
 							 "AudioFormat")));
+    codecTypeChanged(gui_codec_type_box->currentIndex());
     gui_codec_samplerate_box->
       setCurrentItemData(p->intValue("GlassGui","AudioSamplerate"));
+    codecSamplerateChanged(gui_codec_samplerate_box->currentIndex());
     gui_codec_channels_box->
       setCurrentItemData(p->intValue("GlassGui","AudioChannels"));
     gui_codec_bitrate_box->

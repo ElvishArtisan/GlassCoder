@@ -289,3 +289,6 @@
 2015-08-24 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/glasscoder/glasscoder.cpp' that broke audio
 	metering for single channel modes.
+2015-08-24 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/glassgui/glassgui.cpp' that broke preservation
+	of codec parameter settings between sessions.
