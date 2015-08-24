@@ -69,7 +69,7 @@ MainWidget::MainWidget(QWidget *parent)
   // Meter Section
   //
   gui_meter=new StereoMeter(this);
-  gui_meter->setReference(0);
+  gui_meter->setReference(800);
   gui_meter->setMode(SegMeter::Peak);
   gui_start_button=new QPushButton(tr("Start"),this);
   gui_start_button->setFont(section_font);

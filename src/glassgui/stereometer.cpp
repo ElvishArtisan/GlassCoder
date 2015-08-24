@@ -283,14 +283,14 @@ void StereoMeter::paintEvent(QPaintEvent *paintEvent)
   p->setFont(meter_scale_font);
   p->drawText(10,20,tr("L"));
   p->drawText(10,50,tr("R"));
-  p->drawText(12,35,"-30");
-  p->drawText(48,35,"-25");
-  p->drawText(88,35,"-20");
-  p->drawText(126,35,"-15");
-  p->drawText(167,35,"-10");
-  p->drawText(207,35,"-5");
-  p->drawText(255,35,"0");
-  p->drawText(314,35,"+8");
+  p->drawText(38,35,"-35");
+  p->drawText(77,35,"-30");
+  p->drawText(116,35,"-25");
+  p->drawText(153,35,"-20");
+  p->drawText(191,35,"-15");
+  p->drawText(229,35,"-10");
+  p->drawText(267,35,"-5");
+  p->drawText(317,35,"0");
   if(meter_label!=QString("")) {
     p->setFont(meter_label_font);
     p->drawText(label_x,72,meter_label);
