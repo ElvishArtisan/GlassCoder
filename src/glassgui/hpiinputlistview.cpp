@@ -86,6 +86,12 @@ HpiInputListView::HpiInputListView(QWidget *parent)
 }
 
 
+void HpiInputListView::setReadOnly(bool state)
+{
+  hpi_read_only=state;
+}
+
+
 unsigned HpiInputListView::selectedAdapterIndex() const
 {
   if(!currentIndex().isValid()) {
@@ -114,5 +120,38 @@ void HpiInputListView::setSelected(unsigned adapter,unsigned input)
        (model()->data(index,HpiInputListViewModel::InputRole)==input)) {
       setCurrentIndex(index);
     }
+  }
+}
+
+
+void HpiInputListView::keyPressEvent(QKeyEvent *e)
+{
+  if(hpi_read_only) {
+    e->accept();
+  }
+  else {
+    QListView::keyPressEvent(e);
+  }
+}
+
+
+void HpiInputListView::mouseMoveEvent(QMouseEvent *e)
+{
+  if(hpi_read_only) {
+    e->accept();
+  }
+  else {
+    QListView::mouseMoveEvent(e);
+  }
+}
+
+
+void HpiInputListView::mousePressEvent(QMouseEvent *e)
+{
+  if(hpi_read_only) {
+    e->accept();
+  }
+  else {
+    QListView::mousePressEvent(e);
   }
 }

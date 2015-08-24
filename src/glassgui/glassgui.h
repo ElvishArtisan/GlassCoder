@@ -72,6 +72,7 @@ class MainWidget : public QMainWindow
   void fileSelectName();
 
  private:
+  void LockControls(bool state);
   void ProcessFeedback(const QString &str);
   bool MakeServerArgs(QStringList *args);
   void MakeCodecArgs(QStringList *args);

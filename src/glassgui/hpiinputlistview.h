@@ -24,6 +24,7 @@
 #include <vector>
 
 #include <QAbstractListModel>
+#include <QKeyEvent>
 #include <QListView>
 
 class HpiInputListViewModel : public QAbstractListModel
@@ -44,12 +45,19 @@ class HpiInputListView : public QListView
 {
  public:
   HpiInputListView(QWidget *parent);
+  void setReadOnly(bool state);
   unsigned selectedAdapterIndex() const;
   unsigned selectedInputIndex() const;
   void setSelected(unsigned adapter,unsigned input);
 
+ protected:
+  void keyPressEvent(QKeyEvent *e);
+  void mouseMoveEvent(QMouseEvent *e);
+  void mousePressEvent(QMouseEvent *e);
+
  private:
   HpiInputListViewModel *hpi_model;
+  bool hpi_read_only;
 };
 
 #endif  // HPIINPUTLISTVIEW_H

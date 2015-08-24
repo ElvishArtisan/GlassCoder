@@ -22,6 +22,7 @@
 #define COMBOBOX_H
 
 #include <QComboBox>
+#include <QKeyEvent>
 #include <QVariant>
 
 class ComboBox : public QComboBox
@@ -29,8 +30,16 @@ class ComboBox : public QComboBox
  Q_OBJECT;
  public:
   ComboBox(QWidget *parent=0);
+  void setReadOnly(bool state);
   QVariant currentItemData(int role=Qt::UserRole);
   void setCurrentItemData(unsigned val);
+
+ protected:
+  void keyPressEvent(QKeyEvent *e);
+  void mousePressEvent(QMouseEvent *e);
+
+ private:
+  bool box_read_only;
 };
 
 

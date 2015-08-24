@@ -59,6 +59,7 @@ MainWidget::MainWidget(QWidget *parent)
   // Set Size
   //
   setMinimumSize(sizeHint());
+  setMaximumHeight(sizeHint().height());
 
   //
   // Dialogs
@@ -272,6 +273,7 @@ MainWidget::MainWidget(QWidget *parent)
   gui_file_name_edit->hide();
   gui_file_select_button=new QPushButton(tr("Select"),this);
   connect(gui_file_select_button,SIGNAL(clicked()),this,SLOT(fileSelectName()));
+  gui_file_select_button->hide();
 
   //
   // HPI Fields
@@ -326,7 +328,7 @@ MainWidget::MainWidget(QWidget *parent)
 
 QSize MainWidget::sizeHint() const
 {
-  return QSize(560,800);
+  return QSize(560,720);
 }
 
 
@@ -506,11 +508,11 @@ void MainWidget::startEncodingData()
   MakeStreamArgs(&args);
   MakeSourceArgs(&args);
   args.push_back("--meter-data");
-  printf("%s\n",(const char *)args.join(" ").toUtf8());
   gui_process->start("glasscoder",args);
   gui_start_button->disconnect();
   connect(gui_start_button,SIGNAL(clicked()),this,SLOT(stopEncodingData()));
   gui_start_button->setText(tr("Stop"));
+  LockControls(true);
 }
 
 
@@ -945,6 +947,7 @@ void MainWidget::processFinishedData(int exit_code,
     gui_start_button->disconnect();
     connect(gui_start_button,SIGNAL(clicked()),this,SLOT(startEncodingData()));
     gui_start_button->setText(tr("Start"));
+    LockControls(false);
   }
   else {
     ProcessError(exit_code,exit_status);
@@ -996,6 +999,40 @@ void MainWidget::fileSelectName()
 }
 
 
+void MainWidget::LockControls(bool state)
+{
+  gui_server_type_box->setReadOnly(state);
+  gui_server_location_edit->setReadOnly(state);
+  gui_server_username_edit->setReadOnly(state);
+  gui_server_password_edit->setReadOnly(state);
+
+  gui_codec_type_box->setReadOnly(state);
+  gui_codec_samplerate_box->setReadOnly(state);
+  gui_codec_channels_box->setReadOnly(state);
+  gui_codec_bitrate_box->setReadOnly(state);
+
+  gui_stream_name_edit->setReadOnly(state);
+  gui_stream_description_edit->setReadOnly(state);
+  gui_stream_url_edit->setReadOnly(state);
+  gui_stream_genre_edit->setReadOnly(state);
+  gui_stream_icq_edit->setReadOnly(state);
+  gui_stream_aim_edit->setReadOnly(state);
+  gui_stream_irc_edit->setReadOnly(state);
+
+  gui_source_type_box->setReadOnly(state);
+
+  gui_jack_server_name_edit->setReadOnly(state);
+  gui_jack_client_name_edit->setReadOnly(state);
+
+  gui_file_name_edit->setReadOnly(state);
+  gui_file_select_button->setDisabled(state);
+
+  gui_asihpi_view->setReadOnly(state);
+
+  gui_alsa_device_edit->setReadOnly(state);
+}
+
+
 void MainWidget::ProcessFeedback(const QString &str)
 {
   QStringList f0;
@@ -1005,7 +1042,6 @@ void MainWidget::ProcessFeedback(const QString &str)
   f0=str.split(" ");
 
   if(f0[0]=="ME") {  // Meter Levels
-    printf("%s\n",(const char *)f0[1].toUtf8());
     if((f0.size()==2)&&(f0[1].length()==8)) {
       level=f0[1].left(4).toInt(&ok,16);
       if(ok) {
@@ -1182,6 +1218,7 @@ void MainWidget::LoadSettings()
       setText(p->stringValue("GlassGui","ServerUsername"));
     gui_server_password_edit->
       setText(p->stringValue("GlassGui","ServerPassword"));
+
     gui_codec_type_box->
       setCurrentItemData(Codec::codecType(p->stringValue("GlassGui",
 							 "AudioFormat")));
@@ -1193,9 +1230,6 @@ void MainWidget::LoadSettings()
       setCurrentItemData(p->intValue("GlassGui","AudioChannels"));
     gui_codec_bitrate_box->
       setCurrentItemData(p->intValue("GlassGui","AudioBitrate"));
-    gui_source_type_box->
-      setCurrentItemData(AudioDevice::deviceType(p->stringValue("GlassGui",
-	       						"AudioDevice")));
  
     gui_stream_name_edit->setText(p->stringValue("GlassGui","StreamName"));
     gui_stream_description_edit->
@@ -1205,6 +1239,11 @@ void MainWidget::LoadSettings()
     gui_stream_icq_edit->setText(p->stringValue("GlassGui","StreamIcq"));
     gui_stream_aim_edit->setText(p->stringValue("GlassGui","StreamAim"));
     gui_stream_irc_edit->setText(p->stringValue("GlassGui","StreamIrc"));
+
+    gui_source_type_box->
+      setCurrentItemData(AudioDevice::deviceType(p->stringValue("GlassGui",
+	       						"AudioDevice")));
+    sourceTypeChanged(gui_source_type_box->currentIndex());
 
     gui_alsa_device_edit->setText(p->stringValue("GlassGui","AlsaDevice"));
 

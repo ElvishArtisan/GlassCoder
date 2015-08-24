@@ -25,6 +25,13 @@
 ComboBox::ComboBox(QWidget *parent)
   : QComboBox(parent)
 {
+  box_read_only=false;
+}
+
+
+void ComboBox::setReadOnly(bool state)
+{
+  box_read_only=state;
 }
 
 
@@ -41,5 +48,27 @@ void ComboBox::setCurrentItemData(unsigned val)
       setCurrentIndex(i);
       return;
     }
+  }
+}
+
+
+void ComboBox::keyPressEvent(QKeyEvent *e)
+{
+  if(box_read_only) {
+    e->accept();
+  }
+  else {
+    QComboBox::keyPressEvent(e);
+  }
+}
+
+
+void ComboBox::mousePressEvent(QMouseEvent *e)
+{
+  if(box_read_only) {
+    e->accept();
+  }
+  else {
+    QComboBox::mousePressEvent(e);
   }
 }
