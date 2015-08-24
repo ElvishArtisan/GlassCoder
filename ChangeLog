@@ -286,3 +286,6 @@
 2015-08-24 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/glassgui/glassgui.cpp' that caused the codec
 	channels parameter to always be '2'.
+2015-08-24 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/glasscoder/glasscoder.cpp' that broke audio
+	metering for single channel modes.

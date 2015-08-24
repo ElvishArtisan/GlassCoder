@@ -288,6 +288,11 @@ void AudioDevice::peakLevels(int *lvls,const float *pcm,unsigned nframes,
   peakLevels(levels,pcm,nframes,chans);
 
   for(unsigned i=0;i<chans;i++) {
-    lvls[i]=(int)(-2000.0*log10f(levels[i]));
+    if(levels[i]==0) {
+      lvls[i]=10000;
+    }
+    else {
+      lvls[i]=(int)(-2000.0*log10f(levels[i]));
+    }
   }
 }
