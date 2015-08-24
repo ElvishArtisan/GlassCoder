@@ -628,7 +628,7 @@ void MainWidget::codecTypeChanged(int n)
     gui_codec_samplerate_box->insertItem(-1,"44100 samples/sec",44100);
     gui_codec_samplerate_box->insertItem(-1,"48000 samples/sec",48000);
 
-    gui_codec_channels_box->insertItem(-1,"1",2);
+    gui_codec_channels_box->insertItem(-1,"1",1);
     gui_codec_channels_box->insertItem(-1,"2",2);
 
     gui_codec_bitrate_label->setText(tr("Bit Rate")+":");
@@ -653,7 +653,7 @@ void MainWidget::codecTypeChanged(int n)
     gui_codec_samplerate_box->insertItem(-1,"44100 samples/sec",44100);
     gui_codec_samplerate_box->insertItem(-1,"48000 samples/sec",48000);
 
-    gui_codec_channels_box->insertItem(-1,"1",2);
+    gui_codec_channels_box->insertItem(-1,"1",1);
     gui_codec_channels_box->insertItem(-1,"2",2);
 
     gui_codec_bitrate_label->setText(tr("Bit Rate")+":");
@@ -667,7 +667,7 @@ void MainWidget::codecTypeChanged(int n)
     gui_codec_samplerate_box->insertItem(-1,"44100 samples/sec",44100);
     gui_codec_samplerate_box->insertItem(-1,"48000 samples/sec",48000);
 
-    gui_codec_channels_box->insertItem(-1,"1",2);
+    gui_codec_channels_box->insertItem(-1,"1",1);
     gui_codec_channels_box->insertItem(-1,"2",2);
 
     gui_codec_bitrate_label->setText(tr("Quality")+":");

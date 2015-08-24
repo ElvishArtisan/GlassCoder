@@ -283,3 +283,6 @@
 	* Calibrated meter for 0 dBFS in 'src/glassgui/stereometer.cpp'.
 2015-08-24 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented meter level display for the ALSA source in glasscoder(1).
+2015-08-24 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/glassgui/glassgui.cpp' that caused the codec
+	channels parameter to always be '2'.
