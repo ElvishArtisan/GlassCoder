@@ -69,6 +69,8 @@ MainWidget::MainWidget(QWidget *parent)
   // Meter Section
   //
   gui_meter=new StereoMeter(this);
+  gui_meter->setReference(0);
+  gui_meter->setMode(SegMeter::Peak);
   gui_start_button=new QPushButton(tr("Start"),this);
   gui_start_button->setFont(section_font);
   connect(gui_start_button,SIGNAL(clicked()),this,SLOT(startEncodingData()));
@@ -493,7 +495,7 @@ void MainWidget::startEncodingData()
   }
   gui_process=new QProcess(this);
   gui_process->setReadChannel(QProcess::StandardOutput);
-  connect(gui_process,SIGNAL(readyReadStandardOutput()),
+  connect(gui_process,SIGNAL(readyRead()),
 	  this,SLOT(processReadyReadStandardOutputData()));
   connect(gui_process,SIGNAL(error(QProcess::ProcessError)),
 	  this,SLOT(processErrorData(QProcess::ProcessError)));
@@ -913,10 +915,23 @@ void MainWidget::processReadyReadStandardOutputData()
 {
   char data[1500];
   int n=0;
-  printf("HERE!\n");
-  if((n=gui_process->read(data,n))>0) {
+
+  if((n=gui_process->read(data,1500))>0) {
     data[n]=0;
-    printf("RECV: %s\n",data);
+    for(int i=0;i<n;i++) {
+      switch(0xFF&data[i]) {
+      case 13:
+	break;
+
+      case 10:
+	ProcessFeedback(gui_process_accum);
+	gui_process_accum="";
+	break;
+
+      default:
+	gui_process_accum+=data[i];
+      }
+    }
   }
 }
 
@@ -928,6 +943,8 @@ void MainWidget::processFinishedData(int exit_code,
     if(gui_process_kill_timer->isActive()) {
       exit(0);
     }
+    gui_meter->setLeftPeakBar(-10000);
+    gui_meter->setRightPeakBar(-10000);
     gui_start_button->disconnect();
     connect(gui_start_button,SIGNAL(clicked()),this,SLOT(startEncodingData()));
     gui_start_button->setText(tr("Start"));
@@ -978,6 +995,30 @@ void MainWidget::fileSelectName()
 	   tr("Audio Files")+" (*.aiff *.AIFF *.wav *.WAV);;All Files (*)");
   if(!filename.isEmpty()) {
     gui_file_name_edit->setText(filename);
+  }
+}
+
+
+void MainWidget::ProcessFeedback(const QString &str)
+{
+  QStringList f0;
+  bool ok=false;
+  int level;
+
+  f0=str.split(" ");
+
+  if(f0[0]=="ME") {  // Meter Levels
+    printf("%s\n",(const char *)f0[1].toUtf8());
+    if((f0.size()==2)&&(f0[1].length()==8)) {
+      level=f0[1].left(4).toInt(&ok,16);
+      if(ok) {
+	gui_meter->setLeftPeakBar(-level);
+      }
+      level=f0[1].right(4).toInt(&ok,16);
+      if(ok) {
+	gui_meter->setRightPeakBar(-level);
+      }
+    }
   }
 }
 

@@ -72,6 +72,7 @@ class MainWidget : public QMainWindow
   void fileSelectName();
 
  private:
+  void ProcessFeedback(const QString &str);
   bool MakeServerArgs(QStringList *args);
   void MakeCodecArgs(QStringList *args);
   void MakeStreamArgs(QStringList *args);
@@ -142,6 +143,7 @@ class MainWidget : public QMainWindow
   QProcess *gui_process;
   QTimer *gui_process_cleanup_timer;
   QTimer *gui_process_kill_timer;
+  QString gui_process_accum;
 
   QDir *gui_settings_dir;
 };

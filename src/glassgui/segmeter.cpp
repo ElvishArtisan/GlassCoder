@@ -27,7 +27,6 @@
 #include <QPaintEvent>
 #include <stdio.h>
 #include <QSlider>
-//#include <Qt3Support/q3buttongroup.h>
 #include <QSizePolicy>
 #include <QMessageBox>
 
@@ -37,7 +36,6 @@ SegMeter::SegMeter(SegMeter::Orientation o,QWidget *parent)
   : QWidget(parent)
 {
   orient=o;
-  //  setBackgroundColor(Qt::black);
   dark_low_color=QColor(DEFAULT_DARK_LOW_COLOR);
   dark_high_color=QColor(DEFAULT_DARK_HIGH_COLOR);
   dark_clip_color=QColor(DEFAULT_DARK_CLIP_COLOR);
@@ -75,7 +73,7 @@ void SegMeter::setRange(int min,int max)
 {
   range_min=min;
   range_max=max;
-  //  repaint(false);
+  repaint();
 }
 
 
@@ -83,7 +81,7 @@ void SegMeter::setDarkLowColor(QColor color)
 {
   if(dark_low_color!=color) {
     dark_low_color=color;
-    //    repaint(false);
+    repaint();
   }
 }
 
@@ -92,7 +90,7 @@ void SegMeter::setDarkHighColor(QColor color)
 {
   if(dark_high_color!=color) {
     dark_high_color=color;
-    //  repaintfalse);
+    repaint();
   }
 }
 
@@ -101,7 +99,7 @@ void SegMeter::setDarkClipColor(QColor color)
 {
   if(dark_clip_color!=color) {
     dark_clip_color=color;
-    //  repaintfalse);
+    repaint();
   }
 }
 
@@ -110,7 +108,7 @@ void SegMeter::setLowColor(QColor color)
 {
   if(low_color!=color) {
     low_color=color;
-    //  repaintfalse);
+    repaint();
   }
 }
 
@@ -119,7 +117,7 @@ void SegMeter::setHighColor(QColor color)
 {
   if(high_color!=color) {
     high_color=color;
-    //  repaintfalse);
+    repaint();
   }
 }
 
@@ -128,7 +126,7 @@ void SegMeter::setClipColor(QColor color)
 {
   if(clip_color!=color) {
     clip_color=color;
-    //  repaintfalse);
+    repaint();
   }
 }
 
@@ -137,7 +135,7 @@ void SegMeter::setHighThreshold(int level)
 {
   if(high_threshold!=level) {
     high_threshold=level;
-    //  repaintfalse);
+    repaint();
   }
 }
 
@@ -146,7 +144,7 @@ void SegMeter::setClipThreshold(int level)
 {
   if(clip_threshold!=level) {
     clip_threshold=level;
-    //  repaintfalse);
+    repaint();
   }
 }
 
@@ -179,7 +177,7 @@ void SegMeter::setSolidBar(int level)
 {
   if((seg_mode==SegMeter::Independent)&&(solid_bar!=level)) {
     solid_bar=level;
-    //  repaintfalse);
+    repaint();
   }
 }
 
@@ -188,7 +186,7 @@ void SegMeter::setFloatingBar(int level)
 {
   if((seg_mode==SegMeter::Independent)&&(solid_bar!=level)) {
     floating_bar=level;
-    //  repaintfalse);
+    repaint();
   }
 }
 
@@ -204,7 +202,7 @@ void SegMeter::setPeakBar(int level)
     if(solid_bar<range_min) {
       floating_bar=solid_bar;
     }
-    //  repaintfalse);
+    repaint();
   }
 }
 
@@ -213,7 +211,7 @@ void SegMeter::setSegmentSize(int size)
 {
   if(seg_size!=size) {
     seg_size=size;
-    //  repaintfalse);
+    repaint();
   }
 }
 
@@ -497,7 +495,7 @@ void SegMeter::paintEvent(QPaintEvent *paintEvent)
 void SegMeter::peakData()
 {
   floating_bar=solid_bar;
-  //  repaintfalse);
+  repaint();
 }
 
 

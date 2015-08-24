@@ -32,7 +32,6 @@ StereoMeter::StereoMeter(QWidget *parent)
   clip_light_on=false;
   label_x=0;
   meter_label=QString("");
-//  setBackgroundColor(Qt::black);
   left_meter=new SegMeter(SegMeter::Right,this);
   left_meter->setGeometry(25,10,300,10);
   left_meter->setRange(-4600,-800);

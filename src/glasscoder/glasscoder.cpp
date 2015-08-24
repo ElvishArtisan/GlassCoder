@@ -356,7 +356,8 @@ void MainObject::meterData()
   int lvls[MAX_AUDIO_CHANNELS];
 
   sir_audio_device->meterLevels(lvls);
-  printf("%02X%02X\n",lvls[0],lvls[1]);
+  printf("ME %04X%04X\n",lvls[0],lvls[1]);
+  fflush(stdout);
 }
 
 

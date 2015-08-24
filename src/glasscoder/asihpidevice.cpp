@@ -211,7 +211,7 @@ void AsiHpiDevice::meterData()
 
   if(HpiLog(HPI_MeterGetRms(NULL,asihpi_input_meter,levels))==0) {
     for(unsigned i=0;i<MAX_AUDIO_CHANNELS;i++) {
-      lvls[i]=-levels[i]/100;
+      lvls[i]=-levels[i];
     }
     updateMeterLevels(lvls);
   }
