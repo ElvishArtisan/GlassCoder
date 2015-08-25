@@ -301,3 +301,6 @@
 2015-08-25 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/glasscoder/asihpidevice.cpp' that broke the
 	build when configured with no HPI support.
+2015-08-25 Fred Gleason <fredg@paravelsystems.com>
+	* Added code in 'src/glassgui/glassgui.cpp' to escape arguments
+	containing spaces where generating a code dump.

@@ -78,8 +78,8 @@ class MainWidget : public QMainWindow
   void ProcessFeedback(const QString &str);
   bool MakeServerArgs(QStringList *args);
   void MakeCodecArgs(QStringList *args);
-  void MakeStreamArgs(QStringList *args);
-  bool MakeSourceArgs(QStringList *args);
+  void MakeStreamArgs(QStringList *args,bool escape_args);
+  bool MakeSourceArgs(QStringList *args,bool escape_args);
   void ProcessError(int exit_code,QProcess::ExitStatus exit_status);
   void LoadSettings();
   bool SaveSettings();

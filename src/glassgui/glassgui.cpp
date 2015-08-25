@@ -531,8 +531,8 @@ void MainWidget::startEncodingData()
 	  this,SLOT(processFinishedData(int,QProcess::ExitStatus)));
   MakeServerArgs(&args);
   MakeCodecArgs(&args);
-  MakeStreamArgs(&args);
-  MakeSourceArgs(&args);
+  MakeStreamArgs(&args,false);
+  MakeSourceArgs(&args,false);
   args.push_back("--meter-data");
   args.push_back("--errors-to=STDOUT");
   gui_process->start("glasscoder",args);
@@ -556,8 +556,8 @@ void MainWidget::showCodeData()
   args.push_back("glasscoder");
   MakeServerArgs(&args);
   MakeCodecArgs(&args);
-  MakeStreamArgs(&args);
-  MakeSourceArgs(&args);
+  MakeStreamArgs(&args,true);
+  MakeSourceArgs(&args,true);
 
   gui_codeviewer_dialog->exec(args);
 }
@@ -904,7 +904,7 @@ void MainWidget::checkArgs(const QString &str)
   QStringList args;
   bool state;
 
-  state=MakeServerArgs(&args)&&MakeSourceArgs(&args);
+  state=MakeServerArgs(&args)&&MakeSourceArgs(&args,false);
   gui_start_button->setEnabled(state);
   gui_code_button->setEnabled(state);
 }
@@ -1187,34 +1187,44 @@ void MainWidget::MakeCodecArgs(QStringList *args)
 }
 
 
-void MainWidget::MakeStreamArgs(QStringList *args)
+void MainWidget::MakeStreamArgs(QStringList *args,bool escape_args)
 {
+  QString quote="";
+  if(escape_args) {
+    quote="\"";
+  }
   if(!gui_stream_name_edit->text().isEmpty()) {
-    args->push_back("--stream-name="+gui_stream_name_edit->text());
+    args->push_back("--stream-name="+quote+gui_stream_name_edit->text()+quote);
   }
   if(!gui_stream_description_edit->text().isEmpty()) {
-    args->push_back("--stream-description="+gui_stream_description_edit->text());
+    args->push_back("--stream-description="+quote+
+		    gui_stream_description_edit->text()+quote);
   }
   if(!gui_stream_url_edit->text().isEmpty()) {
-    args->push_back("--stream-url="+gui_stream_url_edit->text());
+    args->push_back("--stream-url="+quote+gui_stream_url_edit->text()+quote);
   }
   if(!gui_stream_genre_edit->text().isEmpty()) {
-    args->push_back("--stream-genre="+gui_stream_genre_edit->text());
+    args->push_back("--stream-genre="+quote+gui_stream_genre_edit->text()+
+		    quote);
   }
   if(!gui_stream_icq_edit->text().isEmpty()) {
-    args->push_back("--stream-icq="+gui_stream_icq_edit->text());
+    args->push_back("--stream-icq="+quote+gui_stream_icq_edit->text()+quote);
   }
   if(!gui_stream_aim_edit->text().isEmpty()) {
-    args->push_back("--stream-aim="+gui_stream_aim_edit->text());
+    args->push_back("--stream-aim="+quote+gui_stream_aim_edit->text()+quote);
   }
   if(!gui_stream_irc_edit->text().isEmpty()) {
-    args->push_back("--stream-irc="+gui_stream_irc_edit->text());
+    args->push_back("--stream-irc="+quote+gui_stream_irc_edit->text()+quote);
   }
 }
 
 
-bool MainWidget::MakeSourceArgs(QStringList *args)
+bool MainWidget::MakeSourceArgs(QStringList *args,bool escape_args)
 {
+  QString quote="";
+  if(escape_args) {
+    quote="\"";
+  }
   AudioDevice::DeviceType type=(AudioDevice::DeviceType)
     gui_source_type_box->itemData(gui_source_type_box->currentIndex()).toInt();
   args->push_back("--audio-device="+AudioDevice::optionKeyword(type));
@@ -1241,15 +1251,17 @@ bool MainWidget::MakeSourceArgs(QStringList *args)
     if(gui_file_name_edit->text().isEmpty()) {
       return false;
     }
-    args->push_back("--file-name="+gui_file_name_edit->text());
+    args->push_back("--file-name="+quote+gui_file_name_edit->text()+quote);
     break;
 
   case AudioDevice::Jack:
     if(!gui_jack_server_name_edit->text().isEmpty()) {
-      args->push_back("--jack-server-name="+gui_jack_server_name_edit->text());
+      args->push_back("--jack-server-name="+quote+
+		      gui_jack_server_name_edit->text()+quote);
     }
     if(!gui_jack_client_name_edit->text().isEmpty()) {
-      args->push_back("--jack-client-name="+gui_jack_client_name_edit->text());
+      args->push_back("--jack-client-name="+quote+
+		      gui_jack_client_name_edit->text()+quote);
     }
     break;
 
