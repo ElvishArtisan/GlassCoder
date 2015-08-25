@@ -315,3 +315,6 @@
 2015-08-25 Fred Gleason <fredg@paravelsystems.com>
 	* Added icons in 'icons/'.
 	* Added 'xdg/glassgui.desktop'.
+2015-08-25 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'common/audiodevice.cpp' that broke the build on
+	RHEL 6.
