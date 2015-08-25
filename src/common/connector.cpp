@@ -666,3 +666,492 @@ QString Connector::base64Decode(const QString &str,bool *ok)
 
   return ret;
 }
+
+
+QString Connector::curlStrError(int exit_code)
+{
+  //
+  // From the curl(1) man page (v7.29.0)
+  //
+  QString ret=tr("Unknown CURL error");
+
+  switch(exit_code) {
+  case 1:
+    ret=tr("Unsupported protocol");
+    break;
+
+  case 2:
+    ret=tr("Failed to initialize");
+    break;
+
+  case 3:
+    ret=tr("Malformed URL");
+    break;
+
+  case 4:
+    ret=tr("Feature not supported");
+    break;
+
+  case 5:
+    ret=tr("Cannot resolve proxy");
+    break;
+
+  case 6:
+    ret=tr("Cannot resolve host");
+    break;
+
+  case 7:
+    ret=tr("Connection to host failed");
+    break;
+
+  case 8:
+    ret=tr("Unrecognized FTP server response");
+    break;
+
+  case 9:
+    ret=tr("FTP access denied");
+    break;
+
+  case 11:
+    ret=tr("Unrecognized FTP PASS reply");
+    break;
+
+  case 13:
+    ret=tr("Unrecognized FTP PASV reply");
+    break;
+
+  case 14:
+    ret=tr("Unrecognized FTP 227 format");
+    break;
+
+  case 15:
+    ret=tr("FTP can't get host");
+    break;
+
+  case 17:
+    ret=tr("FTP couldn't set binary mode");
+    break;
+
+  case 18:
+    ret=tr("Partial file transfer");
+    break;
+
+  case 19:
+    ret=tr("FTP download failed");
+    break;
+
+  case 21:
+    ret=tr("FTP quote error");
+    break;
+
+  case 22:
+    ret=tr("HTTP page not retrieved");
+    break;
+
+  case 23:
+    ret=tr("Write error");
+    break;
+
+  case 25:
+    ret=tr("FTP STOR error");
+    break;
+
+  case 26:
+    ret=tr("Read error");
+    break;
+
+  case 27:
+    ret=tr("Out of memory");
+    break;
+
+  case 28:
+    ret=tr("Write error");
+    break;
+
+  case 30:
+    ret=tr("FTP PORT failed");
+    break;
+
+  case 31:
+    ret=tr("FTP REST failed");
+    break;
+
+  case 33:
+    ret=tr("HTTP range error");
+    break;
+
+  case 34:
+    ret=tr("HTTP POST error");
+    break;
+
+  case 35:
+    ret=tr("SSL connect error");
+    break;
+
+  case 36:
+    ret=tr("FTP bad download resume");
+    break;
+
+  case 37:
+    ret=tr("FILE read failure");
+    break;
+
+  case 38:
+    ret=tr("LDAP bind error");
+    break;
+
+  case 39:
+    ret=tr("LDAP search failed");
+    break;
+
+  case 41:
+    ret=tr("LDAP function not found");
+    break;
+
+  case 42:
+    ret=tr("Aborted");
+    break;
+
+  case 43:
+    ret=tr("Internal error");
+    break;
+
+  case 45:
+    ret=tr("Interface error");
+    break;
+
+  case 47:
+    ret=tr("Too many redirects");
+    break;
+
+  case 48:
+    ret=tr("Unknown option");
+    break;
+
+  case 49:
+    ret=tr("Malformed telnet option");
+    break;
+
+  case 51:
+    ret=tr("Bad certificate");
+    break;
+
+  case 52:
+    ret=tr("No data returned");
+    break;
+
+  case 53:
+    ret=tr("No SSL crypto engine");
+    break;
+
+  case 54:
+    ret=tr("Cannot set SSL crypto engine as default");
+    break;
+
+  case 55:
+    ret=tr("Send failure");
+    break;
+
+  case 56:
+    ret=tr("Receive failure");
+    break;
+
+  case 58:
+    ret=tr("Local certificate problem");
+    break;
+
+  case 59:
+    ret=tr("Cannot use requested SSL cipher");
+    break;
+
+  case 60:
+    ret=tr("Peer certificate cannot be authenticated");
+    break;
+
+  case 61:
+    ret=tr("Unrecognized transfer encoding");
+    break;
+
+  case 62:
+    ret=tr("Invalid LDAP URL");
+    break;
+
+  case 63:
+    ret=tr("Maximum file size exceeded");
+    break;
+
+  case 64:
+    ret=tr("Requested FTP SSL level failed");
+    break;
+
+  case 65:
+    ret=tr("Rewind failed");
+    break;
+
+  case 66:
+    ret=tr("SSL engine initialization failed");
+    break;
+
+  case 67:
+    ret=tr("Authentication failure");
+    break;
+
+  case 68:
+    ret=tr("TFTP file not found");
+    break;
+
+  case 69:
+    ret=tr("TFTP permmission problem");
+    break;
+
+  case 70:
+    ret=tr("TFTP out of disc space");
+    break;
+
+  case 71:
+    ret=tr("TFTP illegal operation");
+    break;
+
+  case 72:
+    ret=tr("TFTP unkown transfer ID");
+    break;
+
+  case 73:
+    ret=tr("TFTP file already exists");
+    break;
+
+  case 74:
+    ret=tr("TFTP no such user");
+    break;
+
+  case 75:
+    ret=tr("Character conversion failed");
+    break;
+
+  case 76:
+    ret=tr("Character conversion functions required");
+    break;
+
+  case 77:
+    ret=tr("SSL CA cert read problems");
+    break;
+
+  case 78:
+    ret=tr("Reference resources does not exist");
+    break;
+
+  case 79:
+    ret=tr("SSH unspecified error");
+    break;
+
+  case 80:
+    ret=tr("SSL failed to shut down connection");
+    break;
+
+  case 82:
+    ret=tr("Cannot load CRL file");
+    break;
+
+  case 83:
+    ret=tr("Issuer check failed");
+    break;
+
+  case 84:
+    ret=tr("FTP PRET command failed");
+    break;
+
+  case 85:
+    ret=tr("RTSP CSeq mismatch");
+    break;
+
+  case 86:
+    ret=tr("RTSP SSID mismatch");
+    break;
+
+  case 87:
+    ret=tr("FTP unable to parse file list");
+    break;
+
+  case 88:
+    ret=tr("FTP chunk callback error");
+    break;
+
+  default:
+    ret=tr("Unknown CURL error")+QString().sprintf(" [%d]",exit_code);
+  }
+
+  return ret;
+}
+
+
+QString Connector::httpStrError(int status_code)
+{
+  //
+  // From RFC-2616 Section 6.1.1
+  //
+  QString ret=tr("Unknown status code");
+
+  switch(status_code) {
+  case 100:
+    ret=tr("Continue");
+    break;
+    
+  case 101:
+    ret=tr("Switching Protocols");
+    break;
+    
+  case 200:
+    ret=tr("OK");
+    break;
+    
+  case 201:
+    ret=tr("Created");
+    break;
+    
+  case 202:
+    ret=tr("Accepted");
+    break;
+    
+  case 203:
+    ret=tr("Non-Authoritative Information");
+    break;
+    
+  case 204:
+    ret=tr("No Content");
+    break;
+    
+  case 205:
+    ret=tr("Reset Content");
+    break;
+    
+  case 206:
+    ret=tr("Partial Content");
+    break;
+    
+  case 300:
+    ret=tr("Multiple Choices");
+    break;
+    
+  case 301:
+    ret=tr("Moved Permanently");
+    break;
+    
+  case 302:
+    ret=tr("Found");
+    break;
+    
+  case 303:
+    ret=tr("See Other");
+    break;
+    
+  case 304:
+    ret=tr("Not Modified");
+    break;
+    
+  case 305:
+    ret=tr("Use Proxy");
+    break;
+    
+  case 307:
+    ret=tr("Temporary Redirect");
+    break;
+    
+  case 400:
+    ret=tr("Bad Request");
+    break;
+    
+  case 401:
+    ret=tr("Unauthorized");
+    break;
+    
+  case 402:
+    ret=tr("Payment Required");
+    break;
+    
+  case 403:
+    ret=tr("Forbidden");
+    break;
+    
+  case 404:
+    ret=tr("Not Found");
+    break;
+    
+  case 405:
+    ret=tr("Method Not Allowed");
+    break;
+    
+  case 406:
+    ret=tr("Not Acceptable");
+    break;
+    
+  case 407:
+    ret=tr("Proxy Authentication Required");
+    break;
+    
+  case 408:
+    ret=tr("Request Time-out");
+    break;
+    
+  case 409:
+    ret=tr("Conflict");
+    break;
+    
+  case 410:
+    ret=tr("Gone");
+    break;
+    
+  case 411:
+    ret=tr("Length Required");
+    break;
+    
+  case 412:
+    ret=tr("Precondition Failed");
+    break;
+    
+  case 413:
+    ret=tr("Request Entity Too Large");
+    break;
+    
+  case 414:
+    ret=tr("Request-URI Too Large");
+    break;
+    
+  case 415:
+    ret=tr("Unsupported Media Type");
+    break;
+    
+  case 416:
+    ret=tr("Requested range not satisfiable");
+    break;
+    
+  case 417:
+    ret=tr("Expectation Failed");
+    break;
+    
+  case 500:
+    ret=tr("Internal Server Error");
+    break;
+    
+  case 501:
+    ret=tr("Not Implemented");
+    break;
+    
+  case 502:
+    ret=tr("Bad Gateway");
+    break;
+    
+  case 503:
+    ret=tr("Service Unavailable");
+    break;
+    
+  case 504:
+    ret=tr("Gateway Time-out");
+    break;
+    
+  case 505:
+    ret=tr("HTTP Version not supported");
+    break;
+  }
+
+  return QString().sprintf("%d - ",status_code)+ret;
+}

@@ -307,3 +307,8 @@
 2015-08-25 Fred Gleason <fredg@paravelsystems.com>
 	* Changed the default Server Port from '8000' to '80'.
 	* Added support for multi-rate streaming to glassgui(1).
+2015-08-25 Fred Gleason <fredg@paravelsystems.com>
+	Added 'Connector::curlStrError()' and 'Connector::httpStrError()'
+	metehods in 'src/common/connector.cpp' and 'src/common/connector.h'.
+	* Cleaned up error logging for the HLS server connector in
+	'src/glasscoder/hlsconnector.cpp'.

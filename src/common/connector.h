@@ -90,6 +90,8 @@ class Connector : public QObject
   static QString urlDecode(const QString &str);
   static QString base64Encode(const QString &str);
   static QString base64Decode(const QString &str,bool *ok=NULL);
+  static QString curlStrError(int exit_code);
+  static QString httpStrError(int status_code);
 
  signals:
   void connected(bool state);

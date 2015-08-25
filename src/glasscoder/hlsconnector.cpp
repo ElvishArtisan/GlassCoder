@@ -232,7 +232,7 @@ void HlsConnector::putErrorData(QProcess::ProcessError err)
   Log(LOG_ERR,
       QString().sprintf("curl(1) process error: %d, cmd: \"curl %s\"",err,
 			(const char *)hls_put_args.join(" ").toUtf8()));
-
+  setConnected(false);
   exit(256);
 }
 
@@ -248,17 +248,19 @@ void HlsConnector::putFinishedData(int exit_code,
     exit(256);
   }
   if(exit_code!=0) {
-    Log(LOG_WARNING,
-	QString().sprintf("curl(1) returned exit code: %d, cmd: \"curl %s\"",
-		  exit_code,(const char *)hls_put_args.join(" ").toUtf8()));
+    setConnected(false);
+    Log(LOG_WARNING,QString().sprintf("CURL PUT error: %s",
+		 (const char *)Connector::curlStrError(exit_code).toUtf8()));
   }
   QString response=hls_put_process->readAllStandardOutput();
   for(int i=0;i<response.length();i+=3) {
     int code=response.mid(i,3).toInt(&ok);
     if((code<200)||(code>299)) {
-      Log(LOG_WARNING,
-       QString().sprintf("curl(1) returned response code: %d, cmd: \"curl %s\"",
-		    code,(const char *)hls_put_args.join(" ").toUtf8()));
+      setConnected(false);
+      Log(LOG_WARNING,"PUT response error: "+Connector::httpStrError(code));
+    }
+    else {
+      setConnected(true);
     }
   }
   if(!hls_is_top) {
@@ -294,9 +296,8 @@ void HlsConnector::deleteFinishedData(int exit_code,
     exit(256);
   }
   if(exit_code!=0) {
-    Log(LOG_WARNING,
-	QString().sprintf("curl(1) returned exit code: %d, cmd: \"curl %s\"",
-		  exit_code,(const char *)hls_delete_args.join(" ").toUtf8()));
+    Log(LOG_WARNING,QString().sprintf("CURL DELETE error: %s",
+		 (const char *)Connector::curlStrError(exit_code).toUtf8()));
   }
   hls_delete_garbage_timer->start(0);
 }
@@ -326,9 +327,8 @@ void HlsConnector::stopFinishedData(int exit_code,QProcess::ExitStatus exit_stat
     exit(256);
   }
   if(exit_code!=0) {
-    Log(LOG_WARNING,
-	QString().sprintf("curl(1) returned exit code: %d, cmd: \"curl %s\"",
-		  exit_code,(const char *)hls_stop_args.join(" ").toUtf8()));
+    Log(LOG_WARNING,QString().sprintf("CURL DELETE error: %s",
+		 (const char *)Connector::curlStrError(exit_code).toUtf8()));
   }
 
   //
