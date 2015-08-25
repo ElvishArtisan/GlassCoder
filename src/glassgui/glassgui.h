@@ -42,6 +42,7 @@
 #define GLASSGUI_SETTINGS_DIR ".glassgui"
 #define GLASSGUI_SETTINGS_FILE "glassguirc"
 #define GLASSGUI_TERMINATE_TIMEOUT 5000
+#define GLASSGUI_MAX_SUBSTREAMS 3
 
 class MainWidget : public QMainWindow
 {
@@ -106,7 +107,7 @@ class MainWidget : public QMainWindow
   QLabel *gui_codec_channels_label;
   ComboBox *gui_codec_channels_box;
   QLabel *gui_codec_bitrate_label;
-  ComboBox *gui_codec_bitrate_box;
+  ComboBox *gui_codec_bitrate_box[GLASSGUI_MAX_SUBSTREAMS];
 
   QLabel *gui_stream_label;
   QLabel *gui_stream_name_label;

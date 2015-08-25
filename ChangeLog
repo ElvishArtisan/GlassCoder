@@ -304,3 +304,6 @@
 2015-08-25 Fred Gleason <fredg@paravelsystems.com>
 	* Added code in 'src/glassgui/glassgui.cpp' to escape arguments
 	containing spaces where generating a code dump.
+2015-08-25 Fred Gleason <fredg@paravelsystems.com>
+	* Changed the default Server Port from '8000' to '80'.
+	* Added support for multi-rate streaming to glassgui(1).
