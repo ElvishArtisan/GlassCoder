@@ -57,11 +57,15 @@ AsiHpiDevice::~AsiHpiDevice()
 
 bool AsiHpiDevice::isAvailable() const
 {
+#ifdef ASIHPI
   uint32_t index;
   uint16_t type;
   bool ret=(HPI_SubSysGetAdapter(NULL,0,&index,&type)==0);
 
   return ret;
+#else
+  return false;
+#endif  // ASIHPI
 }
 
 

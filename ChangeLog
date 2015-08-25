@@ -298,3 +298,6 @@
 	* Implemented control locks in glassgui(1).
 2015-08-25 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented a status bar in glassgui(1).
+2015-08-25 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/glasscoder/asihpidevice.cpp' that broke the
+	build when configured with no HPI support.
