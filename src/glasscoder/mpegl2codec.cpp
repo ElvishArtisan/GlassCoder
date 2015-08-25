@@ -18,6 +18,7 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include "logging.h"
 #include "mpegl2codec.h"
 
 MpegL2Codec::MpegL2Codec(Ringbuffer *ring,QObject *parent)
@@ -71,7 +72,7 @@ bool MpegL2Codec::startCodec()
   // Load Library
   //
   if((twolame_handle=dlopen("libtwolame.so",RTLD_LAZY))==NULL) {
-    syslog(LOG_ERR,"unsupported audio format (library not found)");
+    Log(LOG_ERR,"unsupported audio format (library not found)");
     return false;
   }
   *(void **)(&twolame_init)=dlsym(twolame_handle,"twolame_init");
@@ -114,7 +115,7 @@ bool MpegL2Codec::startCodec()
     break;
   }
   if((twolame_lameopts=twolame_init())==NULL) {
-    syslog(LOG_ERR,"unable to initialize MP2 encoder");
+    Log(LOG_ERR,"unable to initialize MP2 encoder");
     return false;
   }
   twolame_set_mode(twolame_lameopts,mpeg_mode);
@@ -130,12 +131,12 @@ bool MpegL2Codec::startCodec()
   }
   twolame_set_energy_levels(twolame_lameopts,1);
   if(twolame_init_params(twolame_lameopts)!=0) {
-    syslog(LOG_ERR,"unable to start MP2 encoder");
+    Log(LOG_ERR,"unable to start MP2 encoder");
     return false;
   }
   return true;
 #else
-  syslog(LOG_ERR,"unsupported audio format (no build support)");
+  Log(LOG_ERR,"unsupported audio format (no build support)");
   return false;
 #endif  // HAVE_TWOLAME
 }

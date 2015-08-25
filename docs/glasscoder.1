@@ -105,6 +105,28 @@ at a different sample rate, the input will be automatically resampled to
 this rate.  Default value is 44100.
 
 .TP
+.B --errors-to=\fBSTDERR\fP|\fBSYSLOG\fP|\fBSTDOUT\fP
+Send error messages to one of the following destinations:
+.RS
+
+.TP
+STDERR
+Standard error.
+
+.TP
+SYSLOG
+The system syslog service.
+
+.TP
+STDOUT
+Standard output, in machine readable format.
+
+.TP
+Default is to send error messages to standard error.
+
+.RE
+
+.TP
 .B --help
 Print a short usage message and exit.
 

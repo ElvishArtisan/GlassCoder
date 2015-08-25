@@ -22,11 +22,11 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#include <syslog.h>
 
 #include <samplerate.h>
 
 #include "audiodevice.h"
+#include "logging.h"
 
 AudioDevice::AudioDevice(unsigned chans,unsigned samprate,
 			 std::vector<Ringbuffer *> *rings,QObject *parent)
@@ -235,8 +235,9 @@ void AudioDevice::remixChannels(float *pcm_out,unsigned chans_out,float *pcm_in,
     }
     return;
   }
-  syslog(LOG_ERR,"invalid channel remix: chans_in: %d  chans_out: %d",
-	 chans_in,chans_out);
+  Log(LOG_ERR,
+      QString().sprintf("invalid channel remix: chans_in: %d  chans_out: %d",
+			chans_in,chans_out));
   exit(256);
 }
 

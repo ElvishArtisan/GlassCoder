@@ -35,6 +35,7 @@
 #include "codeviewer.h"
 #include "combobox.h"
 #include "hpiinputlistview.h"
+#include "statuswidget.h"
 #include "stereometer.h"
 
 #define GLASSGUI_USAGE ""
@@ -69,6 +70,7 @@ class MainWidget : public QMainWindow
   void processErrorData(QProcess::ProcessError err);
   void processCollectGarbageData();
   void processKillData();
+  void messageTimeoutData();
   void fileSelectName();
 
  private:
@@ -147,6 +149,10 @@ class MainWidget : public QMainWindow
   QString gui_process_accum;
 
   QDir *gui_settings_dir;
+  QLabel *gui_message_label;
+  QTimer *gui_message_timer;
+  StatusWidget *gui_status_widget;
+  QLabel *gui_status_frame_widget;
 };
 
 

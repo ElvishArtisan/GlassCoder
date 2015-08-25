@@ -18,11 +18,10 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#include <syslog.h>
-
 #include <QStringList>
 
 #include "icyconnector.h"
+#include "logging.h"
 
 IcyConnector::IcyConnector(int version,QObject *parent)
   : Connector(parent)
@@ -82,8 +81,10 @@ void IcyConnector::socketConnectedData()
 void IcyConnector::socketDisconnectedData()
 {
   if(!icy_authenticated) {
-    syslog(LOG_WARNING,"login to \"%s:%d\" rejected: bad password",
-	   (const char *)hostHostname().toUtf8(),0xFFFF&hostPort());
+    Log(LOG_WARNING,
+	QString().sprintf("login to \"%s:%d\" rejected: bad password",
+			  (const char *)hostHostname().toUtf8(),
+			  0xFFFF&hostPort()));
   }
   icy_authenticated=false;
   setConnected(false);
@@ -113,8 +114,10 @@ void IcyConnector::socketReadyReadData()
 
       case 13:
 	if(QString(icy_recv_buffer)=="invalid password") {
-	  syslog(LOG_WARNING,"login to \"%s:%d\" rejected: invalid password",
-		 (const char *)hostHostname().toUtf8(),0xFFFF&hostPort());
+	  Log(LOG_WARNING,
+	      QString().sprintf("login to \"%s:%d\" rejected: invalid password",
+				(const char *)hostHostname().toUtf8(),
+				0xFFFF&hostPort()));
 	}
 	else {
 	  icy_recv_buffer+=data[i];
@@ -144,9 +147,11 @@ void IcyConnector::ProcessHeaders(const QString &hdrs)
 
   f0=hdrs.split("\r\n");
   if(f0[0]!="OK2") {
-    syslog(LOG_WARNING,"login to \"%s:%d\" rejected: %s",
-	   (const char *)hostHostname().toUtf8(),0xFFFF&hostPort(),
-	   (const char *)f0[0].toUtf8());
+    Log(LOG_WARNING,
+	QString().sprintf("login to \"%s:%d\" rejected: %s",
+			  (const char *)hostHostname().toUtf8(),
+			  0xFFFF&hostPort(),
+			  (const char *)f0[0].toUtf8()));
     return;
   }
   icy_authenticated=true;

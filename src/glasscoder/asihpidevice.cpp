@@ -23,6 +23,7 @@
 #include <stdio.h>
 
 #include "asihpidevice.h"
+#include "logging.h"
 
 AsiHpiDevice::AsiHpiDevice(unsigned chans,unsigned samprate,
 			   std::vector<Ringbuffer *> *rings,QObject *parent)
@@ -195,7 +196,7 @@ void AsiHpiDevice::readData()
     }
   }
   else {
-    syslog(LOG_WARNING,"not in recording state");
+    Log(LOG_WARNING,"not in recording state");
   }
 
 
@@ -234,7 +235,8 @@ void AsiHpiDevice::MakeFormat(struct hpi_format *fmt,uint16_t hfmt)
 hpi_err_t AsiHpiDevice::HpiLog(hpi_err_t err,int priority) const
 {
   if(err!=0) {
-    syslog(priority,"HPI error %d: \"%s\"",err,hpi_strerror(err));
+    Log(priority,
+	QString().sprintf("HPI error %d: \"%s\"",err,hpi_strerror(err)));
   }
   return err;
 }

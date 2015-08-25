@@ -18,10 +18,9 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#include <syslog.h>
-
 #include "alsadevice.h"
 #include "glasslimits.h"
+#include "logging.h"
 
 void *AlsaCallback(void *ptr)
 {
@@ -40,10 +39,10 @@ void *AlsaCallback(void *ptr)
       snd_pcm_drop(dev->alsa_pcm);
       snd_pcm_prepare(dev->alsa_pcm);
       if(n==-EPIPE) {
-	syslog(LOG_INFO,"****** ALSA Capture Xrun ******");
+	Log(LOG_NOTICE,"****** ALSA Capture Xrun ******");
       }
       else {
-	syslog(LOG_INFO,"ALSA Error [%s]",snd_strerror(n));
+	Log(LOG_WARNING,QString().sprintf("ALSA Error [%s]",snd_strerror(n)));
       }
     }
     else {
@@ -176,7 +175,9 @@ bool AlsaDevice::start(QString *err)
   alsa_samplerate=samplerate();
   snd_pcm_hw_params_set_rate_near(alsa_pcm,hwparams,&alsa_samplerate,&dir);
   if(alsa_samplerate!=samplerate()) {
-    syslog(LOG_DEBUG,"using ALSA sample rate of %u",alsa_samplerate);
+    Log(LOG_INFO,
+	QString().sprintf("using ALSA sample rate of %u samples/sec",
+			  alsa_samplerate));
   }
 
   //
@@ -185,7 +186,8 @@ bool AlsaDevice::start(QString *err)
   alsa_channels=channels();
   snd_pcm_hw_params_set_channels_near(alsa_pcm,hwparams,&alsa_channels);
   if(alsa_channels!=channels()) {
-    syslog(LOG_DEBUG,"using ALSA channel count of %u",alsa_channels);
+    Log(LOG_INFO,
+	QString().sprintf("using ALSA channel count of %u",alsa_channels));
   }
 
   //
@@ -195,13 +197,17 @@ bool AlsaDevice::start(QString *err)
   snd_pcm_hw_params_set_periods_near(alsa_pcm,hwparams,&alsa_period_quantity,
 				     &dir);
   if(alsa_period_quantity!=ALSA_PERIOD_QUANTITY) {
-    syslog(LOG_DEBUG,"using ALSA period quantity of %u",alsa_period_quantity);
+    Log(LOG_INFO,
+	QString().sprintf("using ALSA period quantity of %u",
+			  alsa_period_quantity));
   }
   //  alsa_buffer_size=ALSA_PERIOD_SIZE*alsa_period_quantity;
   alsa_buffer_size=alsa_samplerate/2;
   snd_pcm_hw_params_set_buffer_size_near(alsa_pcm,hwparams,&alsa_buffer_size);
   if(alsa_buffer_size!=(alsa_samplerate/2)) {
-    syslog(LOG_DEBUG,"using ALSA buffer size of %lu",alsa_buffer_size);
+    Log(LOG_INFO,
+	QString().sprintf("using ALSA buffer size of %lu frames",
+			  alsa_buffer_size));
   }
 
   //

@@ -21,7 +21,6 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <syslog.h>
 
 #include <QCoreApplication>
 
@@ -30,6 +29,7 @@
 #include "codecfactory.h"
 #include "connectorfactory.h"
 #include "glasscoder.h"
+#include "logging.h"
 
 //
 // Globals
@@ -76,7 +76,6 @@ MainObject::MainObject(QObject *parent)
 
   CmdSwitch *cmd=
     new CmdSwitch(qApp->argc(),qApp->argv(),"glasscoder",GLASSCODER_USAGE);
-  openlog("glasscoder",LOG_PERROR,LOG_DAEMON);
   for(unsigned i=0;i<cmd->keys();i++) {
     if(cmd->key(i)=="--audio-bitrate") {
       num=cmd->value(i).toUInt(&ok);
@@ -84,7 +83,7 @@ MainObject::MainObject(QObject *parent)
 	audio_bitrate.push_back(num);
       }
       else {
-	syslog(LOG_ERR,"invalid --audio-bitrate value");
+	Log(LOG_ERR,"invalid --audio-bitrate value");
 	exit(256);
       }
       cmd->setProcessed(i,true);
@@ -92,7 +91,7 @@ MainObject::MainObject(QObject *parent)
     if(cmd->key(i)=="--audio-channels") {
       audio_channels=cmd->value(i).toUInt(&ok);
       if((!ok)||(audio_channels==0)||(audio_channels>MAX_AUDIO_CHANNELS)) {
-	syslog(LOG_ERR,"invalid --audio-channels value");
+	Log(LOG_ERR,"invalid --audio-channels value");
 	exit(256);
       }
       cmd->setProcessed(i,true);
@@ -137,8 +136,9 @@ MainObject::MainObject(QObject *parent)
 		  cmd->setProcessed(i,true);
 		}
 		else {
-		  syslog(LOG_ERR,"unknown --audio-format value \"%s\"",
-			 (const char *)cmd->value(i).toAscii());
+		  Log(LOG_ERR,
+		      QString().sprintf("unknown --audio-format value \"%s\"",
+					(const char *)cmd->value(i).toAscii()));
 		  exit(256);
 		}
 	      }
@@ -150,7 +150,7 @@ MainObject::MainObject(QObject *parent)
     if(cmd->key(i)=="--audio-quality") {
       audio_quality=cmd->value(i).toDouble(&ok);
       if((!ok)||(audio_quality<0.0)||(audio_quality>1.0)) {
-	syslog(LOG_ERR,"invalid --audio-quality value");
+	Log(LOG_ERR,"invalid --audio-quality value");
 	exit(256);
       }
       cmd->setProcessed(i,true);
@@ -158,10 +158,25 @@ MainObject::MainObject(QObject *parent)
     if(cmd->key(i)=="--audio-samplerate") {
       audio_samplerate=cmd->value(i).toUInt(&ok);
       if(!ok) {
-	syslog(LOG_ERR,"invalid --audio-samplerate value");
+	Log(LOG_ERR,"invalid --audio-samplerate value");
 	exit(256);
       }
       cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--errors-to") {
+      if(cmd->value(i).toLower()=="stderr") {
+	global_log_to=LOG_TO_STDERR;
+	cmd->setProcessed(i,true);
+      }
+      if(cmd->value(i).toLower()=="syslog") {
+	global_log_to=LOG_TO_SYSLOG;
+	openlog("glasscoder",0,LOG_DAEMON);
+	cmd->setProcessed(i,true);
+      }
+      if(cmd->value(i).toLower()=="stdout") {
+	global_log_to=LOG_TO_STDOUT;
+	cmd->setProcessed(i,true);
+      }
     }
     if(cmd->key(i)=="--list-codecs") {
       list_codecs=true;
@@ -193,7 +208,7 @@ MainObject::MainObject(QObject *parent)
     if(cmd->key(i)=="--server-port") {
       server_port=cmd->value(i).toUInt(&ok);
       if((!ok)||(server_port==0)) {
-	syslog(LOG_ERR,"invalid --shout-server-port value");
+	Log(LOG_ERR,"invalid --shout-server-port value");
 	exit(256);
       }
       cmd->setProcessed(i,true);
@@ -219,8 +234,9 @@ MainObject::MainObject(QObject *parent)
 	      cmd->setProcessed(i,true);
 	    }
 	    else {
-	      syslog(LOG_ERR,"unknown server type \"%s\"",
-		     (const char *)cmd->value(i).toAscii());
+	      Log(LOG_ERR,
+		  QString().sprintf("unknown server type \"%s\"",
+				    (const char *)cmd->value(i).toAscii()));
 	      exit(256);
 	    }
 	  }
@@ -283,27 +299,27 @@ MainObject::MainObject(QObject *parent)
   for(int i=0;i<device_keys.size();i++) {
     if(device_keys[i].split("-",QString::SkipEmptyParts)[0]!=
        AudioDevice::optionKeyword(audio_device)) {
-      syslog(LOG_ERR,"glasscoder: unknown/inappropriate option \"%s\"",
-	      (const char *)device_keys[i].toAscii());
+      Log(LOG_ERR,
+	  QString().sprintf("glasscoder: unknown/inappropriate option \"%s\"",
+			    (const char *)device_keys[i].toAscii()));
       exit(256);
     }
   }
 
   if(server_hostname.isEmpty()) {
-    syslog(LOG_ERR,"missing --server-hostname parameter");
+    Log(LOG_ERR,"missing --server-hostname parameter");
     exit(256);
   }
   if((audio_quality>=0.0)&&(audio_bitrate.size()>0)) {
-    syslog(LOG_ERR,
-	   "--audio-quality and --audio-bitrate are mutually exclusive");
+    Log(LOG_ERR,"--audio-quality and --audio-bitrate are mutually exclusive");
     exit(256);
   }
   if((server_type==Connector::Icecast2Server)&&(server_mountpoint.isEmpty())) {
-    syslog(LOG_ERR,"mountpoint not specified");
+    Log(LOG_ERR,"mountpoint not specified");
     exit(256);
   }
   if((audio_bitrate.size()>1)&&(server_type!=Connector::HlsServer)) {
-    syslog(LOG_ERR,"only HLS streams can have multiple bitrates");
+    Log(LOG_ERR,"only HLS streams can have multiple bitrates");
     exit(256);
   }
 
@@ -369,6 +385,19 @@ void MainObject::meterData()
 }
 
 
+void MainObject::connectedData(bool state)
+{
+  if(global_log_to==LOG_TO_STDOUT) {
+    if(state) {
+      printf("CS %d\n",CONNECTION_OK);
+    }
+    else {
+      printf("CS %d\n",CONNECTION_FAILED);
+    }
+  }
+}
+
+
 void MainObject::exitTimerData()
 {
   if(glasscoder_exiting) {
@@ -400,17 +429,19 @@ bool MainObject::StartAudioDevice()
   if((sir_audio_device=
       AudioDeviceFactory(audio_device,audio_channels,audio_samplerate,
 			 &sir_ringbuffers,this))==NULL) {
-    syslog(LOG_ERR,"%s devices not supported",(const char *)AudioDevice::deviceTypeText(audio_device).toUtf8());
+    Log(LOG_ERR,
+	QString().sprintf("%s devices not supported",
+	    (const char *)AudioDevice::deviceTypeText(audio_device).toUtf8()));
     exit(256);
   }
   connect(sir_audio_device,SIGNAL(hasStopped()),
 	  this,SLOT(audioDeviceStoppedData()));
   if(!sir_audio_device->processOptions(&err,device_keys,device_values)) {
-    syslog(LOG_ERR,"%s",(const char *)err.toUtf8());
+    Log(LOG_ERR,err);
     exit(256);
   }
   if(!sir_audio_device->start(&err)) {
-    syslog(LOG_ERR,"%s",(const char *)err.toUtf8());
+    Log(LOG_ERR,err);
     exit(256);
   }
   sir_meter_timer=new QTimer(this);
@@ -429,8 +460,9 @@ bool MainObject::StartCodec()
 
   if((codec=
     CodecFactory(audio_format,sir_ringbuffers[sir_codecs.size()],this))==NULL) {
-    syslog(LOG_ERR,"unsupported codec type \"%s\"",
-	   (const char *)Codec::codecTypeText(Codec::TypeMpegL3).toUtf8());
+    Log(LOG_ERR,
+	QString().sprintf("unsupported codec type \"%s\"",
+	      (const char *)Codec::codecTypeText(Codec::TypeMpegL3).toUtf8()));
     return false;
   }
   if(audio_bitrate.size()>0) {
@@ -462,6 +494,7 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
     connect(conn,SIGNAL(dataRequested(Connector *)),
 	    sir_codecs[sir_connectors.size()],SLOT(encode(Connector *)));
     connect(conn,SIGNAL(stopped()),this,SLOT(connectorStoppedData()));
+    connect(conn,SIGNAL(connected(bool)),this,SLOT(connectedData(bool)));
     sir_codecs[sir_connectors.size()]->
       setCompleteFrames(server_type==Connector::HlsServer);
   }

@@ -296,3 +296,5 @@
 	* Implemented meter level display for the JACK source in glasscoder(1).
 2015-08-24 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented control locks in glassgui(1).
+2015-08-25 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented a status bar in glassgui(1).

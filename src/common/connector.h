@@ -92,6 +92,7 @@ class Connector : public QObject
   static QString base64Decode(const QString &str,bool *ok=NULL);
 
  signals:
+  void connected(bool state);
   void dataRequested(Connector *conn);
   void error(QAbstractSocket::SocketError err);
   void stopped();

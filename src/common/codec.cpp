@@ -19,6 +19,7 @@
 //
 
 #include "codec.h"
+#include "logging.h"
 
 Codec::Codec(Codec::Type type,Ringbuffer *ring,QObject *parent)
 {
@@ -138,7 +139,7 @@ bool Codec::start()
     codec_pcm_in=codec_pcm_buffer[0];
     codec_pcm_out=codec_pcm_buffer[1];
     if((codec_src_state=src_new(SRC_SINC_FASTEST,codec_channels,&err))==NULL) {
-      syslog(LOG_ERR,"unable to create sample rate converter");
+      Log(LOG_ERR,"unable to create sample rate converter");
       return false;
     }
     codec_src_data=new SRC_DATA;
@@ -252,7 +253,7 @@ void Codec::encode(Connector *conn)
       n=codec_ring1->read(codec_pcm_in,pcmFrames());
       codec_src_data->input_frames=n;
       if((err=src_process(codec_src_state,codec_src_data))!=0) {
-	syslog(LOG_WARNING,"SRC error [%s]",src_strerror(err));
+	Log(LOG_WARNING,QString().sprintf("SRC error [%s]",src_strerror(err)));
 	continue;
       }
       n=codec_src_data->output_frames_gen;

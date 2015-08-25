@@ -289,6 +289,11 @@ ln -s ../../src/common/connector.cpp src/glasscoder/connector.cpp
 rm -f src/glasscoder/connector.h
 ln -s ../../src/common/connector.h src/glasscoder/connector.h
 
+rm -f src/glasscoder/logging.cpp
+ln -s ../../src/common/logging.cpp src/glasscoder/logging.cpp
+rm -f src/glasscoder/logging.h
+ln -s ../../src/common/logging.h src/glasscoder/logging.h
+
 rm -f src/glasscoder/ringbuffer.cpp
 ln -s ../../src/common/ringbuffer.cpp src/glasscoder/ringbuffer.cpp
 rm -f src/glasscoder/ringbuffer.h
@@ -317,6 +322,11 @@ rm -f src/glassgui/connector.cpp
 ln -s ../../src/common/connector.cpp src/glassgui/connector.cpp
 rm -f src/glassgui/connector.h
 ln -s ../../src/common/connector.h src/glassgui/connector.h
+
+rm -f src/glassgui/logging.cpp
+ln -s ../../src/common/logging.cpp src/glassgui/logging.cpp
+rm -f src/glassgui/logging.h
+ln -s ../../src/common/logging.h src/glassgui/logging.h
 
 rm -f src/glassgui/ringbuffer.cpp
 ln -s ../../src/common/ringbuffer.cpp src/glassgui/ringbuffer.cpp

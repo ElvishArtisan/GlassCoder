@@ -21,6 +21,7 @@
 #include <samplerate.h>
 
 #include "aaccodec.h"
+#include "logging.h"
 
 AacCodec::AacCodec(Ringbuffer *ring,QObject *parent)
   : Codec(Codec::TypeAac,ring,parent)
@@ -85,7 +86,7 @@ bool AacCodec::startCodec()
   aac_handle=dlopen("libfaac.so",RTLD_LAZY);
 
   if(aac_handle==NULL) {
-    syslog(LOG_ERR,"unsupported audio format (library not found)");
+    Log(LOG_ERR,"unsupported audio format (library not found)");
     return false;
   }
   *(void **)(&faacEncOpen)=dlsym(aac_handle,"faacEncOpen");
@@ -130,7 +131,7 @@ bool AacCodec::startCodec()
 
   return true;
 #else
-  syslog(LOG_ERR,"unsupported audio format (no build support)");
+  Log(LOG_ERR,"unsupported audio format (no build support)");
   return false;
 #endif  // HAVE_FAAC
 }
@@ -147,7 +148,7 @@ void AacCodec::encodeData(Connector *conn,const float *pcm,int frames)
     conn->writeData(frames,aac_buffer,s);
   }
   else {
-    syslog(LOG_WARNING,"aac encoding error %d",s);
+    Log(LOG_WARNING,QString().sprintf("aac encoding error %d",s));
   }
 #endif  // HAVE_FAAC
 }

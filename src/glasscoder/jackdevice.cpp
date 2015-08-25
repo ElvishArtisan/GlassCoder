@@ -20,10 +20,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <syslog.h>
 
 #include "glasslimits.h"
 #include "jackdevice.h"
+#include "logging.h"
 
 //
 // JACK Callback
@@ -206,7 +206,8 @@ bool JackDevice::start(QString *err)
       jack_port_register(jack_jack_client,name.toAscii(),JACK_DEFAULT_AUDIO_TYPE,
 			 JackPortIsInput|JackPortIsTerminal,0);
   }
-  syslog(LOG_DEBUG,"connected to JACK, sample rate = %u",jack_jack_sample_rate);
+  Log(LOG_INFO,QString().sprintf("connected to JACK graph at %u samples/sec.",
+				 jack_jack_sample_rate));
 
   jack_meter_timer->start(AUDIO_METER_INTERVAL);
 

@@ -18,11 +18,10 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#include <syslog.h>
-
 #include <QStringList>
 
 #include "iceconnector.h"
+#include "logging.h"
 
 IceConnector::IceConnector(QObject *parent)
   : Connector(parent)
@@ -150,18 +149,21 @@ void IceConnector::ProcessHeaders(const QString &hdrs)
 	setConnected(true);
       }
       else {
-	syslog(LOG_ERR,"server \"%s:%u/%s\" returned \"%d %s\"",
-	       (const char *)hostHostname().toUtf8(),0xFFFF&hostPort(),
-	       (const char *)serverMountpoint().toUtf8(),
-	       f1[1].toInt(),(const char *)txt.toUtf8());
-	setError(QAbstractSocket::UnknownSocketError);
+	Log(LOG_ERR,
+	    QString().sprintf("server \"%s:%u/%s\" returned \"%d %s\"",
+			      (const char *)hostHostname().toUtf8(),
+			      0xFFFF&hostPort(),
+			      (const char *)serverMountpoint().toUtf8(),
+			      f1[1].toInt(),(const char *)txt.toUtf8()));
+	    setError(QAbstractSocket::UnknownSocketError);
       }
       return;
     }
   }
-  syslog(LOG_ERR,"server \"%s:%u/%s\" returned unrecognized response",
-	 (const char *)hostHostname().toUtf8(),0xFFFF&hostPort(),
-	 (const char *)serverMountpoint().toUtf8());
+  Log(LOG_ERR,
+      QString().sprintf("server \"%s:%u/%s\" returned unrecognized response",
+			(const char *)hostHostname().toUtf8(),0xFFFF&hostPort(),
+			(const char *)serverMountpoint().toUtf8()));
   setError(QAbstractSocket::UnknownSocketError);
 }
 

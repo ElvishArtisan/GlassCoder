@@ -20,6 +20,7 @@
 
 #include <samplerate.h>
 
+#include "logging.h"
 #include "vorbiscodec.h"
 
 VorbisCodec::VorbisCodec(Ringbuffer *ring,QObject *parent)
@@ -84,17 +85,17 @@ bool VorbisCodec::startCodec()
   //
   vorbis_vorbisenc_handle=dlopen("libvorbisenc.so",RTLD_LAZY);
   if(vorbis_vorbisenc_handle==NULL) {
-    syslog(LOG_ERR,"unsupported audio format (library not found)");
+    Log(LOG_ERR,"unsupported audio format (library not found)");
     return false;
   }
   vorbis_vorbis_handle=dlopen("libvorbis.so",RTLD_LAZY);
   if(vorbis_vorbis_handle==NULL) {
-    syslog(LOG_ERR,"unsupported audio format (library not found)");
+    Log(LOG_ERR,"unsupported audio format (library not found)");
     return false;
   }
   vorbis_ogg_handle=dlopen("libogg.so",RTLD_LAZY);
   if(vorbis_ogg_handle==NULL) {
-    syslog(LOG_ERR,"unsupported audio format (library not found)");
+    Log(LOG_ERR,"unsupported audio format (library not found)");
     return false;
   }
 
@@ -275,7 +276,7 @@ bool VorbisCodec::startCodec()
   if(bitrate()==0) {
     if(vorbis_encode_init_vbr(&vorbis_vorbis_info,channels(),streamSamplerate(),
 			      quality())!=0) {
-      syslog(LOG_ERR,"unable to initialize encoder");
+      Log(LOG_ERR,"unable to initialize encoder");
       return false;
     }
   }
@@ -283,7 +284,7 @@ bool VorbisCodec::startCodec()
     if(vorbis_encode_init(&vorbis_vorbis_info,channels(),
 			  streamSamplerate(),1000*bitrate(),
 			  1000*bitrate(),1000*bitrate())!=0) {
-      syslog(LOG_ERR,"unable to initialize encoder");
+      Log(LOG_ERR,"unable to initialize encoder");
       return false;
     }
   }
@@ -300,7 +301,7 @@ bool VorbisCodec::startCodec()
 
   return true;
 #else
-  syslog(LOG_ERR,"unsupported audio format (no build support)");
+  Log(LOG_ERR,"unsupported audio format (no build support)");
   return false;
 #endif  // HAVE_VORBIS
 }
@@ -312,7 +313,7 @@ void VorbisCodec::encodeData(Connector *conn,const float *pcm,int frames)
   float **vorbis;
 
   if((vorbis=vorbis_analysis_buffer(&vorbis_vorbis_dsp,frames))==NULL) {
-    syslog(LOG_ERR,"unable to allocate stream buffer");
+    Log(LOG_ERR,"unable to allocate stream buffer");
     exit(256);
   }
   for(int i=0;i<frames;i++) {

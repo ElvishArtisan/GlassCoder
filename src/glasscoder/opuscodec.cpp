@@ -20,6 +20,7 @@
 
 #include <samplerate.h>
 
+#include "logging.h"
 #include "opuscodec.h"
 
 OpusCodec::OpusCodec(Ringbuffer *ring,QObject *parent)
@@ -73,7 +74,7 @@ bool OpusCodec::startCodec()
   opus_handle=dlopen("libopus.so",RTLD_LAZY);
 
   if(opus_handle==NULL) {
-    syslog(LOG_ERR,"unsupported audio format (library not found)");
+    Log(LOG_ERR,"unsupported audio format (library not found)");
     return false;
   }
   *(void **)(&opus_encoder_create)=dlsym(opus_handle,"opus_encoder_create");
@@ -89,7 +90,8 @@ bool OpusCodec::startCodec()
   //
   if((opus_encoder=opus_encoder_create(streamSamplerate(),channels(),
 				       OPUS_APPLICATION_AUDIO,&err))==NULL) {
-    syslog(LOG_ERR,"unable to create codec [%s]",opus_strerror(err));
+    Log(LOG_ERR,QString().sprintf("unable to create codec [%s]",
+				  opus_strerror(err)));
     return false;
   }
   if(bitrate()==0) {
@@ -102,7 +104,7 @@ bool OpusCodec::startCodec()
   }
   return true;
 #else
-  syslog(LOG_ERR,"unsupported audio format (no build support)");
+  Log(LOG_ERR,"unsupported audio format (no build support)");
   return false;
 #endif  // HAVE_OPUS
 }
@@ -118,7 +120,7 @@ void OpusCodec::encodeData(Connector *conn,const float *pcm,int frames)
     conn->writeData(frames,data,s);
   }
   else {
-    syslog(LOG_WARNING,"opus encoding error %d",s);
+    Log(LOG_WARNING,QString().sprintf("opus encoding error %d",s));
   }
 #endif  // HAVE_OPUS
 }

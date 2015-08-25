@@ -21,6 +21,7 @@
 #include <samplerate.h>
 
 #include "heaaccodec.h"
+#include "logging.h"
 
 HeAacCodec::HeAacCodec(Ringbuffer *ring,QObject *parent)
   : Codec(Codec::TypeHeAac,ring,parent)
@@ -83,22 +84,22 @@ bool HeAacCodec::startCodec()
   // Sanity Checks
   //
   if(bitrate()==0) {
-    syslog(LOG_ERR,"VBR encoding not supported");
+    Log(LOG_ERR,"VBR encoding not supported");
     return false;
   }
   if((streamSamplerate()!=32000)&&(streamSamplerate()!=44100)&
      (streamSamplerate()!=48000)) {
-    syslog(LOG_ERR,"unsupported stream sample rate");
+    Log(LOG_ERR,"unsupported stream sample rate");
     return false;
   }
   if(channels()!=2) {
-    syslog(LOG_ERR,"unsupported channel count");
+    Log(LOG_ERR,"unsupported channel count");
     return false;
   }
   if(((streamSamplerate()==32000)&&(bitrate()!=32))|| 
      ((bitrate()!=32)&&(bitrate()!=48)&&(bitrate()!=56)&&
       (bitrate()!=64)&&(bitrate()!=96)&&(bitrate()!=128))) {
-    syslog(LOG_ERR,"unsupported stream bit rate");
+    Log(LOG_ERR,"unsupported stream bit rate");
     return false;
   }
 
@@ -108,7 +109,7 @@ bool HeAacCodec::startCodec()
   heaac_handle=dlopen("libaacplus.so",RTLD_LAZY);
 
   if(heaac_handle==NULL) {
-    syslog(LOG_ERR,"unsupported audio format (library not found)");
+    Log(LOG_ERR,"unsupported audio format (library not found)");
     return false;
   }
   *(void **)(&aacplusEncGetCurrentConfiguration)=
@@ -144,7 +145,7 @@ bool HeAacCodec::startCodec()
 
   return true;
 #else
-  syslog(LOG_ERR,"unsupported audio format (no build support)");
+  Log(LOG_ERR,"unsupported audio format (no build support)");
   return false;
 #endif  // HAVE_AACPLUS
 }
@@ -161,7 +162,7 @@ void HeAacCodec::encodeData(Connector *conn,const float *pcm,int frames)
     conn->writeData(frames,heaac_buffer,s);
   }
   else {
-    syslog(LOG_WARNING,"aacplus encoding error %d",s);
+    Log(LOG_WARNING,QString().sprintf("aacplus encoding error %d",s));
   }
 #endif  // HAVE_AACPLUS
 }

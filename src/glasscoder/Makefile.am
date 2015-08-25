@@ -55,6 +55,7 @@ dist_glasscoder_SOURCES = aaccodec.cpp aaccodec.h\
 
 nodist_glasscoder_SOURCES = cmdswitch.cpp cmdswitch.h\
                             glasslimits.h\
+                            logging.cpp logging.h\
                             moc_aaccodec.cpp\
                             moc_alsadevice.cpp\
                             moc_asihpidevice.cpp\
@@ -89,6 +90,7 @@ DISTCLEANFILES = audiodevice.cpp audiodevice.h\
                  codec.cpp codec.h\
                  connector.cpp connector.h\
                  glasslimits.h\
+                 logging.cpp logging.h\
                  ringbuffer.cpp ringbuffer.h
 
 MAINTAINERCLEANFILES = *~\

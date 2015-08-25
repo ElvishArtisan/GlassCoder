@@ -36,6 +36,7 @@ dist_glassgui_SOURCES = codeviewer.cpp codeviewer.h\
                         hpiinputlistview.cpp hpiinputlistview.h\
                         profile.cpp profile.h\
                         segmeter.cpp segmeter.h\
+                        statuswidget.cpp statuswidget.h\
                         stereometer.cpp stereometer.h
 
 nodist_glassgui_SOURCES = audiodevice.cpp audiodevice.h\
@@ -43,6 +44,7 @@ nodist_glassgui_SOURCES = audiodevice.cpp audiodevice.h\
                           codec.cpp codec.h\
                           connector.cpp connector.h\
                           glasslimits.h\
+                          logging.cpp logging.h\
                           moc_audiodevice.cpp\
                           moc_codec.cpp\
                           moc_codeviewer.cpp\
@@ -51,6 +53,7 @@ nodist_glassgui_SOURCES = audiodevice.cpp audiodevice.h\
                           moc_glassgui.cpp\
                           moc_hpiinputlistview.cpp\
                           moc_segmeter.cpp\
+                          moc_statuswidget.cpp\
                           moc_stereometer.cpp\
                           ringbuffer.cpp ringbuffer.h
 
@@ -69,6 +72,7 @@ DISTCLEANFILES = audiodevice.cpp audiodevice.h\
                  codec.cpp codec.h\
                  connector.cpp connector.h\
                  glasslimits.h\
+                 logging.cpp logging.h\
                  ringbuffer.cpp ringbuffer.h
 
 MAINTAINERCLEANFILES = *~\

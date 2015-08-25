@@ -18,12 +18,11 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#include <syslog.h>
-
 #include <stdlib.h>
 #include <stdio.h>
 
 #include "cmdswitch.h"
+#include "logging.h"
 
 CmdSwitch::CmdSwitch(int argc,char *argv[],const char *modname,
 			 const char *usage)

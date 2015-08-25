@@ -47,6 +47,7 @@ class MainObject : public QObject
   void audioDeviceStoppedData();
   void connectorStoppedData();
   void meterData();
+  void connectedData(bool state);
   void exitTimerData();
 
  private:

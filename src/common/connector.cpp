@@ -18,11 +18,10 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#include <syslog.h>
-
 #include <QStringList>
 
 #include "connector.h"
+#include "logging.h"
 
 Connector::Connector(QObject *parent)
   : QObject(parent)
@@ -434,17 +433,21 @@ void Connector::setConnected(bool state)
 {
   if(state&&conn_watchdog_active) {
     if(conn_server_mountpoint.isEmpty()) {
-      syslog(LOG_WARNING,"connection to \"%s:%u\" restored",
-	     (const char *)conn_host_hostname.toUtf8(),0xFFFF&conn_host_port);
+      Log(LOG_WARNING,
+	  QString().sprintf("connection to \"%s:%u\" restored",
+			    (const char *)conn_host_hostname.toUtf8(),
+			    0xFFFF&conn_host_port));
     }
     else {
-      syslog(LOG_WARNING,"connection to \"%s:%u/%s\" restored",
-	     (const char *)conn_host_hostname.toUtf8(),0xFFFF&conn_host_port,
-	     (const char *)conn_server_mountpoint.toUtf8());
+      Log(LOG_WARNING,
+	  QString().sprintf("connection to \"%s:%u/%s\" restored",
+	       (const char *)conn_host_hostname.toUtf8(),0xFFFF&conn_host_port,
+			    (const char *)conn_server_mountpoint.toUtf8()));
     }
     conn_watchdog_active=false;
   }
   conn_connected=state;
+  emit connected(state);
 }
 
 
@@ -452,13 +455,17 @@ void Connector::setError(QAbstractSocket::SocketError err)
 {
   if(!conn_watchdog_active) {
     if(conn_server_mountpoint.isEmpty()) {
-      syslog(LOG_WARNING,"connection to \"%s:%u\" lost",
-	     (const char *)conn_host_hostname.toUtf8(),0xFFFF&conn_host_port);
+      Log(LOG_WARNING,
+	  QString().sprintf("connection to \"%s:%u\" lost",
+			    (const char *)conn_host_hostname.toUtf8(),
+			    0xFFFF&conn_host_port));
     }
     else {
-      syslog(LOG_WARNING,"connection to \"%s:%u/%s\" lost",
-	     (const char *)conn_host_hostname.toUtf8(),0xFFFF&conn_host_port,
-	     (const char *)conn_server_mountpoint.toUtf8());
+      Log(LOG_WARNING,
+	  QString().sprintf("connection to \"%s:%u/%s\" lost",
+			    (const char *)conn_host_hostname.toUtf8(),
+			    0xFFFF&conn_host_port,
+			    (const char *)conn_server_mountpoint.toUtf8()));
     }
     conn_watchdog_active=true;
   }

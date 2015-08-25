@@ -18,6 +18,7 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include "logging.h"
 #include "mpegl3codec.h"
 
 MpegL3Codec::MpegL3Codec(Ringbuffer *ring,QObject *parent)
@@ -75,7 +76,7 @@ bool MpegL3Codec::startCodec()
   l3_lame_handle=dlopen("libmp3lame.so",RTLD_LAZY);
 
   if(l3_lame_handle==NULL) {
-    syslog(LOG_ERR,"unsupported audio format (library not found)");
+    Log(LOG_ERR,"unsupported audio format (library not found)");
     return false;
   }
   *(void **)(&lame_init)=dlsym(l3_lame_handle,"lame_init");
@@ -139,11 +140,11 @@ bool MpegL3Codec::startCodec()
     break;
 
   default:
-    syslog(LOG_ERR,"invalid audio channels");
+    Log(LOG_ERR,"invalid audio channels");
     return false;
   }
   if((l3_lameopts=lame_init())==NULL) {
-    syslog(LOG_ERR,"unable to initialize MP3 encoder");
+    Log(LOG_ERR,"unable to initialize MP3 encoder");
     return false;
   }
   if(completeFrames()) {
@@ -163,12 +164,12 @@ bool MpegL3Codec::startCodec()
   lame_set_bWriteVbrTag(l3_lameopts,0);
   if(lame_init_params(l3_lameopts)!=0) {
     lame_close(l3_lameopts);
-    syslog(LOG_ERR,"unable to start MP3 encoder");
+    Log(LOG_ERR,"unable to start MP3 encoder");
     return false;
   }
   return true;
 #else
-  syslog(LOG_ERR,"unsupported audio format (no build support)");
+  Log(LOG_ERR,"unsupported audio format (no build support)");
   return false;
 #endif  // HAVE_LAME
 }

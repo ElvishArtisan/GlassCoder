@@ -32,6 +32,7 @@
 #include "cmdswitch.h"
 #include "codec.h"
 #include "connector.h"
+#include "logging.h"
 #include "profile.h"
 
 #include "glassgui.h"
@@ -54,6 +55,8 @@ MainWidget::MainWidget(QWidget *parent)
   section_font.setPixelSize(16);
   QFont label_font("helvetica",14,QFont::Bold);
   label_font.setPixelSize(14);
+  QFont message_font("helvetica",14,QFont::Normal);
+  message_font.setPixelSize(14);
 
   //
   // Set Size
@@ -65,6 +68,22 @@ MainWidget::MainWidget(QWidget *parent)
   // Dialogs
   //
   gui_codeviewer_dialog=new CodeViewer(this);
+
+  //
+  // Status Bar
+  //
+  gui_message_label=new QLabel(this);
+  gui_message_label->setFont(message_font);
+  gui_message_label->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+  gui_message_label->setFrameStyle(QFrame::Box|QFrame::Raised);
+  gui_message_timer=new QTimer(this);
+  gui_message_timer->setSingleShot(true);
+  connect(gui_message_timer,SIGNAL(timeout()),this,SLOT(messageTimeoutData()));
+
+  gui_status_frame_widget=new QLabel(this);
+  gui_status_frame_widget->setFrameStyle(QFrame::Box|QFrame::Raised);
+  gui_status_widget=new StatusWidget(this);
+  gui_status_widget->setFont(label_font);
 
   //
   // Meter Section
@@ -328,7 +347,7 @@ MainWidget::MainWidget(QWidget *parent)
 
 QSize MainWidget::sizeHint() const
 {
-  return QSize(560,720);
+  return QSize(560,750);
 }
 
 
@@ -482,7 +501,14 @@ void MainWidget::resizeEvent(QResizeEvent *e)
   gui_jack_client_name_label->setGeometry(10,ypos,145,20);
   gui_jack_client_name_edit->setGeometry(160,ypos,size().width()-260,24);
   ypos+=26;
-  
+
+  //
+  // Status Bar
+  //
+  gui_message_label->setGeometry(0,size().height()-30,size().width()-140,30);
+  gui_status_frame_widget->
+    setGeometry(size().width()-140,size().height()-30,140,30);
+  gui_status_widget->setGeometry(size().width()-143,size().height()-27,134,24);
 }
 
 
@@ -508,6 +534,7 @@ void MainWidget::startEncodingData()
   MakeStreamArgs(&args);
   MakeSourceArgs(&args);
   args.push_back("--meter-data");
+  args.push_back("--errors-to=STDOUT");
   gui_process->start("glasscoder",args);
   gui_start_button->disconnect();
   connect(gui_start_button,SIGNAL(clicked()),this,SLOT(stopEncodingData()));
@@ -952,6 +979,7 @@ void MainWidget::processFinishedData(int exit_code,
   else {
     ProcessError(exit_code,exit_status);
   }
+  gui_status_widget->setStatus(CONNECTION_IDLE);
   gui_process_cleanup_timer->start(0);
 }
 
@@ -977,6 +1005,12 @@ void MainWidget::processKillData()
   gui_process->kill();
   qApp->processEvents();
   exit(0);
+}
+
+
+void MainWidget::messageTimeoutData()
+{
+  gui_message_label->setText("");
 }
 
 
@@ -1038,8 +1072,46 @@ void MainWidget::ProcessFeedback(const QString &str)
   QStringList f0;
   bool ok=false;
   int level;
+  int prio;
+  int status;
+  QString msg;
 
   f0=str.split(" ");
+
+  if((f0[0]=="CS")&&(f0.size()==2)) {  // Connection Status
+    status=f0[1].toInt(&ok);
+    if(ok) {
+      if(!gui_status_widget->setStatus(status)) {
+	gui_message_label->setText(tr("Unknown status code")+
+				   QString().sprintf(" \"%d\" ",status)+
+				   tr("received."));
+      }
+    }
+  }
+
+  if((f0[0]=="ER")&&(f0.size()>=2)) {  // Error Message
+    prio=f0[1].toInt();
+    f0.erase(f0.begin());
+    f0.erase(f0.begin());
+    msg=f0.join(" ");
+
+    switch(prio) {
+    case LOG_EMERG:
+    case LOG_ALERT:
+    case LOG_CRIT:
+    case LOG_ERR:
+      QMessageBox::critical(this,"GlassGui - "+tr("Error"),msg);
+      break;
+
+    case LOG_WARNING:
+    case LOG_NOTICE:
+    case LOG_INFO:
+      gui_message_label->setText(msg);
+      gui_message_timer->start(10000);
+      break;
+    }
+    return;
+  }
 
   if(f0[0]=="ME") {  // Meter Levels
     if((f0.size()==2)&&(f0[1].length()==8)) {

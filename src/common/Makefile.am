@@ -25,6 +25,7 @@ EXTRA_DIST = audiodevice.cpp audiodevice.h\
              codec.cpp codec.h\
              connector.cpp connector.h\
              glasslimits.h\
+             logging.cpp logging.h\
              ringbuffer.cpp ringbuffer.h
 
 CLEANFILES = *~\
