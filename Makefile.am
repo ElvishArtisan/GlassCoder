@@ -24,7 +24,9 @@
 
 SUBDIRS = conf\
           docs\
-          src
+          icons\
+          src\
+          xdg
 
 rpm:	dist
 	cp glasscoder-$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES/

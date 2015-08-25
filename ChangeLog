@@ -312,3 +312,6 @@
 	metehods in 'src/common/connector.cpp' and 'src/common/connector.h'.
 	* Cleaned up error logging for the HLS server connector in
 	'src/glasscoder/hlsconnector.cpp'.
+2015-08-25 Fred Gleason <fredg@paravelsystems.com>
+	* Added icons in 'icons/'.
+	* Added 'xdg/glassgui.desktop'.

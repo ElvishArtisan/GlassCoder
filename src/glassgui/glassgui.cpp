@@ -26,6 +26,7 @@
 #include <QApplication>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QPixmap>
 #include <QUrl>
 
 #include "audiodevice.h"
@@ -37,6 +38,8 @@
 
 #include "glassgui.h"
 
+#include "../../icons/glasscoder-16x16.xpm"
+
 MainWidget::MainWidget(QWidget *parent)
   : QMainWindow(parent)
 {
@@ -45,6 +48,7 @@ MainWidget::MainWidget(QWidget *parent)
   for(unsigned i=0;i<cmd->keys();i++) {
   }
 
+  setWindowIcon(QPixmap(glasscoder_16x16_xpm));
   setWindowTitle(QString("GlassGui v")+VERSION);
   gui_settings_dir=NULL;
 

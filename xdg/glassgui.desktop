@@ -1,0 +1,10 @@
+[Desktop Entry]
+Categories=AudioVideo;Player;
+Encoding=UTF-8
+Name=GlassGui
+GenericName=Audio Stream Encoder
+Exec=glassgui
+Icon=glasscoder
+Path=
+Type=Application
+Terminal=false

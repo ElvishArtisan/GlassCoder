@@ -258,10 +258,12 @@ AC_CONFIG_FILES([ \
     conf/Makefile \
     conf/httpd/Makefile \
     docs/Makefile \
+    icons/Makefile \
     src/common/Makefile \
     src/glasscoder/Makefile \
     src/glassgui/Makefile \
     src/Makefile \
+    xdg/Makefile \
     glasscoder.spec \
     Makefile ])
 AC_OUTPUT()
