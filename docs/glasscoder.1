@@ -1,14 +1,14 @@
-.TH glasscoder 1 "June 2014" Linux "Linux Audio Manual"
+.TH glasscoder 1 "August 2015" Linux "Linux Audio Manual"
 .SH NAME
-glasscoder \- Minimalist audio encoder for Icecast/Shoutcast servers
+glasscoder \- Minimalist audio encoder for live streaming
 
 .SH SYNOPSIS
 glasscoder [OPTIONS]
 
 .SH DESCRIPTION
-\fBGlasscoder\fP is an audio encoder that uses the JACK Audio Connection Kit.
-It is capable of sending live streams using a variety of formats to an Icecast
-or Shoutcast audio streaming server as well as generating HTTP Live Streams
+\fBGlasscoder\fP is an audio encoder that is capable of generating live
+streams using a variety of formats and sending them to an Icecast or
+Shoutcast audio streaming server or posting them as HTTP Live Streams
 [HLS].
 
 \fBGlasscoder\fP has no GUI or configuration file components at all; its
@@ -119,7 +119,9 @@ The system syslog service.
 
 .TP
 STDOUT
-Standard output, in machine readable format.
+Standard output, in machine readable format (useful for communicating
+with another 'controller' program).  See also the \fB--meter-data\fP
+option below.
 
 .TP
 Default is to send error messages to standard error.
@@ -136,7 +138,7 @@ Print a list of available codecs and then exit.
 
 .TP
 .B --list-devices
-Print a list of available devices and then exit.
+Print a list of available source devices and then exit.
 
 .TP
 .B --server-hostname=<\fIhostname\fP>
@@ -146,7 +148,7 @@ no default.
 .TP
 .B --server-mountpoint=<\fImount\fP>
 The server mountpoint to use.  This parameter only has meaning when used
-with an Icecast server.  Default value is to use no mountpoint.
+with an Icecast server or HLS streams.  Default value is to use no mountpoint.
 
 .TP
 .B --server-password=<\fIpasswd\fP>
@@ -186,11 +188,12 @@ Default value is \fIIceCast2\fP.
 .TP
 .B --server-username=<\fIname\fP>
 The user name to use when authenticating to the server.  Default value
-is \fIsource\fP.  The setting is used only by Icecast servers.
+is \fIsource\fP.  The setting is used only by Icecast servers and HLS
+streams.
 
 .TP
 .B --stream-aim=<\fIaim\fP>
-The AOL Instant Mesanger ID to associate with the stream.  There is no
+The AOL Instant Messenger ID to associate with the stream.  There is no
 default value.  This setting is used only by Shoutcast servers.
 
 .TP
@@ -201,6 +204,7 @@ This setting is used only by Icecast servers.
 .TP
 .B --stream-genre=<\fIstring\fP>
 The string to show as the stream genre.  There is no default value.
+This setting is used only by Icecast and Shoutcast servers.
 
 .TP
 .B --stream-icq=<\fIicq\fP>
@@ -215,11 +219,13 @@ default value.  This setting is used only by Shoutcast servers.
 .TP
 .B --stream-name=<\fIstring\fP>
 The string to show as the stream name.  There is no default value.
+This setting is used only by Icecast and Shoutcast servers.
 
 .TP
 .B --stream-url=<\fIurl\fP>
 The URL to show for a page giving more information about the stream.
-There is no default value.  This setting is ignored by Shoutcast v2 servers.
+There is no default value.  This setting is used only by Icecast and
+Shoutcast servers, but is ignored by Shoutcast v2 servers.
 
 .TP
 .B --version
@@ -240,7 +246,7 @@ then the \fBhw:0\fP device will be used.
 
 .TP
 .B --asihpi-adapter-index=<\fIindex\fP>
-The index number of the audio adapter to use/
+The index number of the audio adapter to use.
 
 .TP
 .B --asihpi-input-index=<\fIindex\fP>
@@ -263,7 +269,7 @@ The name of the JACK server instance to use.
 
 .TP
 .B --jack-client-name=<\fIname\fP>
-The client name to use.  Default is 'glasscoder'.
+The JACK client name to use.  Default is 'glasscoder'.
 
 
 

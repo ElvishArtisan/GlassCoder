@@ -5,15 +5,21 @@ MANDATORY PREREQUISITES
 You will need the following installed and configured properly on your 
 system before building GlassCoder:
 
-Qt4 Toolkit, v4.6 or better (http://www.trolltech.com/).
+Qt4 Toolkit, v4.6 or better (http://www.qt.io/).
 
 Secret Rabbit Code
 A sample-rate converter library, written by Erik de Castro Lopo.  Included
 with most distros, or you can find it at http://www.mega-nerd.com/SRC/.
 
 
-OPTIONAL PREREQUISITES -- At least one of the following is required:
+OPTIONAL PREREQUISITES
 ---------------------------------------------------------------------------
+GlassCoder depends upon various third-party libraries to provide support
+for both encoding formats ('codecs') and audio sources.  You will need at
+least one of each in order to build a functioning binary.
+
+CODECS
+------
 AACPlus - HE-AAC+ Codec, v2.0.2 or later.  Needed for generating MPEG-4
 HE-AAC+ streams.  Available at http://tipok.org.ua/node/17.  Be sure to
 read the important legal notice at the bottom of that page!
@@ -21,7 +27,7 @@ read the important legal notice at the bottom of that page!
 FAAC - Free Advanced Audio Codec, v1.28 or later.  Needed for generating
 MPEG-2 AAC streams.  Available at http://www.audiocoding.com/faac.html.
 
-LAME - MPEG-1 Layer 3 Encoder Library, v.99.3 or later.  Needed for
+LAME - MPEG-1 Layer 3 Encoder Library, v3.99.3 or later.  Needed for
 generating MPEG-1 Layer 3 (MP3) streams.  Available at
 http://lame.sourceforge.net/.
 
@@ -31,6 +37,22 @@ libraries are required.  Available at http://www.xiph.org.
 TwoLAME - MPEG-1 Layer 2 Encoder Library, v0.2.12 or later.  Needed for
 generating MPEG-1 Layer 2 (MP2) streams.  Available at
 http://www.twolame.org/.
+
+AUDIO SOURCES
+-------------
+Advanced Linux Sound Architecture (ALSA), v1.0 or later.  Included in
+virtually all Linux distros.  Further information is available at
+http://www.alsa-project.org/.
+
+AudioScience HPI (ASIHPI), v4.00 or later.  Advanced audio API for using
+the line of professional, high-end audio cards from AudioScience Corporation.
+Available at http://www.audioscience.com/.
+
+LibSndFile (FILE), v1.0.7 or later.  Library for reading audio files.
+Available at http://mega-nerd.com/libsndfile/.
+
+JACK Audio Connection Kit (JACK).  System for interconnecting audio devices
+and applications.  Available at http://jackaudio.org/.
 
 
 BUILD ENVIRONMENT

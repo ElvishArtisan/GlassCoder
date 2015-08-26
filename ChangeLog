@@ -320,3 +320,7 @@
 	RHEL 6.
 2015-08-26 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'gui' subpackage in 'glasscoder.spec.in'.
+2015-08-26 Fred Gleason <fredg@paravelsystems.com>
+	* Updated 'INSTALL'.
+	* Updated 'README'.
+	* Updated glasscoder(1) man page.

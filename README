@@ -1,11 +1,23 @@
 This is the README file for the GlassCoder package.
 
+This software comes with ABSOLUTELY NO WARRANTY.  See the file 'COPYING' for
+details.
+
+See the file 'INSTALL' for instructions on building GlassCoder from source.
+
 GlassCoder is a minimalist audio encoder for IceCast and Shoutcast streaming
-servers that uses the JACK Audio Connection Kit.  GlassCoder utilizes no
-configuration files or GUI interface at all; the 'user interface' consists
-entirely of the command-line invocation.  As such, it is well suited for
-use cases where the encoder is completely driven by an external system or
-script.
+servers as well as HTTP Live Streaming (HLS). It supports the following
+audio sources:
+
+  Advanced Linux Sound Architeture (ALSA)
+  AudioScience HPI (ASIHPI)
+  File Streaming (FILE)
+  JACK Audio Connection Kit (JACK)
+
+The base GlassCoder streamer component utilizes no configuration files or
+GUI interface whatsoever; with the 'user interface' consisting entirely of
+the command-line invocation.  As such, it is well suited for use cases where
+the encoder is completely driven by an external system or script.
 
 The following audio codecs are supported:
 
@@ -14,3 +26,8 @@ The following audio codecs are supported:
    MPEG-2 Advanced Audio Coding, Main Profile ('AAC')
    MPEG-4 Advanced Audio Coding, High Efficiency Profile ('HE-AAC+')
    Ogg Vorbis
+
+Also included is GlassGui, a graphical point-and-click interface that can
+be used to drive GlassCoder or generate command-line invocations that
+can be copy/pasted to other systems.  A complete man page detailing the
+options for glasscoder(1) is also provided.
