@@ -337,3 +337,5 @@
 	* Fixed a bug in 'src/glasscoder/hlsconnector.cpp' that caused
 	the HLS stream connector to intermittently generate "CURL overrun"
 	errors.
+2015-08-26 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.9.1.
