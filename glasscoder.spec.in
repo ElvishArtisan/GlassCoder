@@ -27,7 +27,7 @@ License: GPLv2
 Packager: Fred Gleason <fredg@paravelsystems.com>
 Group: Productivity/Multimedia/Other
 Source: %{name}-@VERSION@.tar.gz
-BuildRequires: qt-devel libsamplerate-devel libsndfile-devel jack2-devel alsa-lib-devel hpklinux-devel
+BuildRequires: qt-devel libsamplerate-devel libsndfile-devel alsa-lib-devel hpklinux-devel
 BuildRoot: /var/tmp/%{name}-@VERSION@
 Requires: curl
 

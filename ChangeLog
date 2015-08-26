@@ -324,3 +324,5 @@
 	* Updated 'INSTALL'.
 	* Updated 'README'.
 	* Updated glasscoder(1) man page.
+2015-08-26 Fred Gleason <fredg@paravelsystems.com>
+	* Removed a 'jack2' build dependency from 'glasscoder.spec.in'.
