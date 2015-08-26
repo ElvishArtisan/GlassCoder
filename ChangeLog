@@ -315,3 +315,5 @@
 2015-08-25 Fred Gleason <fredg@paravelsystems.com>
 	* Added icons in 'icons/'.
 	* Added 'xdg/glassgui.desktop'.
+2015-08-26 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'gui' subpackage in 'glasscoder.spec.in'.
