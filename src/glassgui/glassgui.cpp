@@ -926,7 +926,8 @@ void MainWidget::checkArgs(const QString &str)
   QStringList args;
   bool state;
 
-  state=MakeServerArgs(&args)&&MakeSourceArgs(&args,false);
+  state=MakeServerArgs(&args);
+  state=state&&MakeSourceArgs(&args,false);
   gui_start_button->setEnabled(state);
   gui_code_button->setEnabled(state);
 }

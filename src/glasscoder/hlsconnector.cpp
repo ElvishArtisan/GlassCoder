@@ -34,6 +34,7 @@ HlsConnector::HlsConnector(bool is_top,QObject *parent)
   hls_sequence_back=0;
   hls_media_frames=0;
   hls_total_media_frames=0;
+  hls_put_process=NULL;
 
   //
   // Create working directory
@@ -178,10 +179,16 @@ void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
       connect(hls_put_process,SIGNAL(finished(int,QProcess::ExitStatus)),
 	      this,SLOT(putFinishedData(int,QProcess::ExitStatus)));
       hls_put_process->start("curl",hls_put_args);
-  }
-  else {
-    Log(LOG_WARNING,"curl(1) command overrun");
-  }
+    }
+    else {
+      if(global_log_verbose) {
+	Log(LOG_WARNING,"curl(1) PUT command overrun, cmd: \""+
+	    hls_put_args.join(" ")+"\"");
+      }
+      else {
+	Log(LOG_WARNING,"curl(1) command overrun");
+      }
+    }
   }
   else {
     //
@@ -429,7 +436,13 @@ void HlsConnector::RotateMediaFile()
     hls_put_process->start("curl",hls_put_args);
   }
   else {
-    Log(LOG_WARNING,"curl(1) command overrun");
+    if(global_log_verbose) {
+      Log(LOG_WARNING,"curl(1) PUT command overrun, cmd: \""+
+	  hls_put_args.join(" ")+"\"");
+    }
+    else {
+      Log(LOG_WARNING,"curl(1) command overrun");
+    }
   }
 
   //
