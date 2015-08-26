@@ -48,7 +48,7 @@ AudioScience HPI (ASIHPI), v4.00 or later.  Advanced audio API for using
 the line of professional, high-end audio cards from AudioScience Corporation.
 Available at http://www.audioscience.com/.
 
-LibSndFile (FILE), v1.0.7 or later.  Library for reading audio files.
+LibSndFile (FILE), v1.0.20 or later.  Library for reading audio files.
 Available at http://mega-nerd.com/libsndfile/.
 
 JACK Audio Connection Kit (JACK).  System for interconnecting audio devices
