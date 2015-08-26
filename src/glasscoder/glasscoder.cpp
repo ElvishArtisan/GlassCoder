@@ -275,6 +275,10 @@ MainObject::MainObject(QObject *parent)
       stream_aim=cmd->value(i);
       cmd->setProcessed(i,true);
     }
+    if(cmd->key(i)=="--verbose") {
+      global_log_verbose=true;
+      cmd->setProcessed(i,true);
+    }
     if(!cmd->processed(i)) {
       device_keys.push_back(cmd->key(i));
       device_values.push_back(cmd->value(i));

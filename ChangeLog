@@ -328,3 +328,5 @@
 	* Removed a 'jack2' build dependency from 'glasscoder.spec.in'.
 2015-08-26 Fred Gleason <fredg@paravelsystems.com>
 	* Tweaked the required version for 'libsndfile' in 'INSTALL'.
+2015-08-26 Fred Gleason <fredg@paravelsystems.com>
+	* Added a '--verbose' switch to glasscoder(1).

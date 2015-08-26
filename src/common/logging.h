@@ -32,5 +32,6 @@
 #define CONNECTION_FAILED 3
 
 extern int global_log_to;
+extern bool global_log_verbose;
 
 void Log(int prio,const QString &msg);

@@ -24,6 +24,7 @@
 #include "logging.h"
 
 int global_log_to=LOG_TO_STDERR;
+bool global_log_verbose=false;
 
 void Log(int prio,const QString &msg)
 {
