@@ -32,17 +32,18 @@
 #include <QStringList>
 #include <QTimer>
 
+#include "codecdialog.h"
 #include "codeviewer.h"
 #include "combobox.h"
 #include "hpiinputlistview.h"
 #include "statuswidget.h"
 #include "stereometer.h"
+#include "streamdialog.h"
 
 #define GLASSGUI_USAGE ""
 #define GLASSGUI_SETTINGS_DIR ".glassgui"
 #define GLASSGUI_SETTINGS_FILE "glassguirc"
 #define GLASSGUI_TERMINATE_TIMEOUT 5000
-#define GLASSGUI_MAX_SUBSTREAMS 3
 
 class MainWidget : public QMainWindow
 {
@@ -60,8 +61,8 @@ class MainWidget : public QMainWindow
   void stopEncodingData();
   void showCodeData();
   void serverTypeChanged(int n);
-  void codecTypeChanged(int n);
-  void codecSamplerateChanged(int n);
+  void codecData();
+  void streamData();
   void sourceTypeChanged(int n);
   void codecFinishedData(int exit_code,QProcess::ExitStatus exit_status);
   void checkArgs(const QString &str);
@@ -78,8 +79,6 @@ class MainWidget : public QMainWindow
   void LockControls(bool state);
   void ProcessFeedback(const QString &str);
   bool MakeServerArgs(QStringList *args);
-  void MakeCodecArgs(QStringList *args);
-  void MakeStreamArgs(QStringList *args,bool escape_args);
   bool MakeSourceArgs(QStringList *args,bool escape_args);
   void ProcessError(int exit_code,QProcess::ExitStatus exit_status);
   void LoadSettings();
@@ -99,31 +98,11 @@ class MainWidget : public QMainWindow
   QLabel *gui_server_password_label;
   QLineEdit *gui_server_password_edit;
 
-  QLabel *gui_codec_label;
-  QLabel *gui_codec_type_label;
-  ComboBox *gui_codec_type_box;
-  QLabel *gui_codec_samplerate_label;
-  ComboBox *gui_codec_samplerate_box;
-  QLabel *gui_codec_channels_label;
-  ComboBox *gui_codec_channels_box;
-  QLabel *gui_codec_bitrate_label;
-  ComboBox *gui_codec_bitrate_box[GLASSGUI_MAX_SUBSTREAMS];
+  CodecDialog *gui_codec_dialog;
+  QPushButton *gui_codec_button;
 
-  QLabel *gui_stream_label;
-  QLabel *gui_stream_name_label;
-  QLineEdit *gui_stream_name_edit;
-  QLabel *gui_stream_description_label;
-  QLineEdit *gui_stream_description_edit;
-  QLabel *gui_stream_url_label;
-  QLineEdit *gui_stream_url_edit;
-  QLabel *gui_stream_genre_label;
-  QLineEdit *gui_stream_genre_edit;
-  QLabel *gui_stream_icq_label;
-  QLineEdit *gui_stream_icq_edit;
-  QLabel *gui_stream_aim_label;
-  QLineEdit *gui_stream_aim_edit;
-  QLabel *gui_stream_irc_label;
-  QLineEdit *gui_stream_irc_edit;
+  StreamDialog *gui_stream_dialog;
+  QPushButton *gui_stream_button;
 
   QLabel *gui_source_label;
   QLabel *gui_source_type_label;

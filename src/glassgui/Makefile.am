@@ -30,14 +30,16 @@ moc_%.cpp:	%.h
 
 bin_PROGRAMS = glassgui
 
-dist_glassgui_SOURCES = codeviewer.cpp codeviewer.h\
+dist_glassgui_SOURCES = codecdialog.cpp codecdialog.h\
+                        codeviewer.cpp codeviewer.h\
                         combobox.cpp combobox.h\
                         glassgui.cpp glassgui.h\
                         hpiinputlistview.cpp hpiinputlistview.h\
                         profile.cpp profile.h\
                         segmeter.cpp segmeter.h\
                         statuswidget.cpp statuswidget.h\
-                        stereometer.cpp stereometer.h
+                        stereometer.cpp stereometer.h\
+                        streamdialog.cpp streamdialog.h
 
 nodist_glassgui_SOURCES = audiodevice.cpp audiodevice.h\
                           cmdswitch.cpp cmdswitch.h\
@@ -47,6 +49,7 @@ nodist_glassgui_SOURCES = audiodevice.cpp audiodevice.h\
                           logging.cpp logging.h\
                           moc_audiodevice.cpp\
                           moc_codec.cpp\
+                          moc_codecdialog.cpp\
                           moc_codeviewer.cpp\
                           moc_combobox.cpp\
                           moc_connector.cpp\
@@ -55,6 +58,7 @@ nodist_glassgui_SOURCES = audiodevice.cpp audiodevice.h\
                           moc_segmeter.cpp\
                           moc_statuswidget.cpp\
                           moc_stereometer.cpp\
+                          moc_streamdialog.cpp\
                           ringbuffer.cpp ringbuffer.h
 
 glassgui_LDADD = @GUILIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ -lpthread

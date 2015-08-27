@@ -18,7 +18,6 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -71,7 +70,9 @@ MainWidget::MainWidget(QWidget *parent)
   //
   // Dialogs
   //
+  gui_codec_dialog=new CodecDialog(this);
   gui_codeviewer_dialog=new CodeViewer(this);
+  gui_stream_dialog=new StreamDialog(this);
 
   //
   // Status Bar
@@ -152,110 +153,18 @@ MainWidget::MainWidget(QWidget *parent)
   gui_server_password_edit->setEchoMode(QLineEdit::Password);
 
   //
-  // Codec Section
+  // Codec Settings
   //
-  gui_codec_label=new QLabel(tr("Codec Settings"),this);
-  gui_codec_label->setFont(section_font);
+  gui_codec_button=new QPushButton(tr("Codec Settings"),this);
+  gui_codec_button->setFont(section_font);
+  connect(gui_codec_button,SIGNAL(clicked()),this,SLOT(codecData()));
 
   //
-  // Codec Type
+  // Stream Settings
   //
-  gui_codec_type_label=new QLabel(tr("Type")+":",this);
-  gui_codec_type_label->setFont(label_font);
-  gui_codec_type_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_codec_type_box=new ComboBox(this);
-  connect(gui_codec_type_box,SIGNAL(activated(int)),
-	  this,SLOT(codecTypeChanged(int)));
-
-  //
-  // Codec Samplerate
-  //
-  gui_codec_samplerate_label=new QLabel(tr("Sample Rate")+":",this);
-  gui_codec_samplerate_label->setFont(label_font);
-  gui_codec_samplerate_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_codec_samplerate_box=new ComboBox(this);
-  connect(gui_codec_samplerate_box,SIGNAL(activated(int)),
-	  this,SLOT(codecSamplerateChanged(int)));
-
-  //
-  // Codec Channels
-  //
-  gui_codec_channels_label=new QLabel(tr("Channels")+":",this);
-  gui_codec_channels_label->setFont(label_font);
-  gui_codec_channels_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_codec_channels_box=new ComboBox(this);
-
-  //
-  // Codec Bitrate
-  //
-  gui_codec_bitrate_label=new QLabel(tr("Bit Rate(s)")+":",this);
-  gui_codec_bitrate_label->setFont(label_font);
-  gui_codec_bitrate_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  for(int  i=0;i<GLASSGUI_MAX_SUBSTREAMS;i++) {
-    gui_codec_bitrate_box[i]=new ComboBox(this);
-  }
-
-  //
-  // Stream Section
-  //
-  gui_stream_label=new QLabel(tr("Stream Metadata Settings"),this);
-  gui_stream_label->setFont(section_font);
-
-  //
-  // Stream Name
-  //
-  gui_stream_name_label=new QLabel(tr("Name")+":",this);
-  gui_stream_name_label->setFont(label_font);
-  gui_stream_name_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_stream_name_edit=new QLineEdit(this);
-
-  //
-  // Stream Description
-  //
-  gui_stream_description_label=new QLabel(tr("Description")+":",this);
-  gui_stream_description_label->setFont(label_font);
-  gui_stream_description_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_stream_description_edit=new QLineEdit(this);
-
-  //
-  // Stream URL
-  //
-  gui_stream_url_label=new QLabel(tr("URL")+":",this);
-  gui_stream_url_label->setFont(label_font);
-  gui_stream_url_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_stream_url_edit=new QLineEdit(this);
-
-  //
-  // Stream Genre
-  //
-  gui_stream_genre_label=new QLabel(tr("Genre")+":",this);
-  gui_stream_genre_label->setFont(label_font);
-  gui_stream_genre_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_stream_genre_edit=new QLineEdit(this);
-
-  //
-  // Stream Icq
-  //
-  gui_stream_icq_label=new QLabel(tr("ICQ ID")+":",this);
-  gui_stream_icq_label->setFont(label_font);
-  gui_stream_icq_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_stream_icq_edit=new QLineEdit(this);
-
-  //
-  // Stream AOL Instant Messager ID
-  //
-  gui_stream_aim_label=new QLabel(tr("AOL IM ID")+":",this);
-  gui_stream_aim_label->setFont(label_font);
-  gui_stream_aim_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_stream_aim_edit=new QLineEdit(this);
-
-  //
-  // Internet Relay Chat ID
-  //
-  gui_stream_irc_label=new QLabel(tr("IRC ID")+":",this);
-  gui_stream_irc_label->setFont(label_font);
-  gui_stream_irc_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_stream_irc_edit=new QLineEdit(this);
+  gui_stream_button=new QPushButton(tr("Stream Settings"),this);
+  gui_stream_button->setFont(section_font);
+  connect(gui_stream_button,SIGNAL(clicked()),this,SLOT(streamData()));
 
   //
   // Source Section
@@ -353,7 +262,7 @@ MainWidget::MainWidget(QWidget *parent)
 
 QSize MainWidget::sizeHint() const
 {
-  return QSize(560,802);
+  return QSize(560,500);
 }
 
 
@@ -413,61 +322,14 @@ void MainWidget::resizeEvent(QResizeEvent *e)
   gui_server_password_edit->setGeometry(160,ypos,size().width()-170,24);
   ypos+=35;
 
-  gui_codec_label->setGeometry(10,ypos,size().width()-20,24);
-  ypos+=23;
+  gui_codec_button->setGeometry(10,ypos,(size().width()-40)/3,35);
+  gui_stream_button->
+    setGeometry(size().width()/3,ypos,(size().width()-40)/3,35);
 
-  gui_codec_type_label->setGeometry(10,ypos,110,24);
-  gui_codec_type_box->setGeometry(125,ypos,250,24);
-  ypos+=26;
-
-  gui_codec_samplerate_label->setGeometry(10,ypos,145,24);
-  gui_codec_samplerate_box->setGeometry(160,ypos,200,24);
-  ypos+=26;
-
-  gui_codec_channels_label->setGeometry(10,ypos,145,24);
-  gui_codec_channels_box->setGeometry(160,ypos,50,24);
-  ypos+=26;
-
-  gui_codec_bitrate_label->setGeometry(10,ypos,145,24);
-  for(int i=0;i<GLASSGUI_MAX_SUBSTREAMS;i++) {
-    gui_codec_bitrate_box[i]->setGeometry(160,ypos,150,24);
-    ypos+=26;
-  }
-  ypos+=9;
-
-  gui_stream_label->setGeometry(10,ypos,size().width()-20,24);
-  ypos+=23;
-
-  gui_stream_name_label->setGeometry(10,ypos,110,24);
-  gui_stream_name_edit->setGeometry(125,ypos,size().width()-170,24);
-  ypos+=26;
-
-  gui_stream_description_label->setGeometry(10,ypos,110,24);
-  gui_stream_description_edit->setGeometry(125,ypos,size().width()-170,24);
-  ypos+=26;
-
-  gui_stream_url_label->setGeometry(10,ypos,110,24);
-  gui_stream_url_edit->setGeometry(125,ypos,size().width()-170,24);
-  ypos+=26;
-
-  gui_stream_genre_label->setGeometry(10,ypos,110,24);
-  gui_stream_genre_edit->setGeometry(125,ypos,size().width()-170,24);
-  ypos+=26;
-
-  gui_stream_icq_label->setGeometry(10,ypos,110,24);
-  gui_stream_icq_edit->setGeometry(125,ypos,size().width()-170,24);
-  ypos+=26;
-
-  gui_stream_aim_label->setGeometry(10,ypos,110,24);
-  gui_stream_aim_edit->setGeometry(125,ypos,size().width()-170,24);
-  ypos+=26;
-
-  gui_stream_irc_label->setGeometry(10,ypos,110,24);
-  gui_stream_irc_edit->setGeometry(125,ypos,size().width()-170,24);
-  ypos+=35;
+  ypos+=55;
 
   gui_source_label->setGeometry(10,ypos,size().width()-20,24);
-  ypos+=23;
+  ypos+=26;
 
   gui_source_type_label->setGeometry(10,ypos,110,20);
   gui_source_type_box->setGeometry(125,ypos,350,24);
@@ -538,8 +400,8 @@ void MainWidget::startEncodingData()
   connect(gui_process,SIGNAL(finished(int,QProcess::ExitStatus)),
 	  this,SLOT(processFinishedData(int,QProcess::ExitStatus)));
   MakeServerArgs(&args);
-  MakeCodecArgs(&args);
-  MakeStreamArgs(&args,false);
+  gui_codec_dialog->makeArgs(&args);
+  gui_stream_dialog->makeArgs(&args,false);
   MakeSourceArgs(&args,false);
   args.push_back("--meter-data");
   args.push_back("--errors-to=STDOUT");
@@ -563,8 +425,9 @@ void MainWidget::showCodeData()
 
   args.push_back("glasscoder");
   MakeServerArgs(&args);
-  MakeCodecArgs(&args);
-  MakeStreamArgs(&args,true);
+  gui_codec_dialog->makeArgs(&args);
+  //  MakeStreamArgs(&args,true);
+  gui_stream_dialog->makeArgs(&args,true);
   MakeSourceArgs(&args,true);
 
   gui_codeviewer_dialog->exec(args);
@@ -577,76 +440,22 @@ void MainWidget::serverTypeChanged(int n)
     (Connector::ServerType)gui_server_type_box->itemData(n).toInt();
   bool multirate=false;
 
+  gui_stream_dialog->setServerType(type);
+
   switch(type) {
   case Connector::HlsServer:
-    gui_stream_name_label->setEnabled(false);
-    gui_stream_name_edit->setEnabled(false);
-    gui_stream_description_label->setEnabled(false);
-    gui_stream_description_edit->setEnabled(false);
-    gui_stream_url_label->setEnabled(false);
-    gui_stream_url_edit->setEnabled(false);
-    gui_stream_genre_label->setEnabled(false);
-    gui_stream_genre_edit->setEnabled(false);
-    gui_stream_icq_label->setEnabled(false);
-    gui_stream_icq_edit->setEnabled(false);
-    gui_stream_aim_label->setEnabled(false);
-    gui_stream_aim_edit->setEnabled(false);
-    gui_stream_irc_label->setEnabled(false);
-    gui_stream_irc_edit->setEnabled(false);
     multirate=true;
     break;
 
   case Connector::Shoutcast1Server:
-    gui_stream_name_label->setEnabled(true);
-    gui_stream_name_edit->setEnabled(true);
-    gui_stream_description_label->setEnabled(false);
-    gui_stream_description_edit->setEnabled(false);
-    gui_stream_url_label->setEnabled(true);
-    gui_stream_url_edit->setEnabled(true);
-    gui_stream_genre_label->setEnabled(true);
-    gui_stream_genre_edit->setEnabled(true);
-    gui_stream_icq_label->setEnabled(true);
-    gui_stream_icq_edit->setEnabled(true);
-    gui_stream_aim_label->setEnabled(true);
-    gui_stream_aim_edit->setEnabled(true);
-    gui_stream_irc_label->setEnabled(true);
-    gui_stream_irc_edit->setEnabled(true);
     multirate=false;
     break;
 
   case Connector::Shoutcast2Server:
-    gui_stream_name_label->setEnabled(true);
-    gui_stream_name_edit->setEnabled(true);
-    gui_stream_description_label->setEnabled(false);
-    gui_stream_description_edit->setEnabled(false);
-    gui_stream_url_label->setEnabled(false);
-    gui_stream_url_edit->setEnabled(false);
-    gui_stream_genre_label->setEnabled(true);
-    gui_stream_genre_edit->setEnabled(true);
-    gui_stream_icq_label->setEnabled(true);
-    gui_stream_icq_edit->setEnabled(true);
-    gui_stream_aim_label->setEnabled(true);
-    gui_stream_aim_edit->setEnabled(true);
-    gui_stream_irc_label->setEnabled(true);
-    gui_stream_irc_edit->setEnabled(true);
     multirate=false;
     break;
 
   case Connector::Icecast2Server:
-    gui_stream_name_label->setEnabled(true);
-    gui_stream_name_edit->setEnabled(true);
-    gui_stream_description_label->setEnabled(true);
-    gui_stream_description_edit->setEnabled(true);
-    gui_stream_url_label->setEnabled(true);
-    gui_stream_url_edit->setEnabled(true);
-    gui_stream_genre_label->setEnabled(true);
-    gui_stream_genre_edit->setEnabled(true);
-    gui_stream_icq_label->setEnabled(false);
-    gui_stream_icq_edit->setEnabled(false);
-    gui_stream_aim_label->setEnabled(false);
-    gui_stream_aim_edit->setEnabled(false);
-    gui_stream_irc_label->setEnabled(false);
-    gui_stream_irc_edit->setEnabled(false);
     multirate=false;
     break;
 
@@ -654,185 +463,29 @@ void MainWidget::serverTypeChanged(int n)
     break;
   }
 
-  for(int i=1;i<GLASSGUI_MAX_SUBSTREAMS;i++) {
-    gui_codec_bitrate_box[i]->setEnabled(multirate);
+  gui_codec_dialog->setMultirate(multirate);
+}
+
+
+void MainWidget::codecData()
+{
+  if(gui_codec_dialog->isVisible()) {
+    gui_codec_dialog->hide();
+  }
+  else {
+    gui_codec_dialog->show();
   }
 }
 
 
-void MainWidget::codecTypeChanged(int n)
+void MainWidget::streamData()
 {
-  Codec::Type type=(Codec::Type)gui_codec_type_box->itemData(n).toInt();
-
-  gui_codec_samplerate_box->clear();
-  gui_codec_channels_box->clear();
-  for(int i=0;i<GLASSGUI_MAX_SUBSTREAMS;i++) {
-    gui_codec_bitrate_box[i]->clear();
+  if(gui_stream_dialog->isVisible()) {
+    gui_stream_dialog->hide();
   }
-
-  switch(type) {
-  case Codec::TypeAac:
-    gui_codec_samplerate_box->insertItem(-1,"32000 samples/sec",32000);
-    gui_codec_samplerate_box->insertItem(-1,"44100 samples/sec",44100);
-    gui_codec_samplerate_box->insertItem(-1,"48000 samples/sec",48000);
-
-    gui_codec_channels_box->insertItem(-1,"1",1);
-    gui_codec_channels_box->insertItem(-1,"2",2);
-
-    gui_codec_bitrate_label->setText(tr("Bit Rate(s)")+":");
-    break;
-
-  case Codec::TypeHeAac:
-    gui_codec_samplerate_box->insertItem(-1,"32000 samples/sec",32000);
-    gui_codec_samplerate_box->insertItem(-1,"44100 samples/sec",44100);
-    gui_codec_samplerate_box->insertItem(-1,"48000 samples/sec",48000);
-
-    gui_codec_channels_box->insertItem(-1,"2",2);
-
-    gui_codec_bitrate_label->setText(tr("Bit Rate(s)")+":");
-    break;
-
-  case Codec::TypeMpegL2:
-  case Codec::TypeMpegL3:
-    gui_codec_samplerate_box->insertItem(-1,"16000 samples/sec",16000);
-    gui_codec_samplerate_box->insertItem(-1,"22050 samples/sec",22050);
-    gui_codec_samplerate_box->insertItem(-1,"24000 samples/sec",24000);
-    gui_codec_samplerate_box->insertItem(-1,"32000 samples/sec",32000);
-    gui_codec_samplerate_box->insertItem(-1,"44100 samples/sec",44100);
-    gui_codec_samplerate_box->insertItem(-1,"48000 samples/sec",48000);
-
-    gui_codec_channels_box->insertItem(-1,"1",1);
-    gui_codec_channels_box->insertItem(-1,"2",2);
-
-    gui_codec_bitrate_label->setText(tr("Bit Rate(s)")+":");
-    break;
-
-  case Codec::TypeVorbis:
-    gui_codec_samplerate_box->insertItem(-1,"16000 samples/sec",16000);
-    gui_codec_samplerate_box->insertItem(-1,"22050 samples/sec",22050);
-    gui_codec_samplerate_box->insertItem(-1,"24000 samples/sec",24000);
-    gui_codec_samplerate_box->insertItem(-1,"32000 samples/sec",32000);
-    gui_codec_samplerate_box->insertItem(-1,"44100 samples/sec",44100);
-    gui_codec_samplerate_box->insertItem(-1,"48000 samples/sec",48000);
-
-    gui_codec_channels_box->insertItem(-1,"1",1);
-    gui_codec_channels_box->insertItem(-1,"2",2);
-
-    gui_codec_bitrate_label->setText(tr("Quality")+":");
-    break;
-
-  case Codec::TypeOpus:
-    break;
-
-  case Codec::TypeLast:
-    break;
+  else {
+    gui_stream_dialog->show();
   }
-  codecSamplerateChanged(0);
-}
-
-
-void MainWidget::codecSamplerateChanged(int n)
-{
-  Codec::Type type=(Codec::Type)gui_codec_type_box->
-    itemData(gui_codec_type_box->currentIndex()).toInt();
-  unsigned samprate=gui_codec_samplerate_box->itemData(n).toUInt();
-
-  for(int i=0;i<GLASSGUI_MAX_SUBSTREAMS;i++) {
-    gui_codec_bitrate_box[i]->clear();
-    if(i!=0) {
-      gui_codec_bitrate_box[i]->insertItem(-1,"None",0);
-    }
-    switch(type) {
-    case Codec::TypeAac:
-      gui_codec_bitrate_box[i]->insertItem(-1,"16 kbits/sec",16);
-      gui_codec_bitrate_box[i]->insertItem(-1,"24 kbits/sec",24);
-      gui_codec_bitrate_box[i]->insertItem(-1,"32 kbits/sec",32);
-      gui_codec_bitrate_box[i]->insertItem(-1,"40 kbits/sec",40);
-      gui_codec_bitrate_box[i]->insertItem(-1,"48 kbits/sec",48);
-      break;
-
-    case Codec::TypeHeAac:
-      switch(samprate) {
-      case 32000:
-	gui_codec_bitrate_box[i]->insertItem(-1,"32 kbits/sec",32);
-	break;
-
-      case 44100:
-      case 48000:
-	gui_codec_bitrate_box[i]->insertItem(-1,"32 kbits/sec",32);
-	gui_codec_bitrate_box[i]->insertItem(-1,"48 kbits/sec",48);
-	gui_codec_bitrate_box[i]->insertItem(-1,"56 kbits/sec",56);
-	gui_codec_bitrate_box[i]->insertItem(-1,"64 kbits/sec",64);
-	gui_codec_bitrate_box[i]->insertItem(-1,"96 kbits/sec",96);
-	gui_codec_bitrate_box[i]->insertItem(-1,"128 kbits/sec",128);
-	break;
-      }
-      break;
-
-    case Codec::TypeMpegL2:
-      gui_codec_bitrate_box[i]->insertItem(-1,"8 kbits/sec",8);
-      gui_codec_bitrate_box[i]->insertItem(-1,"16 kbits/sec",16);
-      gui_codec_bitrate_box[i]->insertItem(-1,"24 kbits/sec",24);
-      gui_codec_bitrate_box[i]->insertItem(-1,"32 kbits/sec",32);
-      gui_codec_bitrate_box[i]->insertItem(-1,"40 kbits/sec",40);
-      gui_codec_bitrate_box[i]->insertItem(-1,"48 kbits/sec",48);
-      gui_codec_bitrate_box[i]->insertItem(-1,"56 kbits/sec",56);
-      gui_codec_bitrate_box[i]->insertItem(-1,"64 kbits/sec",64);
-      gui_codec_bitrate_box[i]->insertItem(-1,"80 kbits/sec",80);
-      gui_codec_bitrate_box[i]->insertItem(-1,"96 kbits/sec",96);
-      gui_codec_bitrate_box[i]->insertItem(-1,"112 kbits/sec",112);
-      gui_codec_bitrate_box[i]->insertItem(-1,"128 kbits/sec",128);
-      gui_codec_bitrate_box[i]->insertItem(-1,"144 kbits/sec",144);
-      gui_codec_bitrate_box[i]->insertItem(-1,"160 kbits/sec",160);
-      gui_codec_bitrate_box[i]->insertItem(-1,"192 kbits/sec",192);
-      gui_codec_bitrate_box[i]->insertItem(-1,"224 kbits/sec",224);
-      gui_codec_bitrate_box[i]->insertItem(-1,"256 kbits/sec",256);
-      gui_codec_bitrate_box[i]->insertItem(-1,"320 kbits/sec",320);
-      gui_codec_bitrate_box[i]->insertItem(-1,"384 kbits/sec",384);
-      break;
-
-    case Codec::TypeMpegL3:
-      gui_codec_bitrate_box[i]->insertItem(-1,"8 kbits/sec",8);
-      gui_codec_bitrate_box[i]->insertItem(-1,"16 kbits/sec",16);
-      gui_codec_bitrate_box[i]->insertItem(-1,"24 kbits/sec",24);
-      gui_codec_bitrate_box[i]->insertItem(-1,"32 kbits/sec",32);
-      gui_codec_bitrate_box[i]->insertItem(-1,"40 kbits/sec",40);
-      gui_codec_bitrate_box[i]->insertItem(-1,"48 kbits/sec",48);
-      gui_codec_bitrate_box[i]->insertItem(-1,"56 kbits/sec",56);
-      gui_codec_bitrate_box[i]->insertItem(-1,"64 kbits/sec",64);
-      gui_codec_bitrate_box[i]->insertItem(-1,"80 kbits/sec",80);
-      gui_codec_bitrate_box[i]->insertItem(-1,"96 kbits/sec",96);
-      gui_codec_bitrate_box[i]->insertItem(-1,"112 kbits/sec",112);
-      gui_codec_bitrate_box[i]->insertItem(-1,"128 kbits/sec",128);
-      gui_codec_bitrate_box[i]->insertItem(-1,"144 kbits/sec",144);
-      gui_codec_bitrate_box[i]->insertItem(-1,"160 kbits/sec",160);
-      gui_codec_bitrate_box[i]->insertItem(-1,"192 kbits/sec",192);
-      gui_codec_bitrate_box[i]->insertItem(-1,"224 kbits/sec",224);
-      gui_codec_bitrate_box[i]->insertItem(-1,"256 kbits/sec",256);
-      gui_codec_bitrate_box[i]->insertItem(-1,"320 kbits/sec",320);
-      break;
-
-    case Codec::TypeVorbis:
-      gui_codec_bitrate_box[i]->insertItem(-1,"0",0);
-      gui_codec_bitrate_box[i]->insertItem(-1,"1",1);
-      gui_codec_bitrate_box[i]->insertItem(-1,"2",2);
-      gui_codec_bitrate_box[i]->insertItem(-1,"3",3);
-      gui_codec_bitrate_box[i]->insertItem(-1,"4",4);
-      gui_codec_bitrate_box[i]->insertItem(-1,"5",5);
-      gui_codec_bitrate_box[i]->insertItem(-1,"6",6);
-      gui_codec_bitrate_box[i]->insertItem(-1,"7",7);
-      gui_codec_bitrate_box[i]->insertItem(-1,"8",8);
-      gui_codec_bitrate_box[i]->insertItem(-1,"9",9);
-      gui_codec_bitrate_box[i]->insertItem(-1,"10",10);
-      break;
-
-    case Codec::TypeOpus:
-      break;
-
-    case Codec::TypeLast:
-      break;
-    }
-  }  
 }
 
 
@@ -893,15 +546,8 @@ void MainWidget::codecFinishedData(int exit_code,
     //
     // Populate Codec Types
     //
-    f0=QString(gui_process->readAllStandardOutput()).split("\n");
-    for(int i=0;i<f0.size();i++) {
-      for(int j=0;j<Codec::TypeLast;j++) {
-	if(f0[i]==Codec::optionKeyword((Codec::Type)j)) {
-	  gui_codec_type_box->
-	    insertItem(-1,Codec::codecTypeText((Codec::Type)j),j);
-	}
-      }
-    }
+    gui_codec_dialog->addCodecTypes(gui_process->readAllStandardOutput());
+
     //
     // Get Device List
     //
@@ -1063,20 +709,9 @@ void MainWidget::LockControls(bool state)
   gui_server_username_edit->setReadOnly(state);
   gui_server_password_edit->setReadOnly(state);
 
-  gui_codec_type_box->setReadOnly(state);
-  gui_codec_samplerate_box->setReadOnly(state);
-  gui_codec_channels_box->setReadOnly(state);
-  for(int  i=0;i<GLASSGUI_MAX_SUBSTREAMS;i++) {
-    gui_codec_bitrate_box[i]->setReadOnly(state);
-  }
+  gui_codec_dialog->setControlsLocked(state);
 
-  gui_stream_name_edit->setReadOnly(state);
-  gui_stream_description_edit->setReadOnly(state);
-  gui_stream_url_edit->setReadOnly(state);
-  gui_stream_genre_edit->setReadOnly(state);
-  gui_stream_icq_edit->setReadOnly(state);
-  gui_stream_aim_edit->setReadOnly(state);
-  gui_stream_irc_edit->setReadOnly(state);
+  gui_stream_dialog->setControlsLocked(state);
 
   gui_source_type_box->setReadOnly(state);
 
@@ -1179,76 +814,6 @@ bool MainWidget::MakeServerArgs(QStringList *args)
 }
 
 
-void MainWidget::MakeCodecArgs(QStringList *args)
-{
-  Codec::Type type=(Codec::Type)
-    gui_codec_type_box->itemData(gui_codec_type_box->currentIndex()).toInt();
-
-  args->push_back("--audio-format="+Codec::optionKeyword(type));
-  args->push_back("--audio-samplerate="+QString().sprintf("%u",
-	     gui_codec_samplerate_box->
-		 itemData(gui_codec_samplerate_box->currentIndex()).toUInt()));
-  args->push_back("--audio-channels="+QString().sprintf("%u",
-	     gui_codec_channels_box->
-		 itemData(gui_codec_channels_box->currentIndex()).toUInt()));
-  for(int i=0;i<GLASSGUI_MAX_SUBSTREAMS;i++) {
-    switch(type) {
-    case Codec::TypeMpegL2:
-    case Codec::TypeMpegL3:
-    case Codec::TypeAac:
-    case Codec::TypeHeAac:
-    case Codec::TypeOpus:
-    case Codec::TypeLast:
-      if(gui_codec_bitrate_box[i]->isEnabled()&&
-	 (gui_codec_bitrate_box[i]->currentItemData().toUInt()!=0)) {
-	args->push_back("--audio-bitrate="+QString().sprintf("%u",
-	      gui_codec_bitrate_box[i]->currentItemData().toUInt()));
-      }
-      break;
-
-    case Codec::TypeVorbis:
-      if(i==0) {
-	args->push_back("--audio-quality="+QString().sprintf("%u",
-	      gui_codec_bitrate_box[i]->currentItemData().toUInt()));
-      }
-      break;
-    }
-  }
-}
-
-
-void MainWidget::MakeStreamArgs(QStringList *args,bool escape_args)
-{
-  QString quote="";
-  if(escape_args) {
-    quote="\"";
-  }
-  if(!gui_stream_name_edit->text().isEmpty()) {
-    args->push_back("--stream-name="+quote+gui_stream_name_edit->text()+quote);
-  }
-  if(!gui_stream_description_edit->text().isEmpty()) {
-    args->push_back("--stream-description="+quote+
-		    gui_stream_description_edit->text()+quote);
-  }
-  if(!gui_stream_url_edit->text().isEmpty()) {
-    args->push_back("--stream-url="+quote+gui_stream_url_edit->text()+quote);
-  }
-  if(!gui_stream_genre_edit->text().isEmpty()) {
-    args->push_back("--stream-genre="+quote+gui_stream_genre_edit->text()+
-		    quote);
-  }
-  if(!gui_stream_icq_edit->text().isEmpty()) {
-    args->push_back("--stream-icq="+quote+gui_stream_icq_edit->text()+quote);
-  }
-  if(!gui_stream_aim_edit->text().isEmpty()) {
-    args->push_back("--stream-aim="+quote+gui_stream_aim_edit->text()+quote);
-  }
-  if(!gui_stream_irc_edit->text().isEmpty()) {
-    args->push_back("--stream-irc="+quote+gui_stream_irc_edit->text()+quote);
-  }
-}
-
-
 bool MainWidget::MakeSourceArgs(QStringList *args,bool escape_args)
 {
   QString quote="";
@@ -1334,29 +899,7 @@ void MainWidget::LoadSettings()
     gui_server_password_edit->
       setText(p->stringValue("GlassGui","ServerPassword"));
 
-    gui_codec_type_box->
-      setCurrentItemData(Codec::codecType(p->stringValue("GlassGui",
-							 "AudioFormat")));
-    codecTypeChanged(gui_codec_type_box->currentIndex());
-    gui_codec_samplerate_box->
-      setCurrentItemData(p->intValue("GlassGui","AudioSamplerate"));
-    codecSamplerateChanged(gui_codec_samplerate_box->currentIndex());
-    gui_codec_channels_box->
-      setCurrentItemData(p->intValue("GlassGui","AudioChannels"));
-    for(int i=0;i<GLASSGUI_MAX_SUBSTREAMS;i++) {
-      gui_codec_bitrate_box[i]->
-	setCurrentItemData(p->intValue("GlassGui",
-				 QString().sprintf("AudioBitrate%d",i+1)));
-    }
-
-    gui_stream_name_edit->setText(p->stringValue("GlassGui","StreamName"));
-    gui_stream_description_edit->
-      setText(p->stringValue("GlassGui","StreamDescription"));
-    gui_stream_url_edit->setText(p->stringValue("GlassGui","StreamUrl"));
-    gui_stream_genre_edit->setText(p->stringValue("GlassGui","StreamGenre"));
-    gui_stream_icq_edit->setText(p->stringValue("GlassGui","StreamIcq"));
-    gui_stream_aim_edit->setText(p->stringValue("GlassGui","StreamAim"));
-    gui_stream_irc_edit->setText(p->stringValue("GlassGui","StreamIrc"));
+    gui_codec_dialog->load(p);
 
     gui_source_type_box->
       setCurrentItemData(AudioDevice::deviceType(p->stringValue("GlassGui",
@@ -1399,36 +942,12 @@ bool MainWidget::SaveSettings()
 	    (const char *)gui_server_username_edit->text().toUtf8());
     fprintf(f,"ServerPassword=%s\n",
 	    (const char *)gui_server_password_edit->text().toUtf8());
-    fprintf(f,"AudioFormat=%s\n",
-	    (const char *)Codec::optionKeyword((Codec::Type)
-	       gui_codec_type_box->currentItemData().toInt()).toUtf8()); 
-    fprintf(f,"AudioSamplerate=%u\n",
-	    gui_codec_samplerate_box->currentItemData().toUInt());
-    fprintf(f,"AudioChannels=%u\n",
-	    gui_codec_channels_box->currentItemData().toUInt());
-    for(int i=0;i<GLASSGUI_MAX_SUBSTREAMS;i++) {
-      fprintf(f,"AudioBitrate%d=%u\n",i+1,
-	      gui_codec_bitrate_box[i]->currentItemData().toUInt());
-    }
+
+    gui_codec_dialog->save(f);
+
     fprintf(f,"AudioDevice=%s\n",
 	    (const char *)AudioDevice::optionKeyword((AudioDevice::DeviceType)
 		     gui_source_type_box->currentItemData().toInt()).toUtf8()); 
-
-    fprintf(f,"StreamName=%s\n",
-	    (const char *)gui_stream_name_edit->text().toUtf8());
-    fprintf(f,"StreamDescription=%s\n",
-	    (const char *)gui_stream_description_edit->text().toUtf8());
-    fprintf(f,"StreamUrl=%s\n",
-	    (const char *)gui_stream_url_edit->text().toUtf8());
-    fprintf(f,"StreamGenre=%s\n",
-	    (const char *)gui_stream_genre_edit->text().toUtf8());
-    fprintf(f,"StreamIcq=%s\n",
-	    (const char *)gui_stream_icq_edit->text().toUtf8());
-    fprintf(f,"StreamAim=%s\n",
-	    (const char *)gui_stream_aim_edit->text().toUtf8());
-    fprintf(f,"StreamIrc=%s\n",
-	    (const char *)gui_stream_irc_edit->text().toUtf8());
-
     fprintf(f,"AlsaDevice=%s\n",
 	    (const char *)gui_alsa_device_edit->text().toUtf8());
 
