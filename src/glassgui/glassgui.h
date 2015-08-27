@@ -36,6 +36,7 @@
 #include "codeviewer.h"
 #include "combobox.h"
 #include "hpiinputlistview.h"
+#include "sourcedialog.h"
 #include "statuswidget.h"
 #include "stereometer.h"
 #include "streamdialog.h"
@@ -63,8 +64,9 @@ class MainWidget : public QMainWindow
   void serverTypeChanged(int n);
   void codecData();
   void streamData();
-  void sourceTypeChanged(int n);
+  void sourceData();
   void codecFinishedData(int exit_code,QProcess::ExitStatus exit_status);
+  void checkArgs();
   void checkArgs(const QString &str);
   void deviceFinishedData(int exit_code,QProcess::ExitStatus exit_status);
   void processReadyReadStandardOutputData();
@@ -73,13 +75,11 @@ class MainWidget : public QMainWindow
   void processCollectGarbageData();
   void processKillData();
   void messageTimeoutData();
-  void fileSelectName();
 
  private:
   void LockControls(bool state);
   void ProcessFeedback(const QString &str);
   bool MakeServerArgs(QStringList *args);
-  bool MakeSourceArgs(QStringList *args,bool escape_args);
   void ProcessError(int exit_code,QProcess::ExitStatus exit_status);
   void LoadSettings();
   bool SaveSettings();
@@ -104,23 +104,8 @@ class MainWidget : public QMainWindow
   StreamDialog *gui_stream_dialog;
   QPushButton *gui_stream_button;
 
-  QLabel *gui_source_label;
-  QLabel *gui_source_type_label;
-  ComboBox *gui_source_type_box;
-
-  QLabel *gui_alsa_device_label;
-  QLineEdit *gui_alsa_device_edit;
-
-  QLabel *gui_file_name_label;
-  QLineEdit *gui_file_name_edit;
-  QPushButton *gui_file_select_button;
-
-  HpiInputListView *gui_asihpi_view;
-
-  QLabel *gui_jack_server_name_label;
-  QLineEdit *gui_jack_server_name_edit;
-  QLabel *gui_jack_client_name_label;
-  QLineEdit *gui_jack_client_name_edit;
+  SourceDialog *gui_source_dialog;
+  QPushButton *gui_source_button;
 
   CodeViewer *gui_codeviewer_dialog;
   QProcess *gui_process;

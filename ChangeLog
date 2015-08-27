@@ -353,3 +353,6 @@
 	and 'src/glassgui/codecdialog.h'.
 	* Added a 'Stream Settings' dialog in 'src/glassgui/streamdialog.cpp'
 	and 'src/glassgui/streamdialog.h'.
+2015-08-27 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Source Settings' dialog in 'src/glassgui/sourcedialog.cpp'
+	and 'src/glassgui/sourcedialog.h'.

@@ -81,6 +81,7 @@ QVariant HpiInputListViewModel::data(const QModelIndex &index,int role) const
 HpiInputListView::HpiInputListView(QWidget *parent)
   : QListView(parent)
 {
+  hpi_read_only=false;
   hpi_model=new HpiInputListViewModel(parent);
   setModel(hpi_model);
 }

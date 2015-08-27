@@ -72,6 +72,8 @@ MainWidget::MainWidget(QWidget *parent)
   //
   gui_codec_dialog=new CodecDialog(this);
   gui_codeviewer_dialog=new CodeViewer(this);
+  gui_source_dialog=new SourceDialog(this);
+  connect(gui_source_dialog,SIGNAL(updated()),this,SLOT(checkArgs()));
   gui_stream_dialog=new StreamDialog(this);
 
   //
@@ -167,70 +169,11 @@ MainWidget::MainWidget(QWidget *parent)
   connect(gui_stream_button,SIGNAL(clicked()),this,SLOT(streamData()));
 
   //
-  // Source Section
+  // Source Settings
   //
-  gui_source_label=new QLabel(tr("Audio Source"),this);
-  gui_source_label->setFont(section_font);
-
-  //
-  // Source Type
-  //
-  gui_source_type_label=new QLabel(tr("Type")+":",this);
-  gui_source_type_label->setFont(label_font);
-  gui_source_type_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_source_type_box=new ComboBox(this);
-  connect(gui_source_type_box,SIGNAL(activated(int)),
-	  this,SLOT(sourceTypeChanged(int)));
-
-  //
-  // ALSA Fields
-  //
-  gui_alsa_device_label=new QLabel(tr("ALSA Device")+":",this);
-  gui_alsa_device_label->setFont(label_font);
-  gui_alsa_device_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_alsa_device_label->hide();
-  gui_alsa_device_edit=new QLineEdit(this);
-  connect(gui_alsa_device_edit,SIGNAL(textEdited(const QString &)),
-	  this,SLOT(checkArgs(const QString &)));
-  gui_alsa_device_edit->hide();
-
-  //
-  // FILE Fields
-  //
-  gui_file_name_label=new QLabel(tr("Filename")+":",this);
-  gui_file_name_label->setFont(label_font);
-  gui_file_name_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_file_name_label->hide();
-  gui_file_name_edit=new QLineEdit(this);
-  connect(gui_file_name_edit,SIGNAL(textEdited(const QString &)),
-	  this,SLOT(checkArgs(const QString &)));
-  gui_file_name_edit->hide();
-  gui_file_select_button=new QPushButton(tr("Select"),this);
-  connect(gui_file_select_button,SIGNAL(clicked()),this,SLOT(fileSelectName()));
-  gui_file_select_button->hide();
-
-  //
-  // HPI Fields
-  //
-  gui_asihpi_view=new HpiInputListView(this);
-  gui_asihpi_view->hide();
-
-  //
-  // JACK Fields
-  //
-  gui_jack_server_name_label=new QLabel(tr("JACK Server Name")+":",this);
-  gui_jack_server_name_label->setFont(label_font);
-  gui_jack_server_name_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_jack_server_name_label->hide();
-  gui_jack_server_name_edit=new QLineEdit(this);
-  gui_jack_server_name_edit->hide();
-
-  gui_jack_client_name_label=new QLabel(tr("JACK Client Name")+":",this);
-  gui_jack_client_name_label->setFont(label_font);
-  gui_jack_client_name_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_jack_client_name_label->hide();
-  gui_jack_client_name_edit=new QLineEdit(this);
-  gui_jack_client_name_edit->hide();
+  gui_source_button=new QPushButton(tr("Source Settings"),this);
+  gui_source_button->setFont(section_font);
+  connect(gui_source_button,SIGNAL(clicked()),this,SLOT(sourceData()));
 
   //
   // Process Timers
@@ -262,7 +205,7 @@ MainWidget::MainWidget(QWidget *parent)
 
 QSize MainWidget::sizeHint() const
 {
-  return QSize(560,500);
+  return QSize(560,290);
 }
 
 
@@ -324,53 +267,11 @@ void MainWidget::resizeEvent(QResizeEvent *e)
 
   gui_codec_button->setGeometry(10,ypos,(size().width()-40)/3,35);
   gui_stream_button->
-    setGeometry(size().width()/3,ypos,(size().width()-40)/3,35);
+    setGeometry(size().width()/3+5,ypos,(size().width()-40)/3,35);
+  gui_source_button->
+    setGeometry(2*size().width()/3,ypos,(size().width()-40)/3,35);
 
   ypos+=55;
-
-  gui_source_label->setGeometry(10,ypos,size().width()-20,24);
-  ypos+=26;
-
-  gui_source_type_label->setGeometry(10,ypos,110,20);
-  gui_source_type_box->setGeometry(125,ypos,350,24);
-  ypos+=26;
-
-  int ypos_base=ypos;
-
-  //
-  // ALSA Controls
-  //
-  ypos=ypos_base;
-  gui_alsa_device_label->setGeometry(10,ypos,160,20);
-  gui_alsa_device_edit->setGeometry(175,ypos,100,24);
-  ypos+=26;
-  
-  //
-  // FILE Controls
-  //
-  ypos=ypos_base;
-  gui_file_select_button->setGeometry(size().width()-90,ypos+2,80,40);
-  ypos+=10;
-  gui_file_name_label->setGeometry(10,ypos,160,20);
-  gui_file_name_edit->setGeometry(175,ypos,size().width()-275,24);
-  ypos+=26;
-  
-  //
-  // ASIHPI Controls
-  //
-  ypos=ypos_base;
-  gui_asihpi_view->setGeometry(125,ypos,350,100);
-
-  //
-  // JACK Controls
-  //
-  ypos=ypos_base;
-  gui_jack_server_name_label->setGeometry(10,ypos,145,20);
-  gui_jack_server_name_edit->setGeometry(160,ypos,size().width()-260,24);
-  ypos+=26;
-  gui_jack_client_name_label->setGeometry(10,ypos,145,20);
-  gui_jack_client_name_edit->setGeometry(160,ypos,size().width()-260,24);
-  ypos+=26;
 
   //
   // Status Bar
@@ -402,7 +303,7 @@ void MainWidget::startEncodingData()
   MakeServerArgs(&args);
   gui_codec_dialog->makeArgs(&args);
   gui_stream_dialog->makeArgs(&args,false);
-  MakeSourceArgs(&args,false);
+  gui_source_dialog->makeArgs(&args,false);
   args.push_back("--meter-data");
   args.push_back("--errors-to=STDOUT");
   gui_process->start("glasscoder",args);
@@ -426,9 +327,8 @@ void MainWidget::showCodeData()
   args.push_back("glasscoder");
   MakeServerArgs(&args);
   gui_codec_dialog->makeArgs(&args);
-  //  MakeStreamArgs(&args,true);
   gui_stream_dialog->makeArgs(&args,true);
-  MakeSourceArgs(&args,true);
+  gui_source_dialog->makeArgs(&args,true);
 
   gui_codeviewer_dialog->exec(args);
 }
@@ -489,50 +389,13 @@ void MainWidget::streamData()
 }
 
 
-void MainWidget::sourceTypeChanged(int n)
+void MainWidget::sourceData()
 {
-  gui_alsa_device_label->hide();
-  gui_alsa_device_edit->hide();
-
-  gui_file_select_button->hide();
-  gui_file_name_label->hide();
-  gui_file_name_edit->hide();
-
-  gui_asihpi_view->hide();
-
-  gui_jack_server_name_label->hide();
-  gui_jack_server_name_edit->hide();
-  gui_jack_client_name_label->hide();
-  gui_jack_client_name_edit->hide();
-
-  AudioDevice::DeviceType type=
-    (AudioDevice::DeviceType)gui_source_type_box->itemData(n).toInt();  
-
-  switch(type) {
-  case AudioDevice::Alsa:
-    gui_alsa_device_label->show();
-    gui_alsa_device_edit->show();
-    break;
-
-  case AudioDevice::AsiHpi:
-    gui_asihpi_view->show();
-    break;
-
-  case AudioDevice::File:
-    gui_file_select_button->show();
-    gui_file_name_label->show();
-    gui_file_name_edit->show();
-    break;
-
-  case AudioDevice::Jack:
-    gui_jack_server_name_label->show();
-    gui_jack_server_name_edit->show();
-    gui_jack_client_name_label->show();
-    gui_jack_client_name_edit->show();
-    break;
-
-  case AudioDevice::LastType:
-    break;
+  if(gui_source_dialog->isVisible()) {
+    gui_source_dialog->hide();
+  }
+  else {
+    gui_source_dialog->show();
   }
 }
 
@@ -567,15 +430,21 @@ void MainWidget::codecFinishedData(int exit_code,
 }
 
 
-void MainWidget::checkArgs(const QString &str)
+void MainWidget::checkArgs()
 {
   QStringList args;
   bool state;
 
   state=MakeServerArgs(&args);
-  state=state&&MakeSourceArgs(&args,false);
+  state=state&&gui_source_dialog->makeArgs(&args,false);
   gui_start_button->setEnabled(state);
   gui_code_button->setEnabled(state);
+}
+
+
+void MainWidget::checkArgs(const QString &str)
+{
+  checkArgs();
 }
 
 
@@ -588,15 +457,7 @@ void MainWidget::deviceFinishedData(int exit_code,
     //
     // Populate Device Types
     //
-    f0=QString(gui_process->readAllStandardOutput()).split("\n");
-    for(int i=0;i<f0.size();i++) {
-      for(int j=0;j<AudioDevice::LastType;j++) {
-	if(f0[i]==AudioDevice::optionKeyword((AudioDevice::DeviceType)j)) {
-	  gui_source_type_box->insertItem(-1,
-		  AudioDevice::deviceTypeText((AudioDevice::DeviceType)j),j);
-	}
-      }
-    }
+    gui_source_dialog->addSourceTypes(gui_process->readAllStandardOutput());
     gui_process=NULL;
     LoadSettings();
   }
@@ -683,25 +544,6 @@ void MainWidget::messageTimeoutData()
 }
 
 
-void MainWidget::fileSelectName()
-{
-  QString filename;
-
-  if(getenv("HOME")!=NULL) {
-    filename=getenv("HOME");
-  }
-  if(!gui_file_name_edit->text().isEmpty()) {
-    filename=gui_file_name_edit->text();
-  }
-  filename=QFileDialog::getOpenFileName(this,"GlassGui - "+tr("Select File"),
-					filename,
-	   tr("Audio Files")+" (*.aiff *.AIFF *.wav *.WAV);;All Files (*)");
-  if(!filename.isEmpty()) {
-    gui_file_name_edit->setText(filename);
-  }
-}
-
-
 void MainWidget::LockControls(bool state)
 {
   gui_server_type_box->setReadOnly(state);
@@ -713,17 +555,7 @@ void MainWidget::LockControls(bool state)
 
   gui_stream_dialog->setControlsLocked(state);
 
-  gui_source_type_box->setReadOnly(state);
-
-  gui_jack_server_name_edit->setReadOnly(state);
-  gui_jack_client_name_edit->setReadOnly(state);
-
-  gui_file_name_edit->setReadOnly(state);
-  gui_file_select_button->setDisabled(state);
-
-  gui_asihpi_view->setReadOnly(state);
-
-  gui_alsa_device_edit->setReadOnly(state);
+  gui_source_dialog->setControlsLocked(state);
 }
 
 
@@ -814,59 +646,6 @@ bool MainWidget::MakeServerArgs(QStringList *args)
 }
 
 
-bool MainWidget::MakeSourceArgs(QStringList *args,bool escape_args)
-{
-  QString quote="";
-  if(escape_args) {
-    quote="\"";
-  }
-  AudioDevice::DeviceType type=(AudioDevice::DeviceType)
-    gui_source_type_box->itemData(gui_source_type_box->currentIndex()).toInt();
-  args->push_back("--audio-device="+AudioDevice::optionKeyword(type));
-
-  switch(type) {
-  case AudioDevice::Alsa:
-    if(!gui_alsa_device_edit->text().isEmpty()) {
-      args->push_back("--alsa-device="+gui_alsa_device_edit->text());
-    }
-    break;
-
-  case AudioDevice::AsiHpi:
-    if((gui_asihpi_view->selectedAdapterIndex()==0)||
-       (gui_asihpi_view->selectedInputIndex()==0)) {
-      return false;
-    }
-    args->push_back("--asihpi-adapter-index="+
-		  QString().sprintf("%u",gui_asihpi_view->selectedAdapterIndex()));
-    args->push_back("--asihpi-input-index="+
-		    QString().sprintf("%u",gui_asihpi_view->selectedInputIndex()));
-    break;
-
-  case AudioDevice::File:
-    if(gui_file_name_edit->text().isEmpty()) {
-      return false;
-    }
-    args->push_back("--file-name="+quote+gui_file_name_edit->text()+quote);
-    break;
-
-  case AudioDevice::Jack:
-    if(!gui_jack_server_name_edit->text().isEmpty()) {
-      args->push_back("--jack-server-name="+quote+
-		      gui_jack_server_name_edit->text()+quote);
-    }
-    if(!gui_jack_client_name_edit->text().isEmpty()) {
-      args->push_back("--jack-client-name="+quote+
-		      gui_jack_client_name_edit->text()+quote);
-    }
-    break;
-
-  case AudioDevice::LastType:
-    break;
-  }
-  return true;
-}
-
-
 void MainWidget::ProcessError(int exit_code,QProcess::ExitStatus exit_status)
 {
   if(exit_status==QProcess::CrashExit) {
@@ -901,22 +680,10 @@ void MainWidget::LoadSettings()
 
     gui_codec_dialog->load(p);
 
-    gui_source_type_box->
-      setCurrentItemData(AudioDevice::deviceType(p->stringValue("GlassGui",
-	       						"AudioDevice")));
-    sourceTypeChanged(gui_source_type_box->currentIndex());
+    gui_source_dialog->load(p);
 
-    gui_alsa_device_edit->setText(p->stringValue("GlassGui","AlsaDevice"));
+    gui_stream_dialog->load(p);
 
-    gui_asihpi_view->setSelected(p->intValue("GlassGui","AsihpiAdapterIndex"),
-				 p->intValue("GlassGui","AsihpiInputIndex"));
-
-    gui_file_name_edit->setText(p->stringValue("GlassGui","FileName"));
-
-    gui_jack_server_name_edit->
-      setText(p->stringValue("GlassGui","JackServerName"));
-    gui_jack_client_name_edit->
-      setText(p->stringValue("GlassGui","JackClientName"));
     delete p;
   }
   checkArgs("");
@@ -945,23 +712,10 @@ bool MainWidget::SaveSettings()
 
     gui_codec_dialog->save(f);
 
-    fprintf(f,"AudioDevice=%s\n",
-	    (const char *)AudioDevice::optionKeyword((AudioDevice::DeviceType)
-		     gui_source_type_box->currentItemData().toInt()).toUtf8()); 
-    fprintf(f,"AlsaDevice=%s\n",
-	    (const char *)gui_alsa_device_edit->text().toUtf8());
+    gui_source_dialog->save(f);
 
-    fprintf(f,"AsihpiAdapterIndex=%u\n",
-	    gui_asihpi_view->selectedAdapterIndex());
-    fprintf(f,"AsihpiInputIndex=%u\n",gui_asihpi_view->selectedInputIndex());
+    gui_stream_dialog->save(f);
 
-    fprintf(f,"FileName=%s\n",
-	    (const char *)gui_file_name_edit->text().toUtf8());
-
-    fprintf(f,"JackServerName=%s\n",
-	    (const char *)gui_jack_server_name_edit->text().toUtf8());
-    fprintf(f,"JackClientName=%s\n",
-	    (const char *)gui_jack_client_name_edit->text().toUtf8());
     fclose(f);
     rename((basepath+".tmp").toUtf8(),basepath.toUtf8());
   }
