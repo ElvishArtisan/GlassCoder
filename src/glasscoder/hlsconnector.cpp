@@ -188,7 +188,7 @@ void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
 	    hls_put_args.join(" ")+"\"");
       }
       else {
-	Log(LOG_WARNING,"curl(1) command overrun");
+	Log(LOG_WARNING,"curl(1) PUT command overrun");
       }
     }
   }
@@ -485,6 +485,15 @@ void HlsConnector::RotateMediaFile()
       connect(hls_delete_process,SIGNAL(finished(int,QProcess::ExitStatus)),
 	      this,SLOT(deleteFinishedData(int,QProcess::ExitStatus)));
       hls_delete_process->start("curl",hls_delete_args);
+    }
+  }
+  else {
+    if(global_log_verbose) {
+      Log(LOG_WARNING,"curl(1) DELETE command overrun, cmd: \""+
+	  hls_delete_args.join(" ")+"\"");
+    }
+    else {
+      Log(LOG_WARNING,"curl(1) DELETE command overrun");
     }
   }
 
