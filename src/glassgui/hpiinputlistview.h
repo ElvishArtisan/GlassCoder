@@ -43,6 +43,7 @@ class HpiInputListViewModel : public QAbstractListModel
 
 class HpiInputListView : public QListView
 {
+  Q_OBJECT;
  public:
   HpiInputListView(QWidget *parent);
   void setReadOnly(bool state);
