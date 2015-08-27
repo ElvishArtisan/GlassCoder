@@ -339,3 +339,8 @@
 	errors.
 2015-08-26 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.9.1.
+2015-08-27 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/glasscoder/hlsconnector.cpp' that caused
+	the HLS stream connector to fail to purge stale media files from
+	active publish points.
+

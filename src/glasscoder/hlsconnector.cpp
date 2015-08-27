@@ -35,6 +35,8 @@ HlsConnector::HlsConnector(bool is_top,QObject *parent)
   hls_media_frames=0;
   hls_total_media_frames=0;
   hls_put_process=NULL;
+  hls_delete_process=NULL;
+  hls_stop_process=NULL;
 
   //
   // Create working directory
