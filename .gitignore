@@ -15,6 +15,8 @@ Makefile
 Makefile.in
 missing
 moc_*
+src/glasscoder/asihpi.cpp
+src/glasscoder/asihpi.h
 src/glasscoder/audiodevice.cpp
 src/glasscoder/audiodevice.h
 src/glasscoder/cmdswitch.cpp
@@ -29,6 +31,8 @@ src/glasscoder/logging.cpp
 src/glasscoder/logging.h
 src/glasscoder/ringbuffer.cpp
 src/glasscoder/ringbuffer.h
+src/glassgui/asihpi.cpp
+src/glassgui/asihpi.h
 src/glassgui/audiodevice.cpp
 src/glassgui/audiodevice.h
 src/glassgui/cmdswitch.cpp
