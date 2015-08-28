@@ -207,8 +207,8 @@ QString HpiWidget::sourceNodeText(uint16_t src_node)
   // From HPI v4.16
   //
   QString ret=tr("Unknown");
-
   switch(src_node) {
+#ifdef ASIHPI
   case HPI_SOURCENODE_NONE:
     ret=tr("None");
     break;
@@ -277,6 +277,7 @@ QString HpiWidget::sourceNodeText(uint16_t src_node)
     ret=tr("AVB audio");
     break;
     */
+#endif  // ASIHPI
   default:
     ret=tr("Unknown")+QString().sprintf(" [%u]",src_node);
     break;
@@ -294,6 +295,7 @@ QString HpiWidget::channelModeText(uint16_t mode)
   QString ret=tr("Unknown");
 
   switch(mode) {
+#ifdef ASIHPI
   case HPI_CHANNEL_MODE_NORMAL:
     ret=tr("Normal");
     break;
@@ -317,7 +319,7 @@ QString HpiWidget::channelModeText(uint16_t mode)
   case HPI_CHANNEL_MODE_STEREO_TO_RIGHT:
     ret=tr("Right Only");
     break;
-
+#endif  // ASIHPI
   default:
     ret=tr("Unknown mode")+QString().sprintf(" [%u]",mode);
     break;
@@ -355,42 +357,51 @@ void HpiWidget::resizeEvent(QResizeEvent *e)
 
 void HpiWidget::listClickedData(const QModelIndex &index)
 {
+#ifdef ASIHPI
   LoadMixer(hpi_view->selectedAdapterIndex(),hpi_view->selectedInputIndex());
   hpi_adapter_index=hpi_view->selectedAdapterIndex();
   hpi_input_index=hpi_view->selectedInputIndex();
+#endif  // ASIHPI
 }
 
 
 void HpiWidget::sourceActivatedData(int n)
 {
+#ifdef ASIHPI
   uint16_t type=ASIHPI_UNPACK_TYPE(hpi_source_box->currentItemData().toUInt());
   uint16_t index=
     ASIHPI_UNPACK_INDEX(hpi_source_box->currentItemData().toUInt());
 
   HpiLog(HPI_Multiplexer_SetSource(NULL,hpi_mult_handle,type,index));
+#endif  // ASIHPI
 }
 
 
 void HpiWidget::typeActivatedData(int n)
 {
+#ifdef ASIHPI
   uint16_t type=ASIHPI_UNPACK_TYPE(hpi_type_box->currentItemData().toUInt());
   uint16_t index=
     ASIHPI_UNPACK_INDEX(hpi_type_box->currentItemData().toUInt());
 
   HpiLog(HPI_Multiplexer_SetSource(NULL,hpi_type_handle,type,index));
+#endif  // ASIHPI
 }
 
 
 void HpiWidget::modeActivatedData(int n)
 {
+#ifdef ASIHPI
   uint16_t mode=hpi_mode_box->currentItemData().toUInt();
 
   HpiLog(HPI_ChannelModeSet(NULL,hpi_mode_handle,mode));
+#endif  // ASIHPI
 }
 
 
 void HpiWidget::volumeChangedData(int level)
 {
+#ifdef ASIHPI
   short lvls[HPI_MAX_CHANNELS];
 
   for(unsigned i=0;i<HPI_MAX_CHANNELS;i++) {
@@ -404,9 +415,11 @@ void HpiWidget::volumeChangedData(int level)
     hpi_volume_readout_label->setText(QString().sprintf("%d dB",level/100));
   }
   HpiLog(HPI_VolumeSetGain(NULL,hpi_volume_handle,lvls));
+#endif  // ASIHPI
 }
 
 
+#ifdef ASIHPI
 void HpiWidget::LoadMixer(unsigned adapter,unsigned input)
 {
   uint16_t index=0;
@@ -531,7 +544,6 @@ void HpiWidget::LoadMixer(unsigned adapter,unsigned input)
 
 void HpiWidget::Redraw()
 {
-#ifdef ASIHPI
   int ypos=0;
 
   hpi_view->setGeometry(0,0,size().width(),100);
@@ -587,11 +599,9 @@ void HpiWidget::Redraw()
     hpi_volume_slider->hide();
     hpi_volume_readout_label->hide();
   }
-#endif  // ASIHPI
 }
 
 
-#ifdef ASIHPI
 hpi_err_t HpiWidget::HpiLog(hpi_err_t err,int priority) const
 {
   if(err!=0) {
@@ -599,10 +609,8 @@ hpi_err_t HpiWidget::HpiLog(hpi_err_t err,int priority) const
   }
   return err;
 }
-#endif  // ASIHPI
 
 
-#ifdef ASIHPI
 const char *HpiWidget::hpi_strerror(hpi_err_t err) const
 {
   static char err_text[200];

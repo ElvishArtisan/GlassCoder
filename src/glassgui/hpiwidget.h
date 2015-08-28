@@ -21,6 +21,7 @@
 #ifndef HPIWIDGET_H
 #define HPIWIDGET_H
 
+#include <stdint.h>
 #include <syslog.h>
 
 #ifdef ASIHPI
