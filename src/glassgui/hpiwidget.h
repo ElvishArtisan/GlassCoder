@@ -48,8 +48,12 @@ class HpiWidget : public QWidget
   void setSelected(unsigned adapter,unsigned input);
   int inputGain() const;
   void setInputGain(int gain);
-  unsigned channelMode();
+  unsigned channelMode() const;
   void setChannelMode(unsigned mode);
+  unsigned inputSource() const;
+  void setInputSource(unsigned src);
+  unsigned inputType() const;
+  void setInputType(unsigned type);
   static QString sourceNodeText(uint16_t src_node);
   static QString channelModeText(uint16_t mode);
 
@@ -59,6 +63,7 @@ class HpiWidget : public QWidget
  private slots:
   void listClickedData(const QModelIndex &index);
   void sourceActivatedData(int n);
+  void typeActivatedData(int n);
   void modeActivatedData(int n);
   void volumeChangedData(int level);
 
@@ -73,6 +78,8 @@ class HpiWidget : public QWidget
   ComboBox *hpi_source_box;
   QLabel *hpi_mode_label;
   ComboBox *hpi_mode_box;
+  QLabel *hpi_type_label;
+  ComboBox *hpi_type_box;
   QLabel *hpi_volume_label;
   QSlider *hpi_volume_slider;
   QLabel *hpi_volume_readout_label;
@@ -81,6 +88,8 @@ class HpiWidget : public QWidget
   uint32_t hpi_mixer_handle;
   hpi_handle_t hpi_mult_handle;
   bool hpi_mult_found;
+  hpi_handle_t hpi_type_handle;
+  bool hpi_type_found;
   hpi_handle_t hpi_mode_handle;
   bool hpi_mode_found;
   hpi_handle_t hpi_volume_handle;

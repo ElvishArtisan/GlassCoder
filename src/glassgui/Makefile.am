@@ -43,7 +43,8 @@ dist_glassgui_SOURCES = codecdialog.cpp codecdialog.h\
                         stereometer.cpp stereometer.h\
                         streamdialog.cpp streamdialog.h
 
-nodist_glassgui_SOURCES = audiodevice.cpp audiodevice.h\
+nodist_glassgui_SOURCES = asihpi.cpp asihpi.h\
+                          audiodevice.cpp audiodevice.h\
                           cmdswitch.cpp cmdswitch.h\
                           codec.cpp codec.h\
                           connector.cpp connector.h\
@@ -75,7 +76,8 @@ CLEANFILES = *~\
              *.pdb\
              *ilk
 
-DISTCLEANFILES = audiodevice.cpp audiodevice.h\
+DISTCLEANFILES = asihpi.cpp asihpi.h\
+                 audiodevice.cpp audiodevice.h\
                  cmdswitch.cpp cmdswitch.h\
                  codec.cpp codec.h\
                  connector.cpp connector.h\

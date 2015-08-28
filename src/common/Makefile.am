@@ -20,7 +20,8 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-EXTRA_DIST = audiodevice.cpp audiodevice.h\
+EXTRA_DIST = asihpi.cpp asihpi.h\
+             audiodevice.cpp audiodevice.h\
              cmdswitch.cpp cmdswitch.h\
              codec.cpp codec.h\
              connector.cpp connector.h\

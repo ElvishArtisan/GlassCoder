@@ -63,10 +63,11 @@ class AsiHpiDevice : public AudioDevice
   //
   uint16_t asihpi_adapter_index;
   uint16_t asihpi_input_index;
-  uint16_t asihpi_input_source;
   uint16_t asihpi_input_mode;
   uint16_t asihpi_input_gain;
   uint16_t asihpi_channel_mode;
+  uint16_t asihpi_input_source;
+  uint16_t asihpi_input_type;
 
   hpi_handle_t asihpi_input_stream;
   hpi_handle_t asihpi_mixer;

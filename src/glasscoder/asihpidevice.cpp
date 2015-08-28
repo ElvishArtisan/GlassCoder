@@ -22,6 +22,7 @@
 
 #include <stdio.h>
 
+#include "asihpi.h"
 #include "asihpidevice.h"
 #include "logging.h"
 
@@ -34,6 +35,8 @@ AsiHpiDevice::AsiHpiDevice(unsigned chans,unsigned samprate,
   asihpi_input_index=ASIHPI_DEFAULT_INPUT_INDEX;
   asihpi_input_gain=0;
   asihpi_channel_mode=HPI_CHANNEL_MODE_NORMAL;
+  asihpi_input_source=HPI_SOURCENODE_LINEIN;
+  asihpi_input_type=HPI_SOURCENODE_LINEIN;
   asihpi_pcm_buffer=NULL;
 
   asihpi_read_timer=new QTimer(this);
@@ -121,7 +124,22 @@ bool AsiHpiDevice::processOptions(QString *err,const QStringList &keys,
       }
       if(!processed) {
 	*err=tr("invalid value for")+" --asihpi-channel-mode";
+	return false;
       }
+    }
+    if(keys[i]=="--asihpi-input-source") {
+      if((asihpi_input_source=AsihpiSourceNode(values[i]))==0) {
+	*err=tr("invalid value for --asihpi-input-source");
+	return false;
+      }
+      processed=true;
+    }
+    if(keys[i]=="--asihpi-input-type") {
+      if((asihpi_input_type=AsihpiSourceNode(values[i]))==0) {
+	*err=tr("invalid value for --asihpi-input-type");
+	return false;
+      }
+      processed=true;
     }
 
     if(!processed) {
@@ -166,6 +184,27 @@ bool AsiHpiDevice::start(QString *err)
 	lvls[i]=asihpi_input_gain*100;
       }
       HpiLog(HPI_VolumeSetGain(NULL,handle,lvls));
+    }
+
+    //
+    // Input Source
+    //
+    if(HpiLog(HPI_MixerGetControl(NULL,asihpi_mixer,0,0,
+				  HPI_DESTNODE_ISTREAM,asihpi_input_index,
+				  HPI_CONTROL_MULTIPLEXER,&handle))==0) {
+      HpiLog(HPI_Multiplexer_SetSource(NULL,handle,asihpi_input_source,
+				       asihpi_input_index));
+    }
+
+    //
+    // Input Type
+    //
+    if((HpiLog(HPI_MixerGetControl(NULL,asihpi_mixer,
+				   HPI_SOURCENODE_LINEIN,asihpi_input_index,
+				   HPI_DESTNODE_NONE,0,
+				   HPI_CONTROL_MULTIPLEXER,&handle)))==0) {
+      HpiLog(HPI_Multiplexer_SetSource(NULL,handle,asihpi_input_type,
+				       asihpi_input_index));
     }
 
     //

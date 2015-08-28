@@ -356,8 +356,13 @@
 2015-08-27 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'Source Settings' dialog in 'src/glassgui/sourcedialog.cpp'
 	and 'src/glassgui/sourcedialog.h'.
-2015-08-27 Fred Gleason <fredg@paravelsystems.com>
+2015-08-28 Fred Gleason <fredg@paravelsystems.com>
 	* Added an '--asihpi-input-gain' switch to the ASIHPI source in
 	'src/glasscoder/asihpidevice.cpp' and 'src/glasscoder/asihpidevice.h'.
 	* Added an '--asihpi-channel-mode' switch to the ASIHPI source in
+	'src/glasscoder/asihpidevice.cpp' and 'src/glasscoder/asihpidevice.h'.
+2015-08-28 Fred Gleason <fredg@paravelsystems.com>
+	* Added an '--asihpi-input-source' switch to the ASIHPI source in
+	'src/glasscoder/asihpidevice.cpp' and 'src/glasscoder/asihpidevice.h'.
+	* Added an '--asihpi-input-type' switch to the ASIHPI source in
 	'src/glasscoder/asihpidevice.cpp' and 'src/glasscoder/asihpidevice.h'.

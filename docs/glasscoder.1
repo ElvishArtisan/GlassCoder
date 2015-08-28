@@ -287,6 +287,88 @@ Right signal goes to both left and right channels.
 .RE
 
 .TP
+.B --asihpi-input-source=<\fIsrc-node\fP>
+The input source to use on the specified adapter.  See the
+\fBHPI Source Nodes\fP section below for the list of valid <\fIsrc-node\fP>
+values.  The default value is \fBLINEIN\fP.
+
+.TP
+.B --asihpi-input-type=<\fIsrc-node\fP>
+The input type to use on the specified adapter.  See the
+\fBHPI Source Nodes\fP section below for the list of valid <\fIsrc-node\fP>
+values.  The default value is \fBLINEIN\fP.
+
+.TP
+.B HPI Source Nodes
+The following values can used for the \fB--asihpi-input-source\fP and
+\fB--asihpi-input-type]\fP options above:
+
+.RS
+.TP
+\fBNONE\fP
+
+.TP
+\fBOSTREAM\fP
+Internal output stream
+
+.TP
+\fBLINEIN\fP
+Generic input signal
+
+.TP
+\fBAESEBU\fP
+AES3 digital input
+
+.TP
+\fBTUNER\fP
+Tuner
+
+.TP
+\fBRF\fP
+RF input
+
+.TP
+\fBCLOCK\fP
+Clock source
+
+.TP
+\fBBITSTREAM\fP
+Raw bitstream
+
+.TP
+\fBMIC\fP
+Microphone
+
+.TP
+\fBCOBRANET\fP
+CobraNet
+
+.TP
+\fBANALOG\fP
+Analog input
+
+.TP
+\fBADAPTER\fP
+Adapter
+
+.TP
+\fBRTP\fP
+
+.TP
+\fBINTERNAL\fP
+Device internal
+
+.TP
+\fBAVB\fP
+AVB input
+
+.TP
+\fBBLULINK\fP
+BLU-Link input
+
+.RE 
+
+.TP
 .B Direct File Streaming (--audio-device=FILE)
 
 .TP

@@ -53,7 +53,8 @@ dist_glasscoder_SOURCES = aaccodec.cpp aaccodec.h\
                           profile.cpp profile.h\
                           vorbiscodec.cpp vorbiscodec.h
 
-nodist_glasscoder_SOURCES = cmdswitch.cpp cmdswitch.h\
+nodist_glasscoder_SOURCES = asihpi.cpp asihpi.h\
+                            cmdswitch.cpp cmdswitch.h\
                             glasslimits.h\
                             logging.cpp logging.h\
                             moc_aaccodec.cpp\
@@ -85,7 +86,8 @@ CLEANFILES = *~\
              *.pdb\
              *ilk
 
-DISTCLEANFILES = audiodevice.cpp audiodevice.h\
+DISTCLEANFILES = asihpi.cpp asihpi.h\
+                 audiodevice.cpp audiodevice.h\
                  cmdswitch.cpp cmdswitch.h\
                  codec.cpp codec.h\
                  connector.cpp connector.h\

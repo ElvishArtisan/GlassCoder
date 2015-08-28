@@ -41,12 +41,22 @@ HpiWidget::HpiWidget(QWidget *parent)
   //
   // Source
   //
-  hpi_source_label=new QLabel(tr("Source")+":",this);
+  hpi_source_label=new QLabel(tr("Input Source")+":",this);
   hpi_source_label->setFont(label_font);
   hpi_source_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
   hpi_source_box=new ComboBox(this);
   connect(hpi_source_box,SIGNAL(activated(int)),
 	  this,SLOT(sourceActivatedData(int)));
+
+  //
+  // Input Type
+  //
+  hpi_type_label=new QLabel(tr("Input Type")+":",this);
+  hpi_type_label->setFont(label_font);
+  hpi_type_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  hpi_type_box=new ComboBox(this);
+  connect(hpi_type_box,SIGNAL(activated(int)),
+	  this,SLOT(typeActivatedData(int)));
 
   //
   // Input Mode
@@ -134,7 +144,7 @@ void HpiWidget::setInputGain(int gain)
 }
 
 
-unsigned HpiWidget::channelMode()
+unsigned HpiWidget::channelMode() const
 {
 #ifdef ASIHPI
   return hpi_mode_box->currentItemData().toUInt();
@@ -149,6 +159,44 @@ void HpiWidget::setChannelMode(unsigned mode)
 #ifdef ASIHPI
   hpi_mode_box->setCurrentItemData(mode);
   modeActivatedData(0);
+#endif  // ASIHPI
+}
+
+
+unsigned HpiWidget::inputSource() const
+{
+#ifdef ASIHPI
+  return ASIHPI_UNPACK_TYPE(hpi_source_box->currentItemData().toUInt());
+#else
+  return 0;
+#endif  // ASIHPI
+}
+
+
+void HpiWidget::setInputSource(unsigned src)
+{
+#ifdef ASIHPI
+  hpi_source_box->setCurrentItemData(ASIHPI_PACK_CONTROL(hpi_input_index,src));
+  sourceActivatedData(0);
+#endif  // ASIHPI
+}
+
+
+unsigned HpiWidget::inputType() const
+{
+#ifdef ASIHPI
+  return ASIHPI_UNPACK_TYPE(hpi_type_box->currentItemData().toUInt());
+#else
+  return 0;
+#endif  // ASIHPI
+}
+
+
+void HpiWidget::setInputType(unsigned type)
+{
+#ifdef ASIHPI
+  hpi_type_box->setCurrentItemData(ASIHPI_PACK_CONTROL(hpi_input_index,type));
+  typeActivatedData(0);
 #endif  // ASIHPI
 }
 
@@ -323,6 +371,16 @@ void HpiWidget::sourceActivatedData(int n)
 }
 
 
+void HpiWidget::typeActivatedData(int n)
+{
+  uint16_t type=ASIHPI_UNPACK_TYPE(hpi_type_box->currentItemData().toUInt());
+  uint16_t index=
+    ASIHPI_UNPACK_INDEX(hpi_type_box->currentItemData().toUInt());
+
+  HpiLog(HPI_Multiplexer_SetSource(NULL,hpi_type_handle,type,index));
+}
+
+
 void HpiWidget::modeActivatedData(int n)
 {
   uint16_t mode=hpi_mode_box->currentItemData().toUInt();
@@ -360,6 +418,7 @@ void HpiWidget::LoadMixer(unsigned adapter,unsigned input)
   short gain=0;
   hpi_mode_found=false;
   hpi_mult_found=false;
+  hpi_type_found=false;
   hpi_volume_found=false;
 
   if((hpi_adapter_index>0)&&(hpi_input_index>0)) {
@@ -372,7 +431,7 @@ void HpiWidget::LoadMixer(unsigned adapter,unsigned input)
       //
       // Input Source Multiplexer
       //
-      hpi_source_box->clear();
+      hpi_source_box->clear();	
       if((HpiLog(HPI_MixerGetControl(NULL,hpi_mixer_handle,0,0,
 				     HPI_DESTNODE_ISTREAM,input-1,
 				     HPI_CONTROL_MULTIPLEXER,
@@ -389,6 +448,28 @@ void HpiWidget::LoadMixer(unsigned adapter,unsigned input)
 	if(HpiLog(HPI_Multiplexer_GetSource(NULL,hpi_mult_handle,&type,
 					    &mindex))==0) {
 	  hpi_source_box->setCurrentItemData(ASIHPI_PACK_CONTROL(type,mindex));
+	}
+      }
+
+      //
+      // Input Type Multiplexer
+      //
+      if((HpiLog(HPI_MixerGetControl(NULL,hpi_mixer_handle,
+				     HPI_SOURCENODE_LINEIN,input-1,
+				     HPI_DESTNODE_NONE,0,
+				     HPI_CONTROL_MULTIPLEXER,
+				     &hpi_type_handle)))==0) {
+	hpi_type_found=true;
+	index=0;
+	while(HPI_Multiplexer_QuerySource(NULL,hpi_type_handle,index,&type,
+					  &mindex)==0) {
+	  hpi_type_box->insertItem(index,HpiWidget::sourceNodeText(type),
+				   ASIHPI_PACK_CONTROL(type,mindex));
+	  index++;
+	}
+	if(HpiLog(HPI_Multiplexer_GetSource(NULL,hpi_type_handle,&type,
+					    &mindex))==0) {
+	  hpi_type_box->setCurrentItemData(ASIHPI_PACK_CONTROL(type,mindex));
 	}
       }
 
@@ -430,12 +511,12 @@ void HpiWidget::LoadMixer(unsigned adapter,unsigned input)
 	}
       }
 
-      /*      
+      /*
       for(uint16_t i=HPI_SOURCENODE_NONE;i<HPI_SOURCENODE_LAST_INDEX;i++) {
 	for(uint16_t j=HPI_DESTNODE_NONE;j<HPI_DESTNODE_LAST_INDEX;j++) {
 	  if(HPI_MixerGetControl(NULL,hpi_mixer_handle,i,0,
 				 j,input-1,
-				 HPI_CONTROL_VOLUME,
+				 HPI_CONTROL_MULTIPLEXER,
 				 &hpi_volume_handle)==0) {
 	    printf("Found: i: %u  j: %u\n",i,j);
 	  }
@@ -456,7 +537,7 @@ void HpiWidget::Redraw()
   hpi_view->setGeometry(0,0,size().width(),100);
   ypos+=105;
 
-  if(hpi_mode_found) {
+  if(hpi_mult_found) {
     hpi_source_label->show();
     hpi_source_label->setGeometry(0,ypos,100,25);
     hpi_source_box->show();
@@ -466,6 +547,18 @@ void HpiWidget::Redraw()
   else {
     hpi_source_label->hide();
     hpi_source_box->hide();
+  }
+
+  if(hpi_type_found) {
+    hpi_type_label->show();
+    hpi_type_label->setGeometry(0,ypos,100,25);
+    hpi_type_box->show();
+    hpi_type_box->setGeometry(105,ypos,size().width()-115,25);
+    ypos+=30;
+  }
+  else {
+    hpi_type_label->hide();
+    hpi_type_box->hide();
   }
 
   if(hpi_mode_found) {

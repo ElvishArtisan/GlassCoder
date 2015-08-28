@@ -20,6 +20,7 @@
 
 #include <QFileDialog>
 
+#include "asihpi.h"
 #include "sourcedialog.h"
 
 SourceDialog::SourceDialog(QWidget *parent)
@@ -111,7 +112,7 @@ QSize SourceDialog::sizeHint() const
     break;
 
   case AudioDevice::AsiHpi:
-    ret=QSize(500,290);
+    ret=QSize(500,320);
     break;
 
   case AudioDevice::Alsa:
@@ -145,6 +146,7 @@ bool SourceDialog::makeArgs(QStringList *args,bool escape_args)
     break;
 
   case AudioDevice::AsiHpi:
+#ifdef ASIHPI
     if((gui_asihpi_widget->selectedAdapterIndex()==0)||
        (gui_asihpi_widget->selectedInputIndex()==0)) {
       return false;
@@ -155,6 +157,10 @@ bool SourceDialog::makeArgs(QStringList *args,bool escape_args)
 	  QString().sprintf("%u",gui_asihpi_widget->selectedInputIndex()));
     args->push_back("--asihpi-input-gain="+
 	  QString().sprintf("%d",gui_asihpi_widget->inputGain()/100));
+    args->push_back("--asihpi-input-source="+
+		    AsihpiSourceName(gui_asihpi_widget->inputSource()));
+    args->push_back("--asihpi-input-type="+
+		    AsihpiSourceName(gui_asihpi_widget->inputType()));
     switch(gui_asihpi_widget->channelMode()) {
     case HPI_CHANNEL_MODE_NORMAL:
       args->push_back("--asihpi-channel-mode=NORMAL");
@@ -172,7 +178,7 @@ bool SourceDialog::makeArgs(QStringList *args,bool escape_args)
       args->push_back("--asihpi-channel-mode=RIGHT");
       break;
     }
-		    
+#endif  // ASIHPI		    
     break;
 
   case AudioDevice::File:
@@ -250,6 +256,10 @@ void SourceDialog::load(Profile *p)
     setInputGain(100*p->intValue("GlassGui","AsihpiInputGain"));
   gui_asihpi_widget->setChannelMode(p->intValue("GlassGui","AsihpiChannelMode",
 						HPI_CHANNEL_MODE_NORMAL));
+  gui_asihpi_widget->setInputSource(p->intValue("GlassGui","AsihpiInputSource",
+						HPI_SOURCENODE_LINEIN));
+  gui_asihpi_widget->setInputType(p->intValue("GlassGui","AsihpiInputType",
+						HPI_SOURCENODE_LINEIN));
 
   gui_file_name_edit->setText(p->stringValue("GlassGui","FileName"));
 
@@ -274,6 +284,8 @@ void SourceDialog::save(FILE *f)
   fprintf(f,"AsihpiInputIndex=%u\n",gui_asihpi_widget->selectedInputIndex());
   fprintf(f,"AsihpiInputGain=%d\n",gui_asihpi_widget->inputGain()/100);
   fprintf(f,"AsihpiChannelMode=%u\n",gui_asihpi_widget->channelMode());
+  fprintf(f,"AsihpiInputSource=%u\n",gui_asihpi_widget->inputSource());
+  fprintf(f,"AsihpiInputType=%u\n",gui_asihpi_widget->inputType());
 
   fprintf(f,"FileName=%s\n",
 	  (const char *)gui_file_name_edit->text().toUtf8());
@@ -324,7 +336,7 @@ void SourceDialog::resizeEvent(QResizeEvent *e)
   // ASIHPI Controls
   //
   ypos=ypos_base;
-  gui_asihpi_widget->setGeometry(75,ypos,400,190);
+  gui_asihpi_widget->setGeometry(75,ypos,400,220);
 
   //
   // JACK Controls

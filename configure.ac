@@ -271,6 +271,11 @@ AC_OUTPUT()
 #
 # Link Common Elements
 #
+rm -f src/glasscoder/asihpi.cpp
+ln -s ../../src/common/asihpi.cpp src/glasscoder/asihpi.cpp
+rm -f src/glasscoder/asihpi.h
+ln -s ../../src/common/asihpi.h src/glasscoder/asihpi.h
+
 rm -f src/glasscoder/audiodevice.cpp
 ln -s ../../src/common/audiodevice.cpp src/glasscoder/audiodevice.cpp
 rm -f src/glasscoder/audiodevice.h
@@ -304,6 +309,11 @@ ln -s ../../src/common/ringbuffer.h src/glasscoder/ringbuffer.h
 rm -f src/glasscoder/glasslimits.h
 ln -s ../../src/common/glasslimits.h src/glasscoder/glasslimits.h
 
+
+rm -f src/glassgui/asihpi.cpp
+ln -s ../../src/common/asihpi.cpp src/glassgui/asihpi.cpp
+rm -f src/glassgui/asihpi.h
+ln -s ../../src/common/asihpi.h src/glassgui/asihpi.h
 
 rm -f src/glassgui/audiodevice.cpp
 ln -s ../../src/common/audiodevice.cpp src/glassgui/audiodevice.cpp
