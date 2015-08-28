@@ -258,6 +258,35 @@ The index number of the audio adapter to use.
 The number of the input audio stream to use on the specified adapter.
 
 .TP
+.B --asihpi-input-gain=<\fIgain\fP>
+The gain to apply to the input audio on the specified adapter in dB.  Valid
+values are -100 to +20 inclusive.  Default value is 0.
+
+.TP
+.B --asihpi-channel_mode=<\fImode\fP>
+The channel mode for the input audio on the specified adapter.  The default
+value is \fBNORMAL\fP.  Valid values are:
+.RS
+
+.TP
+\fBNORMAL\fP
+Left signal goes to left channel, right signal goes to right channel.
+
+.TP
+\fBSWAP\fP
+Left signal goes to right channel, right signal goes to left channel.
+
+.TP
+\fBLEFT\fP
+Left signal goes to both left and right channels.
+
+.TP
+\fBRIGHT\fP
+Right signal goes to both left and right channels.
+
+.RE
+
+.TP
 .B Direct File Streaming (--audio-device=FILE)
 
 .TP

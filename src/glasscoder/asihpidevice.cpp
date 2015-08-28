@@ -32,6 +32,8 @@ AsiHpiDevice::AsiHpiDevice(unsigned chans,unsigned samprate,
 #ifdef ASIHPI
   asihpi_adapter_index=ASIHPI_DEFAULT_INDEX;
   asihpi_input_index=ASIHPI_DEFAULT_INPUT_INDEX;
+  asihpi_input_gain=0;
+  asihpi_channel_mode=HPI_CHANNEL_MODE_NORMAL;
   asihpi_pcm_buffer=NULL;
 
   asihpi_read_timer=new QTimer(this);
@@ -92,6 +94,36 @@ bool AsiHpiDevice::processOptions(QString *err,const QStringList &keys,
       }
       processed=true;
     }
+    if(keys[i]=="--asihpi-input-gain") {
+      asihpi_input_gain=values[i].toUInt(&ok)-1;
+      if((!ok)||((asihpi_input_gain<-100)&&(asihpi_input_gain>20))) {
+	*err=tr("invalid")+" --asihpi-input-gain "+tr("argument");
+	return false;
+      }
+      processed=true;
+    }
+    if(keys[i]=="--asihpi-channel-mode") {
+      if(values[i].toLower()=="normal") {
+	asihpi_channel_mode=HPI_CHANNEL_MODE_NORMAL;
+	processed=true;
+      }
+      if(values[i].toLower()=="swap") {
+	asihpi_channel_mode=HPI_CHANNEL_MODE_SWAP;
+	processed=true;
+      }
+      if(values[i].toLower()=="left") {
+	asihpi_channel_mode=HPI_CHANNEL_MODE_LEFT_TO_STEREO;
+	processed=true;
+      }
+      if(values[i].toLower()=="right") {
+	asihpi_channel_mode=HPI_CHANNEL_MODE_RIGHT_TO_STEREO;
+	processed=true;
+      }
+      if(!processed) {
+	*err=tr("invalid value for")+" --asihpi-channel-mode";
+      }
+    }
+
     if(!processed) {
       *err=tr("unrecognized option")+" "+keys[i]+"\"";
       return false;
@@ -115,10 +147,40 @@ bool AsiHpiDevice::start(QString *err)
   uint32_t samples_recorded=0;
   uint32_t aux_data_recorded=0;
 
+  hpi_handle_t handle;
+  short lvls[HPI_MAX_CHANNELS];
+
   //
   // Open Mixer
   //
   if(HpiLog(HPI_MixerOpen(NULL,asihpi_adapter_index,&asihpi_mixer))==0) {
+
+    //
+    // Input Gain
+    //
+    if(HPI_MixerGetControl(NULL,asihpi_mixer,
+			     HPI_SOURCENODE_LINEIN,asihpi_input_index,
+			     HPI_DESTNODE_NONE,0,HPI_CONTROL_VOLUME,
+			     &handle)==0) {
+      for(unsigned i=0;i<HPI_MAX_CHANNELS;i++) {
+	lvls[i]=asihpi_input_gain*100;
+      }
+      HpiLog(HPI_VolumeSetGain(NULL,handle,lvls));
+    }
+
+    //
+    // Channel Mode
+    //
+    if((HpiLog(HPI_MixerGetControl(NULL,asihpi_mixer,0,0,
+				     HPI_DESTNODE_ISTREAM,asihpi_input_index,
+				     HPI_CONTROL_CHANNEL_MODE,
+				     &handle)))==0) {
+      HpiLog(HPI_ChannelModeSet(NULL,handle,asihpi_channel_mode));
+    }
+
+    //
+    // Input Meter
+    //
     if((HpiLog(HPI_MixerGetControl(NULL,asihpi_mixer,0,0,HPI_DESTNODE_ISTREAM,
       asihpi_input_index,HPI_CONTROL_METER,&asihpi_input_meter)))==0) {
       asihpi_meter_timer->start(100);

@@ -35,6 +35,7 @@ dist_glassgui_SOURCES = codecdialog.cpp codecdialog.h\
                         combobox.cpp combobox.h\
                         glassgui.cpp glassgui.h\
                         hpiinputlistview.cpp hpiinputlistview.h\
+                        hpiwidget.cpp hpiwidget.h\
                         profile.cpp profile.h\
                         segmeter.cpp segmeter.h\
                         sourcedialog.cpp sourcedialog.h\
@@ -56,6 +57,7 @@ nodist_glassgui_SOURCES = audiodevice.cpp audiodevice.h\
                           moc_connector.cpp\
                           moc_glassgui.cpp\
                           moc_hpiinputlistview.cpp\
+                          moc_hpiwidget.cpp\
                           moc_segmeter.cpp\
                           moc_sourcedialog.cpp\
                           moc_statuswidget.cpp\

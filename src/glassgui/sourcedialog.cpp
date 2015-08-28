@@ -73,8 +73,8 @@ SourceDialog::SourceDialog(QWidget *parent)
   //
   // HPI Fields
   //
-  gui_asihpi_view=new HpiInputListView(this);
-  gui_asihpi_view->hide();
+  gui_asihpi_widget=new HpiWidget(this);
+  gui_asihpi_widget->hide();
 
   //
   // JACK Fields
@@ -111,7 +111,7 @@ QSize SourceDialog::sizeHint() const
     break;
 
   case AudioDevice::AsiHpi:
-    ret=QSize(500,200);
+    ret=QSize(500,290);
     break;
 
   case AudioDevice::Alsa:
@@ -145,14 +145,34 @@ bool SourceDialog::makeArgs(QStringList *args,bool escape_args)
     break;
 
   case AudioDevice::AsiHpi:
-    if((gui_asihpi_view->selectedAdapterIndex()==0)||
-       (gui_asihpi_view->selectedInputIndex()==0)) {
+    if((gui_asihpi_widget->selectedAdapterIndex()==0)||
+       (gui_asihpi_widget->selectedInputIndex()==0)) {
       return false;
     }
     args->push_back("--asihpi-adapter-index="+
-		  QString().sprintf("%u",gui_asihpi_view->selectedAdapterIndex()));
+	  QString().sprintf("%u",gui_asihpi_widget->selectedAdapterIndex()));
     args->push_back("--asihpi-input-index="+
-		    QString().sprintf("%u",gui_asihpi_view->selectedInputIndex()));
+	  QString().sprintf("%u",gui_asihpi_widget->selectedInputIndex()));
+    args->push_back("--asihpi-input-gain="+
+	  QString().sprintf("%d",gui_asihpi_widget->inputGain()/100));
+    switch(gui_asihpi_widget->channelMode()) {
+    case HPI_CHANNEL_MODE_NORMAL:
+      args->push_back("--asihpi-channel-mode=NORMAL");
+      break;
+
+    case HPI_CHANNEL_MODE_SWAP:
+      args->push_back("--asihpi-channel-mode=SWAP");
+      break;
+
+    case HPI_CHANNEL_MODE_LEFT_TO_STEREO:
+      args->push_back("--asihpi-channel-mode=LEFT");
+      break;
+
+    case HPI_CHANNEL_MODE_RIGHT_TO_STEREO:
+      args->push_back("--asihpi-channel-mode=RIGHT");
+      break;
+    }
+		    
     break;
 
   case AudioDevice::File:
@@ -191,7 +211,7 @@ void SourceDialog::setControlsLocked(bool state)
   gui_file_name_edit->setReadOnly(state);
   gui_file_select_button->setDisabled(state);
 
-  gui_asihpi_view->setReadOnly(state);
+  gui_asihpi_widget->setReadOnly(state);
 
   gui_alsa_device_edit->setReadOnly(state);
 }
@@ -216,6 +236,7 @@ void SourceDialog::addSourceTypes(const QString &types)
 
 void SourceDialog::load(Profile *p)
 {
+#ifdef ASIHPI
   gui_source_type_box->
     setCurrentItemData(AudioDevice::deviceType(p->stringValue("GlassGui",
 							      "AudioDevice")));
@@ -223,8 +244,12 @@ void SourceDialog::load(Profile *p)
 
   gui_alsa_device_edit->setText(p->stringValue("GlassGui","AlsaDevice"));
 
-  gui_asihpi_view->setSelected(p->intValue("GlassGui","AsihpiAdapterIndex"),
+  gui_asihpi_widget->setSelected(p->intValue("GlassGui","AsihpiAdapterIndex"),
 			       p->intValue("GlassGui","AsihpiInputIndex"));
+  gui_asihpi_widget->
+    setInputGain(100*p->intValue("GlassGui","AsihpiInputGain"));
+  gui_asihpi_widget->setChannelMode(p->intValue("GlassGui","AsihpiChannelMode",
+						HPI_CHANNEL_MODE_NORMAL));
 
   gui_file_name_edit->setText(p->stringValue("GlassGui","FileName"));
 
@@ -232,6 +257,7 @@ void SourceDialog::load(Profile *p)
     setText(p->stringValue("GlassGui","JackServerName"));
   gui_jack_client_name_edit->
     setText(p->stringValue("GlassGui","JackClientName"));
+#endif  // ASIHPI
 }
 
 
@@ -244,8 +270,10 @@ void SourceDialog::save(FILE *f)
 	  (const char *)gui_alsa_device_edit->text().toUtf8());
 
   fprintf(f,"AsihpiAdapterIndex=%u\n",
-	  gui_asihpi_view->selectedAdapterIndex());
-  fprintf(f,"AsihpiInputIndex=%u\n",gui_asihpi_view->selectedInputIndex());
+	  gui_asihpi_widget->selectedAdapterIndex());
+  fprintf(f,"AsihpiInputIndex=%u\n",gui_asihpi_widget->selectedInputIndex());
+  fprintf(f,"AsihpiInputGain=%d\n",gui_asihpi_widget->inputGain()/100);
+  fprintf(f,"AsihpiChannelMode=%u\n",gui_asihpi_widget->channelMode());
 
   fprintf(f,"FileName=%s\n",
 	  (const char *)gui_file_name_edit->text().toUtf8());
@@ -268,8 +296,8 @@ void SourceDialog::resizeEvent(QResizeEvent *e)
 {
   int ypos=10;
 
-  gui_source_type_label->setGeometry(10,ypos,110,20);
-  gui_source_type_box->setGeometry(125,ypos,350,24);
+  gui_source_type_label->setGeometry(10,ypos,60,20);
+  gui_source_type_box->setGeometry(75,ypos,350,24);
   ypos+=26;
 
   int ypos_base=ypos;
@@ -278,8 +306,8 @@ void SourceDialog::resizeEvent(QResizeEvent *e)
   // ALSA Controls
   //
   ypos=ypos_base;
-  gui_alsa_device_label->setGeometry(10,ypos,160,20);
-  gui_alsa_device_edit->setGeometry(175,ypos,100,24);
+  gui_alsa_device_label->setGeometry(70,ypos,110,24);
+  gui_alsa_device_edit->setGeometry(185,ypos,100,24);
   ypos+=26;
   
   //
@@ -296,17 +324,17 @@ void SourceDialog::resizeEvent(QResizeEvent *e)
   // ASIHPI Controls
   //
   ypos=ypos_base;
-  gui_asihpi_view->setGeometry(125,ypos,350,100);
+  gui_asihpi_widget->setGeometry(75,ypos,400,190);
 
   //
   // JACK Controls
   //
   ypos=ypos_base;
-  gui_jack_server_name_label->setGeometry(10,ypos,145,20);
-  gui_jack_server_name_edit->setGeometry(160,ypos,size().width()-260,24);
+  gui_jack_server_name_label->setGeometry(75,ypos,145,20);
+  gui_jack_server_name_edit->setGeometry(225,ypos,size().width()-260,24);
   ypos+=26;
-  gui_jack_client_name_label->setGeometry(10,ypos,145,20);
-  gui_jack_client_name_edit->setGeometry(160,ypos,size().width()-260,24);
+  gui_jack_client_name_label->setGeometry(75,ypos,145,20);
+  gui_jack_client_name_edit->setGeometry(225,ypos,size().width()-260,24);
   ypos+=26;
 
   gui_close_button->setGeometry(size().width()-80,size().height()-50,70,40);
@@ -322,7 +350,7 @@ void SourceDialog::sourceTypeChanged(int n)
   gui_file_name_label->hide();
   gui_file_name_edit->hide();
 
-  gui_asihpi_view->hide();
+  gui_asihpi_widget->hide();
 
   gui_jack_server_name_label->hide();
   gui_jack_server_name_edit->hide();
@@ -339,7 +367,7 @@ void SourceDialog::sourceTypeChanged(int n)
     break;
 
   case AudioDevice::AsiHpi:
-    gui_asihpi_view->show();
+    gui_asihpi_widget->show();
     break;
 
   case AudioDevice::File:
@@ -392,8 +420,9 @@ void SourceDialog::ChangeSize()
   QRect g=geometry();
 
   setGeometry(g.x(),g.y(),sizeHint().width(),sizeHint().height());
-
+  /*
   setMinimumHeight(sizeHint().height());
   setMaximumHeight(sizeHint().height());
   setMinimumSize(sizeHint());
+  */
 }

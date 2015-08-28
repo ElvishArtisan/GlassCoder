@@ -32,7 +32,7 @@
 
 #include "audiodevice.h"
 #include "combobox.h"
-#include "hpiinputlistview.h"
+#include "hpiwidget.h"
 #include "profile.h"
 
 class SourceDialog : public QDialog
@@ -74,7 +74,7 @@ class SourceDialog : public QDialog
   QLineEdit *gui_file_name_edit;
   QPushButton *gui_file_select_button;
 
-  HpiInputListView *gui_asihpi_view;
+  HpiWidget *gui_asihpi_widget;
 
   QLabel *gui_jack_server_name_label;
   QLineEdit *gui_jack_server_name_edit;

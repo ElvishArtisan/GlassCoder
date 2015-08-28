@@ -51,6 +51,9 @@ class HpiInputListView : public QListView
   unsigned selectedInputIndex() const;
   void setSelected(unsigned adapter,unsigned input);
 
+ signals:
+  void inputSelected(unsigned adapter,unsigned input);
+
  protected:
   void keyPressEvent(QKeyEvent *e);
   void mouseMoveEvent(QMouseEvent *e);

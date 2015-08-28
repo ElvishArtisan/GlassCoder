@@ -98,8 +98,8 @@ unsigned HpiInputListView::selectedAdapterIndex() const
   if(!currentIndex().isValid()) {
     return 0;
   }
-  return hpi_model->data(currentIndex(),HpiInputListViewModel::AdapterRole).
-    toUInt();
+  return hpi_model->data(currentIndex(),
+			 HpiInputListViewModel::AdapterRole).toUInt();
 }
 
 
@@ -108,8 +108,8 @@ unsigned HpiInputListView::selectedInputIndex() const
   if(!currentIndex().isValid()) {
     return 0;
   }
-  return hpi_model->data(currentIndex(),HpiInputListViewModel::InputRole).
-    toUInt();
+  return hpi_model->data(currentIndex(),
+			 HpiInputListViewModel::InputRole).toUInt();
 }
 
 

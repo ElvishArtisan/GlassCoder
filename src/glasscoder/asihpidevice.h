@@ -57,8 +57,17 @@ class AsiHpiDevice : public AudioDevice
   void MakeFormat(struct hpi_format *fmt,uint16_t hfmt);
   hpi_err_t HpiLog(hpi_err_t err,int priority=LOG_DEBUG) const;
   const char *hpi_strerror(hpi_err_t err) const;
+
+  //
+  // Arguments
+  //
   uint16_t asihpi_adapter_index;
   uint16_t asihpi_input_index;
+  uint16_t asihpi_input_source;
+  uint16_t asihpi_input_mode;
+  uint16_t asihpi_input_gain;
+  uint16_t asihpi_channel_mode;
+
   hpi_handle_t asihpi_input_stream;
   hpi_handle_t asihpi_mixer;
   hpi_handle_t asihpi_input_meter;
