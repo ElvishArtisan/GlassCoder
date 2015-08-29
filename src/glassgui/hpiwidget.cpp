@@ -265,10 +265,10 @@ QString HpiWidget::sourceNodeText(uint16_t src_node)
     ret=tr("Internal");
     break;
 
+    /*
   case HPI_SOURCENODE_BLULINK:
     ret=tr("BLU-Link input");
     break;
-    /*
   case HPI_SOURCENODE_AVB_INPUT:
     ret=tr("AVB input");
     break;

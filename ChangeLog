@@ -370,3 +370,6 @@
 	* Fixed bugs in 'src/glassgui/hpiwidget.cpp' and
 	'src/glassgui/hpiwidget.h' that broke the build when configured with
 	no ASIHPI support.
+2015-08-29 Fred Gleason <fredg@paravelsystems.com>
+	* Commented out the 'HPI_SOURCENODE_BLULINK' enumeration point
+	in 'src/glassgui/hpiwidget.cpp' to fix a build problem on RHEL6.
