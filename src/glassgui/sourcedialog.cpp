@@ -159,8 +159,10 @@ bool SourceDialog::makeArgs(QStringList *args,bool escape_args)
 	  QString().sprintf("%d",gui_asihpi_widget->inputGain()/100));
     args->push_back("--asihpi-input-source="+
 		    AsihpiSourceName(gui_asihpi_widget->inputSource()));
-    args->push_back("--asihpi-input-type="+
-		    AsihpiSourceName(gui_asihpi_widget->inputType()));
+    if(!AsihpiSourceName(gui_asihpi_widget->inputType()).isEmpty()) {
+      args->push_back("--asihpi-input-type="+
+		      AsihpiSourceName(gui_asihpi_widget->inputType()));
+    }
     switch(gui_asihpi_widget->channelMode()) {
     case HPI_CHANNEL_MODE_NORMAL:
       args->push_back("--asihpi-channel-mode=NORMAL");
