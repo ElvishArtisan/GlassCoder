@@ -139,7 +139,9 @@ void HpiWidget::setInputGain(int gain)
 {
 #ifdef ASIHPI
   hpi_volume_slider->setValue(gain);
-  volumeChangedData(gain);
+  if(hpi_volume_found) {
+    volumeChangedData(gain);
+  }
 #endif  // ASIHPI
 }
 
@@ -157,8 +159,9 @@ unsigned HpiWidget::channelMode() const
 void HpiWidget::setChannelMode(unsigned mode)
 {
 #ifdef ASIHPI
-  hpi_mode_box->setCurrentItemData(mode);
-  modeActivatedData(0);
+  if(hpi_mode_box->setCurrentItemData(mode)) {
+    modeActivatedData(0);
+  }
 #endif  // ASIHPI
 }
 
@@ -176,8 +179,10 @@ unsigned HpiWidget::inputSource() const
 void HpiWidget::setInputSource(unsigned src)
 {
 #ifdef ASIHPI
-  hpi_source_box->setCurrentItemData(ASIHPI_PACK_CONTROL(hpi_input_index,src));
-  sourceActivatedData(0);
+  if(hpi_source_box->
+     setCurrentItemData(ASIHPI_PACK_CONTROL(hpi_input_index,src))) {
+    sourceActivatedData(0);
+  }
 #endif  // ASIHPI
 }
 
@@ -195,8 +200,10 @@ unsigned HpiWidget::inputType() const
 void HpiWidget::setInputType(unsigned type)
 {
 #ifdef ASIHPI
-  hpi_type_box->setCurrentItemData(ASIHPI_PACK_CONTROL(hpi_input_index,type));
-  typeActivatedData(0);
+  if(hpi_type_box->
+     setCurrentItemData(ASIHPI_PACK_CONTROL(hpi_input_index,type))) {
+    typeActivatedData(0);
+  }
 #endif  // ASIHPI
 }
 
@@ -445,10 +452,10 @@ void HpiWidget::LoadMixer(unsigned adapter,unsigned input)
       // Input Source Multiplexer
       //
       hpi_source_box->clear();	
-      if((HpiLog(HPI_MixerGetControl(NULL,hpi_mixer_handle,0,0,
-				     HPI_DESTNODE_ISTREAM,input-1,
-				     HPI_CONTROL_MULTIPLEXER,
-				     &hpi_mult_handle)))==0) {
+      if(HPI_MixerGetControl(NULL,hpi_mixer_handle,0,0,
+			     HPI_DESTNODE_ISTREAM,input-1,
+			     HPI_CONTROL_MULTIPLEXER,
+			     &hpi_mult_handle)==0) {
 	hpi_mult_found=true;
 	index=0;
 	while(HPI_Multiplexer_QuerySource(NULL,hpi_mult_handle,index,&type,
@@ -467,11 +474,11 @@ void HpiWidget::LoadMixer(unsigned adapter,unsigned input)
       //
       // Input Type Multiplexer
       //
-      if((HpiLog(HPI_MixerGetControl(NULL,hpi_mixer_handle,
-				     HPI_SOURCENODE_LINEIN,input-1,
-				     HPI_DESTNODE_NONE,0,
-				     HPI_CONTROL_MULTIPLEXER,
-				     &hpi_type_handle)))==0) {
+      if(HPI_MixerGetControl(NULL,hpi_mixer_handle,
+			     HPI_SOURCENODE_LINEIN,input-1,
+			     HPI_DESTNODE_NONE,0,
+			     HPI_CONTROL_MULTIPLEXER,
+			     &hpi_type_handle)==0) {
 	hpi_type_found=true;
 	index=0;
 	while(HPI_Multiplexer_QuerySource(NULL,hpi_type_handle,index,&type,
@@ -490,10 +497,10 @@ void HpiWidget::LoadMixer(unsigned adapter,unsigned input)
       // Mode Control
       //
       hpi_mode_box->clear();
-      if((HpiLog(HPI_MixerGetControl(NULL,hpi_mixer_handle,0,0,
-				     HPI_DESTNODE_ISTREAM,input-1,
-				     HPI_CONTROL_CHANNEL_MODE,
-				     &hpi_mode_handle)))==0) {
+      if(HPI_MixerGetControl(NULL,hpi_mixer_handle,0,0,
+			     HPI_DESTNODE_ISTREAM,input-1,
+			     HPI_CONTROL_CHANNEL_MODE,
+			     &hpi_mode_handle)==0) {
 	hpi_mode_found=true;
 	index=0;
 	while(HPI_ChannelMode_QueryMode(NULL,hpi_mode_handle,index,&type)==0) {

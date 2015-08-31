@@ -373,7 +373,10 @@
 2015-08-29 Fred Gleason <fredg@paravelsystems.com>
 	* Commented out the 'HPI_SOURCENODE_BLULINK' enumeration point
 	in 'src/glassgui/hpiwidget.cpp' to fix a build problem on RHEL6.
-2015-08-30 Fred Gleason <fredg@paravelsystems.com>
+2015-08-31 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/glassgui/sourcedialog.cpp' that caused
 	connections to fail when using a ASI card with no input type
 	multiplexer control.
+2015-08-31 Fred Gleason <fredg@paravelsystems.com>
+	* Added code in 'src/glassgui/hpiwidget.cpp' to suppress spurious
+	HPI error messages.

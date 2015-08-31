@@ -41,14 +41,15 @@ QVariant ComboBox::currentItemData(int role)
 }
 
 
-void ComboBox::setCurrentItemData(unsigned val)
+bool ComboBox::setCurrentItemData(unsigned val)
 {
   for(int i=0;i<count();i++) {
     if(itemData(i).toUInt()==val) {
       setCurrentIndex(i);
-      return;
+      return true;
     }
   }
+  return false;
 }
 
 
