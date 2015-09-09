@@ -380,3 +380,5 @@
 2015-08-31 Fred Gleason <fredg@paravelsystems.com>
 	* Added code in 'src/glassgui/hpiwidget.cpp' to suppress spurious
 	HPI error messages.
+2015-09-09 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.9.2.
