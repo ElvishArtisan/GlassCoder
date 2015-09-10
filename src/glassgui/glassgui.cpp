@@ -54,6 +54,8 @@ MainWidget::MainWidget(QWidget *parent)
   //
   // Fonts
   //
+  QFont big_font("helvetica",20,QFont::Bold);
+  big_font.setPixelSize(20);
   QFont section_font("helvetica",16,QFont::Bold);
   section_font.setPixelSize(16);
   QFont label_font("helvetica",14,QFont::Bold);
@@ -70,11 +72,15 @@ MainWidget::MainWidget(QWidget *parent)
   //
   // Dialogs
   //
+  gui_server_dialog=new ServerDialog(this);
   gui_codec_dialog=new CodecDialog(this);
   gui_codeviewer_dialog=new CodeViewer(this);
   gui_source_dialog=new SourceDialog(this);
   connect(gui_source_dialog,SIGNAL(updated()),this,SLOT(checkArgs()));
   gui_stream_dialog=new StreamDialog(this);
+  connect(gui_server_dialog,SIGNAL(typeChanged(Connector::ServerType,bool)),
+	  this,SLOT(serverTypeChangedData(Connector::ServerType,bool)));
+  connect(gui_server_dialog,SIGNAL(settingsChanged()),this,SLOT(checkArgs()));
 
   //
   // Status Bar
@@ -99,7 +105,7 @@ MainWidget::MainWidget(QWidget *parent)
   gui_meter->setReference(800);
   gui_meter->setMode(SegMeter::Peak);
   gui_start_button=new QPushButton(tr("Start"),this);
-  gui_start_button->setFont(section_font);
+  gui_start_button->setFont(big_font);
   connect(gui_start_button,SIGNAL(clicked()),this,SLOT(startEncodingData()));
   gui_start_button->setDisabled(true);
   gui_code_button=new QPushButton(tr("Show")+"\n"+tr("Code"),this);
@@ -108,70 +114,30 @@ MainWidget::MainWidget(QWidget *parent)
   gui_code_button->setDisabled(true);
 
   //
-  // Server Section
+  // Server Settings
   //
-  gui_server_label=new QLabel(tr("Server Settings"),this);
-  gui_server_label->setFont(section_font);
-
-  //
-  // Server Type
-  //
-  gui_server_type_label=new QLabel(tr("Type")+":",this);
-  gui_server_type_label->setFont(label_font);
-  gui_server_type_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_server_type_box=new ComboBox(this);
-  for(int i=0;i<Connector::LastServer;i++) {
-    gui_server_type_box->
-      insertItem(i,Connector::serverTypeText((Connector::ServerType)i),i);
-  }
-  connect(gui_server_type_box,SIGNAL(activated(int)),
-	  this,SLOT(serverTypeChanged(int)));
-
-  //
-  // Server Location
-  //
-  gui_server_location_label=new QLabel(tr("Publish Point")+":",this);
-  gui_server_location_label->setFont(label_font);
-  gui_server_location_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_server_location_edit=new QLineEdit(this);
-  connect(gui_server_location_edit,SIGNAL(textEdited(const QString &)),
-	  this,SLOT(checkArgs(const QString &)));
-
-  //
-  // Server Username
-  //
-  gui_server_username_label=new QLabel(tr("User Name")+":",this);
-  gui_server_username_label->setFont(label_font);
-  gui_server_username_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_server_username_edit=new QLineEdit(this);
-
-  //
-  // Server Password
-  //
-  gui_server_password_label=new QLabel(tr("Password")+":",this);
-  gui_server_password_label->setFont(label_font);
-  gui_server_password_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_server_password_edit=new QLineEdit(this);
-  gui_server_password_edit->setEchoMode(QLineEdit::Password);
+  gui_server_button=new QPushButton(tr("Server\nSettings"),this);
+  gui_server_button->setFont(section_font);
+  connect(gui_server_button,SIGNAL(clicked()),this,SLOT(serverData()));
 
   //
   // Codec Settings
   //
-  gui_codec_button=new QPushButton(tr("Codec Settings"),this);
+  gui_codec_button=new QPushButton(tr("Codec\nSettings"),this);
   gui_codec_button->setFont(section_font);
   connect(gui_codec_button,SIGNAL(clicked()),this,SLOT(codecData()));
 
   //
   // Stream Settings
   //
-  gui_stream_button=new QPushButton(tr("Stream Settings"),this);
+  gui_stream_button=new QPushButton(tr("Stream\nSettings"),this);
   gui_stream_button->setFont(section_font);
   connect(gui_stream_button,SIGNAL(clicked()),this,SLOT(streamData()));
 
   //
   // Source Settings
   //
-  gui_source_button=new QPushButton(tr("Source Settings"),this);
+  gui_source_button=new QPushButton(tr("Source\nSettings"),this);
   gui_source_button->setFont(section_font);
   connect(gui_source_button,SIGNAL(clicked()),this,SLOT(sourceData()));
 
@@ -205,7 +171,7 @@ MainWidget::MainWidget(QWidget *parent)
 
 QSize MainWidget::sizeHint() const
 {
-  return QSize(560,290);
+  return QSize(500,175);
 }
 
 
@@ -236,42 +202,23 @@ void MainWidget::closeEvent(QCloseEvent *e)
 
 void MainWidget::resizeEvent(QResizeEvent *e)
 {
-  int ypos=0;
+  int ypos=10;
 
-  gui_meter->setGeometry(10,10,gui_meter->sizeHint().width(),
+  gui_meter->setGeometry(10,ypos,gui_meter->sizeHint().width(),
 			 gui_meter->sizeHint().height());
-  gui_start_button->setGeometry(gui_meter->sizeHint().width()+20,15,
-				2*(size().width()-gui_meter->sizeHint().width()-30)/3-20,gui_meter->sizeHint().height()-10);
-  gui_code_button->setGeometry(gui_meter->sizeHint().width()+10+2*(size().width()-gui_meter->sizeHint().width()-30)/3,15,
-			       (size().width()-gui_meter->sizeHint().width()-30)/3+10,gui_meter->sizeHint().height()-10);
-  ypos+=(gui_meter->sizeHint().height()+15);
+  gui_start_button->setGeometry(gui_meter->sizeHint().width()+20,ypos,
+				size().width()-gui_meter->sizeHint().width()-30,
+				gui_meter->sizeHint().height());
+  ypos+=(gui_meter->sizeHint().height()+10);
 
-  gui_server_label->setGeometry(10,ypos,size().width()-20,24);
-  ypos+=23;
+  int w_edge=(size().width()-60)/5;
+  gui_server_button->setGeometry(10,ypos,w_edge,55);
+  gui_codec_button->setGeometry(20+w_edge,ypos,w_edge,55);
+  gui_stream_button->setGeometry(30+2*w_edge,ypos,w_edge,55);
+  gui_source_button->setGeometry(40+3*w_edge,ypos,w_edge,55);
+  gui_code_button->setGeometry(50+4*w_edge,ypos,w_edge,55);
 
-  gui_server_type_label->setGeometry(10,ypos,110,24);
-  gui_server_type_box->setGeometry(125,ypos,250,24);
-  ypos+=26;
-
-  gui_server_location_label->setGeometry(10,ypos,145,24);
-  gui_server_location_edit->setGeometry(160,ypos,size().width()-170,24);
-  ypos+=26;
-
-  gui_server_username_label->setGeometry(10,ypos,145,24);
-  gui_server_username_edit->setGeometry(160,ypos,size().width()-170,24);
-  ypos+=26;
-
-  gui_server_password_label->setGeometry(10,ypos,145,24);
-  gui_server_password_edit->setGeometry(160,ypos,size().width()-170,24);
-  ypos+=35;
-
-  gui_codec_button->setGeometry(10,ypos,(size().width()-40)/3,35);
-  gui_stream_button->
-    setGeometry(size().width()/3+5,ypos,(size().width()-40)/3,35);
-  gui_source_button->
-    setGeometry(2*size().width()/3,ypos,(size().width()-40)/3,35);
-
-  ypos+=55;
+  ypos+=70;
 
   //
   // Status Bar
@@ -300,7 +247,7 @@ void MainWidget::startEncodingData()
 	  this,SLOT(processErrorData(QProcess::ProcessError)));
   connect(gui_process,SIGNAL(finished(int,QProcess::ExitStatus)),
 	  this,SLOT(processFinishedData(int,QProcess::ExitStatus)));
-  MakeServerArgs(&args);
+  gui_server_dialog->makeArgs(&args,false);
   gui_codec_dialog->makeArgs(&args);
   gui_stream_dialog->makeArgs(&args,false);
   gui_source_dialog->makeArgs(&args,false);
@@ -325,7 +272,7 @@ void MainWidget::showCodeData()
   QStringList args;
 
   args.push_back("glasscoder");
-  MakeServerArgs(&args);
+  gui_server_dialog->makeArgs(&args,true);
   gui_codec_dialog->makeArgs(&args);
   gui_stream_dialog->makeArgs(&args,true);
   gui_source_dialog->makeArgs(&args,true);
@@ -334,36 +281,22 @@ void MainWidget::showCodeData()
 }
 
 
-void MainWidget::serverTypeChanged(int n)
+void MainWidget::serverTypeChangedData(Connector::ServerType type,
+				       bool multirate)
 {
-  Connector::ServerType type=
-    (Connector::ServerType)gui_server_type_box->itemData(n).toInt();
-  bool multirate=false;
-
   gui_stream_dialog->setServerType(type);
-
-  switch(type) {
-  case Connector::HlsServer:
-    multirate=true;
-    break;
-
-  case Connector::Shoutcast1Server:
-    multirate=false;
-    break;
-
-  case Connector::Shoutcast2Server:
-    multirate=false;
-    break;
-
-  case Connector::Icecast2Server:
-    multirate=false;
-    break;
-
-  case Connector::LastServer:
-    break;
-  }
-
   gui_codec_dialog->setMultirate(multirate);
+}
+
+
+void MainWidget::serverData()
+{
+  if(gui_server_dialog->isVisible()) {
+    gui_server_dialog->hide();
+  }
+  else {
+    gui_server_dialog->show();
+  }
 }
 
 
@@ -435,7 +368,7 @@ void MainWidget::checkArgs()
   QStringList args;
   bool state;
 
-  state=MakeServerArgs(&args);
+  state=gui_server_dialog->makeArgs(&args,false);
   state=state&&gui_source_dialog->makeArgs(&args,false);
   gui_start_button->setEnabled(state);
   gui_code_button->setEnabled(state);
@@ -546,10 +479,6 @@ void MainWidget::messageTimeoutData()
 
 void MainWidget::LockControls(bool state)
 {
-  gui_server_type_box->setReadOnly(state);
-  gui_server_location_edit->setReadOnly(state);
-  gui_server_username_edit->setReadOnly(state);
-  gui_server_password_edit->setReadOnly(state);
 
   gui_codec_dialog->setControlsLocked(state);
 
@@ -620,32 +549,6 @@ void MainWidget::ProcessFeedback(const QString &str)
 }
 
 
-bool MainWidget::MakeServerArgs(QStringList *args)
-{
-  QUrl url(gui_server_location_edit->text());
-  if(!url.isValid()) {
-    return false;
-  }
-  Connector::ServerType type=(Connector::ServerType)
-    gui_server_type_box->itemData(gui_server_type_box->currentIndex()).toInt();
-
-  args->push_back("--server-type="+Connector::optionKeyword(type));
-  args->push_back("--server-hostname="+url.host());
-  if(url.port()>0) {
-    args->push_back("--server-port="+QString().sprintf("%d",url.port()));
-  }
-  args->push_back("--server-mountpoint="+url.path());
-  if(!gui_server_username_edit->text().isEmpty()) {
-    args->push_back("--server-username="+gui_server_username_edit->text());
-  }
-  if(!gui_server_password_edit->text().isEmpty()) {
-    args->push_back("--server-password="+gui_server_password_edit->text());
-  }
-
-  return true;
-}
-
-
 void MainWidget::ProcessError(int exit_code,QProcess::ExitStatus exit_status)
 {
   if(exit_status==QProcess::CrashExit) {
@@ -667,26 +570,13 @@ void MainWidget::LoadSettings()
   if(CheckSettingsDirectory()) {
     Profile *p=new Profile();
     p->setSource(gui_settings_dir->path()+"/"+GLASSGUI_SETTINGS_FILE);
-    gui_server_type_box->
-      setCurrentItemData(Connector::serverType(p->stringValue("GlassGui",
-							      "ServerType")));
-    serverTypeChanged(gui_server_type_box->currentIndex());
-    gui_server_location_edit->
-      setText(p->stringValue("GlassGui","ServerLocation"));
-    gui_server_username_edit->
-      setText(p->stringValue("GlassGui","ServerUsername"));
-    gui_server_password_edit->
-      setText(p->stringValue("GlassGui","ServerPassword"));
-
+    gui_server_dialog->load(p);
     gui_codec_dialog->load(p);
-
     gui_source_dialog->load(p);
-
     gui_stream_dialog->load(p);
-
     delete p;
   }
-  checkArgs("");
+  checkArgs();
 }
 
 
@@ -700,22 +590,10 @@ bool MainWidget::SaveSettings()
       return false;
     }
     fprintf(f,"[GlassGui]\n");
-    fprintf(f,"ServerType=%s\n",
-	    (const char *)Connector::optionKeyword((Connector::ServerType)
-		   gui_server_type_box->currentItemData().toInt()).toUtf8()); 
-    fprintf(f,"ServerLocation=%s\n",
-	    (const char *)gui_server_location_edit->text().toUtf8());
-    fprintf(f,"ServerUsername=%s\n",
-	    (const char *)gui_server_username_edit->text().toUtf8());
-    fprintf(f,"ServerPassword=%s\n",
-	    (const char *)gui_server_password_edit->text().toUtf8());
-
+    gui_server_dialog->save(f);
     gui_codec_dialog->save(f);
-
     gui_source_dialog->save(f);
-
     gui_stream_dialog->save(f);
-
     fclose(f);
     rename((basepath+".tmp").toUtf8(),basepath.toUtf8());
   }

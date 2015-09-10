@@ -36,6 +36,7 @@
 #include "codeviewer.h"
 #include "combobox.h"
 #include "hpiinputlistview.h"
+#include "serverdialog.h"
 #include "sourcedialog.h"
 #include "statuswidget.h"
 #include "stereometer.h"
@@ -61,7 +62,8 @@ class MainWidget : public QMainWindow
   void startEncodingData();
   void stopEncodingData();
   void showCodeData();
-  void serverTypeChanged(int n);
+  void serverTypeChangedData(Connector::ServerType type,bool multirate);
+  void serverData();
   void codecData();
   void streamData();
   void sourceData();
@@ -79,7 +81,6 @@ class MainWidget : public QMainWindow
  private:
   void LockControls(bool state);
   void ProcessFeedback(const QString &str);
-  bool MakeServerArgs(QStringList *args);
   void ProcessError(int exit_code,QProcess::ExitStatus exit_status);
   void LoadSettings();
   bool SaveSettings();
@@ -88,15 +89,8 @@ class MainWidget : public QMainWindow
   QPushButton *gui_start_button;
   QPushButton *gui_code_button;
 
-  QLabel *gui_server_label;
-  QLabel *gui_server_type_label;
-  ComboBox *gui_server_type_box;
-  QLabel *gui_server_location_label;
-  QLineEdit *gui_server_location_edit;
-  QLabel *gui_server_username_label;
-  QLineEdit *gui_server_username_edit;
-  QLabel *gui_server_password_label;
-  QLineEdit *gui_server_password_edit;
+  ServerDialog *gui_server_dialog;
+  QPushButton *gui_server_button;
 
   CodecDialog *gui_codec_dialog;
   QPushButton *gui_codec_button;

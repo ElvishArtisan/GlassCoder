@@ -38,6 +38,7 @@ dist_glassgui_SOURCES = codecdialog.cpp codecdialog.h\
                         hpiwidget.cpp hpiwidget.h\
                         profile.cpp profile.h\
                         segmeter.cpp segmeter.h\
+                        serverdialog.cpp serverdialog.h\
                         sourcedialog.cpp sourcedialog.h\
                         statuswidget.cpp statuswidget.h\
                         stereometer.cpp stereometer.h\
@@ -60,6 +61,7 @@ nodist_glassgui_SOURCES = asihpi.cpp asihpi.h\
                           moc_hpiinputlistview.cpp\
                           moc_hpiwidget.cpp\
                           moc_segmeter.cpp\
+                          moc_serverdialog.cpp\
                           moc_sourcedialog.cpp\
                           moc_statuswidget.cpp\
                           moc_stereometer.cpp\

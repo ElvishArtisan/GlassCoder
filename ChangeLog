@@ -386,3 +386,6 @@
 	* Implemented --server-script-up and --server-script-down switches
 	in 'src/glasscoder/glasscoder.cpp', 'src/glasscoder/glasscoder.h',
 	'src/common/connector.cpp' and 'src/common/connector.h'.
+2015-09-10 Fred Gleason <fredg@paravelsystems.com>
+	* Added a Server Settings dialog in 'src/glassgui/serverdialog.cpp'
+	and 'src/glassgui/serverdialog.h'.
