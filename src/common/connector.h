@@ -29,6 +29,7 @@
 #include <QString>
 #include <QTcpSocket>
 #include <QTimer>
+#include <QProcess>
 
 #define RINGBUFFER_SERVICE_INTERVAL 50
 
@@ -79,7 +80,11 @@ class Connector : public QObject
   void setFormatIdentifier(const QString &str);
   virtual void connectToServer(const QString &hostname,uint16_t port);
   virtual int64_t writeData(int frames,const unsigned char *data,int64_t len);
-  virtual void stop();
+  void stop();
+  QString scriptUp() const;
+  void setScriptUp(const QString &cmd);
+  QString scriptDown() const;
+  void setScriptDown(const QString &cmd);
   static QString serverTypeText(Connector::ServerType);
   static QString optionKeyword(Connector::ServerType type);
   static Connector::ServerType serverType(const QString &key);
@@ -103,8 +108,14 @@ class Connector : public QObject
   void dataTimeoutData();
   void watchdogTimeoutData();
   void stopTimeoutData();
+  void scriptErrorData(QProcess::ProcessError err);
+  void scriptUpFinishedData(int exit_code,QProcess::ExitStatus exit_status);
+  void scriptUpCollectGarbageData();
+  void scriptDownFinishedData(int exit_code,QProcess::ExitStatus exit_status);
+  void scriptDownCollectGarbageData();
 
  protected:
+  virtual void startStopping();
   void setConnected(bool state);
   void setError(QAbstractSocket::SocketError err);
   virtual void connectToHostConnector(const QString &hostname,uint16_t port)=0;
@@ -140,6 +151,14 @@ class Connector : public QObject
   QString conn_host_hostname;
   uint16_t conn_host_port;
   QTimer *conn_stop_timer;
+  QString conn_script_up;
+  QProcess *conn_script_up_process;
+  QStringList conn_script_up_args;
+  QTimer *conn_script_up_garbage_timer;
+  QString conn_script_down;
+  QProcess *conn_script_down_process;
+  QStringList conn_script_down_args;
+  QTimer *conn_script_down_garbage_timer;
 };
 
 

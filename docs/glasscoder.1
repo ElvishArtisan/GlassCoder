@@ -161,6 +161,16 @@ The port number to use when connecting to the server.  Default value is
 \fI80\fP.
 
 .TP
+.B --server-script-down=<\fIcmd\fP>
+Run the command <\fIcmd\fP> when the connection enters the
+\fBdisconnected\fP state.
+
+.TP
+.B --server-script-up=<\fIcmd\fP>
+Run the command <\fIcmd\fP> when the connection enters the
+\fBconnected\fP state.
+
+.TP
 .B --server-type=<\fItype\fP>
 The type of streaming server to use.  Valid values for <\fItype\fP> are:
 .RS

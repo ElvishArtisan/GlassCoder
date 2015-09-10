@@ -87,7 +87,7 @@ Connector::ServerType HlsConnector::serverType() const
 }
 
 
-void HlsConnector::stop()
+void HlsConnector::startStopping()
 {
   //
   // Clean up the publishing point

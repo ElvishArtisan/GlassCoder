@@ -45,6 +45,8 @@ Connector::Connector(QObject *parent)
   conn_host_port=0;
   conn_connected=false;
   conn_watchdog_active=false;
+  conn_script_up_process=NULL;
+  conn_script_down_process=NULL;
 
   conn_data_timer=new QTimer(this);
   connect(conn_data_timer,SIGNAL(timeout()),this,SLOT(dataTimeoutData()));
@@ -58,6 +60,16 @@ Connector::Connector(QObject *parent)
   conn_stop_timer=new QTimer(this);
   conn_stop_timer->setSingleShot(true);
   connect(conn_stop_timer,SIGNAL(timeout()),this,SLOT(stopTimeoutData()));
+
+  conn_script_down_garbage_timer=new QTimer(this);
+  conn_script_down_garbage_timer->setSingleShot(true);
+  connect(conn_script_down_garbage_timer,SIGNAL(timeout()),
+	  this,SLOT(scriptDownCollectGarbageData()));
+
+  conn_script_up_garbage_timer=new QTimer(this);
+  conn_script_up_garbage_timer->setSingleShot(true);
+  connect(conn_script_up_garbage_timer,SIGNAL(timeout()),
+	  this,SLOT(scriptUpCollectGarbageData()));
 }
 
 
@@ -307,7 +319,32 @@ int64_t Connector::writeData(int frames,const unsigned char *data,int64_t len)
 
 void Connector::stop()
 {
-  conn_stop_timer->start(0);
+  startStopping();
+  setConnected(false);
+}
+
+
+QString Connector::scriptUp() const
+{
+  return conn_script_up;
+}
+
+
+void Connector::setScriptUp(const QString &cmd)
+{
+  conn_script_up=cmd;
+}
+
+
+QString Connector::scriptDown() const
+{
+  return conn_script_down;
+}
+
+
+void Connector::setScriptDown(const QString &cmd)
+{
+  conn_script_down=cmd;
 }
 
 
@@ -429,8 +466,105 @@ void Connector::stopTimeoutData()
 }
 
 
+void Connector::scriptErrorData(QProcess::ProcessError err)
+{
+  Log(LOG_ERR,
+      QString().sprintf("curl(1) process error: %d, cmd: \"curl %s\"",err,
+			(const char *)conn_script_up_args.join(" ").toUtf8()));
+}
+
+
+void Connector::scriptUpFinishedData(int exit_code,
+				     QProcess::ExitStatus exit_status)
+{
+  conn_script_up_garbage_timer->start(0);
+}
+
+
+void Connector::scriptUpCollectGarbageData()
+{
+  delete conn_script_up_process;
+  conn_script_up_process=NULL;
+}
+
+
+void Connector::scriptDownFinishedData(int exit_code,
+				       QProcess::ExitStatus exit_status)
+{
+  conn_script_down_garbage_timer->start(0);
+}
+
+
+void Connector::scriptDownCollectGarbageData()
+{
+  delete conn_script_down_process;
+  conn_script_down_process=NULL;
+}
+
+
+void Connector::startStopping()
+{
+  conn_stop_timer->start(0);
+}
+
+
 void Connector::setConnected(bool state)
 {
+  QStringList args;
+  QString cmd;
+
+  if(conn_connected!=state) {
+    if(state) {
+      if(conn_script_up_process==NULL) {
+	if(!conn_script_up.isEmpty()) {
+	  args=conn_script_up.split(" ");
+	  cmd=args[0];
+	  args.erase(args.begin());
+	  conn_script_up_process=new QProcess(this);
+	  connect(conn_script_up_process,SIGNAL(error(QProcess::ProcessError)),
+		  this,SLOT(scriptErrorData(QProcess::ProcessError)));
+	  connect(conn_script_up_process,
+		  SIGNAL(finished(int,QProcess::ExitStatus)),
+		  this,SLOT(scriptUpFinishedData(int,QProcess::ExitStatus)));
+	  conn_script_up_process->start(cmd,args);
+	}
+      }
+      else {
+	if(global_log_verbose) {
+	  Log(LOG_WARNING,"curl(1) script-up command overrun, cmd: \""+
+	      args.join(" ")+"\"");
+	}
+	else {
+	  Log(LOG_WARNING,"curl(1) command overrun");
+	}
+      }
+    }
+    else {
+      if(conn_script_down_process==NULL) {
+	if(!conn_script_down.isEmpty()) {
+	  args=conn_script_down.split(" ");
+	  cmd=args[0];
+	  args.erase(args.begin());
+	  conn_script_down_process=new QProcess(this);
+	  connect(conn_script_down_process,SIGNAL(error(QProcess::ProcessError)),
+		  this,SLOT(scriptErrorData(QProcess::ProcessError)));
+	  connect(conn_script_down_process,
+		  SIGNAL(finished(int,QProcess::ExitStatus)),
+		  this,SLOT(scriptDownFinishedData(int,QProcess::ExitStatus)));
+	  conn_script_down_process->start(cmd,args);
+	}
+      }
+      else {
+	if(global_log_verbose) {
+	  Log(LOG_WARNING,"curl(1) script-down command overrun, cmd: \""+
+	      args.join(" ")+"\"");
+	}
+	else {
+	  Log(LOG_WARNING,"curl(1) command overrun");
+	}
+      }
+    }
+  }
   if(state&&conn_watchdog_active) {
     if(conn_server_mountpoint.isEmpty()) {
       Log(LOG_WARNING,

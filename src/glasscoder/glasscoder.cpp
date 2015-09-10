@@ -62,6 +62,8 @@ MainObject::MainObject(QObject *parent)
   server_mountpoint="";
   server_password="";
   server_port=DEFAULT_SERVER_PORT;
+  server_script_up="";
+  server_script_down="";
   server_username=DEFAULT_SERVER_USERNAME;
   stream_genre="";
   stream_name="";
@@ -72,6 +74,7 @@ MainObject::MainObject(QObject *parent)
   list_codecs=false;
   list_devices=false;
   meter_data=false;
+
   unsigned num;
 
   CmdSwitch *cmd=
@@ -211,6 +214,14 @@ MainObject::MainObject(QObject *parent)
 	Log(LOG_ERR,"invalid --shout-server-port value");
 	exit(256);
       }
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--server-script-down") {
+      server_script_down=cmd->value(i);
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--server-script-up") {
+      server_script_up=cmd->value(i);
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--server-type") {
@@ -532,6 +543,8 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
   }
   conn->setAudioChannels(audio_channels);
   conn->setAudioSamplerate(audio_samplerate);
+  conn->setScriptUp(server_script_up);
+  conn->setScriptDown(server_script_down);
   conn->setStreamDescription(stream_description);
   conn->setStreamGenre(stream_genre);
   conn->setStreamName(stream_name);

@@ -72,6 +72,8 @@ class MainObject : public QObject
   QString server_mountpoint;
   QString server_password;
   uint16_t server_port;
+  QString server_script_up;
+  QString server_script_down;
   QString server_username;
   QStringList device_keys;
   QStringList device_values;
