@@ -38,7 +38,7 @@ CodeViewer::CodeViewer(QWidget *parent)
 
 QSize CodeViewer::sizeHint() const
 {
-  return QSize(400,300);
+  return QSize(600,400);
 }
 
 
