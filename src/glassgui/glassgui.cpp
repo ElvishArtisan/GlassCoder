@@ -42,13 +42,28 @@
 MainWidget::MainWidget(QWidget *parent)
   : QMainWindow(parent)
 {
+  instance_name="";
+
   CmdSwitch *cmd=
     new CmdSwitch(qApp->argc(),qApp->argv(),"glassgui",GLASSGUI_USAGE);
   for(unsigned i=0;i<cmd->keys();i++) {
+    if(cmd->key(i)=="--instance-name") {
+      instance_name=cmd->value(i);
+      cmd->setProcessed(i,true);
+    }
+    if(!cmd->processed(i)) {
+      QMessageBox::critical(this,"GlassGui - "+tr("Error"),
+			    tr("Unknown argument")+" \""+cmd->key(i)+"\".");
+      exit(256);
+    }
   }
-
   setWindowIcon(QPixmap(glasscoder_16x16_xpm));
-  setWindowTitle(QString("GlassGui v")+VERSION);
+  if(instance_name.isEmpty()) {
+    setWindowTitle(QString("GlassGui v")+VERSION);
+  }
+  else {
+    setWindowTitle(QString("GlassGui v")+VERSION+" - "+instance_name);
+  }
   gui_settings_dir=NULL;
 
   //
@@ -569,7 +584,7 @@ void MainWidget::LoadSettings()
 {
   if(CheckSettingsDirectory()) {
     Profile *p=new Profile();
-    p->setSource(gui_settings_dir->path()+"/"+GLASSGUI_SETTINGS_FILE);
+    p->setSource(GetSettingsFilename());
     gui_server_dialog->load(p);
     gui_codec_dialog->load(p);
     gui_source_dialog->load(p);
@@ -585,7 +600,7 @@ bool MainWidget::SaveSettings()
   FILE *f;
 
   if(CheckSettingsDirectory()) {
-    QString basepath=gui_settings_dir->path()+"/"+GLASSGUI_SETTINGS_FILE;
+    QString basepath=GetSettingsFilename();
     if((f=fopen((basepath+".tmp").toUtf8(),"w"))==NULL) {
       return false;
     }
@@ -618,6 +633,22 @@ bool MainWidget::CheckSettingsDirectory()
     }
   }
   return true;
+}
+
+
+QString MainWidget::GetSettingsFilename()
+{
+  if(!CheckSettingsDirectory()) {
+    QMessageBox::critical(this,"GlassGui - "+tr("Error"),
+			  tr("Unable to create settings directory!"));
+    exit(256);
+  }
+  QString ret=gui_settings_dir->path()+"/"+GLASSGUI_SETTINGS_FILE;
+  if(!instance_name.isEmpty()) {
+    ret+="-"+instance_name;
+  }
+
+  return ret;
 }
 
 

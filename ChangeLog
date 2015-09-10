@@ -394,5 +394,8 @@
 	Server Settings dialog in 'src/glassgui/serverdialog.cpp'
 	and 'src/glassgui/serverdialog.h'.
 2015-09-10 Fred Gleason <fredg@paravelsystems.com>
-	* Increased the size of the Vview Code dialog in
+	* Increased the size of the View Code dialog in
 	'src/glassgui/codeviewer.cpp'.
+2015-09-10 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented an '--instance-name' switch in 'src/glassgui/glassgui.cpp'
+	and 'src/glassgui/glassgui.h'.

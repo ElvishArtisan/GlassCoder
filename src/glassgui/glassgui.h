@@ -42,7 +42,7 @@
 #include "stereometer.h"
 #include "streamdialog.h"
 
-#define GLASSGUI_USAGE ""
+#define GLASSGUI_USAGE "--instance-name=<name>\n"
 #define GLASSGUI_SETTINGS_DIR ".glassgui"
 #define GLASSGUI_SETTINGS_FILE "glassguirc"
 #define GLASSGUI_TERMINATE_TIMEOUT 5000
@@ -79,12 +79,14 @@ class MainWidget : public QMainWindow
   void messageTimeoutData();
 
  private:
+  QString instance_name;
   void LockControls(bool state);
   void ProcessFeedback(const QString &str);
   void ProcessError(int exit_code,QProcess::ExitStatus exit_status);
   void LoadSettings();
   bool SaveSettings();
   bool CheckSettingsDirectory();
+  QString GetSettingsFilename();
   StereoMeter *gui_meter;
   QPushButton *gui_start_button;
   QPushButton *gui_code_button;
