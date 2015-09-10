@@ -75,6 +75,22 @@ ServerDialog::ServerDialog(QWidget *parent)
   srv_server_password_edit->setEchoMode(QLineEdit::Password);
 
   //
+  // Server Script Up
+  //
+  srv_server_script_up_label=new QLabel(tr("CONNECTED Script")+":",this);
+  srv_server_script_up_label->setFont(label_font);
+  srv_server_script_up_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  srv_server_script_up_edit=new QLineEdit(this);
+
+  //
+  // Server Script Down
+  //
+  srv_server_script_down_label=new QLabel(tr("DISCONNECTED Script")+":",this);
+  srv_server_script_down_label->setFont(label_font);
+  srv_server_script_down_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  srv_server_script_down_edit=new QLineEdit(this);
+
+  //
   // Close Button
   //
   srv_close_button=new QPushButton(tr("Close"),this);
@@ -89,7 +105,7 @@ ServerDialog::ServerDialog(QWidget *parent)
 
 QSize ServerDialog::sizeHint() const
 {
-  return QSize(400,250);
+  return QSize(600,230);
 }
 
 
@@ -98,6 +114,10 @@ bool ServerDialog::makeArgs(QStringList *args,bool escape_args)
   QUrl url(srv_server_location_edit->text());
   if(!url.isValid()) {
     return false;
+  }
+  QString esc="";
+  if(escape_args) {
+    esc="\"";
   }
   Connector::ServerType type=(Connector::ServerType)
     srv_server_type_box->itemData(srv_server_type_box->currentIndex()).toInt();
@@ -113,6 +133,14 @@ bool ServerDialog::makeArgs(QStringList *args,bool escape_args)
   }
   if(!srv_server_password_edit->text().isEmpty()) {
     args->push_back("--server-password="+srv_server_password_edit->text());
+  }
+  if(!srv_server_script_down_edit->text().isEmpty()) {
+    args->push_back("--server-script-down="+
+		    esc+srv_server_script_down_edit->text()+esc);
+  }
+  if(!srv_server_script_up_edit->text().isEmpty()) {
+    args->push_back("--server-script-up="+
+		    esc+srv_server_script_up_edit->text()+esc);
   }
 
   return true;
@@ -140,6 +168,10 @@ void ServerDialog::load(Profile *p)
     setText(p->stringValue("GlassGui","ServerUsername"));
   srv_server_password_edit->
     setText(p->stringValue("GlassGui","ServerPassword"));
+  srv_server_script_down_edit->
+    setText(p->stringValue("GlassGui","ServerScriptDown"));
+  srv_server_script_up_edit->
+    setText(p->stringValue("GlassGui","ServerScriptUp"));
 }
 
 
@@ -154,6 +186,10 @@ void ServerDialog::save(FILE *f)
 	  (const char *)srv_server_username_edit->text().toUtf8());
   fprintf(f,"ServerPassword=%s\n",
 	  (const char *)srv_server_password_edit->text().toUtf8());
+  fprintf(f,"ServerScriptDown=%s\n",
+	  (const char *)srv_server_script_down_edit->text().toUtf8());
+  fprintf(f,"ServerScriptUp=%s\n",
+	  (const char *)srv_server_script_up_edit->text().toUtf8());
 }
 
 
@@ -165,16 +201,24 @@ void ServerDialog::resizeEvent(QResizeEvent *e)
   srv_server_type_box->setGeometry(125,ypos,250,24);
   ypos+=26;
 
-  srv_server_location_label->setGeometry(10,ypos,145,24);
-  srv_server_location_edit->setGeometry(160,ypos,size().width()-170,24);
+  srv_server_location_label->setGeometry(10,ypos,180,24);
+  srv_server_location_edit->setGeometry(195,ypos,size().width()-205,24);
   ypos+=26;
 
-  srv_server_username_label->setGeometry(10,ypos,145,24);
-  srv_server_username_edit->setGeometry(160,ypos,size().width()-170,24);
+  srv_server_username_label->setGeometry(10,ypos,180,24);
+  srv_server_username_edit->setGeometry(195,ypos,size().width()-205,24);
   ypos+=26;
 
-  srv_server_password_label->setGeometry(10,ypos,145,24);
-  srv_server_password_edit->setGeometry(160,ypos,size().width()-170,24);
+  srv_server_password_label->setGeometry(10,ypos,180,24);
+  srv_server_password_edit->setGeometry(195,ypos,size().width()-205,24);
+  ypos+=26;
+
+  srv_server_script_up_label->setGeometry(10,ypos,180,24);
+  srv_server_script_up_edit->setGeometry(195,ypos,size().width()-205,24);
+  ypos+=26;
+
+  srv_server_script_down_label->setGeometry(10,ypos,180,24);
+  srv_server_script_down_edit->setGeometry(195,ypos,size().width()-205,24);
   ypos+=35;
 
   srv_close_button->setGeometry(size().width()-80,size().height()-50,70,40);

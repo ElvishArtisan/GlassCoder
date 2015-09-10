@@ -66,6 +66,10 @@ class ServerDialog : public QDialog
   QLineEdit *srv_server_username_edit;
   QLabel *srv_server_password_label;
   QLineEdit *srv_server_password_edit;
+  QLabel *srv_server_script_up_label;
+  QLineEdit *srv_server_script_up_edit;
+  QLabel *srv_server_script_down_label;
+  QLineEdit *srv_server_script_down_edit;
 
   QPushButton *srv_close_button;
 };
