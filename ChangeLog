@@ -402,3 +402,8 @@
 2015-09-11 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/glasscoder/alsadevice.cpp' that broke S32_LE
 	format support for ALSA.
+2015-09-11 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'MessageWidget' widget in 'src/glassgui/messagewidget.cpp'
+	and 'src/glassgui/messagewidget.h'.
+	* Added logging statements for the ALSA sample format code in
+	'src/glasscoder/alsadevice.cpp'.

@@ -100,13 +100,10 @@ MainWidget::MainWidget(QWidget *parent)
   //
   // Status Bar
   //
-  gui_message_label=new QLabel(this);
-  gui_message_label->setFont(message_font);
-  gui_message_label->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
-  gui_message_label->setFrameStyle(QFrame::Box|QFrame::Raised);
-  gui_message_timer=new QTimer(this);
-  gui_message_timer->setSingleShot(true);
-  connect(gui_message_timer,SIGNAL(timeout()),this,SLOT(messageTimeoutData()));
+  gui_message_widget=new MessageWidget(this);
+  gui_message_widget->setFont(message_font);
+  gui_message_widget->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+  gui_message_widget->setFrameStyle(QFrame::Box|QFrame::Raised);
 
   gui_status_frame_widget=new QLabel(this);
   gui_status_frame_widget->setFrameStyle(QFrame::Box|QFrame::Raised);
@@ -238,7 +235,7 @@ void MainWidget::resizeEvent(QResizeEvent *e)
   //
   // Status Bar
   //
-  gui_message_label->setGeometry(0,size().height()-30,size().width()-140,30);
+  gui_message_widget->setGeometry(0,size().height()-30,size().width()-140,30);
   gui_status_frame_widget->
     setGeometry(size().width()-140,size().height()-30,140,30);
   gui_status_widget->setGeometry(size().width()-143,size().height()-27,134,24);
@@ -486,12 +483,6 @@ void MainWidget::processKillData()
 }
 
 
-void MainWidget::messageTimeoutData()
-{
-  gui_message_label->setText("");
-}
-
-
 void MainWidget::LockControls(bool state)
 {
 
@@ -518,9 +509,9 @@ void MainWidget::ProcessFeedback(const QString &str)
     status=f0[1].toInt(&ok);
     if(ok) {
       if(!gui_status_widget->setStatus(status)) {
-	gui_message_label->setText(tr("Unknown status code")+
-				   QString().sprintf(" \"%d\" ",status)+
-				   tr("received."));
+	gui_message_widget->addMessage(tr("Unknown status code")+
+				       QString().sprintf(" \"%d\" ",status)+
+				       tr("received."));
       }
     }
   }
@@ -542,8 +533,7 @@ void MainWidget::ProcessFeedback(const QString &str)
     case LOG_WARNING:
     case LOG_NOTICE:
     case LOG_INFO:
-      gui_message_label->setText(msg);
-      gui_message_timer->start(10000);
+      gui_message_widget->addMessage(msg);
       break;
     }
     return;

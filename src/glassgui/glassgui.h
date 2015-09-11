@@ -36,6 +36,7 @@
 #include "codeviewer.h"
 #include "combobox.h"
 #include "hpiinputlistview.h"
+#include "messagewidget.h"
 #include "serverdialog.h"
 #include "sourcedialog.h"
 #include "statuswidget.h"
@@ -76,7 +77,6 @@ class MainWidget : public QMainWindow
   void processErrorData(QProcess::ProcessError err);
   void processCollectGarbageData();
   void processKillData();
-  void messageTimeoutData();
 
  private:
   QString instance_name;
@@ -110,8 +110,8 @@ class MainWidget : public QMainWindow
   QString gui_process_accum;
 
   QDir *gui_settings_dir;
-  QLabel *gui_message_label;
-  QTimer *gui_message_timer;
+
+  MessageWidget *gui_message_widget;
   StatusWidget *gui_status_widget;
   QLabel *gui_status_frame_widget;
 };
