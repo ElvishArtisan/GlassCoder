@@ -399,3 +399,6 @@
 2015-09-10 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented an '--instance-name' switch in 'src/glassgui/glassgui.cpp'
 	and 'src/glassgui/glassgui.h'.
+2015-09-11 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/glasscoder/alsadevice.cpp' that broke S32_LE
+	format support for ALSA.
