@@ -407,3 +407,6 @@
 	and 'src/glassgui/messagewidget.h'.
 	* Added logging statements for the ALSA sample format code in
 	'src/glasscoder/alsadevice.cpp'.
+2015-09-14 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/glassgui/glasgui.cpp' that would throw a
+	segfault when processing an error message.

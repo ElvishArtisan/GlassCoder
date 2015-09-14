@@ -527,7 +527,7 @@ void MainWidget::ProcessFeedback(const QString &str)
     case LOG_ALERT:
     case LOG_CRIT:
     case LOG_ERR:
-      QMessageBox::critical(this,"GlassGui - "+tr("Error"),msg);
+      gui_message_widget->addMessage(msg);
       break;
 
     case LOG_WARNING:
