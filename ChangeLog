@@ -410,3 +410,5 @@
 2015-09-14 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/glassgui/glasgui.cpp' that would throw a
 	segfault when processing an error message.
+2015-09-14 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.9.3.
