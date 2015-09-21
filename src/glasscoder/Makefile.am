@@ -39,6 +39,7 @@ dist_glasscoder_SOURCES = aaccodec.cpp aaccodec.h\
                           codecfactory.cpp codecfactory.h\
                           connector.cpp connector.h\
                           connectorfactory.cpp connectorfactory.h\
+                          fileconveyor.cpp fileconveyor.h\
                           filedevice.cpp filedevice.h\
                           glasscoder.cpp glasscoder.h\
                           heaaccodec.cpp heaaccodec.h\
@@ -63,6 +64,7 @@ nodist_glasscoder_SOURCES = asihpi.cpp asihpi.h\
                             moc_audiodevice.cpp\
                             moc_codec.cpp\
                             moc_connector.cpp\
+                            moc_fileconveyor.cpp\
                             moc_filedevice.cpp\
                             moc_glasscoder.cpp\
                             moc_heaaccodec.cpp\

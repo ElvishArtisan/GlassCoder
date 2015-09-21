@@ -34,9 +34,6 @@ HlsConnector::HlsConnector(bool is_top,QObject *parent)
   hls_sequence_back=0;
   hls_media_frames=0;
   hls_total_media_frames=0;
-  hls_put_process=NULL;
-  hls_delete_process=NULL;
-  hls_stop_process=NULL;
 
   //
   // Create working directory
@@ -58,24 +55,23 @@ HlsConnector::HlsConnector(bool is_top,QObject *parent)
 				 (const char *)hls_temp_dir->path().toUtf8()));
 
   //
-  // Garbage Collector Timers
+  // File Conveyor
   //
-  hls_put_garbage_timer=new QTimer(this);
-  hls_put_garbage_timer->setSingleShot(true);
-  connect(hls_put_garbage_timer,SIGNAL(timeout()),
-	  this,SLOT(putCollectGarbageData()));
-
-  hls_delete_garbage_timer=new QTimer(this);
-  hls_delete_garbage_timer->setSingleShot(true);
-  connect(hls_delete_garbage_timer,SIGNAL(timeout()),
-	  this,SLOT(deleteCollectGarbageData()));
+  hls_conveyor=new FileConveyor(this);
+  connect(hls_conveyor,SIGNAL(eventFinished(const ConveyorEvent &,int,int,
+					    const QStringList &)),
+	  this,SLOT(conveyorEventFinished(const ConveyorEvent &,int,int,
+					  const QStringList &)));
+  connect(hls_conveyor,
+	  SIGNAL(error(const ConveyorEvent &,QProcess::ProcessError,
+		       const QStringList &)),
+	  this,SLOT(conveyorError(const ConveyorEvent &,QProcess::ProcessError,
+				  const QStringList &)));
 }
 
 
 HlsConnector::~HlsConnector()
 {
-  delete hls_delete_garbage_timer;
-  delete hls_put_garbage_timer;
   rmdir(hls_temp_dir->path().toAscii());
   delete hls_temp_dir;
 }
@@ -92,51 +88,44 @@ void HlsConnector::startStopping()
   //
   // Clean up the publishing point
   //
-  AddCurlAuthArgs(&hls_stop_args);
 
   //
-  // The Playlist File
+  // The playlist file
   //
-  hls_stop_args.push_back("-X");
-  hls_stop_args.push_back("DELETE");
-  hls_stop_args.push_back("http://"+
-			  hostHostname()+QString().sprintf(":%u",hostPort())+
-			  hls_put_directory+"/"+hls_put_basename);
+  hls_conveyor->push("","http://"+
+		     hostHostname()+QString().sprintf(":%u",hostPort())+
+		     hls_put_directory+"/"+hls_put_basename,
+		     serverUsername(),serverPassword(),
+		     ConveyorEvent::DeleteMethod);
 
+  //
+  // Current Media Segments
+  //
   if(!hls_is_top) {
-    //
-    // Current Media Segments
-    //
     for(int i=hls_sequence_head;i<=hls_sequence_back;i++) {
-      hls_stop_args.push_back("-X");
-      hls_stop_args.push_back("DELETE");
-      hls_stop_args.push_back("http://"+hostHostname()+hls_put_directory+"/"+
-			      GetMediaFilename(i));
-    }
-
-    //
-    // Expired Media Segments
-    //
-    std::map<int,uint64_t>::iterator ci=hls_media_killtimes.begin();
-    while(ci!=hls_media_killtimes.end()) {
-      hls_stop_args.push_back("-X");
-      hls_stop_args.push_back("DELETE");
-      hls_stop_args.
-	push_back("http://"+hostHostname()+hls_put_directory+"/"+
-		  GetMediaFilename(ci->first));
-      hls_media_killtimes.erase(ci++);
+      hls_conveyor->push("","http://"+hostHostname()+hls_put_directory+"/"+
+			 GetMediaFilename(i),serverUsername(),serverPassword(),
+			 ConveyorEvent::DeleteMethod);
     }
   }
 
   //
-  // Run 'em
+  // Expired Media Segments
   //
-  hls_stop_process=new QProcess(this);
-  connect(hls_stop_process,SIGNAL(error(QProcess::ProcessError)),
-	  this,SLOT(stopErrorData(QProcess::ProcessError)));
-  connect(hls_stop_process,SIGNAL(finished(int,QProcess::ExitStatus)),
-	  this,SLOT(stopFinishedData(int,QProcess::ExitStatus)));
-  hls_stop_process->start("curl",hls_stop_args);
+  if(!hls_is_top) {
+    std::map<int,uint64_t>::iterator ci=hls_media_killtimes.begin();
+    while(ci!=hls_media_killtimes.end()) {
+      hls_conveyor->push("","http://"+hostHostname()+hls_put_directory+"/"+
+			 GetMediaFilename(ci->first),
+			 serverUsername(),serverPassword(),
+			 ConveyorEvent::DeleteMethod);
+    }
+  }
+
+  //
+  // The "nomethod" event (so we know when everthing's been cleaned up)
+  //
+  hls_conveyor->push("","","","",ConveyorEvent::NoMethod);
 }
 
 
@@ -164,33 +153,10 @@ void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
 
   if(hls_is_top) {
     WriteTopPlaylistFile();
-    if(hls_put_process==NULL) {
-      hls_put_args.clear();
-      AddCurlAuthArgs(&hls_put_args);
-      hls_put_args.push_back("--write-out");
-      hls_put_args.push_back("%{http_code}");
-      hls_put_args.push_back("--silent");
-      hls_put_args.push_back("--output");
-      hls_put_args.push_back("/dev/null");
-      hls_put_args.push_back("-T");
-      hls_put_args.push_back(hls_playlist_filename);
-      hls_put_args.push_back("http://"+hostHostname()+hls_put_directory+"/");
-      hls_put_process=new QProcess(this);
-      connect(hls_put_process,SIGNAL(error(QProcess::ProcessError)),
-	      this,SLOT(putErrorData(QProcess::ProcessError)));
-      connect(hls_put_process,SIGNAL(finished(int,QProcess::ExitStatus)),
-	      this,SLOT(putFinishedData(int,QProcess::ExitStatus)));
-      hls_put_process->start("curl",hls_put_args);
-    }
-    else {
-      if(global_log_verbose) {
-	Log(LOG_WARNING,"curl(1) PUT command overrun, cmd: \""+
-	    hls_put_args.join(" ")+"\"");
-      }
-      else {
-	Log(LOG_WARNING,"curl(1) PUT command overrun");
-      }
-    }
+    hls_conveyor->push(hls_playlist_filename,
+		       "http://"+hostHostname()+hls_put_directory+"/",
+		       serverUsername(),serverPassword(),
+		       ConveyorEvent::PutMethod);
   }
   else {
     //
@@ -236,55 +202,49 @@ int64_t HlsConnector::writeDataConnector(int frames,const unsigned char *data,
 }
 
 
-void HlsConnector::putErrorData(QProcess::ProcessError err)
+void HlsConnector::conveyorEventFinished(const ConveyorEvent &evt,int exit_code,
+					 int resp_code,const QStringList &args)
 {
-  Log(LOG_ERR,
-      QString().sprintf("curl(1) process error: %d, cmd: \"curl %s\"",err,
-			(const char *)hls_put_args.join(" ").toUtf8()));
-  setConnected(false);
-  exit(256);
-}
-
-
-void HlsConnector::putFinishedData(int exit_code,
-				   QProcess::ExitStatus exit_status)
-{
-  bool ok=false;
-
-  if(exit_status==QProcess::CrashExit) {
-    if(global_log_verbose) {
-      Log(LOG_ERR,QString().sprintf("curl(1) process crashed, cmd: \"curl %s\"",
-			  (const char *)hls_put_args.join(" ").toUtf8()));
+  if(evt.method()==ConveyorEvent::NoMethod) {  // Cleanup finished
+    QStringList files=hls_temp_dir->entryList(QDir::Files|QDir::NoDotAndDotDot);
+    for(int i=0;i<files.size();i++) {
+      hls_temp_dir->remove(files[i]);
     }
-    else {
-      Log(LOG_ERR,tr("curl(1) process crashed"));
-    }
-    exit(256);
+    rmdir(hls_temp_dir->path().toUtf8());
+    emit stopped();
+    return;
   }
+
+  //
+  // Exit code handler
+  //
   if(exit_code!=0) {
     setConnected(false);
     if(global_log_verbose) {
       Log(LOG_WARNING,
-	  QString().sprintf("curl(1) PUT error: %s, cmd: \"curl %s\"",
+	  QString().sprintf("curl(1) error: %s, cmd: \"curl %s\"",
 		     (const char *)Connector::curlStrError(exit_code).toUtf8(),
-		     (const char *)hls_put_args.join(" ").toUtf8()));
+		     (const char *)args.join(" ").toUtf8()));
     }
     else {
-      Log(LOG_WARNING,QString().sprintf("CURL PUT error: %s",
+      Log(LOG_WARNING,QString().sprintf("CURL error: %s",
 		 (const char *)Connector::curlStrError(exit_code).toUtf8()));
     }
   }
-  QString response=hls_put_process->readAllStandardOutput();
-  for(int i=0;i<response.length();i+=3) {
-    int code=response.mid(i,3).toInt(&ok);
-    if((code<200)||(code>299)) {
+  else {
+    //
+    // Reponse code handler
+    //
+    if((resp_code<200)||(resp_code>299)) {
       setConnected(false);
       if(global_log_verbose) {
-	Log(LOG_WARNING,"PUT response error: "+Connector::httpStrError(code)+
-	    ", cmd: \"curl "+hls_put_args.join(" ")+"\"");
+	Log(LOG_WARNING,"curl(1) response error: "+
+	    Connector::httpStrError(resp_code)+
+	    ", cmd: \"curl "+args.join(" ")+"\"");
       }
       else {
-	Log(LOG_WARNING,"PUT response error: "+Connector::httpStrError(code));
+	Log(LOG_WARNING,"curl(1) response error: "+
+	    Connector::httpStrError(resp_code));
       }
     }
     else {
@@ -294,102 +254,18 @@ void HlsConnector::putFinishedData(int exit_code,
   if(!hls_is_top) {
     hls_temp_dir->remove(hls_media_killname);
   }
-  hls_put_garbage_timer->start(0);
 }
 
 
-void HlsConnector::putCollectGarbageData()
-{
-  delete hls_put_process;
-  hls_put_process=NULL;
-}
-
-
-void HlsConnector::deleteErrorData(QProcess::ProcessError err)
+void HlsConnector::conveyorError(const ConveyorEvent &evt,
+				 QProcess::ProcessError err,
+				 const QStringList &args)
 {
   Log(LOG_ERR,
       QString().sprintf("curl(1) process error: %d, cmd: \"curl %s\"",err,
-			(const char *)hls_delete_args.join(" ").toUtf8()));
-
+			(const char *)args.join(" ").toUtf8()));
+  setConnected(false);
   exit(256);
-}
-
-
-void HlsConnector::deleteFinishedData(int exit_code,
-				      QProcess::ExitStatus exit_status)
-{
-  if(exit_status==QProcess::CrashExit) {
-    if(global_log_verbose) {
-      Log(LOG_ERR,QString().sprintf("curl(1) process crashed, cmd: \"curl %s\"",
-			  (const char *)hls_delete_args.join(" ").toUtf8()));
-    }
-    else {
-      Log(LOG_ERR,tr("curl(1) process crashed"));
-    }
-    exit(256);
-  }
-  if(exit_code!=0) {
-    if(global_log_verbose) {
-      Log(LOG_WARNING,
-	  QString().sprintf("curl(1) DELETE error: %s, cmd: \"curl %s\"",
-		     (const char *)Connector::curlStrError(exit_code).toUtf8(),
-		     (const char *)hls_put_args.join(" ").toUtf8()));
-    }
-    else {
-      Log(LOG_WARNING,QString().sprintf("CURL DELETE error: %s",
-		 (const char *)Connector::curlStrError(exit_code).toUtf8()));
-    }
-  }
-  hls_delete_garbage_timer->start(0);
-}
-
-
-void HlsConnector::deleteCollectGarbageData()
-{
-  delete hls_delete_process;
-  hls_delete_process=NULL;
-}
-
-
-void HlsConnector::stopErrorData(QProcess::ProcessError err)
-{
-  Log(LOG_ERR,QString().sprintf("curl(1) process error: %d, cmd: \"curl %s\"",
-			err,(const char *)hls_stop_args.join(" ").toUtf8()));
-
-  emit stopped();
-}
-
-
-void HlsConnector::stopFinishedData(int exit_code,QProcess::ExitStatus exit_status)
-{
-  if(exit_status==QProcess::CrashExit) {
-    Log(LOG_ERR,QString().sprintf("curl(1) process crashed, cmd: \"curl %s\"",
-			  (const char *)hls_stop_args.join(" ").toUtf8()));
-    exit(256);
-  }
-  if(exit_code!=0) {
-    if(global_log_verbose) {
-      Log(LOG_WARNING,
-	  QString().sprintf("curl(1) DELETE error: %s, cmd: \"curl %s\"",
-		     (const char *)Connector::curlStrError(exit_code).toUtf8(),
-		     (const char *)hls_put_args.join(" ").toUtf8()));
-    }
-    else {
-      Log(LOG_WARNING,QString().sprintf("CURL DELETE error: %s",
-		 (const char *)Connector::curlStrError(exit_code).toUtf8()));
-    }
-  }
-
-  //
-  // Remove temporary directory
-  //
-  QStringList files=hls_temp_dir->entryList(QDir::Files|QDir::NoDotAndDotDot);
-  for(int i=0;i<files.size();i++) {
-    hls_temp_dir->remove(files[i]);
-  }
-  rmdir(hls_temp_dir->path().toUtf8());
-
-  emit stopped();
 }
 
 
@@ -411,89 +287,39 @@ void HlsConnector::RotateMediaFile()
   //
   // HTTP Uploads
   //
-  if(hls_put_process==NULL) {
-    hls_put_args.clear();
-    AddCurlAuthArgs(&hls_put_args);
-    hls_put_args.push_back("--write-out");
-    hls_put_args.push_back("%{http_code}");
-    hls_put_args.push_back("--silent");
-    hls_put_args.push_back("--output");
-    hls_put_args.push_back("/dev/null");
-    hls_put_args.push_back("-T");
-    hls_put_args.push_back(hls_temp_dir->path()+"/"+hls_media_filename);
-    hls_put_args.
-      push_back("http://"+hostHostname()+QString().sprintf(":%u",hostPort())+
-		hls_put_directory+"/");
-    hls_put_args.push_back("--silent");
-    hls_put_args.push_back("--output");
-    hls_put_args.push_back("/dev/null");
-    hls_put_args.push_back("-T");
-    hls_put_args.push_back(hls_playlist_filename);
-    hls_put_args.push_back("http://"+hostHostname()+hls_put_directory+"/");
-    hls_put_process=new QProcess(this);
-    connect(hls_put_process,SIGNAL(error(QProcess::ProcessError)),
-	    this,SLOT(putErrorData(QProcess::ProcessError)));
-    connect(hls_put_process,SIGNAL(finished(int,QProcess::ExitStatus)),
-	    this,SLOT(putFinishedData(int,QProcess::ExitStatus)));
-    hls_put_process->start("curl",hls_put_args);
-  }
-  else {
-    if(global_log_verbose) {
-      Log(LOG_WARNING,"curl(1) PUT command overrun, cmd: \""+
-	  hls_put_args.join(" ")+"\"");
-    }
-    else {
-      Log(LOG_WARNING,"curl(1) command overrun");
-    }
-  }
+  hls_conveyor->push(hls_temp_dir->path()+"/"+hls_media_filename,
+		     "http://"+hostHostname()+
+		     QString().sprintf(":%u",hostPort())+
+		     hls_put_directory+"/",serverUsername(),serverPassword(),
+		     ConveyorEvent::PutMethod);
+  hls_conveyor->push(hls_playlist_filename,
+		     "http://"+hostHostname()+hls_put_directory+"/",
+		     serverUsername(),serverPassword(),
+		     ConveyorEvent::PutMethod);
 
   //
   // Take out the trash
   //
-  if(hls_delete_process==NULL) {
-    int jobs=0;
-    hls_delete_args.clear();
-    AddCurlAuthArgs(&hls_delete_args);
-    std::map<int,uint64_t>::iterator ci=hls_media_killtimes.begin();
-    while(ci!=hls_media_killtimes.end()) {
-      if(ci->second<hls_total_media_frames) {
-	std::map<int,double>::iterator cj=hls_media_durations.begin();
-	while(cj!=hls_media_durations.end()) {
-	  if(cj->first==ci->first) {
-	    hls_media_durations.erase(cj++);
-	  }
-	  else {
-	    ++cj;
-	  }
+  std::map<int,uint64_t>::iterator ci=hls_media_killtimes.begin();
+  while(ci!=hls_media_killtimes.end()) {
+    if(ci->second<hls_total_media_frames) {
+      std::map<int,double>::iterator cj=hls_media_durations.begin();
+      while(cj!=hls_media_durations.end()) {
+	if(cj->first==ci->first) {
+	  hls_media_durations.erase(cj++);
 	}
-	hls_delete_args.push_back("-X");
-	hls_delete_args.push_back("DELETE");
-	hls_delete_args.
-	  push_back("http://"+hostHostname()+hls_put_directory+"/"+
-		    GetMediaFilename(ci->first));
-	hls_media_killtimes.erase(ci++);
-	jobs++;
+	else {
+	  ++cj;
+	}
       }
-      else {
-	++ci;
-      }
-    }
-    if(jobs>0) {
-      hls_delete_process=new QProcess(this);
-      connect(hls_delete_process,SIGNAL(error(QProcess::ProcessError)),
-	      this,SLOT(deleteErrorData(QProcess::ProcessError)));
-      connect(hls_delete_process,SIGNAL(finished(int,QProcess::ExitStatus)),
-	      this,SLOT(deleteFinishedData(int,QProcess::ExitStatus)));
-      hls_delete_process->start("curl",hls_delete_args);
-    }
-  }
-  else {
-    if(global_log_verbose) {
-      Log(LOG_WARNING,"curl(1) DELETE command overrun, cmd: \""+
-	  hls_delete_args.join(" ")+"\"");
+      hls_conveyor->push("","http://"+hostHostname()+hls_put_directory+"/"+
+			 GetMediaFilename(ci->first),
+			 serverUsername(),serverPassword(),
+			 ConveyorEvent::DeleteMethod);
+      hls_media_killtimes.erase(ci++);
     }
     else {
-      Log(LOG_WARNING,"curl(1) DELETE command overrun");
+      ++ci;
     }
   }
 
@@ -545,7 +371,6 @@ void HlsConnector::WriteTopPlaylistFile()
 {
   FILE *f=NULL;
 
-  printf("name: %s\n",(const char *)hls_playlist_filename.toUtf8());
   if((f=fopen(hls_playlist_filename.toUtf8(),"w"))==NULL) {
     Log(LOG_ERR,
 	QString().sprintf("unable to write playlist data to \"%s\" [%s]",
@@ -601,19 +426,5 @@ void HlsConnector::GetStreamTimestamp(uint8_t *bytes,uint64_t frames)
     (0x1FFFFFFFF);
   for(int i=0;i<8;i++) {  // Use network byte order!
     bytes[(HLS_ID3_HEADER_SIZE-8)+i]=0xFF&(stamp>>(56-8*i));
-  }
-}
-
-
-void HlsConnector::AddCurlAuthArgs(QStringList *arglist)
-{
-  if(!serverUsername().isEmpty()) {
-    arglist->push_back("-u");
-    if(serverPassword().isEmpty()) {
-      arglist->push_back(serverUsername());
-    }
-    else {
-      arglist->push_back(serverUsername()+":"+serverPassword());
-    }
   }
 }

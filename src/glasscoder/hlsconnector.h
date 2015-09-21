@@ -36,6 +36,7 @@
 #include <QTimer>
 
 #include "connector.h"
+#include "fileconveyor.h"
 
 class HlsConnector : public Connector
 {
@@ -52,14 +53,10 @@ class HlsConnector : public Connector
   int64_t writeDataConnector(int frames,const unsigned char *data,int64_t len);
 
  private slots:
-  void putErrorData(QProcess::ProcessError err);
-  void putFinishedData(int exit_code,QProcess::ExitStatus exit_status);
-  void putCollectGarbageData();
-  void deleteErrorData(QProcess::ProcessError err);
-  void deleteFinishedData(int exit_code,QProcess::ExitStatus exit_status);
-  void deleteCollectGarbageData();
-  void stopErrorData(QProcess::ProcessError err);
-  void stopFinishedData(int exit_code,QProcess::ExitStatus exit_status);
+  void conveyorEventFinished(const ConveyorEvent &evt,int exit_code,
+			     int resp_code,const QStringList &args);
+  void conveyorError(const ConveyorEvent &evt,QProcess::ProcessError err,
+		     const QStringList &args);
 
  private:
   void RotateMediaFile();
@@ -67,7 +64,6 @@ class HlsConnector : public Connector
   void WriteTopPlaylistFile();
   QString GetMediaFilename(int seqno);
   void GetStreamTimestamp(uint8_t *bytes,uint64_t frames);
-  void AddCurlAuthArgs(QStringList *arglist);
   bool hls_is_top;
   QDir *hls_temp_dir;
   QString hls_playlist_filename;
@@ -82,14 +78,7 @@ class HlsConnector : public Connector
   uint64_t hls_total_media_frames;
   QString hls_put_directory;
   QString hls_put_basename;
-  QProcess *hls_put_process;
-  QStringList hls_put_args;
-  QTimer *hls_put_garbage_timer;
-  QProcess *hls_delete_process;
-  QStringList hls_delete_args;
-  QTimer *hls_delete_garbage_timer;
-  QProcess *hls_stop_process;
-  QStringList hls_stop_args;
+  FileConveyor *hls_conveyor;
 };
 
 

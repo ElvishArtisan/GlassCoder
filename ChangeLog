@@ -423,3 +423,8 @@
 	multi-rate streams.
 2015-09-21 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.9.4.
+2015-09-21 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'FileConveyor' class in 'src/glasscoder/fileconveyor.cpp'
+	and 'src/glasscoder/fileconveyor.h'.
+	* Refactored the HLS streaming connector to serialize HTTP
+	operations.
