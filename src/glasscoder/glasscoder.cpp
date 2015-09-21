@@ -64,7 +64,7 @@ MainObject::MainObject(QObject *parent)
   server_port=DEFAULT_SERVER_PORT;
   server_script_up="";
   server_script_down="";
-  server_username=DEFAULT_SERVER_USERNAME;
+  server_username="";
   stream_genre="";
   stream_name="";
   stream_url="";
