@@ -545,6 +545,7 @@ void HlsConnector::WriteTopPlaylistFile()
 {
   FILE *f=NULL;
 
+  printf("name: %s\n",(const char *)hls_playlist_filename.toUtf8());
   if((f=fopen(hls_playlist_filename.toUtf8(),"w"))==NULL) {
     Log(LOG_ERR,
 	QString().sprintf("unable to write playlist data to \"%s\" [%s]",
@@ -562,7 +563,7 @@ void HlsConnector::WriteTopPlaylistFile()
       str+=",CODECS=\""+formatIdentifier()+"\"";
     }
     fprintf(f,"%s\n",(const char *)str.toUtf8());
-    fprintf(f,"%s.m3u8\n",(const char *)Connector::basePart(Connector::subMountpointName(serverMountpoint(),audioBitrates()->at(i))).toUtf8());
+    fprintf(f,"%s\n",(const char *)Connector::basePart(Connector::subMountpointName(serverMountpoint(),audioBitrates()->at(i))).toUtf8());
   }
   fclose(f);
 }

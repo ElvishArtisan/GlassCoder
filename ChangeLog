@@ -417,3 +417,7 @@
 	string.
 	* Set an Icecast-specific default value for --server-username to
 	'source'.
+2015-09-21 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/glasscoder/hlsconnector.cpp' that caused
+	the master index file to be mis-formatted when configured to use
+	multi-rate streams.
