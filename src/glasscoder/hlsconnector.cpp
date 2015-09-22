@@ -26,10 +26,11 @@
 #include "hlsconnector.h"
 #include "logging.h"
 
-HlsConnector::HlsConnector(bool is_top,QObject *parent)
+HlsConnector::HlsConnector(bool is_top,FileConveyor *conv,QObject *parent)
   : Connector(parent)
 {
   hls_is_top=is_top;
+  hls_conveyor=conv;
   hls_sequence_head=0;
   hls_sequence_back=0;
   hls_media_frames=0;
@@ -57,21 +58,27 @@ HlsConnector::HlsConnector(bool is_top,QObject *parent)
   //
   // File Conveyor
   //
-  hls_conveyor=new FileConveyor(this);
-  connect(hls_conveyor,SIGNAL(eventFinished(const ConveyorEvent &,int,int,
-					    const QStringList &)),
-	  this,SLOT(conveyorEventFinished(const ConveyorEvent &,int,int,
-					  const QStringList &)));
-  connect(hls_conveyor,
-	  SIGNAL(error(const ConveyorEvent &,QProcess::ProcessError,
-		       const QStringList &)),
-	  this,SLOT(conveyorError(const ConveyorEvent &,QProcess::ProcessError,
-				  const QStringList &)));
+  if(is_top) {  // Do conveyor error reporting on behalf of sub-connectors
+    connect(hls_conveyor,SIGNAL(eventFinished(const ConveyorEvent &,int,int,
+					      const QStringList &)),
+	    this,SLOT(conveyorEventFinished(const ConveyorEvent &,int,int,
+					    const QStringList &)));
+    connect(hls_conveyor,
+	    SIGNAL(error(const ConveyorEvent &,QProcess::ProcessError,
+			 const QStringList &)),
+	    this,
+	    SLOT(conveyorError(const ConveyorEvent &,QProcess::ProcessError,
+			       const QStringList &)));
+  }
 }
 
 
 HlsConnector::~HlsConnector()
 {
+  QStringList files=hls_temp_dir->entryList(QDir::Files);
+  for(int i=0;i<files.size();i++) {
+    unlink((hls_temp_dir->path()+"/"+files[i]).toUtf8());
+  }
   rmdir(hls_temp_dir->path().toAscii());
   delete hls_temp_dir;
 }
@@ -80,53 +87,6 @@ HlsConnector::~HlsConnector()
 Connector::ServerType HlsConnector::serverType() const
 {
   return Connector::HlsServer;
-}
-
-
-void HlsConnector::startStopping()
-{
-  //
-  // Clean up the publishing point
-  //
-
-  //
-  // The playlist file
-  //
-  hls_conveyor->push("","http://"+
-		     hostHostname()+QString().sprintf(":%u",hostPort())+
-		     hls_put_directory+"/"+hls_put_basename,
-		     serverUsername(),serverPassword(),
-		     ConveyorEvent::DeleteMethod);
-
-  //
-  // Current Media Segments
-  //
-  if(!hls_is_top) {
-    for(int i=hls_sequence_head;i<=hls_sequence_back;i++) {
-      hls_conveyor->push("","http://"+hostHostname()+hls_put_directory+"/"+
-			 GetMediaFilename(i),serverUsername(),serverPassword(),
-			 ConveyorEvent::DeleteMethod);
-    }
-  }
-
-  //
-  // Expired Media Segments
-  //
-  if(!hls_is_top) {
-    std::map<int,uint64_t>::iterator ci=hls_media_killtimes.begin();
-    while(ci!=hls_media_killtimes.end()) {
-      hls_conveyor->push("","http://"+hostHostname()+hls_put_directory+"/"+
-			 GetMediaFilename(ci->first),
-			 serverUsername(),serverPassword(),
-			 ConveyorEvent::DeleteMethod);
-      ci++;
-    }
-  }
-
-  //
-  // The "nomethod" event (so we know when everthing's been cleaned up)
-  //
-  hls_conveyor->push("","","","",ConveyorEvent::NoMethod);
 }
 
 
@@ -156,8 +116,8 @@ void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
     WriteTopPlaylistFile();
     hls_conveyor->push(hls_playlist_filename,
 		       "http://"+hostHostname()+hls_put_directory+"/",
-		       serverUsername(),serverPassword(),
 		       ConveyorEvent::PutMethod);
+    unlink(hls_playlist_filename.toUtf8());
   }
   else {
     //
@@ -206,16 +166,6 @@ int64_t HlsConnector::writeDataConnector(int frames,const unsigned char *data,
 void HlsConnector::conveyorEventFinished(const ConveyorEvent &evt,int exit_code,
 					 int resp_code,const QStringList &args)
 {
-  if(evt.method()==ConveyorEvent::NoMethod) {  // Cleanup finished
-    QStringList files=hls_temp_dir->entryList(QDir::Files|QDir::NoDotAndDotDot);
-    for(int i=0;i<files.size();i++) {
-      hls_temp_dir->remove(files[i]);
-    }
-    rmdir(hls_temp_dir->path().toUtf8());
-    emit stopped();
-    return;
-  }
-
   //
   // Exit code handler
   //
@@ -251,9 +201,6 @@ void HlsConnector::conveyorEventFinished(const ConveyorEvent &evt,int exit_code,
     else {
       setConnected(true);
     }
-  }
-  if(!hls_is_top) {
-    hls_temp_dir->remove(hls_media_killname);
   }
 }
 
@@ -291,12 +238,12 @@ void HlsConnector::RotateMediaFile()
   hls_conveyor->push(hls_temp_dir->path()+"/"+hls_media_filename,
 		     "http://"+hostHostname()+
 		     QString().sprintf(":%u",hostPort())+
-		     hls_put_directory+"/",serverUsername(),serverPassword(),
-		     ConveyorEvent::PutMethod);
+		     hls_put_directory+"/",ConveyorEvent::PutMethod);
+  unlink((hls_temp_dir->path()+"/"+hls_media_filename).toUtf8());
   hls_conveyor->push(hls_playlist_filename,
 		     "http://"+hostHostname()+hls_put_directory+"/",
-		     serverUsername(),serverPassword(),
 		     ConveyorEvent::PutMethod);
+  unlink(hls_playlist_filename.toUtf8());
 
   //
   // Take out the trash
@@ -315,7 +262,6 @@ void HlsConnector::RotateMediaFile()
       }
       hls_conveyor->push("","http://"+hostHostname()+hls_put_directory+"/"+
 			 GetMediaFilename(ci->first),
-			 serverUsername(),serverPassword(),
 			 ConveyorEvent::DeleteMethod);
       hls_media_killtimes.erase(ci++);
     }
@@ -329,7 +275,7 @@ void HlsConnector::RotateMediaFile()
   //
   hls_sequence_back++;
   hls_media_frames=0;
-  hls_media_killname=hls_media_filename;
+  //hls_media_killname=hls_media_filename;
   hls_media_filename=GetMediaFilename(hls_sequence_back);
   if((hls_media_handle=
       fopen((hls_temp_dir->path()+"/"+hls_media_filename).toUtf8(),"w"))==

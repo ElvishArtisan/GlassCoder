@@ -18,16 +18,18 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <errno.h>
+#include <stdlib.h>
+#include <syslog.h>
+#include <unistd.h>
+
 #include "fileconveyor.h"
 
 ConveyorEvent::ConveyorEvent(const QString &filename,const QString &url,
-			     const QString &username,const QString &passwd,
 			     HttpMethod meth)
 {
   evt_filename=filename;
   evt_url=url;
-  evt_username=username;
-  evt_password=passwd;
   evt_method=meth;
 }
 
@@ -50,18 +52,6 @@ ConveyorEvent::HttpMethod ConveyorEvent::method() const
 }
 
 
-QString ConveyorEvent::username() const
-{
-  return evt_username;
-}
-
-
-QString ConveyorEvent::password() const
-{
-  return evt_password;
-}
-
-
 
 
 FileConveyor::FileConveyor(QObject *parent)
@@ -69,6 +59,9 @@ FileConveyor::FileConveyor(QObject *parent)
 {
   conv_process=NULL;
 
+  //
+  // Timers
+  //
   conv_nomethod_timer=new QTimer(this);
   conv_nomethod_timer->setSingleShot(true);
   connect(conv_nomethod_timer,SIGNAL(timeout()),this,SLOT(nomethodData()));
@@ -77,11 +70,38 @@ FileConveyor::FileConveyor(QObject *parent)
   conv_garbage_timer->setSingleShot(true);
   connect(conv_garbage_timer,SIGNAL(timeout()),
 	  this,SLOT(processCollectGarbageData()));
+
+  //
+  // Create temp directory
+  //
+  char tempdir[PATH_MAX];
+
+  strncpy(tempdir,"/tmp",PATH_MAX);
+  if(getenv("TEMP")!=NULL) {
+    strncpy(tempdir,getenv("TEMP"),PATH_MAX);
+  }
+  strncat(tempdir,"/glasscoder-XXXXXX",PATH_MAX-strlen(tempdir));
+  if(mkdtemp(tempdir)==NULL) {
+    syslog(LOG_ERR,"unable to create temporary directory [%s]",
+	   strerror(errno));
+    exit(256);
+  }
+  conv_temp_dir=new QDir(tempdir);
 }
 
 
 FileConveyor::~FileConveyor()
 {
+  //
+  // Clean up temp directory
+  //
+  QStringList files=conv_temp_dir->entryList(QDir::Files);
+  for(int i=0;i<files.size();i++) {
+    unlink((conv_temp_dir->path()+"/"+files[i]).toUtf8());
+  }
+  rmdir(conv_temp_dir->path().toUtf8());
+  delete conv_temp_dir;
+
   delete conv_garbage_timer;
   if(conv_process!=NULL) {
     conv_process->kill();
@@ -90,8 +110,27 @@ FileConveyor::~FileConveyor()
 }
 
 
+void FileConveyor::setUsername(const QString &str)
+{
+  conv_username=str;
+}
+
+
+void FileConveyor::setPassword(const QString &str)
+{
+  conv_password=str;
+}
+
+
 void FileConveyor::push(const ConveyorEvent &evt)
 {
+  if(!evt.filename().isEmpty()) {
+    if(link(evt.filename().toUtf8(),Repath(evt.filename()).toUtf8())!=0) {
+      syslog(LOG_WARNING,"FileConveyor::push: unable to make hard link %s [%s]",
+	     (const char *)Repath(evt.filename()).toUtf8(),strerror(errno));
+      return;
+    }
+  }
   conv_events.push(evt);
   if(conv_events.size()==1) {
     Dispatch();
@@ -100,11 +139,20 @@ void FileConveyor::push(const ConveyorEvent &evt)
 
 
 void FileConveyor::push(const QString &filename,const QString &url,
-			const QString &username,const QString &passwd,
 			ConveyorEvent::HttpMethod meth)
 {
-  ConveyorEvent evt(filename,url,username,passwd,meth);
+  ConveyorEvent evt(filename,url,meth);
   push(evt);
+}
+
+
+void FileConveyor::stop()
+{
+  QStringList urls=conv_putted_files;
+  for(int i=0;i<urls.size();i++) {
+    push("",urls[i],ConveyorEvent::DeleteMethod);
+  }
+  push("","",ConveyorEvent::NoMethod);
 }
 
 
@@ -140,6 +188,9 @@ void FileConveyor::processCollectGarbageData()
     delete conv_process;
     conv_process=NULL;
   }
+  if(!conv_events.front().filename().isEmpty()) {
+    unlink(Repath(conv_events.front().filename()).toUtf8());
+  }
   conv_events.pop();
   if(conv_events.size()>0) {
     Dispatch();
@@ -167,9 +218,9 @@ void FileConveyor::Dispatch()
   conv_arguments.push_back("/dev/null");
 
   switch(evt.method()) {
-  case ConveyorEvent::NoMethod:  // Simply pass this through
-    conv_nomethod_timer->start(0);
-    break;
+  case ConveyorEvent::NoMethod:  // Shutting down
+    emit stopped();
+    return;
 
   case ConveyorEvent::GetMethod:
     conv_arguments.push_back(evt.url());
@@ -177,16 +228,20 @@ void FileConveyor::Dispatch()
 
   case ConveyorEvent::PutMethod:
     conv_arguments.push_back("-T");
-    conv_arguments.push_back(evt.filename());
+    conv_arguments.push_back(Repath(evt.filename()));
     conv_arguments.push_back(evt.url());
+    AddPuttedFile(evt.url()+evt.filename().split("/").back());
     break;
 
   case ConveyorEvent::DeleteMethod:
     conv_arguments.push_back("-X");
     conv_arguments.push_back("DELETE");
     conv_arguments.push_back(evt.url());
+    RemovePuttedFile(evt.url());
     break;
   }
+
+  //printf("curl %s\n",(const char *)conv_arguments.join(" ").toUtf8());
 
   conv_process=new QProcess(this);
   connect(conv_process,SIGNAL(error(QProcess::ProcessError)),
@@ -200,13 +255,41 @@ void FileConveyor::Dispatch()
 void FileConveyor::AddCurlAuthArgs(QStringList *arglist,
 				   const ConveyorEvent &evt)
 {
-  if(!evt.username().isEmpty()) {
+  if(!conv_username.isEmpty()) {
     arglist->push_back("-u");
-    if(evt.password().isEmpty()) {
-      arglist->push_back(evt.username());
+    if(conv_password.isEmpty()) {
+      arglist->push_back(conv_username);
     }
     else {
-      arglist->push_back(evt.username()+":"+evt.password());
+      arglist->push_back(conv_username+":"+conv_password);
+    }
+  }
+}
+
+
+QString FileConveyor::Repath(const QString &filename) const
+{
+  return conv_temp_dir->path()+"/"+filename.split("/").back();
+}
+
+
+void FileConveyor::AddPuttedFile(const QString &url)
+{
+  for(int i=0;i<conv_putted_files.size();i++) {
+    if(url==conv_putted_files[i]) {
+      return;
+    }
+  }
+  conv_putted_files.push_back(url);
+}
+
+
+void FileConveyor::RemovePuttedFile(const QString &url)
+{
+  for(int i=0;i<conv_putted_files.size();i++) {
+    if(url==conv_putted_files[i]) {
+      conv_putted_files.erase(conv_putted_files.begin()+i);
+      return;
     }
   }
 }

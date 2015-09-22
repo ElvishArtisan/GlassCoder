@@ -22,9 +22,11 @@
 #define FILECONVEYOR_H
 
 #include <queue>
+#include <vector>
 
 #include <curl/curl.h>
 
+#include <QDir>
 #include <QObject>
 #include <QProcess>
 #include <QString>
@@ -36,19 +38,14 @@ class ConveyorEvent
  public:
   enum HttpMethod {NoMethod=0,GetMethod=1,PutMethod=2,DeleteMethod=3};
   ConveyorEvent(const QString &filename,const QString &url,
-		const QString &username,const QString &passwd,
 		HttpMethod meth=NoMethod);
   QString filename() const;
   QString url() const;
-  QString username() const;
-  QString password() const;
   ConveyorEvent::HttpMethod method() const;
 
  private:
   QString evt_filename;
   QString evt_url;
-  QString evt_username;
-  QString evt_password;
   ConveyorEvent::HttpMethod evt_method;
 };
 
@@ -59,15 +56,19 @@ class FileConveyor : public QObject
  public:
   FileConveyor(QObject *parent=0);
   ~FileConveyor();
+  void setUsername(const QString &str);
+  void setPassword(const QString &str);
   void push(const ConveyorEvent &evt);
-  void push(const QString &filename,const QString &url,const QString &username,
-	    const QString &passwd,ConveyorEvent::HttpMethod meth);
+  void push(const QString &filename,const QString &url,
+	    ConveyorEvent::HttpMethod meth);
+  void stop();
 
  signals:
   void eventFinished(const ConveyorEvent &evt,int exit_code,int resp_code,
 		     const QStringList &args);
   void error(const ConveyorEvent &evt,QProcess::ProcessError err,
 	     const QStringList &args);
+  void stopped();
 
  private slots:
   void processErrorData(QProcess::ProcessError err);
@@ -78,11 +79,18 @@ class FileConveyor : public QObject
  private:
   void Dispatch();
   void AddCurlAuthArgs(QStringList *arglist,const ConveyorEvent &evt);
+  QString Repath(const QString &filename) const;
+  void AddPuttedFile(const QString &url);
+  void RemovePuttedFile(const QString &url);
   std::queue<ConveyorEvent> conv_events;
   QProcess *conv_process;
   QStringList conv_arguments;
   QTimer *conv_nomethod_timer;
   QTimer *conv_garbage_timer;
+  QDir *conv_temp_dir;
+  QStringList conv_putted_files;
+  QString conv_username;
+  QString conv_password;
 };
 
 

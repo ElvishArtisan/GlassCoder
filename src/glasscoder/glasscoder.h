@@ -32,6 +32,7 @@
 #include "audiodevice.h"
 #include "codec.h"
 #include "connector.h"
+#include "fileconveyor.h"
 #include "glasslimits.h"
 #include "ringbuffer.h"
 
@@ -93,6 +94,7 @@ class MainObject : public QObject
   //
   void StartServerConnection(const QString &mntpt="",bool is_top=false);
   std::vector<Connector *> sir_connectors;
+  FileConveyor *sir_conveyor;
 
   //
   // Codec

@@ -24,13 +24,13 @@
 #include "connectorfactory.h"
 
 Connector *ConnectorFactory(Connector::ServerType type,bool is_top,
-			    QObject *parent)
+			    FileConveyor *conv,QObject *parent)
 {
   Connector *conn=NULL;
 
   switch(type) {
   case Connector::HlsServer:
-    conn=new HlsConnector(is_top,parent);
+    conn=new HlsConnector(is_top,conv,parent);
     break;
 
   case Connector::Shoutcast1Server:

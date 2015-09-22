@@ -431,3 +431,5 @@
 2015-09-22 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/glasscoder/hlsconnector.cpp' that caused
 	a lockup upon exit.
+2015-09-22 Fred Gleason <fredg@paravelsystems.com>
+	* Refactored the HLS streaming connector to use a single FileConveyor.

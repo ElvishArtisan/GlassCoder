@@ -346,6 +346,13 @@ MainObject::MainObject(QObject *parent)
     exit(256);
   }
 
+  //
+  // Start Server Connections
+  //
+  sir_conveyor=new FileConveyor(this);
+  sir_conveyor->setUsername(server_username);
+  sir_conveyor->setPassword(server_password);
+  connect(sir_conveyor,SIGNAL(stopped()),this,SLOT(connectorStoppedData()));
   if(audio_bitrate.size()>1) {
     if(!StartMultiStream()) {
       exit(256);
@@ -376,7 +383,11 @@ void MainObject::audioDeviceStoppedData()
 
 void MainObject::connectorStoppedData()
 {
-  if(++sir_exit_count==sir_connectors.size()) {
+  if(++sir_exit_count==(sir_connectors.size()+1)) {
+    for(unsigned i=0;i<sir_connectors.size();i++) {
+      delete sir_connectors[i];
+    }
+    delete sir_conveyor;
     exit(0);
   }
 }
@@ -419,6 +430,8 @@ void MainObject::exitTimerData()
     for(unsigned i=0;i<sir_connectors.size();i++) {
       sir_connectors[i]->stop();
     }
+    sir_conveyor->stop();
+    sir_exit_timer->stop();
   }
 }
 
@@ -504,11 +517,11 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
   //
   // Create Connector Instance
   //
-  conn=ConnectorFactory(server_type,is_top,this);
+  conn=ConnectorFactory(server_type,is_top,sir_conveyor,this);
+  connect(conn,SIGNAL(stopped()),this,SLOT(connectorStoppedData()));
   if(!is_top) {
     connect(conn,SIGNAL(dataRequested(Connector *)),
 	    sir_codecs[sir_connectors.size()],SLOT(encode(Connector *)));
-    connect(conn,SIGNAL(stopped()),this,SLOT(connectorStoppedData()));
     connect(conn,SIGNAL(connected(bool)),this,SLOT(connectedData(bool)));
     sir_codecs[sir_connectors.size()]->
       setCompleteFrames(server_type==Connector::HlsServer);

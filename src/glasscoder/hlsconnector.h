@@ -42,12 +42,11 @@ class HlsConnector : public Connector
 {
   Q_OBJECT;
  public:
-  HlsConnector(bool is_top,QObject *parent=0);
+  HlsConnector(bool is_top,FileConveyor *conv,QObject *parent=0);
   ~HlsConnector();
   Connector::ServerType serverType() const;
 
  protected:
-  void startStopping();
   void connectToHostConnector(const QString &hostname,uint16_t port);
   void disconnectFromHostConnector();
   int64_t writeDataConnector(int frames,const unsigned char *data,int64_t len);
@@ -72,7 +71,7 @@ class HlsConnector : public Connector
   std::map<int,double> hls_media_durations;
   std::map<int,uint64_t> hls_media_killtimes;
   QString hls_media_filename;
-  QString hls_media_killname;
+  //QString hls_media_killname;
   FILE *hls_media_handle;
   uint64_t hls_media_frames;
   uint64_t hls_total_media_frames;
