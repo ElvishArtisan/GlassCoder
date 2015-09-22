@@ -188,8 +188,6 @@ void FileConveyor::Dispatch()
     break;
   }
 
-  printf("curl: %s\n",(const char *)conv_arguments.join(" ").toUtf8());
-
   conv_process=new QProcess(this);
   connect(conv_process,SIGNAL(error(QProcess::ProcessError)),
 	  this,SLOT(processErrorData(QProcess::ProcessError)));

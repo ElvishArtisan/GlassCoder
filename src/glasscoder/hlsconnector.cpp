@@ -119,6 +119,7 @@ void HlsConnector::startStopping()
 			 GetMediaFilename(ci->first),
 			 serverUsername(),serverPassword(),
 			 ConveyorEvent::DeleteMethod);
+      ci++;
     }
   }
 
