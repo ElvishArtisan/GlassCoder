@@ -58,13 +58,9 @@ MainObject::MainObject(QObject *parent)
   audio_quality=-1.0;
   audio_samplerate=DEFAULT_AUDIO_SAMPLERATE;
   server_type=Connector::Icecast2Server;
-  server_hostname="";
-  server_mountpoint="";
   server_password="";
-  server_port=DEFAULT_SERVER_PORT;
   server_script_up="";
   server_script_down="";
-  server_username="";
   stream_genre="";
   stream_name="";
   stream_url="";
@@ -193,25 +189,21 @@ MainObject::MainObject(QObject *parent)
       meter_data=true;
       cmd->setProcessed(i,true);
     }
-    if(cmd->key(i)=="--server-hostname") {
-      server_hostname=cmd->value(i);
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--server-mountpoint") {
-      server_mountpoint=cmd->value(i);
-      if(server_mountpoint.left(1)!="/") {
-	server_mountpoint="/"+server_mountpoint;
+    if(cmd->key(i)=="--server-auth") {
+      QStringList f0=cmd->value(i).split(":");
+      if(f0.size()==2) {
+	server_username=f0[0];
+	server_password=f0[1];
+      }
+      else {
+	server_username=f0[0];
       }
       cmd->setProcessed(i,true);
     }
-    if(cmd->key(i)=="--server-password") {
-      server_password=cmd->value(i);
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--server-port") {
-      server_port=cmd->value(i).toUInt(&ok);
-      if((!ok)||(server_port==0)) {
-	Log(LOG_ERR,"invalid --shout-server-port value");
+    if(cmd->key(i)=="--server-url") {
+      server_url.setUrl(cmd->value(i));
+      if(!server_url.isValid()) {
+	Log(LOG_ERR,"invalid argument for --server-url");
 	exit(256);
       }
       cmd->setProcessed(i,true);
@@ -253,10 +245,6 @@ MainObject::MainObject(QObject *parent)
 	  }
 	}
       }
-    }
-    if(cmd->key(i)=="--server-username") {
-      server_username=cmd->value(i);
-      cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--stream-description") {
       stream_description=cmd->value(i);
@@ -321,16 +309,12 @@ MainObject::MainObject(QObject *parent)
     }
   }
 
-  if(server_hostname.isEmpty()) {
-    Log(LOG_ERR,"missing --server-hostname parameter");
+  if(server_url.isEmpty()) {
+    Log(LOG_ERR,"missing --server-url parameter");
     exit(256);
   }
   if((audio_quality>=0.0)&&(audio_bitrate.size()>0)) {
     Log(LOG_ERR,"--audio-quality and --audio-bitrate are mutually exclusive");
-    exit(256);
-  }
-  if((server_type==Connector::Icecast2Server)&&(server_mountpoint.isEmpty())) {
-    Log(LOG_ERR,"mountpoint not specified");
     exit(256);
   }
   if((audio_bitrate.size()>1)&&(server_type!=Connector::HlsServer)) {
@@ -531,7 +515,7 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
   // Set Configuration
   //
   if(mntpt.isEmpty()) {
-    conn->setServerMountpoint(server_mountpoint);
+    conn->setServerMountpoint(server_url.path());
   }
   else {
     conn->setServerMountpoint(mntpt);
@@ -570,7 +554,11 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
   // Open the server connection
   //
   sir_connectors.push_back(conn);
-  sir_connectors.back()->connectToServer(server_hostname,server_port);
+  uint16_t port=DEFAULT_SERVER_PORT;
+  if(server_url.port()>0) {
+    port=server_url.port();
+  }
+  sir_connectors.back()->connectToServer(server_url.host(),port);
 }
 
 
@@ -596,14 +584,14 @@ bool MainObject::StartMultiStream()
     }
   }
   for(unsigned i=0;i<audio_bitrate.size();i++) {
-    StartServerConnection(Connector::subMountpointName(server_mountpoint,
+    StartServerConnection(Connector::subMountpointName(server_url.path(),
 						       audio_bitrate[i]));
   }
 
   //
   // Top-level playlist
   //
-  StartServerConnection(server_mountpoint,true);
+  StartServerConnection(server_url.path(),true);
 
   return true;
 }

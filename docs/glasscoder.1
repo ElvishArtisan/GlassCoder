@@ -141,24 +141,8 @@ Print a list of available codecs and then exit.
 Print a list of available source devices and then exit.
 
 .TP
-.B --server-hostname=<\fIhostname\fP>
-The host name or IP address of the streaming server.  This parameter has
-no default.
-
-.TP
-.B --server-mountpoint=<\fImount\fP>
-The server mountpoint to use.  This parameter only has meaning when used
-with an Icecast server or HLS streams.  Default value is to use no mountpoint.
-
-.TP
-.B --server-password=<\fIpasswd\fP>
-The password to use when authenticating to the server.  This parameter
-has no default.
-
-.TP
-.B --server-port=<\fIport-num\fP>
-The port number to use when connecting to the server.  Default value is
-\fI80\fP.
+.B --server-auth=[<\fIusername\fP>][:<\fIpassword\fP>]
+The authentication parameters to use.  This parameter has no default.
 
 .TP
 .B --server-script-down=<\fIcmd\fP>
@@ -196,11 +180,9 @@ Default value is \fIIceCast2\fP.
 .RE
 
 .TP
-.B --server-username=<\fIname\fP>
-The user name to use when authenticating to the server.  This setting has
-no default value except when used with Icecast v2 servers, where it
-is \fIsource\fP.  The setting is used only by Icecast servers and HLS
-streams.
+.B --server-url=<\fIurl\fP>
+The URL describing the server resource to stream to.  This parameter has no
+default.
 
 .TP
 .B --stream-aim=<\fIaim\fP>

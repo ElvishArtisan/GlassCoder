@@ -123,16 +123,27 @@ bool ServerDialog::makeArgs(QStringList *args,bool escape_args)
     srv_server_type_box->itemData(srv_server_type_box->currentIndex()).toInt();
 
   args->push_back("--server-type="+Connector::optionKeyword(type));
+  args->push_back("--server-url="+url.toString());
+  /*
   args->push_back("--server-hostname="+url.host());
   if(url.port()>0) {
     args->push_back("--server-port="+QString().sprintf("%d",url.port()));
   }
   args->push_back("--server-mountpoint="+url.path());
-  if(!srv_server_username_edit->text().isEmpty()) {
-    args->push_back("--server-username="+srv_server_username_edit->text());
+  */
+  if(srv_server_username_edit->text().isEmpty()) {
+    if(!srv_server_password_edit->text().isEmpty()) {
+      args->push_back("--server-auth=:"+srv_server_password_edit->text());
+    }
   }
-  if(!srv_server_password_edit->text().isEmpty()) {
-    args->push_back("--server-password="+srv_server_password_edit->text());
+  else {
+    if(srv_server_password_edit->text().isEmpty()) {
+      args->push_back("--server-auth="+srv_server_username_edit->text());
+    }
+    else {
+      args->push_back("--server-auth="+srv_server_username_edit->text()+":"+
+		      srv_server_password_edit->text());
+    }
   }
   if(!srv_server_script_down_edit->text().isEmpty()) {
     args->push_back("--server-script-down="+

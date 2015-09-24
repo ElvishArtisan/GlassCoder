@@ -28,6 +28,7 @@
 #include <QObject>
 #include <QStringList>
 #include <QTimer>
+#include <QUrl>
 
 #include "audiodevice.h"
 #include "codec.h"
@@ -69,13 +70,11 @@ class MainObject : public QObject
   QString stream_icq;
   QString stream_aim;
   Connector::ServerType server_type;
-  QString server_hostname;
-  QString server_mountpoint;
+  QUrl server_url;
+  QString server_username;
   QString server_password;
-  uint16_t server_port;
   QString server_script_up;
   QString server_script_down;
-  QString server_username;
   QStringList device_keys;
   QStringList device_values;
   bool list_codecs;

@@ -435,3 +435,8 @@
 	* Refactored the HLS streaming connector to use a single FileConveyor.
 2015-09-24 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.9.5.
+2015-09-24 Fred Gleason <fredg@paravelsystems.com>
+	* Replaced '--server-hostname', '--server-mountpoint' and
+	'--server-port' options with the '--server-url' option.
+	* Replaced '--server-username' and '--server=password' options with
+	the '--server-auth' option.
