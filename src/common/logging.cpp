@@ -35,6 +35,7 @@ void Log(int prio,const QString &msg)
 
   case LOG_TO_STDOUT:
     printf("ER %d %s\n",prio,(const char *)msg.toUtf8());
+    syslog(prio,msg.toUtf8());
     break;
 
   default:

@@ -23,6 +23,7 @@
 
 #include <stdio.h>
 
+#include <QCheckBox>
 #include <QDialog>
 #include <QLabel>
 #include <QLineEdit>
@@ -60,6 +61,8 @@ class ServerDialog : public QDialog
   QLabel *srv_server_label;
   QLabel *srv_server_type_label;
   ComboBox *srv_server_type_box;
+  QCheckBox *srv_verbose_check;
+  QLabel *srv_verbose_label;
   QLabel *srv_server_location_label;
   QLineEdit *srv_server_location_edit;
   QLabel *srv_server_username_label;

@@ -440,3 +440,7 @@
 	'--server-port' options with the '--server-url' option.
 	* Replaced '--server-username' and '--server=password' options with
 	the '--server-auth' option.
+2015-09-24 Fred Gleason <fredg@paravelsystems.com>
+	* Added an 'Enable verbose logging' checkbox to the Server Settings
+	dialog in 'src/glassgui/serverdialog.cpp' and
+	'src/glassgui/serverdialog.h'.

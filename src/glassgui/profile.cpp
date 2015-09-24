@@ -296,13 +296,13 @@ bool Profile::boolValue(const QString &section,const QString &tag,
     }
     return default_value;
   }
-  if((str=="yes")||(str=="true")||(str=="on")) {
+  if((str=="yes")||(str=="true")||(str=="on")||(str=="1")) {
     if(ok!=NULL) {
       *ok=true;
     }
     return true;
   }
-  if((str=="no")||(str=="false")||(str=="off")) {
+  if((str=="no")||(str=="false")||(str=="off")||(str=="0")) {
     if(ok!=NULL) {
       *ok=true;
     }

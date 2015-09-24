@@ -48,9 +48,17 @@ ServerDialog::ServerDialog(QWidget *parent)
 	  this,SLOT(serverTypeChanged(int)));
 
   //
+  // Verbose Logging
+  //
+  srv_verbose_check=new QCheckBox(this);
+  srv_verbose_label=new QLabel(tr("Enable verbose logging"),this);
+  srv_verbose_label->setFont(label_font);
+  srv_verbose_label->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+
+  //
   // Server Location
   //
-  srv_server_location_label=new QLabel(tr("Publish Point")+":",this);
+  srv_server_location_label=new QLabel(tr("Server URL")+":",this);
   srv_server_location_label->setFont(label_font);
   srv_server_location_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
   srv_server_location_edit=new QLineEdit(this);
@@ -124,13 +132,6 @@ bool ServerDialog::makeArgs(QStringList *args,bool escape_args)
 
   args->push_back("--server-type="+Connector::optionKeyword(type));
   args->push_back("--server-url="+url.toString());
-  /*
-  args->push_back("--server-hostname="+url.host());
-  if(url.port()>0) {
-    args->push_back("--server-port="+QString().sprintf("%d",url.port()));
-  }
-  args->push_back("--server-mountpoint="+url.path());
-  */
   if(srv_server_username_edit->text().isEmpty()) {
     if(!srv_server_password_edit->text().isEmpty()) {
       args->push_back("--server-auth=:"+srv_server_password_edit->text());
@@ -152,6 +153,9 @@ bool ServerDialog::makeArgs(QStringList *args,bool escape_args)
   if(!srv_server_script_up_edit->text().isEmpty()) {
     args->push_back("--server-script-up="+
 		    esc+srv_server_script_up_edit->text()+esc);
+  }
+  if(srv_verbose_check->isChecked()) {
+    args->push_back("--verbose");
   }
 
   return true;
@@ -183,6 +187,7 @@ void ServerDialog::load(Profile *p)
     setText(p->stringValue("GlassGui","ServerScriptDown"));
   srv_server_script_up_edit->
     setText(p->stringValue("GlassGui","ServerScriptUp"));
+  srv_verbose_check->setChecked(p->boolValue("GlassGui","VerboseLogging"));
 }
 
 
@@ -201,6 +206,7 @@ void ServerDialog::save(FILE *f)
 	  (const char *)srv_server_script_down_edit->text().toUtf8());
   fprintf(f,"ServerScriptUp=%s\n",
 	  (const char *)srv_server_script_up_edit->text().toUtf8());
+  fprintf(f,"VerboseLogging=%d\n",srv_verbose_check->isChecked());
 }
 
 
@@ -210,6 +216,9 @@ void ServerDialog::resizeEvent(QResizeEvent *e)
 
   srv_server_type_label->setGeometry(10,ypos,110,24);
   srv_server_type_box->setGeometry(125,ypos,250,24);
+
+  srv_verbose_check->setGeometry(395,ypos,25,25);
+  srv_verbose_label->setGeometry(420,ypos,size().width()-430,24);
   ypos+=26;
 
   srv_server_location_label->setGeometry(10,ypos,180,24);
