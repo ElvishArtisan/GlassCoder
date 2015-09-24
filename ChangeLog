@@ -433,3 +433,5 @@
 	a lockup upon exit.
 2015-09-22 Fred Gleason <fredg@paravelsystems.com>
 	* Refactored the HLS streaming connector to use a single FileConveyor.
+2015-09-24 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.9.5.
