@@ -37,13 +37,15 @@ class ConveyorEvent
 {
  public:
   enum HttpMethod {NoMethod=0,GetMethod=1,PutMethod=2,DeleteMethod=3};
-  ConveyorEvent(const QString &filename,const QString &url,
+  ConveyorEvent(void *orig,const QString &filename,const QString &url,
 		HttpMethod meth=NoMethod);
+  void *originator() const;
   QString filename() const;
   QString url() const;
   ConveyorEvent::HttpMethod method() const;
 
  private:
+  void *evt_originator;
   QString evt_filename;
   QString evt_url;
   ConveyorEvent::HttpMethod evt_method;
@@ -59,7 +61,7 @@ class FileConveyor : public QObject
   void setUsername(const QString &str);
   void setPassword(const QString &str);
   void push(const ConveyorEvent &evt);
-  void push(const QString &filename,const QString &url,
+  void push(void *orig,const QString &filename,const QString &url,
 	    ConveyorEvent::HttpMethod meth);
   void stop();
 

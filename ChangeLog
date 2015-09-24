@@ -444,3 +444,9 @@
 	* Added an 'Enable verbose logging' checkbox to the Server Settings
 	dialog in 'src/glassgui/serverdialog.cpp' and
 	'src/glassgui/serverdialog.h'.
+2015-09-24 Fred Gleason <fredg@paravelsystems.com>
+	* Modified the 'Connector::writeData()' method in
+	'src/common/connector.cpp' so as to send media data to the send
+	queue regardless of the connection state.
+	* Added a 'ConveyorEvent::origination()' method in
+	'src/glasscoder/fileconveyor.cpp' and 'src/glasscoder/fileconveyor.h'.

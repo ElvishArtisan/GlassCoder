@@ -310,10 +310,7 @@ void Connector::connectToServer(const QString &hostname,uint16_t port)
 
 int64_t Connector::writeData(int frames,const unsigned char *data,int64_t len)
 {
-  if(conn_connected) {
-    return writeDataConnector(frames,data,len);
-  }
-  return 0;
+  return writeDataConnector(frames,data,len);
 }
 
 

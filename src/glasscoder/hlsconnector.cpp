@@ -56,20 +56,18 @@ HlsConnector::HlsConnector(bool is_top,FileConveyor *conv,QObject *parent)
 				 (const char *)hls_temp_dir->path().toUtf8()));
 
   //
-  // File Conveyor
+  // File Conveyor Error Logging
   //
-  if(is_top) {  // Do conveyor error reporting on behalf of sub-connectors
-    connect(hls_conveyor,SIGNAL(eventFinished(const ConveyorEvent &,int,int,
-					      const QStringList &)),
-	    this,SLOT(conveyorEventFinished(const ConveyorEvent &,int,int,
-					    const QStringList &)));
-    connect(hls_conveyor,
-	    SIGNAL(error(const ConveyorEvent &,QProcess::ProcessError,
-			 const QStringList &)),
-	    this,
-	    SLOT(conveyorError(const ConveyorEvent &,QProcess::ProcessError,
-			       const QStringList &)));
-  }
+  connect(hls_conveyor,SIGNAL(eventFinished(const ConveyorEvent &,int,int,
+					    const QStringList &)),
+	  this,SLOT(conveyorEventFinished(const ConveyorEvent &,int,int,
+					  const QStringList &)));
+  connect(hls_conveyor,
+	  SIGNAL(error(const ConveyorEvent &,QProcess::ProcessError,
+		       const QStringList &)),
+	  this,
+	  SLOT(conveyorError(const ConveyorEvent &,QProcess::ProcessError,
+			     const QStringList &)));
 }
 
 
@@ -114,7 +112,7 @@ void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
 
   if(hls_is_top) {
     WriteTopPlaylistFile();
-    hls_conveyor->push(hls_playlist_filename,
+    hls_conveyor->push(this,hls_playlist_filename,
 		       "http://"+hostHostname()+hls_put_directory+"/",
 		       ConveyorEvent::PutMethod);
     unlink(hls_playlist_filename.toUtf8());
@@ -166,40 +164,42 @@ int64_t HlsConnector::writeDataConnector(int frames,const unsigned char *data,
 void HlsConnector::conveyorEventFinished(const ConveyorEvent &evt,int exit_code,
 					 int resp_code,const QStringList &args)
 {
-  //
-  // Exit code handler
-  //
-  if(exit_code!=0) {
-    setConnected(false);
-    if(global_log_verbose) {
-      Log(LOG_WARNING,
-	  QString().sprintf("curl(1) error: %s, cmd: \"curl %s\"",
-		     (const char *)Connector::curlStrError(exit_code).toUtf8(),
-		     (const char *)args.join(" ").toUtf8()));
-    }
-    else {
-      Log(LOG_WARNING,QString().sprintf("CURL error: %s",
-		 (const char *)Connector::curlStrError(exit_code).toUtf8()));
-    }
-  }
-  else {
+  if(evt.originator()==this) {
     //
-    // Reponse code handler
+    // Exit code handler
     //
-    if((resp_code<200)||(resp_code>299)) {
+    if(exit_code!=0) {
       setConnected(false);
       if(global_log_verbose) {
-	Log(LOG_WARNING,"curl(1) response error: "+
-	    Connector::httpStrError(resp_code)+
-	    ", cmd: \"curl "+args.join(" ")+"\"");
+	Log(LOG_WARNING,
+	    QString().sprintf("curl(1) error: %s, cmd: \"curl %s\"",
+		   (const char *)Connector::curlStrError(exit_code).toUtf8(),
+		   (const char *)args.join(" ").toUtf8()));
       }
       else {
-	Log(LOG_WARNING,"curl(1) response error: "+
-	    Connector::httpStrError(resp_code));
+	Log(LOG_WARNING,QString().sprintf("CURL error: %s",
+		   (const char *)Connector::curlStrError(exit_code).toUtf8()));
       }
     }
     else {
-      setConnected(true);
+      //
+      // Reponse code handler
+      //
+      if((resp_code<200)||(resp_code>299)) {
+	setConnected(false);
+	if(global_log_verbose) {
+	  Log(LOG_WARNING,"curl(1) response error: "+
+	      Connector::httpStrError(resp_code)+
+	      ", cmd: \"curl "+args.join(" ")+"\"");
+	}
+	else {
+	  Log(LOG_WARNING,"curl(1) response error: "+
+	      Connector::httpStrError(resp_code));
+	}
+      }
+      else {
+	setConnected(true);
+      }
     }
   }
 }
@@ -235,12 +235,12 @@ void HlsConnector::RotateMediaFile()
   //
   // HTTP Uploads
   //
-  hls_conveyor->push(hls_temp_dir->path()+"/"+hls_media_filename,
+  hls_conveyor->push(this,hls_temp_dir->path()+"/"+hls_media_filename,
 		     "http://"+hostHostname()+
 		     QString().sprintf(":%u",hostPort())+
 		     hls_put_directory+"/",ConveyorEvent::PutMethod);
   unlink((hls_temp_dir->path()+"/"+hls_media_filename).toUtf8());
-  hls_conveyor->push(hls_playlist_filename,
+  hls_conveyor->push(this,hls_playlist_filename,
 		     "http://"+hostHostname()+hls_put_directory+"/",
 		     ConveyorEvent::PutMethod);
   unlink(hls_playlist_filename.toUtf8());
@@ -260,7 +260,7 @@ void HlsConnector::RotateMediaFile()
 	  ++cj;
 	}
       }
-      hls_conveyor->push("","http://"+hostHostname()+hls_put_directory+"/"+
+      hls_conveyor->push(this,"","http://"+hostHostname()+hls_put_directory+"/"+
 			 GetMediaFilename(ci->first),
 			 ConveyorEvent::DeleteMethod);
       hls_media_killtimes.erase(ci++);

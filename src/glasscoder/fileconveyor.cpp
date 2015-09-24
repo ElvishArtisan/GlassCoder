@@ -25,12 +25,19 @@
 
 #include "fileconveyor.h"
 
-ConveyorEvent::ConveyorEvent(const QString &filename,const QString &url,
+ConveyorEvent::ConveyorEvent(void *orig,const QString &filename,const QString &url,
 			     HttpMethod meth)
 {
+  evt_originator=orig;
   evt_filename=filename;
   evt_url=url;
   evt_method=meth;
+}
+
+
+void *ConveyorEvent::originator() const
+{
+  return evt_originator;
 }
 
 
@@ -138,10 +145,10 @@ void FileConveyor::push(const ConveyorEvent &evt)
 }
 
 
-void FileConveyor::push(const QString &filename,const QString &url,
+void FileConveyor::push(void *orig,const QString &filename,const QString &url,
 			ConveyorEvent::HttpMethod meth)
 {
-  ConveyorEvent evt(filename,url,meth);
+  ConveyorEvent evt(orig,filename,url,meth);
   push(evt);
 }
 
@@ -150,9 +157,9 @@ void FileConveyor::stop()
 {
   QStringList urls=conv_putted_files;
   for(int i=0;i<urls.size();i++) {
-    push("",urls[i],ConveyorEvent::DeleteMethod);
+    push(this,"",urls[i],ConveyorEvent::DeleteMethod);
   }
-  push("","",ConveyorEvent::NoMethod);
+  push(this,"","",ConveyorEvent::NoMethod);
 }
 
 
