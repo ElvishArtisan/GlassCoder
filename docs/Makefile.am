@@ -2,7 +2,7 @@
 ##
 ## docs/Automake.am for GlassCoder
 ##
-##   (C) Copyright 2014 Fred Gleason <fredg@paravelsystems.com>
+##   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -22,9 +22,11 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-man_MANS = glasscoder.1
+man_MANS = glasscoder.1\
+           glassgui.1
 
-EXTRA_DIST = glasscoder.1
+EXTRA_DIST = glasscoder.1\
+             glassgui.1
 
 CLEANFILES = *~
 DISTCLEANFILES = moc_*

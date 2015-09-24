@@ -43,7 +43,7 @@
 #include "stereometer.h"
 #include "streamdialog.h"
 
-#define GLASSGUI_USAGE "--instance-name=<name>\n"
+#define GLASSGUI_USAGE "[options]\n"
 #define GLASSGUI_SETTINGS_DIR ".glassgui"
 #define GLASSGUI_SETTINGS_FILE "glassguirc"
 #define GLASSGUI_TERMINATE_TIMEOUT 5000
@@ -87,30 +87,25 @@ class MainWidget : public QMainWindow
   bool SaveSettings();
   bool CheckSettingsDirectory();
   QString GetSettingsFilename();
+  void DeleteInstance(const QString &name);
+  void ListInstances();
   StereoMeter *gui_meter;
   QPushButton *gui_start_button;
   QPushButton *gui_code_button;
-
   ServerDialog *gui_server_dialog;
   QPushButton *gui_server_button;
-
   CodecDialog *gui_codec_dialog;
   QPushButton *gui_codec_button;
-
   StreamDialog *gui_stream_dialog;
   QPushButton *gui_stream_button;
-
   SourceDialog *gui_source_dialog;
   QPushButton *gui_source_button;
-
   CodeViewer *gui_codeviewer_dialog;
   QProcess *gui_process;
   QTimer *gui_process_cleanup_timer;
   QTimer *gui_process_kill_timer;
   QString gui_process_accum;
-
   QDir *gui_settings_dir;
-
   MessageWidget *gui_message_widget;
   StatusWidget *gui_status_widget;
   QLabel *gui_status_frame_widget;

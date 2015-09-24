@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 #include <QApplication>
 #include <QFileDialog>
@@ -43,12 +44,22 @@ MainWidget::MainWidget(QWidget *parent)
   : QMainWindow(parent)
 {
   instance_name="";
+  QString delete_instance="";
+  bool list_instances=false;
 
   CmdSwitch *cmd=
     new CmdSwitch(qApp->argc(),qApp->argv(),"glassgui",GLASSGUI_USAGE);
   for(unsigned i=0;i<cmd->keys();i++) {
+    if(cmd->key(i)=="--delete-instance") {
+      delete_instance=cmd->value(i);
+      cmd->setProcessed(i,true);
+    }
     if(cmd->key(i)=="--instance-name") {
       instance_name=cmd->value(i);
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--list-instances") {
+      list_instances=true;
       cmd->setProcessed(i,true);
     }
     if(!cmd->processed(i)) {
@@ -57,6 +68,19 @@ MainWidget::MainWidget(QWidget *parent)
       exit(256);
     }
   }
+  if(list_instances&&(!delete_instance.isEmpty())) {
+    fprintf(stderr,"glassgui: --list-instances and --delete-instance are mutually exclusive\n");
+    exit(256);
+  }
+  if(list_instances) {
+    ListInstances();
+    exit(0);
+  }
+  if(!delete_instance.isEmpty()) {
+    DeleteInstance(delete_instance);
+    exit(0);
+  }
+
   setWindowIcon(QPixmap(glasscoder_16x16_xpm));
   if(instance_name.isEmpty()) {
     setWindowTitle(QString("GlassGui v")+VERSION);
@@ -639,6 +663,27 @@ QString MainWidget::GetSettingsFilename()
   }
 
   return ret;
+}
+
+
+void MainWidget::DeleteInstance(const QString &name)
+{
+  if(CheckSettingsDirectory()) {
+    unlink((gui_settings_dir->path()+"/glassguirc-"+name).toUtf8());
+  }
+}
+
+
+void MainWidget::ListInstances()
+{
+  if(CheckSettingsDirectory()) {
+    QStringList files=gui_settings_dir->entryList(QStringList("glassguirc-*"),
+						  QDir::Files,QDir::Name);
+    for(int i=0;i<files.size();i++) {
+      printf("%s\n",
+	     (const char *)files[i].right(files[i].length()-11).toUtf8());
+    }
+  }
 }
 
 

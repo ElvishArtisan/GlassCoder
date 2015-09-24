@@ -78,6 +78,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %{_bindir}/glasscoder
 %{_mandir}/man1/glasscoder.1.gz
+%{_mandir}/man1/glassgui.1.gz
 %doc AUTHORS
 %doc ChangeLog
 %doc COPYING 
