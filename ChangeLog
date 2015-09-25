@@ -454,3 +454,6 @@
 	* Added a glassgui(1) man page.
 	* Added a '--list-instances' option to glassgui(1).
 	* Added a '--delete-instance' options to glassgui(1).
+2015-09-25 Fred Gleason <fredg@paravelsystems.com>
+	* Optimized 'FileConveyor::push()' to unlink stale target files before
+	attempting to link a new one.

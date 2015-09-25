@@ -132,6 +132,10 @@ void FileConveyor::setPassword(const QString &str)
 void FileConveyor::push(const ConveyorEvent &evt)
 {
   if(!evt.filename().isEmpty()) {
+    if(unlink(Repath(evt.filename()).toUtf8())==0) {
+      syslog(LOG_DEBUG,"FileConveyor::push: had to move \"%s\" out of the way",
+	     (const char *)Repath(evt.filename()).toUtf8());
+    }
     if(link(evt.filename().toUtf8(),Repath(evt.filename()).toUtf8())!=0) {
       syslog(LOG_WARNING,"FileConveyor::push: unable to make hard link %s [%s]",
 	     (const char *)Repath(evt.filename()).toUtf8(),strerror(errno));
