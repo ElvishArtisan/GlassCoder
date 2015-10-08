@@ -457,3 +457,5 @@
 2015-09-25 Fred Gleason <fredg@paravelsystems.com>
 	* Optimized 'FileConveyor::push()' to unlink stale target files before
 	attempting to link a new one.
+2015-10-08 Fred Gleason <fredg@paravelsystems.com>
+	* Rewrote glasscoder(1) and glassgui(1) man pages in XML-DocBook 5.

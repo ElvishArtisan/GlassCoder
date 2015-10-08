@@ -22,13 +22,22 @@
 ##
 ## Use automake to process this into a Makefile.in
 
+# The dependency for man pages
+%.1:	%.xml
+	xsltproc $(DOCBOOK_STYLESHEETS)/manpages/docbook.xsl $<
+
+all-local:	glasscoder.1 glassgui.1
+
 man_MANS = glasscoder.1\
            glassgui.1
 
 EXTRA_DIST = glasscoder.1\
-             glassgui.1
+             glasscoder.xml\
+             glassgui.1\
+             glassgui.xml
 
 CLEANFILES = *~
 DISTCLEANFILES = moc_*
 MAINTAINERCLEANFILES = *~\
+                       *.1\
                        Makefile.in
