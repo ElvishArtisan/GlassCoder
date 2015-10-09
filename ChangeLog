@@ -459,5 +459,7 @@
 	attempting to link a new one.
 2015-10-08 Fred Gleason <fredg@paravelsystems.com>
 	* Rewrote glasscoder(1) and glassgui(1) man pages in XML-DocBook 5.
-2015-10-08 Fred Gleason <fredg@paravelsystems.com>
+2015-10-09 Fred Gleason <fredg@paravelsystems.com>
 	* Tweaked markup glasscoder(1) and glassgui(1) man pages.
+2015-10-09 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.9.6.
