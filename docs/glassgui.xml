@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <refentry id="stdin" xmlns="http://docbook.org/ns/docbook" version="5.0">
+  <!--
+      Header
+  -->
   <refmeta>
     <refentrytitle>glassgui</refentrytitle>
     <manvolnum>1</manvolnum>
@@ -10,9 +13,20 @@
     <refname>glassgui</refname>
     <refpurpose>GUI front-end for <command>glasscoder</command><manvolnum>1</manvolnum> audio encoder</refpurpose>
   </refnamediv>
+  <info>
+    <author>
+      <personname>
+	<firstname>Fred</firstname>
+	<surname>Gleason</surname>
+	<email>fredg@paravelsystems.com</email>
+      </personname>
+      <contrib>Application Author</contrib>
+    </author>
+  </info>
 
-
-  <!-- body begins here -->
+  <!--
+      Body
+  -->
   <refsynopsisdiv id='synopsis'>
     <cmdsynopsis>
       <command>glassgui</command>    <arg choice='opt'><replaceable>OPTIONS</replaceable></arg>
@@ -20,46 +34,66 @@
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1 id='description'><title>DESCRIPTION</title>
-  <para><emphasis remap='B'>Glassgui</emphasis> is a GUI front end for the
-  <command>glasscoder</command><manvolnum>1</manvolnum> audio encoder.
-  It provides a convienent and discoverable means for creating and saving
-  <command>glasscoder</command><manvolnum>1</manvolnum> invocations as
-  well as an instance management system for
-  saving multiple sets of configurations on the local system.</para>
+  <refsect1 id='description'><title>Description</title>
+  <para>
+    <command>glassgui</command><manvolnum>1</manvolnum> is a GUI front end
+    for the <command>glasscoder</command><manvolnum>1</manvolnum> audio encoder.
+    It provides a convenient and discoverable means for creating and saving
+    <command>glasscoder</command><manvolnum>1</manvolnum> invocations as
+    well as an instance management system for
+    saving multiple sets of configurations on the local system.
+  </para>
   </refsect1>
 
-  <refsect1 id='options'><title>OPTIONS</title>
+  <refsect1 id='options'><title>Options</title>
   <variablelist remap='TP'>
     <varlistentry>
-      <term><option>--delete-instance</option><emphasis role="bold">=</emphasis>&lt;<replaceable>name</replaceable>&gt;</term>
+      <term>
+	<option>--delete-instance=</option><replaceable>name</replaceable>
+      </term>
       <listitem>
-	<para>Delete the &lt;<emphasis remap='I'>name</emphasis>&gt; instance from storage and then exit.</para>
+	<para>
+	  Delete the <replaceable>name</replaceable> instance from storage
+	  and then exit.
+	</para>
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--instance-name</option><emphasis role="bold">=</emphasis>&lt;<replaceable>name</replaceable>&gt;</term>
+      <term>
+	<option>--instance-name=</option><replaceable>name</replaceable>
+      </term>
       <listitem>
-	<para>Load and save settings from/to the &lt;<emphasis remap='I'>name</emphasis>&gt; instance.</para>
+	<para>
+	  Load and save settings from/to the <replaceable>name</replaceable>
+	  instance.
+	</para>
       </listitem>
     </varlistentry>
 
     <varlistentry>
       <term><option>--list-instances</option></term>
       <listitem>
-	<para>Print the list of saved instances to standard output and then exit.</para>
+	<para>
+	  Print the list of saved instances to standard output and then exit.
+	</para>
       </listitem>
     </varlistentry>
   </variablelist>
   </refsect1>
 
-  <refsect1 id='author'><title>AUTHOR</title>
-  <para>Fred Gleason &lt;fredg@paravelsystems.com&gt;</para>
+  <refsect1 id='author'><title>Author</title>
+  <para>
+    Fred Gleason &lt;fredg@paravelsystems.com&gt;
+  </para>
   </refsect1>
 
-  <refsect1 id='see_also'><title>SEE ALSO</title>
-  <para><citerefentry><refentrytitle>glasscoder</refentrytitle><manvolnum>1</manvolnum></citerefentry></para>
+  <refsect1 id='see_also'><title>See Also</title>
+  <para>
+  <citerefentry>
+    <refentrytitle>glasscoder</refentrytitle><manvolnum>1</manvolnum>
+  </citerefentry>
+  </para>
   </refsect1>
 </refentry>
 

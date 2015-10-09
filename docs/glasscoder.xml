@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <refentry id="stdin" xmlns="http://docbook.org/ns/docbook" version="5.0">
+  <!--
+      Header
+  -->
   <refmeta>
     <refentrytitle>glasscoder</refentrytitle>
     <manvolnum>1</manvolnum>
@@ -10,57 +13,94 @@
     <refname>glasscoder</refname>
     <refpurpose>Minimalist audio encoder for live streaming</refpurpose>
   </refnamediv>
+  <info>
+    <author>
+      <personname>
+	<firstname>Fred</firstname>
+	<surname>Gleason</surname>
+	<email>fredg@paravelsystems.com</email>
+      </personname>
+      <contrib>Application Author</contrib>
+    </author>
+  </info>
 
-  <!-- body begins here -->
+  <!--
+      Body
+  -->
   <refsynopsisdiv id='synopsis'>
     <cmdsynopsis>
-      <command>glasscoder</command>    <arg choice='opt'><replaceable>OPTIONS</replaceable></arg>
+      <command>glasscoder</command>
+      <arg choice='opt'><replaceable>OPTIONS</replaceable></arg>
       <sbr/>
     </cmdsynopsis>
   </refsynopsisdiv>
 
-  <refsect1 id='description'><title>DESCRIPTION</title>
-  <para><emphasis remap='B'>Glasscoder</emphasis> is an audio encoder that is capable of generating live
-  streams using a variety of formats and sending them to an Icecast or
-  Shoutcast audio streaming server or posting them as HTTP Live Streams
-  [HLS].</para>
+  <refsect1 id='description'><title>Description</title>
+  <para>
+    <command>glasscoder</command><manvolnum>1</manvolnum> is an audio encoder
+    that is capable of generating live streams using a variety of formats and
+    sending them to an Icecast or Shoutcast audio streaming server or posting
+    them as HTTP Live Streams [HLS].
+  </para>
 
-  <para><emphasis remap='B'>Glasscoder</emphasis> has no GUI or configuration file components at all; its
-  sole 'user interface' is its command-line invocation.</para>
+  <para>
+    <command>glasscoder</command><manvolnum>1</manvolnum> has no GUI or
+    configuration file components at all; its sole 'user interface' is its
+    command-line invocation.
+  </para>
   </refsect1>
 
-  <refsect1 id='options'><title>OPTIONS</title>
+  <refsect1 id='options'><title>Options</title>
   <variablelist remap='TP'>
     <varlistentry>
-      <term><option>--audio-bitrate</option><emphasis role="bold">=</emphasis>&lt;<replaceable>kbps</replaceable>&gt;</term>
+      <term>
+	<option>--audio-bitrate=</option><replaceable>kbps</replaceable>
+      </term>
       <listitem>
-	<para>The constant stream data rate in kilobits per second.  Default value is 128.
-	Use of this option is mutually exclusive with that of the
-	<option>--audio-quality</option> option (see below).</para>
+	<para>
+	  The constant stream data rate in kilobits per second.  Default value
+	  is <userinput>128</userinput>. Use of this option is mutually
+	  exclusive with that of the <option>--audio-quality</option> option
+	  (see below).
+	</para>
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--audio-channels</option><emphasis role="bold">=</emphasis>&lt;<replaceable>chans</replaceable>&gt;</term>
+      <term>
+	<option>--audio-channels=</option><replaceable>chans</replaceable>
+      </term>
       <listitem>
-	<para>The number of audio channels to use.  Valid values are <literal>1</literal> or <literal>2</literal>.
-	Default value is <emphasis remap='P->I'>2</emphasis>.</para>
-
+	<para>
+	  The number of audio channels to use.  Valid values are 
+	  <userinput>1</userinput> or <userinput>2</userinput>.
+	  Default value is <userinput>2</userinput>.
+	</para>
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--audio-device</option><emphasis role="bold">=</emphasis>&lt;<replaceable>type</replaceable>&gt;</term>
+      <term>
+	<option>--audio-device=</option><replaceable>type</replaceable>
+      </term>
       <listitem>
-	<para>The type of audio device to use.  The default value is <emphasis remap='B'>JACK</emphasis>. See the
-	<emphasis remap='B'>DEVICE OPTIONS</emphasis> section (below) for the options appropriate for each
-	audio device type.  Valid values are:</para>
+	<para>
+	  The type of audio device to use.  The default value is
+	  <userinput>JACK</userinput>. See the
+	  <emphasis remap='B'>DEVICE OPTIONS</emphasis> section (below) for
+	  the options appropriate for each audio device type.  Valid values
+	  are:
+	</para>
 	<blockquote remap='RS'>
 	  <variablelist remap='TP'>
 	    <varlistentry>
-	      <term><emphasis remap='B'>ALSA</emphasis></term>
+	      <term>
+		<userinput>ALSA</userinput>
+	      </term>
 	      <listitem>
-		<para>The Advanced Linux Sound Architecture.</para>
+		<para>
+		  The Advanced Linux Sound Architecture.
+		</para>
 	      </listitem>
 	    </varlistentry>
 	  </variablelist>
@@ -68,9 +108,13 @@
 	<blockquote remap='RS'>
 	  <variablelist remap='TP'>
 	    <varlistentry>
-	      <term><emphasis remap='B'>ASIHPI</emphasis></term>
+	      <term>
+		<userinput>ASIHPI</userinput>
+	      </term>
 	      <listitem>
-		<para>AudioScience HPI.</para>
+		<para>
+		  AudioScience HPI.
+		</para>
 	      </listitem>
 	    </varlistentry>
 	  </variablelist>
@@ -78,9 +122,13 @@
 	<blockquote remap='RS'>
 	  <variablelist remap='TP'>
 	    <varlistentry>
-	      <term><emphasis remap='B'>FILE</emphasis></term>
+	      <term>
+		<userinput>FILE</userinput>
+	      </term>
 	      <listitem>
-		<para>Stream directly from a file.</para>
+		<para>
+		  Stream directly from a file.
+		</para>
 	      </listitem>
 	    </varlistentry>
 	  </variablelist>
@@ -88,67 +136,13 @@
 	<blockquote remap='RS'>
 	  <variablelist remap='TP'>
 	    <varlistentry>
-	      <term><emphasis remap='B'>JACK</emphasis></term>
+	      <term>
+		<userinput>JACK</userinput>
+	      </term>
 	      <listitem>
-		<para>The Jack Audio Connection Kit.</para>
-	      </listitem>
-	    </varlistentry>
-	  </variablelist>
-	</blockquote> <!-- remap='RE' -->
-      </listitem>
-    </varlistentry>
-
-    <varlistentry>
-      <term><option>--audio-format</option><emphasis role="bold">=</emphasis>&lt;<replaceable>fmt</replaceable>&gt;</term>
-      <listitem>
-	<para>The audio encoding format to use.  The default value is <emphasis remap='B'>VORBIS</emphasis>.  Valid
-	&lt;<emphasis remap='I'>fmt</emphasis>&gt; values are:</para>
-	<blockquote remap='RS'>
-	  <variablelist remap='TP'>
-	    <varlistentry>
-	      <term><emphasis remap='B'>MP2</emphasis></term>
-	      <listitem>
-		<para>MPEG-1/1.5 Layer 2</para>
-	      </listitem>
-	    </varlistentry>
-	  </variablelist>
-	</blockquote> <!-- remap='RE' -->
-	<blockquote remap='RS'>
-	  <variablelist remap='TP'>
-	    <varlistentry>
-	      <term><emphasis remap='B'>MP3</emphasis></term>
-	      <listitem>
-		<para>MPEG-1/1.5 Layer 3</para>
-	      </listitem>
-	    </varlistentry>
-	  </variablelist>
-	</blockquote> <!-- remap='RE' -->
-	<blockquote remap='RS'>
-	  <variablelist remap='TP'>
-	    <varlistentry>
-	      <term><emphasis remap='B'>AAC</emphasis></term>
-	      <listitem>
-		<para>MPEG-2 Advanced Audio Coding (Main Profile)</para>
-	      </listitem>
-	    </varlistentry>
-	  </variablelist>
-	</blockquote> <!-- remap='RE' -->
-	<blockquote remap='RS'>
-	  <variablelist remap='TP'>
-	    <varlistentry>
-	      <term><emphasis remap='B'>AACP</emphasis></term>
-	      <listitem>
-		<para>MPEG-4 Advanced Audio Coding (High Efficiency Profile)</para>
-	      </listitem>
-	    </varlistentry>
-	  </variablelist>
-	</blockquote> <!-- remap='RE' -->
-	<blockquote remap='RS'>
-	  <variablelist remap='TP'>
-	    <varlistentry>
-	      <term><emphasis remap='B'>VORBIS</emphasis></term>
-	      <listitem>
-		<para>Ogg Vorbis</para>
+		<para>
+		  The Jack Audio Connection Kit.
+		</para>
 	      </listitem>
 	    </varlistentry>
 	  </variablelist>
@@ -157,35 +151,137 @@
     </varlistentry>
 
     <varlistentry>
-      <term><option>--audio-quality</option><emphasis role="bold">=</emphasis>&lt;<replaceable>qual</replaceable>&gt;</term>
+      <term>
+	<option>--audio-format=</option><replaceable>fmt</replaceable>
+      </term>
       <listitem>
-	<para>Use variable bitrate streaming at the given audio quality.  &lt;<emphasis remap='I'>qual</emphasis>&gt; can
-	be in the range 0.0 (lowest quality) to 1.0 (highest).  Use of this option is mutually exclusive
-	with that of the <option>--audio-bitrate</option> option (see above).</para>
+	<para>
+	  The audio encoding format to use.  The default value is
+	  <userinput>VORBIS</userinput>.  Valid	<replaceable>fmt</replaceable>
+	  values are:
+	</para>
+	<blockquote remap='RS'>
+	  <variablelist remap='TP'>
+	    <varlistentry>
+	      <term>
+		<userinput>MP2</userinput>
+	      </term>
+	      <listitem>
+		<para>
+		  MPEG-1/1.5 Layer 2
+		</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</blockquote> <!-- remap='RE' -->
+	<blockquote remap='RS'>
+	  <variablelist remap='TP'>
+	    <varlistentry>
+	      <term>
+		<userinput>MP3</userinput>
+	      </term>
+	      <listitem>
+		<para>
+		  MPEG-1/1.5 Layer 3
+		</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</blockquote> <!-- remap='RE' -->
+	<blockquote remap='RS'>
+	  <variablelist remap='TP'>
+	    <varlistentry>
+	      <term>
+		<userinput>AAC</userinput>
+	      </term>
+	      <listitem>
+		<para>
+		  MPEG-2 Advanced Audio Coding (Main Profile)
+		</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</blockquote> <!-- remap='RE' -->
+	<blockquote remap='RS'>
+	  <variablelist remap='TP'>
+	    <varlistentry>
+	      <term>
+		<userinput>AACP</userinput>
+	      </term>
+	      <listitem>
+		<para>
+		  MPEG-4 Advanced Audio Coding (High Efficiency Profile)
+		</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</blockquote> <!-- remap='RE' -->
+	<blockquote remap='RS'>
+	  <variablelist remap='TP'>
+	    <varlistentry>
+	      <term>
+		<userinput>VORBIS</userinput>
+	      </term>
+	      <listitem>
+		<para>
+		  Ogg Vorbis
+		</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</blockquote> <!-- remap='RE' -->
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--audio-samplerate</option><emphasis role="bold">=</emphasis>&lt;<replaceable>rate</replaceable>&gt;</term>
+      <term>
+	<option>--audio-quality=</option><replaceable>qual</replaceable>
+      </term>
       <listitem>
-	<para>The audio sample rate to use for streaming.  If the underlying
-	audio layer is operating at a different sample rate, the input will
-	be automatically resampled to this rate.
-	Default value is 44100.</para>
+	<para>
+	  Use variable bitrate streaming at the given audio quality.
+	  <replaceable>qual</replaceable> can be in the range
+	  <userinput>0.0</userinput> (lowest quality) to
+	  <userinput>1.0</userinput> (highest). Use of this option is mutually
+	  exclusive with that of the <option>--audio-bitrate</option> option
+	  (see above).
+	</para>
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--errors-to</option><emphasis role="bold">=</emphasis>&lt;<replaceable>dest</replaceable>&gt;</term>
+      <term>
+	<option>--audio-samplerate=</option><replaceable>rate</replaceable>
+      </term>
+      <listitem>
+	<para>
+	  The audio sample rate to use for streaming.  If the underlying
+	  audio layer is operating at a different sample rate, the input will
+	  be automatically resampled to this rate.
+	  Default value is <userinput>44100</userinput>.
+	</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>
+	<option>--errors-to=</option><replaceable>dest</replaceable>
+      </term>
     <listitem>
-      <para>Send error messages to &lt;<replaceable>dest</replaceable>&gt; (default standard error).
-      Valid destinations are:</para>
+      <para>
+	Send error messages to <replaceable>dest</replaceable> (default
+	standard error). Valid destinations are:
+      </para>
       <blockquote remap='RS'>
-      <variablelist remap='TP'>
-	<varlistentry>
-	  <term><emphasis remap='B'>STDERR</emphasis></term>
-	  <listitem>
-	    <para>Standard error.</para>
+	<variablelist remap='TP'>
+	  <varlistentry>
+	    <term>
+	      <userinput>STDERR</userinput>
+	    </term>
+	    <listitem>
+	      <para>
+		Standard error.
+	      </para>
 	  </listitem>
 	</varlistentry>
       </variablelist>
@@ -193,9 +289,13 @@
       <blockquote remap='RS'>
       <variablelist remap='TP'>
 	<varlistentry>
-	  <term><emphasis remap='B'>SYSLOG</emphasis></term>
+	  <term>
+	    <userinput>SYSLOG</userinput>
+	  </term>
 	  <listitem>
-	    <para>The system syslog service.</para>
+	    <para>
+	      The system syslog service.
+	    </para>
 	  </listitem>
 	</varlistentry>
       </variablelist>
@@ -203,11 +303,15 @@
       <blockquote remap='RS'>
       <variablelist remap='TP'>
 	<varlistentry>
-	  <term><emphasis remap='B'>STDOUT</emphasis></term>
+	  <term>
+	    <userinput>STDOUT</userinput>
+	  </term>
 	  <listitem>
-	    <para>Standard output,in machine readable format (useful for communicating
-	    with another 'controller' program).  See also the <option>--meter-data</option>
-	    option below.</para>
+	    <para>
+	      Standard output,in machine readable format (useful for
+	      communication with another 'controller' program).  See also the
+	      <option>--meter-data</option> option below.
+	    </para>
 	  </listitem>
 	</varlistentry>
       </variablelist>
@@ -216,191 +320,288 @@
     </varlistentry>
 
     <varlistentry>
-      <term><option>--help</option></term>
+      <term>
+	<option>--help</option>
+      </term>
       <listitem>
-	<para>Print a short usage message and exit.</para>
+	<para>
+	  Print a short usage message and exit.
+	</para>
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--list-codecs</option></term>
+      <term>
+	<option>--list-codecs</option>
+      </term>
       <listitem>
-	<para>Print a list of available codecs and then exit.</para>
+	<para>
+	  Print a list of available codecs and then exit.
+	</para>
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--list-devices</option></term>
+      <term>
+	<option>--list-devices</option>
+      </term>
       <listitem>
-	<para>Print a list of available source devices and then exit.</para>
+	<para>
+	  Print a list of available source devices and then exit.
+	</para>
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--meter-data</option></term>
+      <term>
+	<option>--meter-data</option>
+      </term>
       <listitem>
-	<para>Output meter level updates on standard output.  Useful for
-	driving an external metering display.</para>
+	<para>
+	  Output meter level updates on standard output.  Useful for
+	  driving an external metering display.
+	</para>
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--server-auth</option><emphasis role="bold">=</emphasis>[&lt;<replaceable>username</replaceable>&gt;][<emphasis role="bold">:</emphasis>&lt;<replaceable>password</replaceable>&gt;]</term>
+      <term>
+	<option>--server-auth=</option>[<replaceable>username</replaceable>][<option>:</option><replaceable>password</replaceable>]
+      </term>
       <listitem>
-	<para>The authentication parameters to use.  This parameter has no default.</para>
+	<para>
+	  The authentication parameters to use.  This parameter has no default.
+	</para>
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--server-script-down</option><emphasis role="bold">=</emphasis>&lt;<replaceable>cmd</replaceable>&gt;</term>
+      <term>
+	<option>--server-script-down=</option><replaceable>cmd</replaceable>
+      </term>
       <listitem>
-	<para>Run the command &lt;<replaceable>cmd</replaceable>&gt; when the connection enters the
-	<emphasis remap='B'>disconnected</emphasis> state.</para>
+	<para>
+	  Run the command <replaceable>cmd</replaceable> when the connection
+	  enters the
+	  <computeroutput>disconnected</computeroutput> state.
+	</para>
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--server-script-up</option><emphasis role="bold">=</emphasis>&lt;<replaceable>cmd</replaceable>&gt;</term>
+      <term>
+	<option>--server-script-up=</option><replaceable>cmd</replaceable>
+      </term>
       <listitem>
-	<para>Run the command &lt;<replaceable>cmd</replaceable>&gt; when the connection enters the
-	<emphasis remap='B'>connected</emphasis> state.</para>	
+	<para>
+	  Run the command <replaceable>cmd</replaceable> when the connection
+	  enters the <computeroutput>connected</computeroutput> state.
+	</para>	
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--server-type</option><emphasis role="bold">=</emphasis>&lt;<replaceable>type</replaceable>&gt;</term>
-    <listitem>
-      <para>The type of streaming server to use (default is <emphasis role="bold">Icecast2</emphasis>).
-      Valid values for &lt;<replaceable>type</replaceable>&gt; are:</para>
-      <blockquote remap='RS'>
-      <variablelist remap='TP'>
+      <term>
+      <option>--server-type=</option><replaceable>type</replaceable>
+      </term>
+      <listitem>
+	<para>
+	  The type of streaming server to use (default is
+	  <userinput>Icecast2</userinput>). Valid values for
+	  <replaceable>type</replaceable> are:
+	</para>
+	<blockquote remap='RS'>
+	  <variablelist remap='TP'>
 
-	<varlistentry>
-	  <term><emphasis remap='B'>HLS</emphasis></term>
-	  <listitem>
-	    <para>HLS/HTTP Live Streaming</para>
-	  </listitem>
-	</varlistentry>
+	    <varlistentry>
+	      <term>
+		<userinput>HLS</userinput>
+	      </term>
+	      <listitem>
+		<para>
+		  HLS/HTTP Live Streaming
+		</para>
+	      </listitem>
+	    </varlistentry>
 
-	<varlistentry>
-	  <term><emphasis remap='B'>IceCast2</emphasis></term>
-	  <listitem>
-	    <para>IcCast v2</para>
-	  </listitem>
-	</varlistentry>
+	    <varlistentry>
+	      <term>
+		<userinput>IceCast2</userinput>
+	      </term>
+	      <listitem>
+		<para>
+		  IceCast v2
+		</para>
+	      </listitem>
+	    </varlistentry>
 
-	<varlistentry>
-	  <term><emphasis remap='B'>Shout1</emphasis></term>
-	  <listitem>
-	    <para>Shoutcat v1</para>
-	  </listitem>
-	</varlistentry>
+	    <varlistentry>
+	      <term>
+		<userinput>Shout1</userinput>
+	      </term>
+	      <listitem>
+		<para>
+		  Shoutcast v1
+		</para>
+	      </listitem>
+	    </varlistentry>
 
-	<varlistentry>
-	  <term><emphasis remap='B'>Shout2</emphasis></term>
-	  <listitem>
-	    <para>Shoutcast v2</para>
-	  </listitem>
-	</varlistentry>
-      </variablelist>
-      </blockquote>
-    </listitem>
+	    <varlistentry>
+	      <term>
+		<userinput>Shout2</userinput>
+	      </term>
+	      <listitem>
+		<para>
+		  Shoutcast v2
+		</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</blockquote>
+      </listitem>
     </varlistentry>
     
     <varlistentry>
-      <term><option>--server-url</option><emphasis role="bold">=</emphasis>&lt;<replaceable>url</replaceable>&gt;</term>
+      <term>
+	<option>--server-url=</option><replaceable>url</replaceable>
+      </term>
       <listitem>
-	<para>The URL describing the server resource to stream to.  This parameter has no
-	default.</para>
-
+	<para>
+	  The URL describing the server resource to stream to.  This parameter
+	  has no default.
+	</para>
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--stream-aim</option><emphasis role="bold">=</emphasis>&lt;<replaceable>aim</replaceable>&gt;</term>
+      <term>
+	<option>--stream-aim=</option><replaceable>aim</replaceable>
+      </term>
       <listitem>
-	<para>The AOL Instant Messenger ID to associate with the stream.  There is no
-	default value.  This setting is used only by Shoutcast servers.</para>
+	<para>
+	  The AOL Instant Messenger ID to associate with the stream.  There is
+	  no default value.  This setting is used only by Shoutcast servers.
+	</para>
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--stream-description</option><emphasis role="bold">=</emphasis>&lt;<replaceable>string</replaceable>&gt;</term>
+      <term>
+	<option>--stream-description=</option><replaceable>string</replaceable>
+      </term>
       <listitem>
-	<para>The string to show as the stream description.  There is no default value.
-	This setting is used only by Icecast servers.</para>
+	<para>
+	  The string to show as the stream description.  There is no default
+	  value. This setting is used only by Icecast servers.
+	</para>
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--stream-genre</option><emphasis role="bold">=</emphasis>&lt;<replaceable>string</replaceable>&gt;</term>
+      <term>
+	<option>--stream-genre=</option><replaceable>string</replaceable>
+      </term>
       <listitem>
-	<para>The string to show as the stream genre.  There is no default value.
-	This setting is used only by Icecast and Shoutcast servers.</para>
+	<para>
+	  The string to show as the stream genre.  There is no default value.
+	  This setting is used only by Icecast and Shoutcast servers.
+	</para>
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--stream-icq</option><emphasis role="bold">=</emphasis>&lt;<replaceable>icq</replaceable>&gt;</term>
+      <term>
+	<option>--stream-icq=</option><replaceable>icq</replaceable>
+      </term>
       <listitem>
-	<para>The ICQ ID to associate with the stream.  There is no default value.
-	This setting is used only by Shoutcast servers.</para>	
+	<para>
+	  The ICQ ID to associate with the stream.  There is no default value.
+	  This setting is used only by Shoutcast servers.
+	</para>	
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--stream-irc</option><emphasis role="bold">=</emphasis>&lt;<replaceable>irc</replaceable>&gt;</term>
+      <term>
+	<option>--stream-irc=</option><replaceable>irc</replaceable>
+      </term>
       <listitem>
-	<para>The Internet Relay Chat ID to associate with the stream.  There is no
-	default value.  This setting is used only by Shoutcast servers.</para>
+	<para>
+	  The Internet Relay Chat ID to associate with the stream.  There is no
+	  default value.  This setting is used only by Shoutcast servers.
+	</para>
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--stream-name</option><emphasis role="bold">=</emphasis>&lt;<replaceable>string</replaceable>&gt;</term>
+      <term>
+	<option>--stream-name=</option><replaceable>string</replaceable>
+      </term>
       <listitem>
-	<para>The string to show as the stream name.  There is no default value.
-	This setting is used only by Icecast and Shoutcast servers.</para>
+	<para>
+	  The string to show as the stream name.  There is no default value.
+	  This setting is used only by Icecast and Shoutcast servers.
+	</para>
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--stream-url</option><emphasis role="bold">=</emphasis>&lt;<replaceable>url</replaceable>&gt;</term>
+      <term>
+	<option>--stream-url=</option><replaceable>url</replaceable>
+      </term>
       <listitem>
-	<para>The URL to show for a page giving more information about the stream.
-	There is no default value.  This setting is used only by Icecast and
-	Shoutcast servers, but is ignored by Shoutcast v2 servers.</para>	
+	<para>
+	  The URL to show for a page giving more information about the stream.
+	  There is no default value.  This setting is used only by Icecast and
+	  Shoutcast servers, but is ignored by Shoutcast v2 servers.
+	</para>	
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--verbose</option></term>
+      <term>
+	<option>--verbose</option>
+      </term>
       <listitem>
-	<para>Increase verbosity level of information printed to standard error.
-	WARNING: this may cause cleartext passwords to printed!</para>
+	<para>
+	  Increase verbosity level of information printed to standard error.
+	  WARNING: this may cause cleartext passwords to printed!
+	</para>
       </listitem>
     </varlistentry>
 
     <varlistentry>
-      <term><option>--version</option></term>
+      <term>
+	<option>--version</option>
+      </term>
       <listitem>
-	<para>Output version information and exit.</para>
+	<para>
+	  Output version information and exit.
+	</para>
       </listitem>
     </varlistentry>
   </variablelist>
 </refsect1>
 
-<refsect1 id='device_options'><title>DEVICE OPTIONS</title>
+<refsect1 id='device_options'><title>Device Options</title>
 <variablelist remap='TP'>
   <varlistentry>
-    <term><emphasis remap='B'>Advanced Linux Sound Architecture</emphasis> (<option>--audio-device</option><emphasis role="bold">=ALSA</emphasis>)</term>    
+    <term>
+      <emphasis remap='B'>Advanced Linux Sound Architecture</emphasis> 
+      (<option>--audio-device=</option><userinput>ALSA</userinput>)
+    </term>    
     <listitem>
       <variablelist>
 	<varlistentry>
-	  <term><option>--alsa-device</option><emphasis role="bold">=</emphasis>&lt;<replaceable>dev</replaceable>&gt;</term>
+	  <term>
+	    <option>--alsa-device=</option><replaceable>dev</replaceable>
+	  </term>
 	  <listitem>
-	    <para>The name of the ALSA device to use.  If no <option>--audio-device</option> option is given,
-	    then the <emphasis remap='B'>hw:0</emphasis> device will be used.</para>
+	    <para>
+	      The name of the ALSA device to use.  If no
+	      <option>--audio-device</option> option is given,
+	      then the <userinput>hw:0</userinput> device will be used.
+	    </para>
 	  </listitem>
 	</varlistentry>
       </variablelist>
@@ -408,58 +609,97 @@
   </varlistentry>
 
   <varlistentry>
-    <term><emphasis remap='B'>AudioScience HPI</emphasis> (<option>--audio-device</option><emphasis role="bold">=ASIHPI</emphasis>)</term>
+    <term>
+      <emphasis remap='B'>AudioScience HPI</emphasis> 
+      (<option>--audio-device=</option><userinput>=ASIHPI</userinput>)
+    </term>
     <listitem>
       <variablelist>
 	<varlistentry>
-	  <term><option>--asihpi-adapter-index</option><emphasis role="bold">=</emphasis>&lt;<replaceable>index</replaceable>&gt;</term>
+	  <term>
+	    <option>--asihpi-adapter-index=</option><replaceable>index</replaceable>
+	  </term>
 	  <listitem>
-	    <para>The index number of the audio adapter to use.</para>
+	    <para>
+	      The index number of the audio adapter to use.
+	    </para>
 	  </listitem>
 	</varlistentry>
 	<varlistentry>
-	  <term><option>--asihpi-input-index</option><emphasis role="bold">=</emphasis>&lt;<replaceable>index</replaceable>&gt;</term>
+	  <term>
+	    <option>--asihpi-input-index=</option><replaceable>index</replaceable>
+	  </term>
 	  <listitem>
-	    <para>The number of the input audio stream to use on the specified adapter.</para>
+	    <para>
+	      The number of the input audio stream to use on the specified adapter.
+	    </para>
 	  </listitem>
 	</varlistentry>
 	<varlistentry>
-	  <term><option>--asihpi-input-gain</option><emphasis role="bold">=</emphasis>&lt;<replaceable>gain</replaceable>&gt;</term>
+	  <term>
+	    <option>--asihpi-input-gain=</option><replaceable>gain</replaceable>
+	  </term>
 	  <listitem>
-	    <para>The gain to apply to the input audio on the specified adapter in dB.  Valid
-	    values are -100 to +20 inclusive.  Default value is 0.</para>      
+	    <para>
+	      The gain to apply to the input audio on the specified adapter in
+	      dB. Valid values are <userinput>-100</userinput> to
+	      <userinput>+20</userinput> inclusive.  Default value is
+	      <userinput>0</userinput>.
+	    </para>
 	  </listitem>
 	</varlistentry>
 	<varlistentry>
-	  <term><option>--asihpi-channel_mode</option><emphasis role="bold">=</emphasis>&lt;<replaceable>mode</replaceable>&gt;</term>
+	  <term>
+	    <option>--asihpi-channel_mode=</option><replaceable>mode</replaceable>
+	  </term>
 	  <listitem>
-	    <para>The channel mode for the input audio on the specified adapter.  The default
-	    value is <emphasis remap='B'>NORMAL</emphasis>.  Valid values are:</para>
+	    <para>
+	      The channel mode for the input audio on the specified adapter.
+	      The default value is <userinput>NORMAL</userinput>. Valid values
+	      are:
+	    </para>
 	    <blockquote remap='RS'>
 	      <variablelist remap='TP'>
 		<varlistentry>
-		  <term><emphasis remap='B'>NORMAL</emphasis></term>
+		  <term>
+		    <userinput>NORMAL</userinput>
+		  </term>
 		  <listitem>
-		    <para>Left signal goes to left channel, right signal goes to right channel.</para>
+		    <para>
+		      Left signal goes to left channel, right signal goes to
+		      right channel.
+		    </para>
 		  </listitem>
 		</varlistentry>
 		<varlistentry>
-		  <term><emphasis remap='B'>SWAP</emphasis></term>
+		  <term>
+		    <userinput>SWAP</userinput>
+		  </term>
 		  <listitem>
-		    <para>Left signal goes to right channel, right signal goes to left channel.</para>
-
+		    <para>
+		    Left signal goes to right channel, right signal goes to
+		    left channel.
+		    </para>
 		  </listitem>
 		</varlistentry>
 		<varlistentry>
-		  <term><emphasis remap='B'>LEFT</emphasis></term>
+		  <term>
+		    <userinput>LEFT</userinput>
+		  </term>
 		  <listitem>
-		    <para>Left signal goes to both left and right channels.</para>
+		    <para>
+		      Left signal goes to both left and right channels.
+		    </para>
 		  </listitem>
 		</varlistentry>
 		<varlistentry>
-		  <term><emphasis remap='B'>RIGHT</emphasis></term>
+		  <term>
+		    <userinput>RIGHT</userinput>
+		  </term>
 		  <listitem>
-		    <para>Right signal goes to both left and right channels.</para>
+		    <para>
+		      Right signal goes to both left and right channels.
+		    </para>
 		  </listitem>
 		</varlistentry>
 	      </variablelist>
@@ -467,105 +707,176 @@
 	  </listitem>
 	</varlistentry>
 	<varlistentry>
-	  <term><option>--asihpi-input-source</option><emphasis role="bold">=</emphasis>&lt;<replaceable>src-node</replaceable>&gt;</term>
+	  <term>
+	  <option>--asihpi-input-source=</option><replaceable>src-node</replaceable>
+	  </term>
 	  <listitem>
-	    <para>The input source to use on the specified adapter.  See the
-	    <emphasis remap='B'>HPI Source Nodes</emphasis> section below for the list of valid &lt;<replaceable>src-node</replaceable>&gt;
-	    values.  The default value is <emphasis remap='B'>LINEIN</emphasis>.</para>
+	    <para>
+	      The input source to use on the specified adapter.  See the
+	      <emphasis remap='B'>HPI Source Nodes</emphasis> section below
+	      for the list of valid <replaceable>src-node</replaceable>
+	      values. The default value is <userinput>LINEIN</userinput>.
+	    </para>
 	  </listitem>
 	</varlistentry>
 	<varlistentry>
-	  <term><option>--asihpi-input-type</option><emphasis role="bold">=</emphasis>&lt;<replaceable>src-node</replaceable>&gt;</term>
+	  <term>
+	    <option>--asihpi-input-type=</option><replaceable>src-node</replaceable>
+	  </term>
 	  <listitem>
-	    <para>The input type to use on the specified adapter.  See the
-	    <emphasis remap='B'>HPI Source Nodes</emphasis> section below for the list of valid &lt;<replaceable>src-node</replaceable>&gt;
-	    values.  The default value is <emphasis remap='B'>LINEIN</emphasis>.</para>
+	    <para>
+	      The input type to use on the specified adapter.  See the
+	      <emphasis remap='B'>HPI Source Nodes</emphasis> section below
+	      for the list of valid <replaceable>src-node</replaceable>
+	      values. The default value is <userinput>LINEIN</userinput>.
+	    </para>
 	  </listitem>
 	</varlistentry>
 	<varlistentry>
-	  <term><emphasis remap='B'>HPI Source Nodes</emphasis></term>
+	  <term>
+	    <emphasis remap='B'>HPI Source Nodes</emphasis>
+	  </term>
 	  <listitem>
-	    <para>The following values can used for the <option>--asihpi-input-source</option> and
-	    <option>--asihpi-input-type</option> options above:</para>
+	    <para>
+	      The following values can used for the
+	      <option>--asihpi-input-source</option> and
+	      <option>--asihpi-input-type</option> options above:
+	    </para>
 	    <variablelist remap='TP'>
 	      <varlistentry>
-		<term><emphasis remap='B'>NONE</emphasis></term>
-		<term><emphasis remap='B'>OSTREAM</emphasis></term>
+		<term>
+		  <userinput>NONE</userinput>
+		</term>
+		<term>
+		  <userinput>OSTREAM</userinput>
+		</term>
 		<listitem>
-		  <para>Internal output stream</para>
+		  <para>
+		    Internal output stream
+		  </para>
 		</listitem>
 	      </varlistentry>
 	      <varlistentry>
-		<term><emphasis remap='B'>LINEIN</emphasis></term>
+		<term>
+		  <userinput>LINEIN</userinput>
+		</term>
 		<listitem>
-		  <para>Generic input signal</para>
+		  <para>
+		    Generic input signal
+		  </para>
 		</listitem>
 	      </varlistentry>
 	      <varlistentry>
-		<term><emphasis remap='B'>AESEBU</emphasis></term>
+		<term>
+		  <userinput>AESEBU</userinput>
+		</term>
 		<listitem>
-		  <para>AES3 digital input</para>
+		  <para>
+		    AES3 digital input
+		  </para>
 		</listitem>
 	      </varlistentry>
 	      <varlistentry>
-		<term><emphasis remap='B'>TUNER</emphasis></term>
+		<term>
+		  <userinput>TUNER</userinput>
+		</term>
 		<listitem>
-		  <para>Tuner</para>
+		  <para>
+		    Tuner
+		  </para>
 		</listitem>
 	      </varlistentry>
 	      <varlistentry>
-		<term><emphasis remap='B'>RF</emphasis></term>
+		<term>
+		  <userinput>RF</userinput>
+		</term>
 		<listitem>
-		  <para>RF input</para>
+		  <para>
+		    RF input
+		  </para>
 		</listitem>
 	      </varlistentry>
 	      <varlistentry>
-		<term><emphasis remap='B'>CLOCK</emphasis></term>
+		<term>
+		  <userinput>CLOCK</userinput>
+		</term>
 		<listitem>
-		  <para>Clock source</para>
+		  <para>
+		    Clock source
+		  </para>
 		</listitem>
 	      </varlistentry>
 	      <varlistentry>
-		<term><emphasis remap='B'>BITSTREAM</emphasis></term>
+		<term>
+		  <userinput>BITSTREAM</userinput>
+		</term>
 		<listitem>
-		  <para>Raw bitstream</para>
+		  <para>
+		    Raw bitstream
+		  </para>
 		</listitem>
 	      </varlistentry>
 	      <varlistentry>
-		<term><emphasis remap='B'>MIC</emphasis></term>
+		<term>
+		  <userinput>MIC</userinput>
+		</term>
 		<listitem>
-		  <para>Microphone</para>
+		  <para>
+		    Microphone
+		  </para>
 		</listitem>
 	      </varlistentry>
 	      <varlistentry>
-		<term><emphasis remap='B'>COBRANET</emphasis></term>
+		<term>
+		  <userinput>COBRANET</userinput>
+		</term>
 		<listitem>
-		  <para>CobraNet</para>
+		  <para>
+		    CobraNet
+		  </para>
 		</listitem>
 	      </varlistentry>
 	      <varlistentry>
-		<term><emphasis remap='B'>ANALOG</emphasis></term>
+		<term>
+		  <userinput>ANALOG</userinput>
+		</term>
 		<listitem>
-		  <para>Analog input</para>
+		  <para>
+		    Analog input
+		  </para>
 		</listitem>
 	      </varlistentry>
 	      <varlistentry>
-		<term><emphasis remap='B'>ADAPTER</emphasis></term>
+		<term>
+		  <userinput>ADAPTER</userinput>
+		</term>
 		<listitem>
-		  <para>Adapter</para>
+		  <para>
+		    Adapter
+		  </para>
 		</listitem>
 	      </varlistentry>
 	      <varlistentry>
-		<term><emphasis remap='B'>RTP</emphasis></term>
-		<term><emphasis remap='B'>INTERNAL</emphasis></term>
+		<term>
+		  <userinput>RTP</userinput>
+		</term>
+		<term>
+		  <userinput>INTERNAL</userinput>
+		</term>
 		<listitem>
-		  <para>Device internal</para>
+		  <para>
+		    Device internal
+		  </para>
 		</listitem>
 	      </varlistentry>
 	      <varlistentry>
-		<term><emphasis remap='B'>AVB</emphasis></term>
+		<term>
+		  <userinput>AVB</userinput>
+		</term>
 		<listitem>
-		  <para>AVB input</para>
+		  <para>
+		    AVB input
+		  </para>
 		</listitem>
 	      </varlistentry>
 	    </variablelist>      
@@ -577,14 +888,22 @@
 
 
   <varlistentry>
-    <term><emphasis remap='B'>Direct File Streaming</emphasis> (<option>--audio-device</option><emphasis role="bold">=FILE</emphasis>)</term>
+    <term>
+      <emphasis remap='B'>Direct File Streaming</emphasis>
+      (<option>--audio-device=</option><userinput>FILE</userinput>)
+    </term>
     <listitem>
       <variablelist>
 	<varlistentry>
-	  <term><option>--file-name</option><emphasis role="bold">=</emphasis>&lt;<replaceable>name</replaceable>&gt;</term>
+	  <term>
+	    <option>--file-name=</option><replaceable>name</replaceable>
+	  </term>
 	  <listitem>
-	    <para>The name of the file to stream.  If no <option>--file-name</option> option is given,
-	    then the name of the file will be read from standard input.</para>
+	    <para>
+	      The name of the file to stream.  If no
+	      <option>--file-name</option> option is given,
+	      then the name of the file will be read from standard input.
+	    </para>
 	  </listitem>
 	</varlistentry>
       </variablelist>
@@ -592,19 +911,31 @@
   </varlistentry>
 
   <varlistentry>
-    <term><emphasis remap='B'>The Jack Audio Connection Kit</emphasis> (<option>--audio-device</option><emphasis role="bold">=JACK</emphasis>)</term>
+    <term>
+      <emphasis remap='B'>The Jack Audio Connection Kit</emphasis>
+      (<option>--audio-device=</option><userinput>JACK</userinput>)
+    </term>
     <listitem>
       <variablelist>
 	<varlistentry>
-	  <term><option>--jack-server-name</option><emphasis role="bold">=</emphasis>&lt;<replaceable>name</replaceable>&gt;</term>
+	  <term>
+	    <option>--jack-server-name=</option><replaceable>name</replaceable>
+	  </term>
 	  <listitem>
-	    <para>The name of the JACK server instance to use.</para>
+	    <para>
+	      The name of the JACK server instance to use.
+	    </para>
 	  </listitem>
 	</varlistentry>
 	<varlistentry>
-	  <term><option>--jack-client-name</option><emphasis role="bold">=</emphasis>&lt;<replaceable>name</replaceable>&gt;</term>
+	  <term>
+	    <option>--jack-client-name=</option><replaceable>name</replaceable>
+	  </term>
 	  <listitem>
-	    <para>The JACK client name to use.  Default is 'glasscoder'.</para>
+	    <para>
+	      The name of the JACK client to use.  Default is
+	      <userinput>glasscoder</userinput>.
+	    </para>
 	  </listitem>
 	</varlistentry>
       </variablelist>
@@ -614,20 +945,31 @@
 </variablelist>
 </refsect1>
 
-<refsect1 id='notes'><title>NOTES</title>
-<para>HTTP Live Streams [HLS] require support for the HTTP <emphasis role="bold">PUT</emphasis>
-and <emphasis role="bold">DELETE</emphasis> methods
-on the publishing web server.  See the GlassCoder documentation directory
-for a sample configuration for the Apache Web Server.</para>
+<refsect1 id='notes'><title>Notes</title>
+<para>
+  HTTP Live Streams [HLS] require support for the HTTP
+  <emphasis role="bold">PUT</emphasis> and 
+  <emphasis role="bold">DELETE</emphasis> methods on the publishing web server.
+  See the GlassCoder documentation directory
+  for a sample configuration for the Apache Web Server.
+</para>
 </refsect1>
 
-<refsect1 id='author'><title>AUTHOR</title>
-<para>Fred Gleason &lt;fredg@paravelsystems.com&gt;</para>
+<refsect1 id='author'><title>Author</title>
+<para>
+  Fred Gleason &lt;fredg@paravelsystems.com&gt;
+</para>
 </refsect1>
 
-<refsect1 id='see_also'><title>SEE ALSO</title>
-<para><citerefentry><refentrytitle>glassgui</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
-<citerefentry><refentrytitle>jackd</refentrytitle><manvolnum>1</manvolnum></citerefentry></para>
+<refsect1 id='see_also'><title>See Also</title>
+<para>
+  <citerefentry>
+    <refentrytitle>glassgui</refentrytitle><manvolnum>1</manvolnum>
+    </citerefentry>,
+    <citerefentry>
+      <refentrytitle>jackd</refentrytitle><manvolnum>1</manvolnum>
+    </citerefentry>
+</para>
 </refsect1>
 </refentry>
 

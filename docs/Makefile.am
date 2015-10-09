@@ -40,4 +40,7 @@ CLEANFILES = *~
 DISTCLEANFILES = moc_*
 MAINTAINERCLEANFILES = *~\
                        *.1\
+                       *.fo\
+                       *.html\
+                       *.pdf\
                        Makefile.in

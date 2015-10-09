@@ -1,9 +1,12 @@
 *~
 .deps
 *.1
+*.fo
+*.html
 *.la
 *.lo
 *.o
+*.pdf
 *.spec
 aclocal.m4
 autom4te.cache
