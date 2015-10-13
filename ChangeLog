@@ -463,3 +463,6 @@
 	* Tweaked markup glasscoder(1) and glassgui(1) man pages.
 2015-10-09 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.9.6.
+2015-10-13 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented support for HE-AAC+ using fdk-aac in
+	'src/glasscoder/fdkcodec.cpp' and 'src/glasscoder/fdkcodec.h'.

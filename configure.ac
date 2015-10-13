@@ -64,6 +64,8 @@ AC_ARG_ENABLE(faac,[  --disable-faac          disable MPEG-2 AAC support],
 	      [FAAC_DISABLED=yes],[]) 
 AC_ARG_ENABLE(aacplus,[  --disable-aacplus       disable MPEG-4 HE-AAC+ support],
 	      [AACPLUS_DISABLED=yes],[]) 
+AC_ARG_ENABLE(fdkaac,[  --disable-fdkaac        disable MPEG-4 HE-AAC+ support],
+	      [FDKAAC_DISABLED=yes],[]) 
 AC_ARG_ENABLE(vorbis,[  --disable-vorbis        disable Ogg Vorbis support],
 	      [VORBIS_DISABLED=yes],[]) 
 AC_ARG_ENABLE(alsa,[  --disable-alsa          disable ALSA sound support],
@@ -204,6 +206,17 @@ if test $AACPLUS_FOUND ; then
   if test -z $AACPLUS_DISABLED ; then
     AC_DEFINE(HAVE_AACPLUS)
     USING_AACPLUS=yes
+  fi
+fi
+
+#
+# Check for Fraunhofer FDK (Optional, required for MPEG-4 AAC-HE support)
+#
+AC_CHECK_HEADER(fdk-aac/aacenc_lib.h,[FDKAAC_FOUND=yes],[])
+if test $FDKAAC_FOUND ; then
+  if test -z $FDKAAC_DISABLED ; then
+    AC_DEFINE(HAVE_FDKAAC)
+    USING_FDKAAC=yes
   fi
 fi
 
@@ -373,6 +386,11 @@ if test -z $USING_AACPLUS ; then
 AC_MSG_NOTICE("|              MPEG-4 HE-AAC+ (via AACPlus) ... No    |")
 else
 AC_MSG_NOTICE("|              MPEG-4 HE-AAC+ (via AACPlus) ... Yes   |")
+fi
+if test -z $USING_FDKAAC ; then
+AC_MSG_NOTICE("|               MPEG-4 HE-AAC+ (via FDKAAC) ... No    |")
+else
+AC_MSG_NOTICE("|               MPEG-4 HE-AAC+ (via FDKAAC) ... Yes   |")
 fi
 #if test -z $USING_OPUS ; then
 #AC_MSG_NOTICE("|         Ogg Opus (via libogg and libopus) ... No    |")

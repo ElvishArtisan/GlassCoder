@@ -27,6 +27,9 @@ read the important legal notice at the bottom of that page!
 FAAC - Free Advanced Audio Codec, v1.28 or later.  Needed for generating
 MPEG-2 AAC streams.  Available at http://www.audiocoding.com/faac.html.
 
+FDK-AAC - Fraunhofer FDK AAC codec from Android.  Another codec for generating
+MPEG-4 HE-AAC+ streams.  Available at https://github.com/mstorsjo/fdk-aac.
+
 LAME - MPEG-1 Layer 3 Encoder Library, v3.99.3 or later.  Needed for
 generating MPEG-1 Layer 3 (MP3) streams.  Available at
 http://lame.sourceforge.net/.

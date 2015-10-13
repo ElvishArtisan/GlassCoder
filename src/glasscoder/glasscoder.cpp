@@ -120,25 +120,31 @@ MainObject::MainObject(QObject *parent)
 	    cmd->setProcessed(i,true);
 	  }
 	  else {
-	    if(cmd->value(i).toLower()=="aacp") {
-	      audio_format=Codec::TypeHeAac;
+	    if(cmd->value(i).toLower()=="fdk") {
+	      audio_format=Codec::TypeFdk;
 	      cmd->setProcessed(i,true);
 	    }
 	    else {
-	      if(cmd->value(i).toLower()=="vorbis") {
-		audio_format=Codec::TypeVorbis;
+	      if(cmd->value(i).toLower()=="aacp") {
+		audio_format=Codec::TypeHeAac;
 		cmd->setProcessed(i,true);
 	      }
 	      else {
-		if(cmd->value(i).toLower()=="opus") {
-		  audio_format=Codec::TypeOpus;
+		if(cmd->value(i).toLower()=="vorbis") {
+		  audio_format=Codec::TypeVorbis;
 		  cmd->setProcessed(i,true);
 		}
 		else {
-		  Log(LOG_ERR,
-		      QString().sprintf("unknown --audio-format value \"%s\"",
-					(const char *)cmd->value(i).toAscii()));
-		  exit(256);
+		  if(cmd->value(i).toLower()=="opus") {
+		    audio_format=Codec::TypeOpus;
+		    cmd->setProcessed(i,true);
+		  }
+		  else {
+		    Log(LOG_ERR,
+			QString().sprintf("unknown --audio-format value \"%s\"",
+					  (const char *)cmd->value(i).toAscii()));
+		    exit(256);
+		  }
 		}
 	      }
 	    }
