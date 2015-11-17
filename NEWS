@@ -1,6 +1,28 @@
 The NEWS file for the GlassCoder package.
 
 -------------------------------------------------------------------------------
+v0.9.7 -- 11/17/2015
+
+Changes:
+   Dependency Change.  HeAAC support is now accomplished using the
+   Fraunhofer Android FDK library.  See the 'INSTALL' file for details. 
+
+   GlassGui Layout.  The widget layout in GlassGuui has been extensively
+   refactored to reduce required desktop real estate.
+
+   HLS Rewrite.  Refactored HLS support to be compatible with Akamai's
+   HLS streaming service.
+
+   Command Switch Changes.  Replaced the '--server-hostname',
+   '--server-mountpoint' and '--server-port' options with a single
+   '--server-url' option and the '--server-username' and '--server=password'
+   options with	the '--server-auth' option in glasscoder(1).  See the
+   glasscoder(1) man page for details.
+
+   AudioScience HPI Support.  Added support for HPI mixers in glasscoder(1)
+   and glassgui(1).
+
+-------------------------------------------------------------------------------
 v0.9.0 -- 8/26/2015
 
 Changes:

@@ -476,3 +476,6 @@
 2015-11-17 Fred Gleason <fredg@paravelsystems.com>
 	* Removed 'src/glasscoder/heaaccodec.cpp' and
 	'src/glasscoder/heaaccodec.h'.
+2015-11-17 Fred Gleason <fredg@paravelsystems.com>
+	* Updated 'NEWS'.
+	* Incremented the package version to 0.9.7.
