@@ -46,10 +46,15 @@ MainWidget::MainWidget(QWidget *parent)
   instance_name="";
   QString delete_instance="";
   bool list_instances=false;
+  gui_autostart=false;
 
   CmdSwitch *cmd=
     new CmdSwitch(qApp->argc(),qApp->argv(),"glassgui",GLASSGUI_USAGE);
   for(unsigned i=0;i<cmd->keys();i++) {
+    if(cmd->key(i)=="--autostart") {
+      gui_autostart=true;
+      cmd->setProcessed(i,true);
+    }
     if(cmd->key(i)=="--delete-instance") {
       delete_instance=cmd->value(i);
       cmd->setProcessed(i,true);
@@ -189,6 +194,13 @@ MainWidget::MainWidget(QWidget *parent)
   gui_process_kill_timer->setSingleShot(true);
   connect(gui_process_kill_timer,SIGNAL(timeout()),
 	  this,SLOT(processKillData()));
+
+  //
+  // Autostart Timer
+  //
+  gui_autostart_timer=new QTimer(this);
+  gui_autostart_timer->setSingleShot(true);
+  connect(gui_autostart_timer,SIGNAL(timeout()),this,SLOT(startEncodingData()));
 
   //
   // Get Codec List
@@ -429,6 +441,9 @@ void MainWidget::deviceFinishedData(int exit_code,
     gui_source_dialog->addSourceTypes(gui_process->readAllStandardOutput());
     gui_process=NULL;
     LoadSettings();
+    if(gui_autostart) {
+      gui_autostart_timer->start(0);
+    }
   }
   else {
     ProcessError(exit_code,exit_status);

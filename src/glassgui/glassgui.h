@@ -109,6 +109,8 @@ class MainWidget : public QMainWindow
   MessageWidget *gui_message_widget;
   StatusWidget *gui_status_widget;
   QLabel *gui_status_frame_widget;
+  bool gui_autostart;
+  QTimer *gui_autostart_timer;
 };
 
 

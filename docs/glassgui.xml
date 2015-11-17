@@ -49,6 +49,17 @@
   <variablelist remap='TP'>
     <varlistentry>
       <term>
+	<option>--autostart</option>
+      </term>
+      <listitem>
+	<para>
+	  Start encoding immediately upon startup.
+	</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>
 	<option>--delete-instance=</option><replaceable>name</replaceable>
       </term>
       <listitem>
