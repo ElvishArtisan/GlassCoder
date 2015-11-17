@@ -469,3 +469,7 @@
 2015-11-17 Fred Gleason <fredg@paravelsystems.com>
 	* Added an '--autostart' switch to glassgui(1) in
 	'src/glassgui/glassgui.cpp' and 'src/glassgui/glassgui.h'.
+2015-11-17 Fred Gleason <fredg@paravelsystems.com>
+	* Added a psuedo-random name element to the media segment filenames
+	in 'src/glasscoder/hlsconnector.cpp' and
+	'src/glasscoder/hlsconnector.h'.

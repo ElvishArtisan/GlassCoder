@@ -21,6 +21,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "hlsconnector.h"
@@ -95,6 +96,7 @@ void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
   //
   QStringList f0=serverMountpoint().split("/",QString::SkipEmptyParts);
   hls_put_basename=f0[f0.size()-1];
+  hls_put_basestamp=QString().sprintf("%ld",time(NULL));
   QStringList f1=hls_put_basename.split(".");
   if((f1[f1.size()-1]!="m3u8")&&(f1[f1.size()-1]!="m3u")) {
     hls_put_basename+=".m3u8";
@@ -343,7 +345,8 @@ void HlsConnector::WriteTopPlaylistFile()
 
 QString HlsConnector::GetMediaFilename(int seqno)
 {
-  return hls_put_basename+QString().sprintf("%d.",seqno)+extension();
+  return hls_put_basename+"-"+hls_put_basestamp+"-"+
+    QString().sprintf("%d.",seqno)+extension();
 }
 
 

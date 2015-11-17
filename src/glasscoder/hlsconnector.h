@@ -77,6 +77,7 @@ class HlsConnector : public Connector
   uint64_t hls_total_media_frames;
   QString hls_put_directory;
   QString hls_put_basename;
+  QString hls_put_basestamp;
   FileConveyor *hls_conveyor;
 };
 
