@@ -173,11 +173,7 @@ QString Codec::codecTypeText(Codec::Type type)
     break;
 
   case Codec::TypeFdk:
-    ret=tr("MPEG-4 AAC High Efficiency (FDK)");
-    break;
-
-  case Codec::TypeHeAac:
-    ret=tr("MPEG-4 AAC High Efficiency (AACPlus)");
+    ret=tr("MPEG-4 AAC High Efficiency");
     break;
 
   case Codec::TypeVorbis:
@@ -214,10 +210,6 @@ QString Codec::optionKeyword(Codec::Type type)
     break;
 
   case Codec::TypeFdk:
-    ret="fdk";
-    break;
-
-  case Codec::TypeHeAac:
     ret="aacp";
     break;
 

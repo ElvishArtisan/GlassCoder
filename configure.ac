@@ -62,8 +62,6 @@ AC_ARG_ENABLE(lame,[  --disable-lame          disable MPEG-1 Layer 3 support],
 	      [LAME_DISABLED=yes],[]) 
 AC_ARG_ENABLE(faac,[  --disable-faac          disable MPEG-2 AAC support],
 	      [FAAC_DISABLED=yes],[]) 
-AC_ARG_ENABLE(aacplus,[  --disable-aacplus       disable MPEG-4 HE-AAC+ support],
-	      [AACPLUS_DISABLED=yes],[]) 
 AC_ARG_ENABLE(fdkaac,[  --disable-fdkaac        disable MPEG-4 HE-AAC+ support],
 	      [FDKAAC_DISABLED=yes],[]) 
 AC_ARG_ENABLE(vorbis,[  --disable-vorbis        disable Ogg Vorbis support],
@@ -195,17 +193,6 @@ if test $FAAC_FOUND ; then
   if test -z $FAAC_DISABLED ; then
     AC_DEFINE(HAVE_FAAC)
     USING_FAAC=yes
-  fi
-fi
-
-#
-# Check for AACPlus (Optional, required for MPEG-4 AAC-HE support)
-#
-AC_CHECK_HEADER(aacplus.h,[AACPLUS_FOUND=yes],[])
-if test $AACPLUS_FOUND ; then
-  if test -z $AACPLUS_DISABLED ; then
-    AC_DEFINE(HAVE_AACPLUS)
-    USING_AACPLUS=yes
   fi
 fi
 
@@ -381,11 +368,6 @@ if test -z $USING_FAAC ; then
 AC_MSG_NOTICE("|                     MPEG-2 AAC (via FAAC) ... No    |")
 else
 AC_MSG_NOTICE("|                     MPEG-2 AAC (via FAAC) ... Yes   |")
-fi
-if test -z $USING_AACPLUS ; then
-AC_MSG_NOTICE("|              MPEG-4 HE-AAC+ (via AACPlus) ... No    |")
-else
-AC_MSG_NOTICE("|              MPEG-4 HE-AAC+ (via AACPlus) ... Yes   |")
 fi
 if test -z $USING_FDKAAC ; then
 AC_MSG_NOTICE("|               MPEG-4 HE-AAC+ (via FDKAAC) ... No    |")

@@ -21,7 +21,6 @@
 #include "aaccodec.h"
 #include "codecfactory.h"
 #include "fdkcodec.h"
-#include "heaaccodec.h"
 #include "mpegl2codec.h"
 #include "mpegl3codec.h"
 #include "opuscodec.h"
@@ -46,10 +45,6 @@ Codec *CodecFactory(Codec::Type type,Ringbuffer *ring,QObject *parent)
 
   case Codec::TypeFdk:
     cdc=new FdkCodec(ring,parent);
-    break;
-
-  case Codec::TypeHeAac:
-    cdc=new HeAacCodec(ring,parent);
     break;
 
   case Codec::TypeVorbis:

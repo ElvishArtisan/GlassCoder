@@ -473,3 +473,6 @@
 	* Added a psuedo-random name element to the media segment filenames
 	in 'src/glasscoder/hlsconnector.cpp' and
 	'src/glasscoder/hlsconnector.h'.
+2015-11-17 Fred Gleason <fredg@paravelsystems.com>
+	* Removed 'src/glasscoder/heaaccodec.cpp' and
+	'src/glasscoder/heaaccodec.h'.

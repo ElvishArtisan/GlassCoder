@@ -15,19 +15,15 @@ with most distros, or you can find it at http://www.mega-nerd.com/SRC/.
 OPTIONAL PREREQUISITES
 ---------------------------------------------------------------------------
 GlassCoder depends upon various third-party libraries to provide support
-for both encoding formats ('codecs') and audio sources.  You will need at
-least one of each in order to build a functioning binary.
+for both encoding formats ('codecs') and some audio sources.  You will need
+at least one of each in order to build a functioning binary.
 
 CODECS
 ------
-AACPlus - HE-AAC+ Codec, v2.0.2 or later.  Needed for generating MPEG-4
-HE-AAC+ streams.  Available at http://tipok.org.ua/node/17.  Be sure to
-read the important legal notice at the bottom of that page!
-
 FAAC - Free Advanced Audio Codec, v1.28 or later.  Needed for generating
 MPEG-2 AAC streams.  Available at http://www.audiocoding.com/faac.html.
 
-FDK-AAC - Fraunhofer FDK AAC codec from Android.  Another codec for generating
+FDK-AAC - Fraunhofer FDK AAC codec for Android.  A codec for generating
 MPEG-4 HE-AAC+ streams.  Available at https://github.com/mstorsjo/fdk-aac.
 
 LAME - MPEG-1 Layer 3 Encoder Library, v3.99.3 or later.  Needed for
@@ -60,8 +56,8 @@ and applications.  Available at http://jackaudio.org/.
 DOCUMENTATION
 -------------
 The GlassCoder man pages are written in XML-DocBook5.  Pre-generated troff
-versions are included in the source tarball, so normally special tools
-will not be required to build them.  However, if you do need to rebuild them
+versions are included in the source tarball, so special tools will not
+normally be required to install them.  However, if you need to rebuild them
 (either because you've modified the DocBook sources or are installing from
 the primary GitHub repository), then you will need the following:
 

@@ -147,16 +147,6 @@ void CodecDialog::codecTypeChanged(int n)
     gui_codec_bitrate_label->setText(tr("Bit Rate(s)")+":");
     break;
 
-  case Codec::TypeHeAac:
-    gui_codec_samplerate_box->insertItem(-1,"32000 samples/sec",32000);
-    gui_codec_samplerate_box->insertItem(-1,"44100 samples/sec",44100);
-    gui_codec_samplerate_box->insertItem(-1,"48000 samples/sec",48000);
-
-    gui_codec_channels_box->insertItem(-1,"2",2);
-
-    gui_codec_bitrate_label->setText(tr("Bit Rate(s)")+":");
-    break;
-
   case Codec::TypeFdk:
   case Codec::TypeMpegL2:
   case Codec::TypeMpegL3:
@@ -201,7 +191,6 @@ void CodecDialog::codecSamplerateChanged(int n)
 {
   Codec::Type type=(Codec::Type)gui_codec_type_box->
     itemData(gui_codec_type_box->currentIndex()).toInt();
-  unsigned samprate=gui_codec_samplerate_box->itemData(n).toUInt();
 
   for(int i=0;i<CODECDIALOG_MAX_SUBSTREAMS;i++) {
     gui_codec_bitrate_box[i]->clear();
@@ -216,24 +205,6 @@ void CodecDialog::codecSamplerateChanged(int n)
       gui_codec_bitrate_box[i]->insertItem(-1,"32 kbits/sec",32);
       gui_codec_bitrate_box[i]->insertItem(-1,"40 kbits/sec",40);
       gui_codec_bitrate_box[i]->insertItem(-1,"48 kbits/sec",48);
-      break;
-
-    case Codec::TypeHeAac:
-      switch(samprate) {
-      case 32000:
-	gui_codec_bitrate_box[i]->insertItem(-1,"32 kbits/sec",32);
-	break;
-
-      case 44100:
-      case 48000:
-	gui_codec_bitrate_box[i]->insertItem(-1,"32 kbits/sec",32);
-	gui_codec_bitrate_box[i]->insertItem(-1,"48 kbits/sec",48);
-	gui_codec_bitrate_box[i]->insertItem(-1,"56 kbits/sec",56);
-	gui_codec_bitrate_box[i]->insertItem(-1,"64 kbits/sec",64);
-	gui_codec_bitrate_box[i]->insertItem(-1,"96 kbits/sec",96);
-	gui_codec_bitrate_box[i]->insertItem(-1,"128 kbits/sec",128);
-	break;
-      }
       break;
 
     case Codec::TypeMpegL2:
@@ -329,7 +300,6 @@ void CodecDialog::makeArgs(QStringList *args)
     case Codec::TypeMpegL3:
     case Codec::TypeAac:
     case Codec::TypeFdk:
-    case Codec::TypeHeAac:
     case Codec::TypeOpus:
     case Codec::TypeLast:
       if(gui_codec_bitrate_box[i]->isEnabled()&&

@@ -43,7 +43,6 @@ dist_glasscoder_SOURCES = aaccodec.cpp aaccodec.h\
                           fileconveyor.cpp fileconveyor.h\
                           filedevice.cpp filedevice.h\
                           glasscoder.cpp glasscoder.h\
-                          heaaccodec.cpp heaaccodec.h\
                           hlsconnector.cpp hlsconnector.h\
                           iceconnector.cpp iceconnector.h\
                           icyconnector.cpp icyconnector.h\
@@ -69,7 +68,6 @@ nodist_glasscoder_SOURCES = asihpi.cpp asihpi.h\
                             moc_fileconveyor.cpp\
                             moc_filedevice.cpp\
                             moc_glasscoder.cpp\
-                            moc_heaaccodec.cpp\
                             moc_hlsconnector.cpp\
                             moc_iceconnector.cpp\
                             moc_icyconnector.cpp\
