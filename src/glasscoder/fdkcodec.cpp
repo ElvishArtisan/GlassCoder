@@ -45,7 +45,7 @@ FdkCodec::~FdkCodec()
 bool FdkCodec::isAvailable() const
 {
 #ifdef HAVE_FDKAAC
-  return dlopen("libaacplus.so",RTLD_LAZY)!=NULL;
+  return dlopen("libfdk-aac.so",RTLD_LAZY)!=NULL;
 #else
   return false;
 #endif  // HAVE_FDKAAC

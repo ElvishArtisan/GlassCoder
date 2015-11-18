@@ -479,3 +479,7 @@
 2015-11-17 Fred Gleason <fredg@paravelsystems.com>
 	* Updated 'NEWS'.
 	* Incremented the package version to 0.9.7.
+2015-11-17 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a regression in 'src/glasscoder.fdkcodec.cpp' that caused
+	HeAAC encoding to be listed unavailable unless the AACPlus library
+	was installed.
