@@ -274,7 +274,7 @@ void MainWidget::resizeEvent(QResizeEvent *e)
   gui_message_widget->setGeometry(0,size().height()-30,size().width()-140,30);
   gui_status_frame_widget->
     setGeometry(size().width()-140,size().height()-30,140,30);
-  gui_status_widget->setGeometry(size().width()-143,size().height()-27,134,24);
+  gui_status_widget->setGeometry(size().width()-137,size().height()-27,134,24);
 }
 
 

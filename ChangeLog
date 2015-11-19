@@ -485,3 +485,6 @@
 	was installed.
 2015-11-17 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.9.8.
+2015-11-19 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a positioning error in the status widget in
+	'src/glassgui/glassgui.cpp'.
