@@ -18,6 +18,7 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include "filearchiveconnector.h"
 #include "fileconnector.h"
 #include "hlsconnector.h"
 #include "iceconnector.h"
@@ -48,6 +49,10 @@ Connector *ConnectorFactory(Connector::ServerType type,bool is_top,
 
   case Connector::FileServer:
     conn=new FileConnector(parent);
+    break;
+
+  case Connector::FileArchiveServer:
+    conn=new FileArchiveConnector(parent);
     break;
 
   case Connector::LastServer:

@@ -142,6 +142,8 @@ void StreamDialog::setServerType(Connector::ServerType type)
 {
   switch(type) {
   case Connector::HlsServer:
+  case Connector::FileServer:
+  case Connector::FileArchiveServer:
     gui_stream_name_label->setEnabled(false);
     gui_stream_name_edit->setEnabled(false);
     gui_stream_description_label->setEnabled(false);

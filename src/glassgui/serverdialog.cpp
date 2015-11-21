@@ -257,14 +257,10 @@ void ServerDialog::serverTypeChanged(int index)
     break;
 
   case Connector::Shoutcast1Server:
-    multirate=false;
-    break;
-
   case Connector::Shoutcast2Server:
-    multirate=false;
-    break;
-
   case Connector::Icecast2Server:
+  case Connector::FileServer:
+  case Connector::FileArchiveServer:
     multirate=false;
     break;
 

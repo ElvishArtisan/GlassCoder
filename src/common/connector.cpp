@@ -370,6 +370,10 @@ QString Connector::serverTypeText(Connector::ServerType type)
     ret=tr("Local File");
     break;
 
+  case Connector::FileArchiveServer:
+    ret=tr("Local File Archive");
+    break;
+
   case Connector::LastServer:
     break;
   }
@@ -401,6 +405,10 @@ QString Connector::optionKeyword(Connector::ServerType type)
 
   case Connector::FileServer:
     ret="file";
+    break;
+
+  case Connector::FileArchiveServer:
+    ret="filearchive";
     break;
 
   case Connector::LastServer:

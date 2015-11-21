@@ -500,3 +500,5 @@
 2015-11-21 Fred Gleason <fredg@paravelsystems.com>
 	* Refactored option-processing to utilize the
 	'Codec::optionKeyword()' method in 'src/glasscoder/glasscoder.cpp'.
+2015-11-21 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented a FILEARCHIVE server type.

@@ -426,6 +426,18 @@
 
 	    <varlistentry>
 	      <term>
+		<userinput>FILEARCHIVE</userinput>
+	      </term>
+	      <listitem>
+		<para>
+		  Local file archive.  Stream to a set of files on the local
+		  system, starting a new file at the beginning of each hour.
+		</para>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	      <term>
 		<userinput>HLS</userinput>
 	      </term>
 	      <listitem>
