@@ -502,3 +502,6 @@
 	'Codec::optionKeyword()' method in 'src/glasscoder/glasscoder.cpp'.
 2015-11-21 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented a FILEARCHIVE server type.
+2015-11-21 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/glasscoder/fileconnector.cpp' that broke
+	compilation under RHEL 7.
