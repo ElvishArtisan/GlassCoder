@@ -105,45 +105,18 @@ MainObject::MainObject(QObject *parent)
       }
     }
     if(cmd->key(i)=="--audio-format") {
-      if(cmd->value(i).toLower()=="mp2") {
-	audio_format=Codec::TypeMpegL2;
-	cmd->setProcessed(i,true);
-      }
-      else {
-	if(cmd->value(i).toLower()=="mp3") {
-	  audio_format=Codec::TypeMpegL3;
+      for(int j=0;j<Codec::TypeLast;j++) {
+	if(Codec::optionKeyword((Codec::Type)j)==
+	   cmd->value(i).toLower()) {
+	  audio_format=(Codec::Type)j;
 	  cmd->setProcessed(i,true);
 	}
-	else {
-	  if(cmd->value(i).toLower()=="aac") {
-	    audio_format=Codec::TypeAac;
-	    cmd->setProcessed(i,true);
-	  }
-	  else {
-	    if(cmd->value(i).toLower()=="aacp") {
-	      audio_format=Codec::TypeFdk;
-	      cmd->setProcessed(i,true);
-	    }
-	    else {
-	      if(cmd->value(i).toLower()=="vorbis") {
-		audio_format=Codec::TypeVorbis;
-		cmd->setProcessed(i,true);
-	      }
-	      else {
-		if(cmd->value(i).toLower()=="opus") {
-		  audio_format=Codec::TypeOpus;
-		  cmd->setProcessed(i,true);
-		}
-		else {
-		  Log(LOG_ERR,
-		      QString().sprintf("unknown --audio-format value \"%s\"",
-					(const char *)cmd->value(i).toAscii()));
-		  exit(256);
-		}
-	      }
-	    }
-	  }
-	}
+      }
+      if(!cmd->processed(i)) {
+	Log(LOG_ERR,
+	    QString().sprintf("unknown --audio-format value \"%s\"",
+			      (const char *)cmd->value(i).toAscii()));
+	exit(256);
       }
     }
     if(cmd->key(i)=="--audio-quality") {
@@ -223,6 +196,12 @@ MainObject::MainObject(QObject *parent)
 	  server_type=(Connector::ServerType)j;
 	  cmd->setProcessed(i,true);
 	}
+      }
+      if(!cmd->processed(i)) {
+	Log(LOG_ERR,
+	    QString().sprintf("unknown --server-type value \"%s\"",
+			      (const char *)cmd->value(i).toAscii()));
+	exit(256);
       }
     }
     if(cmd->key(i)=="--stream-description") {
