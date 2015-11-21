@@ -57,7 +57,6 @@ class FdkCodec : public Codec
 			       const AACENC_InArgs *,AACENC_OutArgs *);
   AACENC_ERROR (*aacEncInfo)(const HANDLE_AACENCODER,AACENC_InfoStruct *);
   AACENC_ERROR (*aacEncGetLibInfo)(LIB_INFO *);
-#endif  // HAVE_FDKAAC
   unsigned long fdk_input_samples;
   AACENC_BufDesc fdk_input_desc;
   INT_PCM *fdk_input_buffer;
@@ -70,6 +69,7 @@ class FdkCodec : public Codec
   INT fdk_output_sizes[1];
   INT fdk_outputel_sizes[1];
   AACENC_InfoStruct fdk_info;
+#endif  // HAVE_FDKAAC
 };
 
 

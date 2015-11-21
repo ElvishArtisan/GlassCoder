@@ -488,3 +488,7 @@
 2015-11-19 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a positioning error in the status widget in
 	'src/glassgui/glassgui.cpp'.
+2015-11-21 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/glasscoder/fdkcodec.cpp' and
+	'src/glasscoder/fdkcodec.h' that broke compilation when
+	the FDK-AAC library was not present.

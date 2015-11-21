@@ -26,19 +26,23 @@
 FdkCodec::FdkCodec(Ringbuffer *ring,QObject *parent)
   : Codec(Codec::TypeFdk,ring,parent)
 {
+#ifdef HAVE_FDKAAC
   fdk_input_buffer=NULL;
   fdk_output_buffer=NULL;
+#endif  // HAVE_FDKAAC
 }
 
 
 FdkCodec::~FdkCodec()
 {
+#ifdef HAVE_FDKAAC
   if(fdk_input_buffer!=NULL) {
     delete fdk_input_buffer;
   }
   if(fdk_output_buffer!=NULL) {
     delete fdk_output_buffer;
   }
+#endif  // HAVE_FDKAAC
 }
 
 
@@ -60,7 +64,11 @@ QString FdkCodec::contentType() const
 
 unsigned FdkCodec::pcmFrames() const
 {
+#ifdef HAVE_FDKAAC
   return fdk_info.frameLength;
+#else
+  return 0;
+#endif  // HAVE_FDKAAC
 }
 
 
