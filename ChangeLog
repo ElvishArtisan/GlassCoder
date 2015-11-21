@@ -505,3 +505,5 @@
 2015-11-21 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/glasscoder/fileconnector.cpp' that broke
 	compilation under RHEL 7.
+2015-11-21 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.9.9.
