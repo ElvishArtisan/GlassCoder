@@ -217,38 +217,11 @@ MainObject::MainObject(QObject *parent)
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--server-type") {
-      if(cmd->value(i).toLower()=="hls") {
-	server_type=Connector::HlsServer;
-	cmd->setProcessed(i,true);
-      }
-      else {
-	if(cmd->value(i).toLower()=="icecast2") {
-	  server_type=Connector::Icecast2Server;
+      for(int j=0;j<Connector::LastServer;j++) {
+	if(Connector::optionKeyword((Connector::ServerType)j)==
+	   cmd->value(i).toLower()) {
+	  server_type=(Connector::ServerType)j;
 	  cmd->setProcessed(i,true);
-	}
-	else {
-	  if(cmd->value(i).toLower()=="shout1") {
-	    server_type=Connector::Shoutcast1Server;
-	    cmd->setProcessed(i,true);
-	  }
-	  else {
-	    if(cmd->value(i).toLower()=="shout2") {
-	      server_type=Connector::Shoutcast2Server;
-	      cmd->setProcessed(i,true);
-	    }
-	    else {
-	      if(cmd->value(i).toLower()=="file") {
-		server_type=Connector::FileServer;
-		cmd->setProcessed(i,true);
-	      }
-	      else {
-		Log(LOG_ERR,
-		    QString().sprintf("unknown server type \"%s\"",
-				      (const char *)cmd->value(i).toAscii()));
-		exit(256);
-	      }
-	    }
-	  }
 	}
       }
     }
