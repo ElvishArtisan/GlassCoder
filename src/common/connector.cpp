@@ -366,6 +366,10 @@ QString Connector::serverTypeText(Connector::ServerType type)
     ret=tr("Icecast v2");
     break;
 
+  case Connector::FileServer:
+    ret=tr("Local File");
+    break;
+
   case Connector::LastServer:
     break;
   }
@@ -393,6 +397,10 @@ QString Connector::optionKeyword(Connector::ServerType type)
 
   case Connector::Icecast2Server:
     ret="icecast2";
+    break;
+
+  case Connector::FileServer:
+    ret="file";
     break;
 
   case Connector::LastServer:

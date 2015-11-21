@@ -492,3 +492,5 @@
 	* Fixed a bug in 'src/glasscoder/fdkcodec.cpp' and
 	'src/glasscoder/fdkcodec.h' that broke compilation when
 	the FDK-AAC library was not present.
+2015-11-21 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented a FILE server type.

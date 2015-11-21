@@ -415,6 +415,17 @@
 
 	    <varlistentry>
 	      <term>
+		<userinput>FILE</userinput>
+	      </term>
+	      <listitem>
+		<para>
+		  Local file
+		</para>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	      <term>
 		<userinput>HLS</userinput>
 	      </term>
 	      <listitem>

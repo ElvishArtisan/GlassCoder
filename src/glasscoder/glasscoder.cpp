@@ -237,10 +237,16 @@ MainObject::MainObject(QObject *parent)
 	      cmd->setProcessed(i,true);
 	    }
 	    else {
-	      Log(LOG_ERR,
-		  QString().sprintf("unknown server type \"%s\"",
-				    (const char *)cmd->value(i).toAscii()));
-	      exit(256);
+	      if(cmd->value(i).toLower()=="file") {
+		server_type=Connector::FileServer;
+		cmd->setProcessed(i,true);
+	      }
+	      else {
+		Log(LOG_ERR,
+		    QString().sprintf("unknown server type \"%s\"",
+				      (const char *)cmd->value(i).toAscii()));
+		exit(256);
+	      }
 	    }
 	  }
 	}
