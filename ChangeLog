@@ -524,3 +524,5 @@
 	* Modified PCM16 codec to use big-endian encoding.
 2015-11-23 Fred Gleason <fredg@paravelsystems.com>
 	* Update error reporting in 'src/glasscoder/asihpisource.cpp'.
+2015-11-23 Fred Gleason <fredg@paravelsystems.com>
+	* Updated the package version to 0.9.10.
