@@ -279,6 +279,7 @@ void CodecDialog::codecSamplerateChanged(int n)
       break;
 
     case Codec::TypePcm16:
+      gui_codec_bitrate_box[i]->insertItem(-1,tr("None",0));
       break;
 
     case Codec::TypeOpus:

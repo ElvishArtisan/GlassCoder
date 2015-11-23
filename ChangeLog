@@ -517,3 +517,6 @@
 	'src/glasscoder/filearchiveconnector.cpp'
 	and 'src/glasscoder/filearchiveconnector.h' to use a WAV file container
 	when streaming PCM16 data.
+2015-11-23 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/glassgui/codecdialog.cpp' that enabled
+	bitrate settings for the PCM16 codec.
