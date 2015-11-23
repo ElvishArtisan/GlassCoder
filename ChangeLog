@@ -520,3 +520,5 @@
 2015-11-23 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/glassgui/codecdialog.cpp' that enabled
 	bitrate settings for the PCM16 codec.
+2015-11-23 Fred Gleason <fredg@paravelsystems.com>
+	* Modified PCM16 codec to use big-endian encoding.

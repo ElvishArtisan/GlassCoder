@@ -224,7 +224,7 @@
 	      </term>
 	      <listitem>
 		<para>
-		  PCM16 (little endian)
+		  PCM16 Uncompressed
 		</para>
 	      </listitem>
 	    </varlistentry>

@@ -181,7 +181,7 @@ QString Codec::codecTypeText(Codec::Type type)
     break;
 
   case Codec::TypePcm16:
-    ret=tr("PCM16 (little endian)");
+    ret=tr("PCM16 Uncompressed");
     break;
 
   case Codec::TypeVorbis:

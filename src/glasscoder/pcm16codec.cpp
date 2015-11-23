@@ -18,6 +18,8 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <arpa/inet.h>
+
 #include <samplerate.h>
 
 #include "pcm16codec.h"
@@ -67,6 +69,9 @@ bool Pcm16Codec::startCodec()
 void Pcm16Codec::encodeData(Connector *conn,const float *pcm,int frames)
 {
   src_float_to_short_array(pcm,pcm16_buffer,frames*channels());
+  for(int i=0;i<(frames*(int)channels());i++) {
+    pcm16_buffer[i]=htons(pcm16_buffer[i]);
+  }
   conn->writeData(frames,(const unsigned char *)pcm16_buffer,
 		  frames*channels()*2);
 }

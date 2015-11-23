@@ -23,6 +23,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <arpa/inet.h>
 
 #include <QStringList>
 
@@ -104,7 +105,9 @@ int64_t FileConnector::writeDataConnector(int frames,const unsigned char *data,
   if(file_snd==NULL) {
     return write(file_fd,data,len);
   }
-  else {
-    return sf_writef_short(file_snd,(short *)data,frames)*2*audioChannels();
+  short pcm[frames*audioChannels()];
+  for(int i=0;i<frames*(int)audioChannels();i++) {
+    pcm[i]=ntohs(((short *)data)[i]);
   }
+  return sf_writef_short(file_snd,pcm,frames)*2*audioChannels();
 }
