@@ -160,14 +160,6 @@ QString Codec::codecTypeText(Codec::Type type)
   QString ret=tr("Unknown");
 
   switch(type) {
-  case Codec::TypeMpegL2:
-    ret=tr("MPEG-1 Layer 2");
-    break;
- 
-  case Codec::TypeMpegL3:
-    ret=tr("MPEG-1 Layer 3");
-    break;
- 
   case Codec::TypeAac:
     ret=tr("MPEG-2 AAC Main Profile");
     break;
@@ -176,12 +168,24 @@ QString Codec::codecTypeText(Codec::Type type)
     ret=tr("MPEG-4 AAC High Efficiency");
     break;
 
-  case Codec::TypeVorbis:
-    ret=tr("Ogg Vorbis");
+  case Codec::TypeMpegL2:
+    ret=tr("MPEG-1 Layer 2");
     break;
-
+ 
+  case Codec::TypeMpegL3:
+    ret=tr("MPEG-1 Layer 3");
+    break;
+ 
   case Codec::TypeOpus:
     ret=tr("Opus [RFC 6716]");
+    break;
+
+  case Codec::TypePcm16:
+    ret=tr("PCM16 (little endian)");
+    break;
+
+  case Codec::TypeVorbis:
+    ret=tr("Ogg Vorbis");
     break;
 
   case Codec::TypeLast:
@@ -197,14 +201,6 @@ QString Codec::optionKeyword(Codec::Type type)
   QString ret;
 
   switch(type) {
-  case Codec::TypeMpegL2:
-    ret="mp2";
-    break;
- 
-  case Codec::TypeMpegL3:
-    ret="mp3";
-    break;
- 
   case Codec::TypeAac:
     ret="aac";
     break;
@@ -213,12 +209,24 @@ QString Codec::optionKeyword(Codec::Type type)
     ret="aacp";
     break;
 
-  case Codec::TypeVorbis:
-    ret="vorbis";
+  case Codec::TypeMpegL2:
+    ret="mp2";
     break;
-
+ 
+  case Codec::TypeMpegL3:
+    ret="mp3";
+    break;
+ 
   case Codec::TypeOpus:
     ret="opus";
+    break;
+
+  case Codec::TypePcm16:
+    ret="pcm16";
+    break;
+
+  case Codec::TypeVorbis:
+    ret="vorbis";
     break;
 
   case Codec::TypeLast:

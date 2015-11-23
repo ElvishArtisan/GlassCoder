@@ -24,6 +24,8 @@
 #include <QDateTime>
 #include <QTimer>
 
+#include <sndfile.h>
+
 #include "connector.h"
 
 #define FILEARCHIVE_DATETIME_PATTERN "yyyy-MM-dd-hh"
@@ -49,6 +51,8 @@ class FileArchiveConnector : public Connector
   QString GetFilename(const QDateTime &dt) const;
   QTimer *archive_rotate_timer;
   int archive_fd;
+  SNDFILE *archive_snd;
+  SF_INFO archive_sf;
   int archive_hour;
 };
 

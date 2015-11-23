@@ -164,6 +164,34 @@
 	  <variablelist remap='TP'>
 	    <varlistentry>
 	      <term>
+		<userinput>AAC</userinput>
+	      </term>
+	      <listitem>
+		<para>
+		  MPEG-2 Advanced Audio Coding (Main Profile)
+		</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</blockquote> <!-- remap='RE' -->
+	<blockquote remap='RS'>
+	  <variablelist remap='TP'>
+	    <varlistentry>
+	      <term>
+		<userinput>AACP</userinput>
+	      </term>
+	      <listitem>
+		<para>
+		  MPEG-4 Advanced Audio Coding (High Efficiency Profile)
+		</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</blockquote> <!-- remap='RE' -->
+	<blockquote remap='RS'>
+	  <variablelist remap='TP'>
+	    <varlistentry>
+	      <term>
 		<userinput>MP2</userinput>
 	      </term>
 	      <listitem>
@@ -192,25 +220,11 @@
 	  <variablelist remap='TP'>
 	    <varlistentry>
 	      <term>
-		<userinput>AAC</userinput>
+		<userinput>PCM16</userinput>
 	      </term>
 	      <listitem>
 		<para>
-		  MPEG-2 Advanced Audio Coding (Main Profile)
-		</para>
-	      </listitem>
-	    </varlistentry>
-	  </variablelist>
-	</blockquote> <!-- remap='RE' -->
-	<blockquote remap='RS'>
-	  <variablelist remap='TP'>
-	    <varlistentry>
-	      <term>
-		<userinput>AACP</userinput>
-	      </term>
-	      <listitem>
-		<para>
-		  MPEG-4 Advanced Audio Coding (High Efficiency Profile)
+		  PCM16 (little endian)
 		</para>
 	      </listitem>
 	    </varlistentry>

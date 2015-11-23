@@ -33,11 +33,15 @@ FileConnector::FileConnector(QObject *parent)
   : Connector(parent)
 {
   file_fd=-1;
+  file_snd=NULL;
 }
 
 
 FileConnector::~FileConnector()
 {
+  if(file_snd!=NULL) {
+    sf_close(file_snd);
+  }
   if(file_fd>=0) {
     close(file_fd);
   }
@@ -52,27 +56,55 @@ FileConnector::ServerType FileConnector::serverType() const
 
 void FileConnector::connectToHostConnector(const QString &hostname,uint16_t port)
 {
-  if((file_fd=open(serverMountpoint().toUtf8(),O_WRONLY|O_TRUNC|O_CREAT,
-		   S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH))>=0) {
-    setConnected(true);
+  SF_INFO sf;
+  if(contentType()=="audio/x-wav") {
+    memset(&sf,0,sizeof(sf));
+    sf.samplerate=audioSamplerate();
+    sf.channels=audioChannels();
+    sf.format=SF_FORMAT_WAV|SF_FORMAT_PCM_16;
+    if((file_snd=sf_open(serverMountpoint().toUtf8(),SFM_WRITE,&sf))!=NULL) {
+      setConnected(true);
+    }
+    else {
+      Log(LOG_ERR,("unable to open destination file \""+serverMountpoint()+
+		   "\" ["+sf_strerror(file_snd)+"]").toUtf8());
+      setConnected(false);
+    }
   }
   else {
-    Log(LOG_ERR,("unable to open destination file \""+serverMountpoint()+
-		 "\" ["+strerror(errno)+"]").toUtf8());
-    setConnected(false);
+    if((file_fd=open(serverMountpoint().toUtf8(),O_WRONLY|O_TRUNC|O_CREAT,
+		     S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH))>=0) {
+      setConnected(true);
+    }
+    else {
+      Log(LOG_ERR,("unable to open destination file \""+serverMountpoint()+
+		   "\" ["+strerror(errno)+"]").toUtf8());
+      setConnected(false);
+    }
   }
 }
 
 
 void FileConnector::disconnectFromHostConnector()
 {
-  close(file_fd);
-  file_fd=-1;
+  if(file_snd==NULL) {
+    close(file_fd);
+    file_fd=-1;
+  }
+  else {
+    sf_close(file_snd);
+    file_snd=NULL;
+  }
 }
 
 
 int64_t FileConnector::writeDataConnector(int frames,const unsigned char *data,
 					 int64_t len)
 {
-  return write(file_fd,data,len);
+  if(file_snd==NULL) {
+    return write(file_fd,data,len);
+  }
+  else {
+    return sf_writef_short(file_snd,(short *)data,frames)*2*audioChannels();
+  }
 }

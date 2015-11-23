@@ -507,3 +507,13 @@
 	compilation under RHEL 7.
 2015-11-21 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.9.9.
+2015-11-23 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented a PCM16 (little endian) codec in
+	'src/glasscoder/pcm16codec.cpp' and 'src/glasscoder/pcm16codec.h'.
+	* Modified the FILE server driver in 'src/glasscoder/fileconnector.cpp'
+	and 'src/glasscoder/fileconnector.h' to use a WAV file container
+	when streaming PCM16 data.
+	* Modified the FILEARCHIVE server driver in
+	'src/glasscoder/filearchiveconnector.cpp'
+	and 'src/glasscoder/filearchiveconnector.h' to use a WAV file container
+	when streaming PCM16 data.

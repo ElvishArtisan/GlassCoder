@@ -384,6 +384,11 @@ AC_MSG_NOTICE("|     Ogg Vorbis (via libogg and libvorbis) ... No    |")
 else
 AC_MSG_NOTICE("|     Ogg Vorbis (via libogg and libvorbis) ... Yes   |")
 fi
+if test -z $USING_SNDFILE ; then
+AC_MSG_NOTICE("|                    PCM16 (via libsndfile) ... No    |")
+else
+AC_MSG_NOTICE("|                    PCM16 (via libsndfile) ... Yes   |")
+fi
 AC_MSG_NOTICE("|                                                     |")
 AC_MSG_NOTICE("| Audio Sources:                                      |")
 if test -z $USING_ALSA ; then

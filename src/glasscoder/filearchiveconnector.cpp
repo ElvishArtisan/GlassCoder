@@ -33,6 +33,7 @@ FileArchiveConnector::FileArchiveConnector(QObject *parent)
   : Connector(parent)
 {
   archive_fd=-1;
+  archive_snd=NULL;
   archive_hour=-1;
 
   archive_rotate_timer=new QTimer(this);
@@ -44,6 +45,9 @@ FileArchiveConnector::FileArchiveConnector(QObject *parent)
 FileArchiveConnector::~FileArchiveConnector()
 {
   delete archive_rotate_timer;
+  if(archive_snd!=NULL) {
+    sf_close(archive_snd);
+  }
   if(archive_fd>=0) {
     close(archive_fd);
   }
@@ -52,7 +56,7 @@ FileArchiveConnector::~FileArchiveConnector()
 
 FileArchiveConnector::ServerType FileArchiveConnector::serverType() const
 {
-  return Connector::FileServer;
+  return Connector::FileArchiveServer;
 }
 
 
@@ -66,19 +70,36 @@ void FileArchiveConnector::rotateFile()
     return;
   }
 
-  if(archive_fd>=0) {
-    close(archive_fd);
-    archive_fd=-1;
-  }
-  if((archive_fd=open(filename.toUtf8(),O_WRONLY|O_TRUNC|O_CREAT,
-		   S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH))>=0) {
-    setConnected(true);
-    Log(LOG_DEBUG,"now writing to \""+filename+"\"");
+  if(contentType()=="audio/x-wav") {
+    if(archive_snd!=NULL) {
+      sf_close(archive_snd);
+      archive_snd=NULL;
+    }
+    if((archive_snd=sf_open(filename.toUtf8(),SFM_WRITE,&archive_sf))!=NULL) {
+      setConnected(true);
+      Log(LOG_DEBUG,"now writing to \""+filename+"\"");
+    }
+    else {
+      Log(LOG_WARNING,("unable to open destination file \""+filename+
+		       "\" ["+sf_strerror(archive_snd)+"]").toUtf8());
+      setConnected(false);
+    }
   }
   else {
-    Log(LOG_WARNING,("unable to open destination file \""+filename+
-		     "\" ["+strerror(errno)+"]").toUtf8());
-    setConnected(false);
+    if(archive_fd>=0) {
+      close(archive_fd);
+      archive_fd=-1;
+    }
+    if((archive_fd=open(filename.toUtf8(),O_WRONLY|O_TRUNC|O_CREAT,
+			S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH))>=0) {
+      setConnected(true);
+      Log(LOG_DEBUG,"now writing to \""+filename+"\"");
+    }
+    else {
+      Log(LOG_WARNING,("unable to open destination file \""+filename+
+		       "\" ["+strerror(errno)+"]").toUtf8());
+      setConnected(false);
+    }
   }
   archive_rotate_timer->
     start(now.time().msecsTo(QTime(now.time().hour(),59,59,999)));
@@ -104,6 +125,16 @@ void FileArchiveConnector::connectToHostConnector(const QString &hostname,
   close(archive_fd);
   archive_fd=-1;
   unlink(serverMountpoint().toUtf8());
+
+  //
+  // Initialize libsndfile
+  //
+  if(contentType()=="audio/x-wav") {
+    memset(&archive_sf,0,sizeof(archive_sf));
+    archive_sf.samplerate=audioSamplerate();
+    archive_sf.channels=audioChannels();
+    archive_sf.format=SF_FORMAT_WAV|SF_FORMAT_PCM_16;
+  }
   rotateFile();
 }
 
@@ -111,8 +142,13 @@ void FileArchiveConnector::connectToHostConnector(const QString &hostname,
 void FileArchiveConnector::disconnectFromHostConnector()
 {
   archive_rotate_timer->stop();
-  close(archive_fd);
-  archive_fd=-1;
+  if(archive_fd>=0) {
+    close(archive_fd);
+    archive_fd=-1;
+  }
+  if(archive_snd!=NULL) {
+    sf_close(archive_snd);
+  }
 }
 
 
@@ -120,7 +156,13 @@ int64_t FileArchiveConnector::writeDataConnector(int frames,
 						 const unsigned char *data,
 						 int64_t len)
 {
-  return write(archive_fd,data,len);
+  if(contentType()=="audio/x-wav") {
+    return sf_writef_short(archive_snd,(short *)data,frames)*2*audioChannels();
+
+  }
+  else {
+    return write(archive_fd,data,len);
+  }
 }
 
 

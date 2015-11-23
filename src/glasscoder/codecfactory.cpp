@@ -24,6 +24,7 @@
 #include "mpegl2codec.h"
 #include "mpegl3codec.h"
 #include "opuscodec.h"
+#include "pcm16codec.h"
 #include "vorbiscodec.h"
 
 Codec *CodecFactory(Codec::Type type,Ringbuffer *ring,QObject *parent)
@@ -31,14 +32,6 @@ Codec *CodecFactory(Codec::Type type,Ringbuffer *ring,QObject *parent)
   Codec *cdc=NULL;
 
   switch(type) {
-  case Codec::TypeMpegL2:
-    cdc=new MpegL2Codec(ring,parent);
-    break;
-
-  case Codec::TypeMpegL3:
-    cdc=new MpegL3Codec(ring,parent);
-    break;
-
   case Codec::TypeAac:
     cdc=new AacCodec(ring,parent);
     break;
@@ -47,12 +40,24 @@ Codec *CodecFactory(Codec::Type type,Ringbuffer *ring,QObject *parent)
     cdc=new FdkCodec(ring,parent);
     break;
 
-  case Codec::TypeVorbis:
-    cdc=new VorbisCodec(ring,parent);
+  case Codec::TypeMpegL2:
+    cdc=new MpegL2Codec(ring,parent);
+    break;
+
+  case Codec::TypeMpegL3:
+    cdc=new MpegL3Codec(ring,parent);
     break;
 
   case Codec::TypeOpus:
     cdc=new OpusCodec(ring,parent);
+    break;
+
+  case Codec::TypePcm16:
+    cdc=new Pcm16Codec(ring,parent);
+    break;
+
+  case Codec::TypeVorbis:
+    cdc=new VorbisCodec(ring,parent);
     break;
 
   case Codec::TypeLast:

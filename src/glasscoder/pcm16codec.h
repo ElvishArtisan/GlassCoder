@@ -1,6 +1,6 @@
-// fileconnector.h
+// pcm16codec.h
 //
-// Source connector class for local files
+// Codec class for 16 bit PCM (little endian)
 //
 //   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -18,30 +18,31 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef FILECONNECTOR_H
-#define FILECONNECTOR_H
+#ifndef PCM16CODEC_H
+#define PCM16CODEC_H
 
-#include <sndfile.h>
+#include "codec.h"
 
-#include "connector.h"
+#define PCM16_MAX_FRAMES 1024
 
-class FileConnector : public Connector
+class Pcm16Codec : public Codec
 {
   Q_OBJECT;
  public:
-  FileConnector(QObject *parent=0);
-  ~FileConnector();
-  FileConnector::ServerType serverType() const;
+  Pcm16Codec(Ringbuffer *ring,QObject *parent=0);
+  bool isAvailable() const;
+  QString contentType() const;
+  unsigned pcmFrames() const;
+  QString defaultExtension() const;
+  QString formatIdentifier() const;
+  bool startCodec();
 
  protected:
-  void connectToHostConnector(const QString &hostname,uint16_t port);
-  void disconnectFromHostConnector();
-  int64_t writeDataConnector(int frames,const unsigned char *data,int64_t len);
+  void encodeData(Connector *conn,const float *pcm,int frames);
 
  private:
-  int file_fd;
-  SNDFILE *file_snd;
+  short pcm16_buffer[PCM16_MAX_FRAMES*MAX_AUDIO_CHANNELS];
 };
 
 
-#endif  // FILECONNECTOR_H
+#endif  // PCM16CODEC_H
