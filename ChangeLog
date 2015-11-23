@@ -522,3 +522,5 @@
 	bitrate settings for the PCM16 codec.
 2015-11-23 Fred Gleason <fredg@paravelsystems.com>
 	* Modified PCM16 codec to use big-endian encoding.
+2015-11-23 Fred Gleason <fredg@paravelsystems.com>
+	* Update error reporting in 'src/glasscoder/asihpisource.cpp'.

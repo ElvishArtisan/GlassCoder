@@ -301,7 +301,8 @@ void AsiHpiDevice::readData()
     }
   }
   else {
-    Log(LOG_WARNING,"not in recording state");
+    Log(LOG_WARNING,"not in recording state"+
+	QString().sprintf(" [state: %u]",state));
   }
 
 
