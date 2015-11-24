@@ -526,3 +526,6 @@
 	* Update error reporting in 'src/glasscoder/asihpisource.cpp'.
 2015-11-23 Fred Gleason <fredg@paravelsystems.com>
 	* Updated the package version to 0.9.10.
+2015-11-24 Fred Gleason <fredg@paravelsystems.com>
+	* Removed FLOAT support from the ALSA driver in
+	'src/glasscoder/alsadevice.cpp'.

@@ -155,26 +155,20 @@ bool AlsaDevice::start(QString *err)
   //
   // Sample Format
   //
-  if(snd_pcm_hw_params_set_format(alsa_pcm,hwparams,SND_PCM_FORMAT_FLOAT)==0) {
-    alsa_format=AudioDevice::FLOAT;
-    Log(LOG_INFO,"using ALSA FLOAT sample format");
+  if(snd_pcm_hw_params_set_format(alsa_pcm,hwparams,
+				  SND_PCM_FORMAT_S32_LE)==0) {
+    alsa_format=AudioDevice::S32_LE;
+    Log(LOG_INFO,"using ALSA S32_LE sample format");
   }
   else {
     if(snd_pcm_hw_params_set_format(alsa_pcm,hwparams,
-				     SND_PCM_FORMAT_S32_LE)==0) {
-      alsa_format=AudioDevice::S32_LE;
-      Log(LOG_INFO,"using ALSA S32_LE sample format");
+				    SND_PCM_FORMAT_S16_LE)==0) {
+      alsa_format=AudioDevice::S16_LE;
+      Log(LOG_INFO,"using ALSA S16_LE sample format");
     }
     else {
-      if(snd_pcm_hw_params_set_format(alsa_pcm,hwparams,
-				      SND_PCM_FORMAT_S16_LE)==0) {
-	alsa_format=AudioDevice::S16_LE;
-	Log(LOG_INFO,"using ALSA S16_LE sample format");
-      }
-      else {
-	*err=tr("incompatible sample format");
-	return false;
-      }
+      *err=tr("incompatible sample format");
+      return false;
     }
   }
 
