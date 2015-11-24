@@ -529,3 +529,5 @@
 2015-11-24 Fred Gleason <fredg@paravelsystems.com>
 	* Removed FLOAT support from the ALSA driver in
 	'src/glasscoder/alsadevice.cpp'.
+2015-11-24 Fred Gleason <fredg@paravelsystems.com>
+	* Updated the package version to 0.9.11.
