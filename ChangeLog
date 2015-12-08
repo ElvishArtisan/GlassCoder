@@ -531,3 +531,6 @@
 	'src/glasscoder/alsadevice.cpp'.
 2015-11-24 Fred Gleason <fredg@paravelsystems.com>
 	* Updated the package version to 0.9.11.
+2015-12-08 Fred Gleason <fredg@paravelsystems.com>
+	* Changed the HLS version value to '3' in
+	'src/glasscoder/hlsconnector.h'.
