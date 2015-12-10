@@ -136,10 +136,12 @@ void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
     //
     // Write ID3 tag
     //
+#ifndef HLS_OMIT_ID3_TIMESTAMPS
     uint8_t id3_header[HLS_ID3_HEADER_SIZE];
     hls_total_media_frames=HLS_SEGMENT_SIZE*audioSamplerate();
     GetStreamTimestamp(id3_header,hls_total_media_frames);
     fwrite(id3_header,1,HLS_ID3_HEADER_SIZE,hls_media_handle);
+#endif  // HLS_OMIT_ID3_TIMESTAMPS
   }
 
   setConnected(true);
@@ -287,9 +289,11 @@ void HlsConnector::RotateMediaFile()
 	   (const char *)(hls_temp_dir->path()+"/"+hls_media_filename).toUtf8(),
 			  strerror(errno)));
   }
+#ifndef HLS_OMIT_ID3_TIMESTAMPS
   uint8_t id3_header[HLS_ID3_HEADER_SIZE];
   GetStreamTimestamp(id3_header,hls_total_media_frames);
   fwrite(id3_header,1,HLS_ID3_HEADER_SIZE,hls_media_handle);
+#endif  // HLS_OMIT_ID3_TIMESTAMPS
 }
 
 

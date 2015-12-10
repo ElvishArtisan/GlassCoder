@@ -536,3 +536,7 @@
 	'src/glasscoder/hlsconnector.h'.
 2015-12-08 Fred Gleason <fredg@paravelsystems.com>
 	* Updated the package version to 0.9.12.
+2015-12-09 Fred Gleason <fredg@paravelsystems.com>
+	* Added a HLS_OMIT_ID3_TIMESTAMPS define in
+	'src/glasscoder/hlsconnector.cpp' to allow supression of ID3 PRIV
+	timestamp in media segments.
