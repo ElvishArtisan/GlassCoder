@@ -540,3 +540,18 @@
 	* Added a HLS_OMIT_ID3_TIMESTAMPS define in
 	'src/glasscoder/hlsconnector.cpp' to allow supression of ID3 PRIV
 	timestamp in media segments.
+2015-12-09 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/glasscoder/aaccodec.cpp' where an incomplete
+	ObjectTypeIndication (OTI) was being emitted by the
+	'AacCodec::formatIdentifier()' method.
+	* Fixed a bug in 'src/glasscoder/fdkcodec.cpp' where an incomplete
+	ObjectTypeIndication (OTI) was being emitted by the
+	'FdkCodec::formatIdentifier()' method.
+	* Fixed a bug in 'src/glasscoder/mpegl2codec.cpp' where an incomplete
+	ObjectTypeIndication (OTI) was being emitted by the
+	'MpegL2Codec::formatIdentifier()' method.
+	* Fixed a bug in 'src/glasscoder/mpegl3codec.cpp' where an incomplete
+	ObjectTypeIndication (OTI) was being emitted by the
+	'MpegL3Codec::formatIdentifier()' method.
+	* Removed generation of the '#EXT-X-VERSION' tag for master index
+	files in 'src/glasscoder/hlsconnector.cpp'.

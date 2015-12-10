@@ -60,7 +60,10 @@ QString MpegL2Codec::defaultExtension() const
 
 QString MpegL2Codec::formatIdentifier() const
 {
-  return QString();
+  //
+  // See RFC 6381
+  //
+  return QString("mp4a/40.33");
 }
 
 

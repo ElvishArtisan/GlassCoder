@@ -314,7 +314,7 @@ void HlsConnector::WritePlaylistFile()
   fprintf(f,"#EXT-X-MEDIA-SEQUENCE:%d\n",hls_sequence_head);
   for(int i=hls_sequence_head;i<=hls_sequence_back;i++) {
     fprintf(f,"#EXTINF:%7.5lf,\n%s\n",
-	    hls_media_durations[i],(const char *)GetMediaFilename(i).toUtf8());
+    	    hls_media_durations[i],(const char *)GetMediaFilename(i).toUtf8());
   }
   fclose(f);
 }
@@ -332,10 +332,10 @@ void HlsConnector::WriteTopPlaylistFile()
     exit(256);
   }
   fprintf(f,"#EXTM3U\n");
-  fprintf(f,"#EXT-X-VERSION:%d\n",HLS_VERSION);
+  //fprintf(f,"#EXT-X-VERSION:%d\n",HLS_VERSION);
   for(unsigned i=0;i<audioBitrates()->size();i++) {
     QString str=
-      QString().sprintf("#EXT-X-STREAM-INF:BANDWIDTH=%u,RESOLUTION=0x0",
+      QString().sprintf("#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=%u",
 			1000*audioBitrates()->at(i));
     if(!formatIdentifier().isEmpty()) {
       str+=",CODECS=\""+formatIdentifier()+"\"";

@@ -61,7 +61,11 @@ QString MpegL3Codec::defaultExtension() const
 
 QString MpegL3Codec::formatIdentifier() const
 {
-  return QString();
+  //
+  // From ISO/IEC 14496-3
+  // (see the summary at https://en.wikipedia.org/wiki/MPEG-4_Part_3)
+  //
+  return QString("mp4a.40.34");
 }
 
 

@@ -69,9 +69,10 @@ QString AacCodec::defaultExtension() const
 QString AacCodec::formatIdentifier() const
 {
   //
-  // See RFC 6381
+  // From ISO/IEC 14496-3
+  // (see the summary at https://en.wikipedia.org/wiki/MPEG-4_Part_3)
   //
-  return QString("mp4a");
+  return QString("mp4a.40.1");
 }
 
 
