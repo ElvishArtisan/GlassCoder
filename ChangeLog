@@ -555,3 +555,5 @@
 	'MpegL3Codec::formatIdentifier()' method.
 	* Removed generation of the '#EXT-X-VERSION' tag for master index
 	files in 'src/glasscoder/hlsconnector.cpp'.
+2015-12-09 Fred Gleason <fredg@paravelsystems.com>
+	* Updated the package version to 0.9.13.
