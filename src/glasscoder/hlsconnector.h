@@ -26,6 +26,15 @@
 #define HLS_MINIMUM_SEGMENT_QUAN 4
 #define HLS_ID3_HEADER_SIZE 73
 
+//
+// The Pantos & May draft HLS spec calls for placing an ID3 PRIV timestamp
+// at the start of each media segment [Section 3].  However, doing so causes
+// certain players -- e.g. VLC -- to produce audable glitches in the playout.
+//
+// Define this to suppress generation of such timestamps.
+//
+//#define HLS_OMIT_ID3_TIMESTAMPS
+
 #include <stdio.h>
 
 #include <map>
@@ -37,15 +46,6 @@
 
 #include "connector.h"
 #include "fileconveyor.h"
-
-//
-// The Pantos & May draft HLS spec calls for placing an ID3 PRIV timestamp
-// at the start of each media segment [Section 3].  However, doing so causes
-// certain players -- e.g. VLC -- to produce audable glitches in the playout.
-//
-// Define this to suppress generation of such timestamps.
-//
-#define HLS_OMIT_ID3_TIMESTAMPS
 
 class HlsConnector : public Connector
 {

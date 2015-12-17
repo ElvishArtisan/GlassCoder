@@ -557,3 +557,6 @@
 	files in 'src/glasscoder/hlsconnector.cpp'.
 2015-12-09 Fred Gleason <fredg@paravelsystems.com>
 	* Updated the package version to 0.9.13.
+2015-12-17 Fred Gleason <fredg@paravelsystems.com>
+	* Commented out the HLS_OMIT_ID3_TIMESTAMPS define in
+	'src/glasscoder/hlsconnector.h'.
