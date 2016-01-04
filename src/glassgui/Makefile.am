@@ -41,6 +41,7 @@ dist_glassgui_SOURCES = codecdialog.cpp codecdialog.h\
                         segmeter.cpp segmeter.h\
                         serverdialog.cpp serverdialog.h\
                         sourcedialog.cpp sourcedialog.h\
+                        spinbox.cpp spinbox.h\
                         statuswidget.cpp statuswidget.h\
                         stereometer.cpp stereometer.h\
                         streamdialog.cpp streamdialog.h
@@ -65,6 +66,7 @@ nodist_glassgui_SOURCES = asihpi.cpp asihpi.h\
                           moc_segmeter.cpp\
                           moc_serverdialog.cpp\
                           moc_sourcedialog.cpp\
+                          moc_spinbox.cpp\
                           moc_statuswidget.cpp\
                           moc_stereometer.cpp\
                           moc_streamdialog.cpp\

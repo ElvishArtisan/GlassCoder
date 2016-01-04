@@ -75,6 +75,8 @@ class Connector : public QObject
   void setStreamGenre(const QString &str);
   bool streamPublic() const;
   void setStreamPublic(bool state);
+  int streamTimestampOffset() const;
+  void setStreamTimestampOffset(int msec);
   QString extension() const;
   void setExtension(const QString &str);
   QString formatIdentifier() const;
@@ -98,6 +100,7 @@ class Connector : public QObject
   static QString base64Decode(const QString &str,bool *ok=NULL);
   static QString curlStrError(int exit_code);
   static QString httpStrError(int status_code);
+  static QString timezoneOffset();
 
  signals:
   void connected(bool state);
@@ -143,6 +146,7 @@ class Connector : public QObject
   QString conn_stream_aim;
   QString conn_stream_genre;
   bool conn_stream_public;
+  int conn_stream_timestamp_offset;
   QString conn_extension;
   QString conn_format_identifier;
   QTimer *conn_data_timer;

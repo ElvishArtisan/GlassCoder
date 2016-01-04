@@ -69,6 +69,7 @@ class MainObject : public QObject
   QString stream_irc;
   QString stream_icq;
   QString stream_aim;
+  int stream_timestamp_offset;
   Connector::ServerType server_type;
   QUrl server_url;
   QString server_username;

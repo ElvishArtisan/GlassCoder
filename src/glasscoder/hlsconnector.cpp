@@ -227,6 +227,8 @@ void HlsConnector::RotateMediaFile()
   // Update working files
   //
   fclose(hls_media_handle);
+  hls_media_datetimes[hls_sequence_back]=
+    QDateTime(QDate::currentDate(),QTime::currentTime());
   hls_media_durations[hls_sequence_back]=
     (double)hls_media_frames/(double)audioSamplerate();
   if((hls_sequence_back-hls_sequence_head)>=HLS_MINIMUM_SEGMENT_QUAN) {
@@ -262,6 +264,15 @@ void HlsConnector::RotateMediaFile()
 	}
 	else {
 	  ++cj;
+	}
+      }
+      std::map<int,QDateTime>::iterator dj=hls_media_datetimes.begin();
+      while(dj!=hls_media_datetimes.end()) {
+	if(dj->first==ci->first) {
+	  hls_media_datetimes.erase(dj++);
+	}
+	else {
+	  ++dj;
 	}
       }
       hls_conveyor->push(this,"","http://"+hostHostname()+hls_put_directory+"/"+
@@ -313,6 +324,10 @@ void HlsConnector::WritePlaylistFile()
   fprintf(f,"#EXT-X-VERSION:%d\n",HLS_VERSION);
   fprintf(f,"#EXT-X-MEDIA-SEQUENCE:%d\n",hls_sequence_head);
   for(int i=hls_sequence_head;i<=hls_sequence_back;i++) {
+    fprintf(f,"#EXT-X-PROGRAM-DATE-TIME:%s%s\n",(const char *)
+	    hls_media_datetimes[i].addSecs(streamTimestampOffset()).
+	    toString("yyyy-MM-ddThh:mm:ss.zzz").toUtf8(),
+	    (const char *)Connector::timezoneOffset().toUtf8());
     fprintf(f,"#EXTINF:%7.5lf,\n%s\n",
     	    hls_media_durations[i],(const char *)GetMediaFilename(i).toUtf8());
   }

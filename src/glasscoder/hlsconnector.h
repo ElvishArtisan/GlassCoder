@@ -39,6 +39,7 @@
 
 #include <map>
 
+#include <QDateTime>
 #include <QDir>
 #include <QProcess>
 #include <QStringList>
@@ -78,6 +79,7 @@ class HlsConnector : public Connector
   int hls_sequence_head;
   int hls_sequence_back;
   std::map<int,double> hls_media_durations;
+  std::map<int,QDateTime> hls_media_datetimes;
   std::map<int,uint64_t> hls_media_killtimes;
   QString hls_media_filename;
   //QString hls_media_killname;

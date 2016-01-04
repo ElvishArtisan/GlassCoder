@@ -67,6 +67,7 @@ MainObject::MainObject(QObject *parent)
   stream_irc="";
   stream_icq="";
   stream_aim="";
+  stream_timestamp_offset=0;
   list_codecs=false;
   list_devices=false;
   meter_data=false;
@@ -230,6 +231,14 @@ MainObject::MainObject(QObject *parent)
     }
     if(cmd->key(i)=="--stream-aim") {
       stream_aim=cmd->value(i);
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--stream-timestamp-offset") {
+      stream_timestamp_offset=cmd->value(i).toInt(&ok);
+      if(!ok) {
+	fprintf(stderr,"invalid --stream-timestamp-offset\n");
+	exit(256);
+      }
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--verbose") {
@@ -507,6 +516,7 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
   conn->setStreamIrc(stream_irc);
   conn->setStreamIcq(stream_icq);
   conn->setStreamAim(stream_aim);
+  conn->setStreamTimestampOffset(stream_timestamp_offset);
 
   //
   // Open the server connection

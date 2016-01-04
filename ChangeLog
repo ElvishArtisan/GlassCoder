@@ -562,3 +562,8 @@
 	'src/glasscoder/hlsconnector.h'.
 2015-12-23 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.9.14.
+2016-01-04 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented the #EXT-X-PROGRAM-DATE-TIME tag for HLS streams
+	in 'src/glasscoder/hlsconnector.cpp' and
+	'src/glasscoder/hlsconnector.h'.
+	* Added a '--stream-timestamp-offset=' switch to glasscoder(1).

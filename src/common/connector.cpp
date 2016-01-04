@@ -18,6 +18,8 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <time.h>
+
 #include <QStringList>
 
 #include "connector.h"
@@ -41,6 +43,7 @@ Connector::Connector(QObject *parent)
   conn_stream_aim="";
   conn_stream_genre="unknown";
   conn_stream_public=true;
+  conn_stream_timestamp_offset=0;
   conn_host_hostname="";
   conn_host_port=0;
   conn_connected=false;
@@ -273,6 +276,18 @@ bool Connector::streamPublic() const
 void Connector::setStreamPublic(bool state)
 {
   conn_stream_public=state;
+}
+
+
+int Connector::streamTimestampOffset() const
+{
+  return conn_stream_timestamp_offset;
+}
+
+
+void Connector::setStreamTimestampOffset(int msec)
+{
+  conn_stream_timestamp_offset=msec;
 }
 
 
@@ -1301,4 +1316,25 @@ QString Connector::httpStrError(int status_code)
   }
 
   return QString().sprintf("%d - ",status_code)+ret;
+}
+
+
+QString Connector::timezoneOffset()
+{
+  QString ret="Z";
+  time_t t=time(NULL);
+  time_t gmt;
+  time_t lt;
+  
+  gmt=mktime(gmtime(&t));
+  lt=mktime(localtime(&t));
+
+  if(gmt<lt) {
+    ret=QString().sprintf("-%02ld:%02ld",(lt-gmt)/3600,((lt-gmt)%3600)/60);
+  }
+  if(gmt>lt) {
+    ret=QString().sprintf("+%02ld:%02ld",(gmt-lt)/3600,((gmt-lt)%3600)/60);
+  }
+
+  return ret;
 }

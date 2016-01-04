@@ -32,6 +32,7 @@
 
 #include "connector.h"
 #include "profile.h"
+#include "spinbox.h"
 
 class StreamDialog : public QDialog
 {
@@ -65,6 +66,9 @@ class StreamDialog : public QDialog
   QLabel *gui_stream_irc_label;
   QLineEdit *gui_stream_irc_edit;
   QPushButton *gui_close_button;
+  QLabel *gui_stream_timestamp_offset_label;
+  SpinBox *gui_stream_timestamp_offset_spin;
+  QLabel *gui_stream_timestamp_offset_unit;
 };
 
 

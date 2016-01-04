@@ -584,6 +584,19 @@
 
     <varlistentry>
       <term>
+	<option>--stream-timestamp-offset=</option><replaceable>offset</replaceable>
+      </term>
+      <listitem>
+	<para>
+	  The offset to add to the value of stream timestamps, in seconds.
+	  Default value is <userinput>0</userinput>.  This setting is used
+	  only for HLS streams.
+	</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>
 	<option>--stream-url=</option><replaceable>url</replaceable>
       </term>
       <listitem>
