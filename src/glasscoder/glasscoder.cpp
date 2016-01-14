@@ -57,6 +57,7 @@ MainObject::MainObject(QObject *parent)
   audio_format=Codec::TypeVorbis;
   audio_quality=-1.0;
   audio_samplerate=DEFAULT_AUDIO_SAMPLERATE;
+  audio_atomic_frames=false;
   server_type=Connector::Icecast2Server;
   server_password="";
   server_script_up="";
@@ -77,6 +78,10 @@ MainObject::MainObject(QObject *parent)
   CmdSwitch *cmd=
     new CmdSwitch(qApp->argc(),qApp->argv(),"glasscoder",GLASSCODER_USAGE);
   for(unsigned i=0;i<cmd->keys();i++) {
+    if(cmd->key(i)=="--audio-atomic-frames") {
+      audio_atomic_frames=true;
+      cmd->setProcessed(i,true);
+    }
     if(cmd->key(i)=="--audio-bitrate") {
       num=cmd->value(i).toUInt(&ok);
       if(ok) {
@@ -454,6 +459,7 @@ bool MainObject::StartCodec()
   codec->setQuality(audio_quality);
   codec->setSourceSamplerate(sir_audio_device->deviceSamplerate());
   codec->setStreamSamplerate(audio_samplerate);
+  codec->setCompleteFrames(audio_atomic_frames);
 
   sir_codecs.push_back(codec);
 

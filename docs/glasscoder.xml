@@ -54,6 +54,18 @@
   <variablelist remap='TP'>
     <varlistentry>
       <term>
+	<option>--audio-atomic-frames</option>
+      </term>
+      <listitem>
+	<para>
+	  Emit a stream consisting of self-contained frames --e.g. by
+	  disabling the MPEG-1 bit reservoir.  Useful mostly for debugging.
+	</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>
 	<option>--audio-bitrate=</option><replaceable>kbps</replaceable>
       </term>
       <listitem>

@@ -567,3 +567,5 @@
 	in 'src/glasscoder/hlsconnector.cpp' and
 	'src/glasscoder/hlsconnector.h'.
 	* Added a '--stream-timestamp-offset=' switch to glasscoder(1).
+2016-01-13 Fred Gleason <fredg@paravelsystems.com>
+	* Added an '--audio-atomic-frames' option to glasscoder(1).

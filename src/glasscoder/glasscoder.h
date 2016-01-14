@@ -62,6 +62,7 @@ class MainObject : public QObject
   Codec::Type audio_format;
   double audio_quality;
   unsigned audio_samplerate;
+  bool audio_atomic_frames;
   QString stream_description;
   QString stream_genre;
   QString stream_name;
