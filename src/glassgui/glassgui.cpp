@@ -210,7 +210,7 @@ MainWidget::MainWidget(QWidget *parent)
 	  this,SLOT(processErrorData(QProcess::ProcessError)));
   connect(gui_process,SIGNAL(finished(int,QProcess::ExitStatus)),
 	  this,SLOT(codecFinishedData(int,QProcess::ExitStatus)));
-  
+
   QStringList args;
   args.push_back("--list-codecs");
   gui_process->start("glasscoder",args);
@@ -400,7 +400,7 @@ void MainWidget::codecFinishedData(int exit_code,
 	    this,SLOT(processErrorData(QProcess::ProcessError)));
     connect(gui_process,SIGNAL(finished(int,QProcess::ExitStatus)),
 	    this,SLOT(deviceFinishedData(int,QProcess::ExitStatus)));
-    
+
     QStringList args;
     args.push_back("--list-devices");
     gui_process->start("glasscoder",args);
@@ -684,7 +684,7 @@ QString MainWidget::GetSettingsFilename()
 void MainWidget::DeleteInstance(const QString &name)
 {
   if(CheckSettingsDirectory()) {
-    unlink((gui_settings_dir->path()+"/glassguirc-"+name).toUtf8());
+    unlink((gui_settings_dir->path()+"/"+GLASSGUI_SETTINGS_FILE+"-"+name).toUtf8());
   }
 }
 
@@ -692,11 +692,12 @@ void MainWidget::DeleteInstance(const QString &name)
 void MainWidget::ListInstances()
 {
   if(CheckSettingsDirectory()) {
-    QStringList files=gui_settings_dir->entryList(QStringList("glassguirc-*"),
+    #define FILEMASK GLASSGUI_SETTINGS_FILE "-*"
+    QStringList files=gui_settings_dir->entryList(QStringList(FILEMASK),
 						  QDir::Files,QDir::Name);
     for(int i=0;i<files.size();i++) {
       printf("%s\n",
-	     (const char *)files[i].right(files[i].length()-11).toUtf8());
+	     (const char *)files[i].right(files[i].length()-sizeof(GLASSGUI_SETTINGS_FILE)-1+1).toUtf8());
     }
   }
 }
