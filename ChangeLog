@@ -573,3 +573,7 @@
 	* Merged changes from Sascha Ludwig [saschaludwig] to fix bug in
 	glassgui(1) when compiled without HPI support [GitHub pull request
 	#000002].
+2016-02-16 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/common/connector.cpp' that caused the
+	script specified by --server-script-down to fail to be executed
+	during a normal shutdown.
