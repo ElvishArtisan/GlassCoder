@@ -569,3 +569,7 @@
 	* Added a '--stream-timestamp-offset=' switch to glasscoder(1).
 2016-01-13 Fred Gleason <fredg@paravelsystems.com>
 	* Added an '--audio-atomic-frames' option to glasscoder(1).
+2016-02-16 Fred Gleason <fredg@paravelsystems.com>
+	* Merged changes from Sascha Ludwig [saschaludwig] to fix bug in
+	glassgui(1) when compiled without HPI support [GitHub pull request
+	#000002].
