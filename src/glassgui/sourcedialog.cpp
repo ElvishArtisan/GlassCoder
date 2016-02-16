@@ -124,7 +124,7 @@ QSize SourceDialog::sizeHint() const
   case AudioDevice::LastType:
     break;
   }
-  return ret; 
+  return ret;
 }
 
 
@@ -180,7 +180,7 @@ bool SourceDialog::makeArgs(QStringList *args,bool escape_args)
       args->push_back("--asihpi-channel-mode=RIGHT");
       break;
     }
-#endif  // ASIHPI		    
+#endif  // ASIHPI
     break;
 
   case AudioDevice::File:
@@ -244,14 +244,16 @@ void SourceDialog::addSourceTypes(const QString &types)
 
 void SourceDialog::load(Profile *p)
 {
-#ifdef ASIHPI
   gui_source_type_box->
     setCurrentItemData(AudioDevice::deviceType(p->stringValue("GlassGui",
 							      "AudioDevice")));
   sourceTypeChanged(gui_source_type_box->currentIndex());
 
+#ifdef ALSA
   gui_alsa_device_edit->setText(p->stringValue("GlassGui","AlsaDevice"));
+#endif  // ALSA
 
+#ifdef ASIHPI
   gui_asihpi_widget->setSelected(p->intValue("GlassGui","AsihpiAdapterIndex"),
 			       p->intValue("GlassGui","AsihpiInputIndex"));
   gui_asihpi_widget->
@@ -262,14 +264,18 @@ void SourceDialog::load(Profile *p)
 						HPI_SOURCENODE_LINEIN));
   gui_asihpi_widget->setInputType(p->intValue("GlassGui","AsihpiInputType",
 						HPI_SOURCENODE_LINEIN));
+#endif  // ASIHPI
 
+#ifdef SNDFILE
   gui_file_name_edit->setText(p->stringValue("GlassGui","FileName"));
+#endif  // SNDFILE
 
+#ifdef JACK
   gui_jack_server_name_edit->
     setText(p->stringValue("GlassGui","JackServerName"));
   gui_jack_client_name_edit->
     setText(p->stringValue("GlassGui","JackClientName"));
-#endif  // ASIHPI
+#endif  // JACK
 }
 
 
@@ -277,7 +283,7 @@ void SourceDialog::save(FILE *f)
 {
   fprintf(f,"AudioDevice=%s\n",
 	  (const char *)AudioDevice::optionKeyword((AudioDevice::DeviceType)
-		    gui_source_type_box->currentItemData().toInt()).toUtf8()); 
+		    gui_source_type_box->currentItemData().toInt()).toUtf8());
   fprintf(f,"AlsaDevice=%s\n",
 	  (const char *)gui_alsa_device_edit->text().toUtf8());
 
@@ -323,7 +329,7 @@ void SourceDialog::resizeEvent(QResizeEvent *e)
   gui_alsa_device_label->setGeometry(70,ypos,110,24);
   gui_alsa_device_edit->setGeometry(185,ypos,100,24);
   ypos+=26;
-  
+
   //
   // FILE Controls
   //
@@ -333,7 +339,7 @@ void SourceDialog::resizeEvent(QResizeEvent *e)
   gui_file_name_label->setGeometry(10,ypos,160,20);
   gui_file_name_edit->setGeometry(175,ypos,size().width()-275,24);
   ypos+=26;
-  
+
   //
   // ASIHPI Controls
   //
@@ -372,7 +378,7 @@ void SourceDialog::sourceTypeChanged(int n)
   gui_jack_client_name_edit->hide();
 
   AudioDevice::DeviceType type=
-    (AudioDevice::DeviceType)gui_source_type_box->itemData(n).toInt();  
+    (AudioDevice::DeviceType)gui_source_type_box->itemData(n).toInt();
 
   switch(type) {
   case AudioDevice::Alsa:
