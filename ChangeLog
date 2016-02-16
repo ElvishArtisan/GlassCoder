@@ -577,3 +577,6 @@
 	* Fixed a bug in 'src/common/connector.cpp' that caused the
 	script specified by --server-script-down to fail to be executed
 	during a normal shutdown.
+2016-02-16 Fred Gleason <fredg@paravelsystems.com>
+	* Updated 'NEWS'.
+	* Incremented the package version to 0.9.15.
