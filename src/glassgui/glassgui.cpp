@@ -692,12 +692,13 @@ void MainWidget::DeleteInstance(const QString &name)
 void MainWidget::ListInstances()
 {
   if(CheckSettingsDirectory()) {
-    #define FILEMASK GLASSGUI_SETTINGS_FILE "-*"
-    QStringList files=gui_settings_dir->entryList(QStringList(FILEMASK),
-						  QDir::Files,QDir::Name);
+    QStringList files=gui_settings_dir->
+      entryList(QStringList(QString(GLASSGUI_SETTINGS_FILE)+"-*"),
+		QDir::Files,QDir::Name);
     for(int i=0;i<files.size();i++) {
       printf("%s\n",
-	     (const char *)files[i].right(files[i].length()-sizeof(GLASSGUI_SETTINGS_FILE)-1+1).toUtf8());
+	     (const char *)files[i].right(files[i].length()-
+	                   sizeof(GLASSGUI_SETTINGS_FILE)-1+1).toUtf8());
     }
   }
 }

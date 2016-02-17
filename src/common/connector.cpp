@@ -50,6 +50,7 @@ Connector::Connector(QObject *parent)
   conn_watchdog_active=false;
   conn_script_up_process=NULL;
   conn_script_down_process=NULL;
+  conn_is_stopping=false;
 
   conn_data_timer=new QTimer(this);
   connect(conn_data_timer,SIGNAL(timeout()),this,SLOT(dataTimeoutData()));
@@ -331,8 +332,22 @@ int64_t Connector::writeData(int frames,const unsigned char *data,int64_t len)
 
 void Connector::stop()
 {
+  conn_is_stopping=true;
   startStopping();
   setConnected(false);
+
+  //
+  // We have to run this synchronously since we're shutting down
+  //
+  if(conn_connected&&(!conn_script_down.isEmpty())) {
+    QStringList args;
+    args=conn_script_down.split(" ");
+    QString cmd=args[0];
+    args.erase(args.begin());
+    conn_script_down_process=new QProcess(this);
+    conn_script_down_process->start(cmd,args);
+    conn_script_down_process->waitForFinished(3000);
+  }
 }
 
 
@@ -542,53 +557,58 @@ void Connector::setConnected(bool state)
   QString cmd;
 
   if(conn_connected!=state) {
-    if(state) {
-      if(conn_script_up_process==NULL) {
-	if(!conn_script_up.isEmpty()) {
-	  args=conn_script_up.split(" ");
-	  cmd=args[0];
-	  args.erase(args.begin());
-	  conn_script_up_process=new QProcess(this);
-	  connect(conn_script_up_process,SIGNAL(error(QProcess::ProcessError)),
-		  this,SLOT(scriptErrorData(QProcess::ProcessError)));
-	  connect(conn_script_up_process,
-		  SIGNAL(finished(int,QProcess::ExitStatus)),
-		  this,SLOT(scriptUpFinishedData(int,QProcess::ExitStatus)));
-	  conn_script_up_process->start(cmd,args);
+    if(!conn_is_stopping) {
+      if(state) {
+	if(conn_script_up_process==NULL) {
+	  if(!conn_script_up.isEmpty()) {
+	    args=conn_script_up.split(" ");
+	    cmd=args[0];
+	    args.erase(args.begin());
+	    conn_script_up_process=new QProcess(this);
+	    connect(conn_script_up_process,
+		    SIGNAL(error(QProcess::ProcessError)),
+		    this,SLOT(scriptErrorData(QProcess::ProcessError)));
+	    connect(conn_script_up_process,
+		    SIGNAL(finished(int,QProcess::ExitStatus)),
+		    this,SLOT(scriptUpFinishedData(int,QProcess::ExitStatus)));
+	    conn_script_up_process->start(cmd,args);
+	  }
+	}
+	else {
+	  if(global_log_verbose) {
+	    Log(LOG_WARNING,"curl(1) script-up command overrun, cmd: \""+
+		args.join(" ")+"\"");
+	  }
+	  else {
+	    Log(LOG_WARNING,"curl(1) command overrun");
+	  }
 	}
       }
       else {
-	if(global_log_verbose) {
-	  Log(LOG_WARNING,"curl(1) script-up command overrun, cmd: \""+
-	      args.join(" ")+"\"");
+	if(conn_script_down_process==NULL) {
+	  if(!conn_script_down.isEmpty()) {
+	    args=conn_script_down.split(" ");
+	    cmd=args[0];
+	    args.erase(args.begin());
+	    conn_script_down_process=new QProcess(this);
+	    connect(conn_script_down_process,
+		    SIGNAL(error(QProcess::ProcessError)),
+		    this,SLOT(scriptErrorData(QProcess::ProcessError)));
+	    connect(conn_script_down_process,
+		    SIGNAL(finished(int,QProcess::ExitStatus)),
+		    this,
+		    SLOT(scriptDownFinishedData(int,QProcess::ExitStatus)));
+	    conn_script_down_process->start(cmd,args);
+	  }
 	}
 	else {
-	  Log(LOG_WARNING,"curl(1) command overrun");
-	}
-      }
-    }
-    else {
-      if(conn_script_down_process==NULL) {
-	if(!conn_script_down.isEmpty()) {
-	  args=conn_script_down.split(" ");
-	  cmd=args[0];
-	  args.erase(args.begin());
-	  conn_script_down_process=new QProcess(this);
-	  connect(conn_script_down_process,SIGNAL(error(QProcess::ProcessError)),
-		  this,SLOT(scriptErrorData(QProcess::ProcessError)));
-	  connect(conn_script_down_process,
-		  SIGNAL(finished(int,QProcess::ExitStatus)),
-		  this,SLOT(scriptDownFinishedData(int,QProcess::ExitStatus)));
-	  conn_script_down_process->start(cmd,args);
-	}
-      }
-      else {
-	if(global_log_verbose) {
-	  Log(LOG_WARNING,"curl(1) script-down command overrun, cmd: \""+
-	      args.join(" ")+"\"");
-	}
-	else {
-	  Log(LOG_WARNING,"curl(1) command overrun");
+	  if(global_log_verbose) {
+	    Log(LOG_WARNING,"curl(1) script-down command overrun, cmd: \""+
+		args.join(" ")+"\"");
+	  }
+	  else {
+	    Log(LOG_WARNING,"curl(1) command overrun");
+	  }
 	}
       }
     }

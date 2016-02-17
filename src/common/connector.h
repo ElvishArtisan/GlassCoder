@@ -164,6 +164,7 @@ class Connector : public QObject
   QProcess *conn_script_down_process;
   QStringList conn_script_down_args;
   QTimer *conn_script_down_garbage_timer;
+  bool conn_is_stopping;
 };
 
 
