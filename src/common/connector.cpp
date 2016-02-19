@@ -334,7 +334,6 @@ void Connector::stop()
 {
   conn_is_stopping=true;
   startStopping();
-  setConnected(false);
 
   //
   // We have to run this synchronously since we're shutting down
@@ -348,6 +347,7 @@ void Connector::stop()
     conn_script_down_process->start(cmd,args);
     conn_script_down_process->waitForFinished(3000);
   }
+  setConnected(false);
 }
 
 
@@ -773,7 +773,7 @@ QString Connector::base64Encode(const QString &str)
     case 1:
       ret=ret.left(ret.length()-2)+"==";
       break;
-      
+
     case 2:
       ret=ret.left(ret.length()-1)+"=";
       break;
@@ -1177,159 +1177,159 @@ QString Connector::httpStrError(int status_code)
   case 100:
     ret=tr("Continue");
     break;
-    
+
   case 101:
     ret=tr("Switching Protocols");
     break;
-    
+
   case 200:
     ret=tr("OK");
     break;
-    
+
   case 201:
     ret=tr("Created");
     break;
-    
+
   case 202:
     ret=tr("Accepted");
     break;
-    
+
   case 203:
     ret=tr("Non-Authoritative Information");
     break;
-    
+
   case 204:
     ret=tr("No Content");
     break;
-    
+
   case 205:
     ret=tr("Reset Content");
     break;
-    
+
   case 206:
     ret=tr("Partial Content");
     break;
-    
+
   case 300:
     ret=tr("Multiple Choices");
     break;
-    
+
   case 301:
     ret=tr("Moved Permanently");
     break;
-    
+
   case 302:
     ret=tr("Found");
     break;
-    
+
   case 303:
     ret=tr("See Other");
     break;
-    
+
   case 304:
     ret=tr("Not Modified");
     break;
-    
+
   case 305:
     ret=tr("Use Proxy");
     break;
-    
+
   case 307:
     ret=tr("Temporary Redirect");
     break;
-    
+
   case 400:
     ret=tr("Bad Request");
     break;
-    
+
   case 401:
     ret=tr("Unauthorized");
     break;
-    
+
   case 402:
     ret=tr("Payment Required");
     break;
-    
+
   case 403:
     ret=tr("Forbidden");
     break;
-    
+
   case 404:
     ret=tr("Not Found");
     break;
-    
+
   case 405:
     ret=tr("Method Not Allowed");
     break;
-    
+
   case 406:
     ret=tr("Not Acceptable");
     break;
-    
+
   case 407:
     ret=tr("Proxy Authentication Required");
     break;
-    
+
   case 408:
     ret=tr("Request Time-out");
     break;
-    
+
   case 409:
     ret=tr("Conflict");
     break;
-    
+
   case 410:
     ret=tr("Gone");
     break;
-    
+
   case 411:
     ret=tr("Length Required");
     break;
-    
+
   case 412:
     ret=tr("Precondition Failed");
     break;
-    
+
   case 413:
     ret=tr("Request Entity Too Large");
     break;
-    
+
   case 414:
     ret=tr("Request-URI Too Large");
     break;
-    
+
   case 415:
     ret=tr("Unsupported Media Type");
     break;
-    
+
   case 416:
     ret=tr("Requested range not satisfiable");
     break;
-    
+
   case 417:
     ret=tr("Expectation Failed");
     break;
-    
+
   case 500:
     ret=tr("Internal Server Error");
     break;
-    
+
   case 501:
     ret=tr("Not Implemented");
     break;
-    
+
   case 502:
     ret=tr("Bad Gateway");
     break;
-    
+
   case 503:
     ret=tr("Service Unavailable");
     break;
-    
+
   case 504:
     ret=tr("Gateway Time-out");
     break;
-    
+
   case 505:
     ret=tr("HTTP Version not supported");
     break;
@@ -1345,7 +1345,7 @@ QString Connector::timezoneOffset()
   time_t t=time(NULL);
   time_t gmt;
   time_t lt;
-  
+
   gmt=mktime(gmtime(&t));
   lt=mktime(localtime(&t));
 
