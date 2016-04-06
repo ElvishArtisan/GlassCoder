@@ -130,6 +130,7 @@ bool JackDevice::processOptions(QString *err,const QStringList &keys,
 }
 
 
+
 bool JackDevice::start(QString *err)
 {
 #ifdef JACK

@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>glasscoder</title><meta name="generator" content="DocBook XSL-NS Stylesheets V1.78.1" /></head><body><div class="refentry"><a id="stdin"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>glasscoder — Minimalist audio encoder for live streaming</p></div><div class="refsynopsisdiv"><a id="synopsis"></a><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">glasscoder</code>  [<em class="replaceable"><code>OPTIONS</code></em>]<br /></p></div></div><div class="refsect1"><a id="description"></a><h2>Description</h2><p>
+    <span class="command"><strong>glasscoder</strong></span>(1) is an audio encoder
+    that is capable of generating live streams using a variety of formats and
+    sending them to an Icecast or Shoutcast audio streaming server or posting
+    them as HTTP Live Streams [HLS].
+  </p><p>
+    <span class="command"><strong>glasscoder</strong></span>(1) has no GUI or
+    configuration file components at all; its sole 'user interface' is its
+    command-line invocation.
+  </p></div><div class="refsect1"><a id="options"></a><h2>Options</h2><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+	<code class="option">--audio-atomic-frames</code>
+      </span></dt><dd><p>
+	  Emit a stream consisting of self-contained frames --e.g. by
+	  disabling the MPEG-1 bit reservoir.  Useful mostly for debugging.
+	</p></dd><dt><span class="term">
+	<code class="option">--audio-bitrate=</code><em class="replaceable"><code>kbps</code></em>
+      </span></dt><dd><p>
+	  The constant stream data rate in kilobits per second.  Default value
+	  is <strong class="userinput"><code>128</code></strong>. Use of this option is mutually
+	  exclusive with that of the <code class="option">--audio-quality</code> option
+	  (see below).
+	</p></dd><dt><span class="term">
+	<code class="option">--audio-channels=</code><em class="replaceable"><code>chans</code></em>
+      </span></dt><dd><p>
+	  The number of audio channels to use.  Valid values are 
+	  <strong class="userinput"><code>1</code></strong> or <strong class="userinput"><code>2</code></strong>.
+	  Default value is <strong class="userinput"><code>2</code></strong>.
+	</p></dd><dt><span class="term">
+	<code class="option">--audio-device=</code><em class="replaceable"><code>type</code></em>
+      </span></dt><dd><p>
+	  The type of audio device to use.  The default value is
+	  <strong class="userinput"><code>JACK</code></strong>. See the
+	  <span class="emphasis"><em>DEVICE OPTIONS</em></span> section (below) for
+	  the options appropriate for each audio device type.  Valid values
+	  are:
+	</p><div class="blockquote"><blockquote class="blockquote"><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+		<strong class="userinput"><code>ALSA</code></strong>
+	      </span></dt><dd><p>
+		  The Advanced Linux Sound Architecture.
+		</p></dd></dl></div></blockquote></div><div class="blockquote"><blockquote class="blockquote"><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+		<strong class="userinput"><code>ASIHPI</code></strong>
+	      </span></dt><dd><p>
+		  AudioScience HPI.
+		</p></dd></dl></div></blockquote></div><div class="blockquote"><blockquote class="blockquote"><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+		<strong class="userinput"><code>FILE</code></strong>
+	      </span></dt><dd><p>
+		  Stream directly from a file.
+		</p></dd></dl></div></blockquote></div><div class="blockquote"><blockquote class="blockquote"><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+		<strong class="userinput"><code>JACK</code></strong>
+	      </span></dt><dd><p>
+		  The Jack Audio Connection Kit.
+		</p></dd></dl></div></blockquote></div></dd><dt><span class="term">
+	<code class="option">--audio-format=</code><em class="replaceable"><code>fmt</code></em>
+      </span></dt><dd><p>
+	  The audio encoding format to use.  The default value is
+	  <strong class="userinput"><code>VORBIS</code></strong>.  Valid	<em class="replaceable"><code>fmt</code></em>
+	  values are:
+	</p><div class="blockquote"><blockquote class="blockquote"><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+		<strong class="userinput"><code>AAC</code></strong>
+	      </span></dt><dd><p>
+		  MPEG-2 Advanced Audio Coding (Main Profile)
+		</p></dd></dl></div></blockquote></div><div class="blockquote"><blockquote class="blockquote"><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+		<strong class="userinput"><code>AACP</code></strong>
+	      </span></dt><dd><p>
+		  MPEG-4 Advanced Audio Coding (High Efficiency Profile)
+		</p></dd></dl></div></blockquote></div><div class="blockquote"><blockquote class="blockquote"><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+		<strong class="userinput"><code>MP2</code></strong>
+	      </span></dt><dd><p>
+		  MPEG-1/1.5 Layer 2
+		</p></dd></dl></div></blockquote></div><div class="blockquote"><blockquote class="blockquote"><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+		<strong class="userinput"><code>MP3</code></strong>
+	      </span></dt><dd><p>
+		  MPEG-1/1.5 Layer 3
+		</p></dd></dl></div></blockquote></div><div class="blockquote"><blockquote class="blockquote"><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+		<strong class="userinput"><code>PCM16</code></strong>
+	      </span></dt><dd><p>
+		  PCM16 Uncompressed
+		</p></dd></dl></div></blockquote></div><div class="blockquote"><blockquote class="blockquote"><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+		<strong class="userinput"><code>VORBIS</code></strong>
+	      </span></dt><dd><p>
+		  Ogg Vorbis
+		</p></dd></dl></div></blockquote></div></dd><dt><span class="term">
+	<code class="option">--audio-quality=</code><em class="replaceable"><code>qual</code></em>
+      </span></dt><dd><p>
+	  Use variable bitrate streaming at the given audio quality.
+	  <em class="replaceable"><code>qual</code></em> can be in the range
+	  <strong class="userinput"><code>0.0</code></strong> (lowest quality) to
+	  <strong class="userinput"><code>1.0</code></strong> (highest). Use of this option is mutually
+	  exclusive with that of the <code class="option">--audio-bitrate</code> option
+	  (see above).
+	</p></dd><dt><span class="term">
+	<code class="option">--audio-samplerate=</code><em class="replaceable"><code>rate</code></em>
+      </span></dt><dd><p>
+	  The audio sample rate to use for streaming.  If the underlying
+	  audio layer is operating at a different sample rate, the input will
+	  be automatically resampled to this rate.
+	  Default value is <strong class="userinput"><code>44100</code></strong>.
+	</p></dd><dt><span class="term">
+	<code class="option">--errors-to=</code><em class="replaceable"><code>dest</code></em>
+      </span></dt><dd><p>
+	Send error messages to <em class="replaceable"><code>dest</code></em> (default
+	standard error). Valid destinations are:
+      </p><div class="blockquote"><blockquote class="blockquote"><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+	      <strong class="userinput"><code>STDERR</code></strong>
+	    </span></dt><dd><p>
+		Standard error.
+	      </p></dd></dl></div></blockquote></div><div class="blockquote"><blockquote class="blockquote"><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+	    <strong class="userinput"><code>SYSLOG</code></strong>
+	  </span></dt><dd><p>
+	      The system syslog service.
+	    </p></dd></dl></div></blockquote></div><div class="blockquote"><blockquote class="blockquote"><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+	    <strong class="userinput"><code>STDOUT</code></strong>
+	  </span></dt><dd><p>
+	      Standard output,in machine readable format (useful for
+	      communication with another 'controller' program).  See also the
+	      <code class="option">--meter-data</code> option below.
+	    </p></dd></dl></div></blockquote></div></dd><dt><span class="term">
+	<code class="option">--help</code>
+      </span></dt><dd><p>
+	  Print a short usage message and exit.
+	</p></dd><dt><span class="term">
+	<code class="option">--list-codecs</code>
+      </span></dt><dd><p>
+	  Print a list of available codecs and then exit.
+	</p></dd><dt><span class="term">
+	<code class="option">--list-devices</code>
+      </span></dt><dd><p>
+	  Print a list of available source devices and then exit.
+	</p></dd><dt><span class="term">
+	<code class="option">--meter-data</code>
+      </span></dt><dd><p>
+	  Output meter level updates on standard output.  Useful for
+	  driving an external metering display.
+	</p></dd><dt><span class="term">
+	<code class="option">--server-auth=</code>[<em class="replaceable"><code>username</code></em>][<code class="option">:</code><em class="replaceable"><code>password</code></em>]
+      </span></dt><dd><p>
+	  The authentication parameters to use.  This parameter has no default.
+	</p></dd><dt><span class="term">
+	<code class="option">--server-script-down=</code><em class="replaceable"><code>cmd</code></em>
+      </span></dt><dd><p>
+	  Run the command <em class="replaceable"><code>cmd</code></em> when the connection
+	  enters the
+	  <code class="computeroutput">disconnected</code> state.
+	</p></dd><dt><span class="term">
+	<code class="option">--server-script-up=</code><em class="replaceable"><code>cmd</code></em>
+      </span></dt><dd><p>
+	  Run the command <em class="replaceable"><code>cmd</code></em> when the connection
+	  enters the <code class="computeroutput">connected</code> state.
+	</p></dd><dt><span class="term">
+      <code class="option">--server-type=</code><em class="replaceable"><code>type</code></em>
+      </span></dt><dd><p>
+	  The type of streaming server to use (default is
+	  <strong class="userinput"><code>Icecast2</code></strong>). Valid values for
+	  <em class="replaceable"><code>type</code></em> are:
+	</p><div class="blockquote"><blockquote class="blockquote"><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+		<strong class="userinput"><code>FILE</code></strong>
+	      </span></dt><dd><p>
+		  Local file
+		</p></dd><dt><span class="term">
+		<strong class="userinput"><code>FILEARCHIVE</code></strong>
+	      </span></dt><dd><p>
+		  Local file archive.  Stream to a set of files on the local
+		  system, starting a new file at the beginning of each hour.
+		</p></dd><dt><span class="term">
+		<strong class="userinput"><code>HLS</code></strong>
+	      </span></dt><dd><p>
+		  HLS/HTTP Live Streaming
+		</p></dd><dt><span class="term">
+		<strong class="userinput"><code>IceCast2</code></strong>
+	      </span></dt><dd><p>
+		  IceCast v2
+		</p></dd><dt><span class="term">
+		<strong class="userinput"><code>Shout1</code></strong>
+	      </span></dt><dd><p>
+		  Shoutcast v1
+		</p></dd><dt><span class="term">
+		<strong class="userinput"><code>Shout2</code></strong>
+	      </span></dt><dd><p>
+		  Shoutcast v2
+		</p></dd></dl></div></blockquote></div></dd><dt><span class="term">
+	<code class="option">--server-url=</code><em class="replaceable"><code>url</code></em>
+      </span></dt><dd><p>
+	  The URL describing the server resource to stream to.  This parameter
+	  has no default.
+	</p></dd><dt><span class="term">
+	<code class="option">--stream-aim=</code><em class="replaceable"><code>aim</code></em>
+      </span></dt><dd><p>
+	  The AOL Instant Messenger ID to associate with the stream.  There is
+	  no default value.  This setting is used only by Shoutcast servers.
+	</p></dd><dt><span class="term">
+	<code class="option">--stream-description=</code><em class="replaceable"><code>string</code></em>
+      </span></dt><dd><p>
+	  The string to show as the stream description.  There is no default
+	  value. This setting is used only by Icecast servers.
+	</p></dd><dt><span class="term">
+	<code class="option">--stream-genre=</code><em class="replaceable"><code>string</code></em>
+      </span></dt><dd><p>
+	  The string to show as the stream genre.  There is no default value.
+	  This setting is used only by Icecast and Shoutcast servers.
+	</p></dd><dt><span class="term">
+	<code class="option">--stream-icq=</code><em class="replaceable"><code>icq</code></em>
+      </span></dt><dd><p>
+	  The ICQ ID to associate with the stream.  There is no default value.
+	  This setting is used only by Shoutcast servers.
+	</p></dd><dt><span class="term">
+	<code class="option">--stream-irc=</code><em class="replaceable"><code>irc</code></em>
+      </span></dt><dd><p>
+	  The Internet Relay Chat ID to associate with the stream.  There is no
+	  default value.  This setting is used only by Shoutcast servers.
+	</p></dd><dt><span class="term">
+	<code class="option">--stream-name=</code><em class="replaceable"><code>string</code></em>
+      </span></dt><dd><p>
+	  The string to show as the stream name.  There is no default value.
+	  This setting is used only by Icecast and Shoutcast servers.
+	</p></dd><dt><span class="term">
+	<code class="option">--stream-timestamp-offset=</code><em class="replaceable"><code>offset</code></em>
+      </span></dt><dd><p>
+	  The offset to add to the value of stream timestamps, in seconds.
+	  Default value is <strong class="userinput"><code>0</code></strong>.  This setting is used
+	  only for HLS streams.
+	</p></dd><dt><span class="term">
+	<code class="option">--stream-url=</code><em class="replaceable"><code>url</code></em>
+      </span></dt><dd><p>
+	  The URL to show for a page giving more information about the stream.
+	  There is no default value.  This setting is used only by Icecast and
+	  Shoutcast servers, but is ignored by Shoutcast v2 servers.
+	</p></dd><dt><span class="term">
+	<code class="option">--verbose</code>
+      </span></dt><dd><p>
+	  Increase verbosity level of information printed to standard error.
+	  WARNING: this may cause cleartext passwords to printed!
+	</p></dd><dt><span class="term">
+	<code class="option">--version</code>
+      </span></dt><dd><p>
+	  Output version information and exit.
+	</p></dd></dl></div></div><div class="refsect1"><a id="device_options"></a><h2>Device Options</h2><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+      <span class="emphasis"><em>Advanced Linux Sound Architecture</em></span> 
+      (<code class="option">--audio-device=</code><strong class="userinput"><code>ALSA</code></strong>)
+    </span></dt><dd><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+	    <code class="option">--alsa-device=</code><em class="replaceable"><code>dev</code></em>
+	  </span></dt><dd><p>
+	      The name of the ALSA device to use.  If no
+	      <code class="option">--audio-device</code> option is given,
+	      then the <strong class="userinput"><code>hw:0</code></strong> device will be used.
+	    </p></dd></dl></div></dd><dt><span class="term">
+      <span class="emphasis"><em>AudioScience HPI</em></span> 
+      (<code class="option">--audio-device=</code><strong class="userinput"><code>=ASIHPI</code></strong>)
+    </span></dt><dd><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+	    <code class="option">--asihpi-adapter-index=</code><em class="replaceable"><code>index</code></em>
+	  </span></dt><dd><p>
+	      The index number of the audio adapter to use.
+	    </p></dd><dt><span class="term">
+	    <code class="option">--asihpi-input-index=</code><em class="replaceable"><code>index</code></em>
+	  </span></dt><dd><p>
+	      The number of the input audio stream to use on the specified adapter.
+	    </p></dd><dt><span class="term">
+	    <code class="option">--asihpi-input-gain=</code><em class="replaceable"><code>gain</code></em>
+	  </span></dt><dd><p>
+	      The gain to apply to the input audio on the specified adapter in
+	      dB. Valid values are <strong class="userinput"><code>-100</code></strong> to
+	      <strong class="userinput"><code>+20</code></strong> inclusive.  Default value is
+	      <strong class="userinput"><code>0</code></strong>.
+	    </p></dd><dt><span class="term">
+	    <code class="option">--asihpi-channel_mode=</code><em class="replaceable"><code>mode</code></em>
+	  </span></dt><dd><p>
+	      The channel mode for the input audio on the specified adapter.
+	      The default value is <strong class="userinput"><code>NORMAL</code></strong>. Valid values
+	      are:
+	    </p><div class="blockquote"><blockquote class="blockquote"><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+		    <strong class="userinput"><code>NORMAL</code></strong>
+		  </span></dt><dd><p>
+		      Left signal goes to left channel, right signal goes to
+		      right channel.
+		    </p></dd><dt><span class="term">
+		    <strong class="userinput"><code>SWAP</code></strong>
+		  </span></dt><dd><p>
+		    Left signal goes to right channel, right signal goes to
+		    left channel.
+		    </p></dd><dt><span class="term">
+		    <strong class="userinput"><code>LEFT</code></strong>
+		  </span></dt><dd><p>
+		      Left signal goes to both left and right channels.
+		    </p></dd><dt><span class="term">
+		    <strong class="userinput"><code>RIGHT</code></strong>
+		  </span></dt><dd><p>
+		      Right signal goes to both left and right channels.
+		    </p></dd></dl></div></blockquote></div></dd><dt><span class="term">
+	  <code class="option">--asihpi-input-source=</code><em class="replaceable"><code>src-node</code></em>
+	  </span></dt><dd><p>
+	      The input source to use on the specified adapter.  See the
+	      <span class="emphasis"><em>HPI Source Nodes</em></span> section below
+	      for the list of valid <em class="replaceable"><code>src-node</code></em>
+	      values. The default value is <strong class="userinput"><code>LINEIN</code></strong>.
+	    </p></dd><dt><span class="term">
+	    <code class="option">--asihpi-input-type=</code><em class="replaceable"><code>src-node</code></em>
+	  </span></dt><dd><p>
+	      The input type to use on the specified adapter.  See the
+	      <span class="emphasis"><em>HPI Source Nodes</em></span> section below
+	      for the list of valid <em class="replaceable"><code>src-node</code></em>
+	      values. The default value is <strong class="userinput"><code>LINEIN</code></strong>.
+	    </p></dd><dt><span class="term">
+	    <span class="emphasis"><em>HPI Source Nodes</em></span>
+	  </span></dt><dd><p>
+	      The following values can used for the
+	      <code class="option">--asihpi-input-source</code> and
+	      <code class="option">--asihpi-input-type</code> options above:
+	    </p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+		  <strong class="userinput"><code>NONE</code></strong>
+		, </span><span class="term">
+		  <strong class="userinput"><code>OSTREAM</code></strong>
+		</span></dt><dd><p>
+		    Internal output stream
+		  </p></dd><dt><span class="term">
+		  <strong class="userinput"><code>LINEIN</code></strong>
+		</span></dt><dd><p>
+		    Generic input signal
+		  </p></dd><dt><span class="term">
+		  <strong class="userinput"><code>AESEBU</code></strong>
+		</span></dt><dd><p>
+		    AES3 digital input
+		  </p></dd><dt><span class="term">
+		  <strong class="userinput"><code>TUNER</code></strong>
+		</span></dt><dd><p>
+		    Tuner
+		  </p></dd><dt><span class="term">
+		  <strong class="userinput"><code>RF</code></strong>
+		</span></dt><dd><p>
+		    RF input
+		  </p></dd><dt><span class="term">
+		  <strong class="userinput"><code>CLOCK</code></strong>
+		</span></dt><dd><p>
+		    Clock source
+		  </p></dd><dt><span class="term">
+		  <strong class="userinput"><code>BITSTREAM</code></strong>
+		</span></dt><dd><p>
+		    Raw bitstream
+		  </p></dd><dt><span class="term">
+		  <strong class="userinput"><code>MIC</code></strong>
+		</span></dt><dd><p>
+		    Microphone
+		  </p></dd><dt><span class="term">
+		  <strong class="userinput"><code>COBRANET</code></strong>
+		</span></dt><dd><p>
+		    CobraNet
+		  </p></dd><dt><span class="term">
+		  <strong class="userinput"><code>ANALOG</code></strong>
+		</span></dt><dd><p>
+		    Analog input
+		  </p></dd><dt><span class="term">
+		  <strong class="userinput"><code>ADAPTER</code></strong>
+		</span></dt><dd><p>
+		    Adapter
+		  </p></dd><dt><span class="term">
+		  <strong class="userinput"><code>RTP</code></strong>
+		, </span><span class="term">
+		  <strong class="userinput"><code>INTERNAL</code></strong>
+		</span></dt><dd><p>
+		    Device internal
+		  </p></dd><dt><span class="term">
+		  <strong class="userinput"><code>AVB</code></strong>
+		</span></dt><dd><p>
+		    AVB input
+		  </p></dd></dl></div></dd></dl></div></dd><dt><span class="term">
+      <span class="emphasis"><em>Direct File Streaming</em></span>
+      (<code class="option">--audio-device=</code><strong class="userinput"><code>FILE</code></strong>)
+    </span></dt><dd><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+	    <code class="option">--file-name=</code><em class="replaceable"><code>name</code></em>
+	  </span></dt><dd><p>
+	      The name of the file to stream.  If no
+	      <code class="option">--file-name</code> option is given,
+	      then the name of the file will be read from standard input.
+	    </p></dd></dl></div></dd><dt><span class="term">
+      <span class="emphasis"><em>The Jack Audio Connection Kit</em></span>
+      (<code class="option">--audio-device=</code><strong class="userinput"><code>JACK</code></strong>)
+    </span></dt><dd><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+	    <code class="option">--jack-server-name=</code><em class="replaceable"><code>name</code></em>
+	  </span></dt><dd><p>
+	      The name of the JACK server instance to use.
+	    </p></dd><dt><span class="term">
+	    <code class="option">--jack-client-name=</code><em class="replaceable"><code>name</code></em>
+	  </span></dt><dd><p>
+	      The name of the JACK client to use.  Default is
+	      <strong class="userinput"><code>glasscoder</code></strong>.
+	    </p></dd></dl></div></dd></dl></div></div><div class="refsect1"><a id="notes"></a><h2>Notes</h2><p>
+  HTTP Live Streams [HLS] require support for the HTTP
+  <span class="bold"><strong>PUT</strong></span> and 
+  <span class="bold"><strong>DELETE</strong></span> methods on the publishing web server.
+  See the GlassCoder documentation directory
+  for a sample configuration for the Apache Web Server.
+</p></div><div class="refsect1"><a id="author"></a><h2>Author</h2><p>
+  Fred Gleason &lt;fredg@paravelsystems.com&gt;
+</p></div><div class="refsect1"><a id="see_also"></a><h2>See Also</h2><p>
+  <span class="citerefentry"><span class="refentrytitle">glassgui</span>(1)</span>,
+    <span class="citerefentry"><span class="refentrytitle">jackd</span>(1)</span>
+</p></div></div></body></html>

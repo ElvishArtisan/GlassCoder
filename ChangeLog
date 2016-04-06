@@ -580,3 +580,5 @@
 2016-02-16 Fred Gleason <fredg@paravelsystems.com>
 	* Updated 'NEWS'.
 	* Incremented the package version to 0.9.15.
+2016-04-06 Fred Gleason <fredg@paravelsystems.com>
+	* Added rules to build an HTML version of the docs.
