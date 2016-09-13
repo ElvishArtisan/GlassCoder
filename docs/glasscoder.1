@@ -2,12 +2,12 @@
 .\"     Title: glasscoder
 .\"    Author: Fred Gleason <fredg@paravelsystems.com>
 .\" Generator: DocBook XSL-NS Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: 04/06/2016
+.\"      Date: 09/13/2016
 .\"    Manual: Linux Audio Manual
 .\"    Source: October 2015
 .\"  Language: English
 .\"
-.TH "GLASSCODER" "1" "04/06/2016" "October 2015" "Linux Audio Manual"
+.TH "GLASSCODER" "1" "09/13/2016" "October 2015" "Linux Audio Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -148,6 +148,19 @@ option (see above)\&.
 .RS 4
 The audio sample rate to use for streaming\&. If the underlying audio layer is operating at a different sample rate, the input will be automatically resampled to this rate\&. Default value is
 \fB44100\fR\&.
+.RE
+.PP
+\fB\-\-errors\-string=\fR\fIstring\fR
+.RS 4
+Prepend
+\fIstring\fR
+to messages sent to the
+\fBsyslog\fR
+service (see the
+\fB\-\-errors\-to\fR
+option, below)\&. Useful for disambiguating messages from multiple
+\fBglasscoder\fR(1)
+instances\&.
 .RE
 .PP
 \fB\-\-errors\-to=\fR\fIdest\fR

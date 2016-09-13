@@ -291,6 +291,21 @@
 
     <varlistentry>
       <term>
+	<option>--errors-string=</option><replaceable>string</replaceable>
+      </term>
+      <listitem>
+	<para>
+	  Prepend <replaceable>string</replaceable> to messages sent to the
+	  <command>syslog</command> service (see the 
+	  <option>--errors-to</option> option, below). Useful for
+	  disambiguating messages from multiple
+	  <command>glasscoder</command><manvolnum>1</manvolnum> instances.
+	</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>
 	<option>--errors-to=</option><replaceable>dest</replaceable>
       </term>
     <listitem>

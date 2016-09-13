@@ -582,3 +582,5 @@
 	* Incremented the package version to 0.9.15.
 2016-04-06 Fred Gleason <fredg@paravelsystems.com>
 	* Added rules to build an HTML version of the docs.
+2016-09-13 Fred Gleason <fredg@paravelsystems.com>
+	* Added an '--errors-string' switch to glasscoder(1).

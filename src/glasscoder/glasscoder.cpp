@@ -71,6 +71,7 @@ MainObject::MainObject(QObject *parent)
   stream_timestamp_offset=0;
   list_codecs=false;
   list_devices=false;
+  global_log_string="";
   meter_data=false;
 
   unsigned num;
@@ -139,6 +140,10 @@ MainObject::MainObject(QObject *parent)
 	Log(LOG_ERR,"invalid --audio-samplerate value");
 	exit(256);
       }
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--errors-string") {
+      global_log_string=cmd->value(i);
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--errors-to") {

@@ -24,13 +24,20 @@
 #include "logging.h"
 
 int global_log_to=LOG_TO_STDERR;
+QString global_log_string;
 bool global_log_verbose=false;
 
 void Log(int prio,const QString &msg)
 {
   switch(global_log_to) {
   case LOG_TO_SYSLOG:
-    syslog(prio,msg.toUtf8());
+    if(!global_log_string.isEmpty()) {
+      syslog(prio,"[%s] %s",(const char *)global_log_string.toUtf8(),
+	     (const char *)msg.toUtf8());
+    }
+    else {
+      syslog(prio,msg.toUtf8());
+    }
     break;
 
   case LOG_TO_STDOUT:
