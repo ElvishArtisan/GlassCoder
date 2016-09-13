@@ -301,6 +301,9 @@ void MainWidget::startEncodingData()
   gui_source_dialog->makeArgs(&args,false);
   args.push_back("--meter-data");
   args.push_back("--errors-to=STDOUT");
+  if(!instance_name.isEmpty()) {
+    args.push_back("--errors-string="+instance_name);
+  }
   gui_process->start("glasscoder",args);
   gui_start_button->disconnect();
   connect(gui_start_button,SIGNAL(clicked()),this,SLOT(stopEncodingData()));

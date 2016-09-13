@@ -29,20 +29,19 @@ bool global_log_verbose=false;
 
 void Log(int prio,const QString &msg)
 {
+  QString sysmsg=msg;
+  if(!global_log_string.isEmpty()) {
+    sysmsg="["+global_log_string+"] "+msg;
+  }
+
   switch(global_log_to) {
   case LOG_TO_SYSLOG:
-    if(!global_log_string.isEmpty()) {
-      syslog(prio,"[%s] %s",(const char *)global_log_string.toUtf8(),
-	     (const char *)msg.toUtf8());
-    }
-    else {
-      syslog(prio,msg.toUtf8());
-    }
+    syslog(prio,sysmsg.toUtf8());
     break;
 
   case LOG_TO_STDOUT:
     printf("ER %d %s\n",prio,(const char *)msg.toUtf8());
-    syslog(prio,msg.toUtf8());
+    syslog(prio,sysmsg.toUtf8());
     break;
 
   default:

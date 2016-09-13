@@ -584,3 +584,7 @@
 	* Added rules to build an HTML version of the docs.
 2016-09-13 Fred Gleason <fredg@paravelsystems.com>
 	* Added an '--errors-string' switch to glasscoder(1).
+2016-09-13 Fred Gleason <fredg@paravelsystems.com>
+	* Modified glassgui(1) to use the --instance-name value for logging.
+	* Fixed a bug in 'src/glasscoder/asihpidevice.cpp' that returned
+	an error when passed negative values for '--asihpi-input-gain'.

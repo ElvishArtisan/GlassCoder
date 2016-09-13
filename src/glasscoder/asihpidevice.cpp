@@ -98,7 +98,7 @@ bool AsiHpiDevice::processOptions(QString *err,const QStringList &keys,
       processed=true;
     }
     if(keys[i]=="--asihpi-input-gain") {
-      asihpi_input_gain=values[i].toUInt(&ok)-1;
+      asihpi_input_gain=values[i].toInt(&ok);
       if((!ok)||((asihpi_input_gain<-100)&&(asihpi_input_gain>20))) {
 	*err=tr("invalid")+" --asihpi-input-gain "+tr("argument");
 	return false;
