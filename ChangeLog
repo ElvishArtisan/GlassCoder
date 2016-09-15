@@ -600,3 +600,7 @@
 	* Added a 'FileConveyor::setAddedHeaders()' method in
 	'glasscoder/fileconveyor.cpp' and 'glasscoder/fileconveyor.h'.
 	* Implemented metadata updates for Shoutcast1.
+2016-09-15 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Local Metadata Port' control to the Server Settings
+	dialog in 'src/glassgui/serversettings.cpp' and
+	'src/glassgui/serversettings.h'.

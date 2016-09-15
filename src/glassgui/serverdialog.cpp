@@ -99,6 +99,17 @@ ServerDialog::ServerDialog(QWidget *parent)
   srv_server_script_down_edit=new QLineEdit(this);
 
   //
+  // Metadata Port
+  //
+  srv_server_metadata_port_label=
+    new QLabel(tr("Local MetaData Port")+":",this);
+  srv_server_metadata_port_label->setFont(label_font);
+  srv_server_metadata_port_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  srv_server_metadata_port_spin=new QSpinBox(this);
+  srv_server_metadata_port_spin->setRange(0,0xFFFF);
+  srv_server_metadata_port_spin->setSpecialValueText(tr("Disabled"));
+
+  //
   // Close Button
   //
   srv_close_button=new QPushButton(tr("Close"),this);
@@ -154,6 +165,10 @@ bool ServerDialog::makeArgs(QStringList *args,bool escape_args)
     args->push_back("--server-script-up="+
 		    esc+srv_server_script_up_edit->text()+esc);
   }
+  if(srv_server_metadata_port_spin->value()>0) {
+    args->push_back("--metadata-port="+
+	     QString().sprintf("%d",srv_server_metadata_port_spin->value()));
+  }
   if(srv_verbose_check->isChecked()) {
     args->push_back("--verbose");
   }
@@ -188,6 +203,8 @@ void ServerDialog::load(Profile *p)
   srv_server_script_up_edit->
     setText(p->stringValue("GlassGui","ServerScriptUp"));
   srv_verbose_check->setChecked(p->boolValue("GlassGui","VerboseLogging"));
+  srv_server_metadata_port_spin->
+    setValue(p->intValue("GlassGui","MetadataPort"));
 }
 
 
@@ -206,6 +223,7 @@ void ServerDialog::save(FILE *f)
 	  (const char *)srv_server_script_down_edit->text().toUtf8());
   fprintf(f,"ServerScriptUp=%s\n",
 	  (const char *)srv_server_script_up_edit->text().toUtf8());
+  fprintf(f,"MetadataPort=%d\n",srv_server_metadata_port_spin->value());
   fprintf(f,"VerboseLogging=%d\n",srv_verbose_check->isChecked());
 }
 
@@ -239,6 +257,10 @@ void ServerDialog::resizeEvent(QResizeEvent *e)
 
   srv_server_script_down_label->setGeometry(10,ypos,180,24);
   srv_server_script_down_edit->setGeometry(195,ypos,size().width()-205,24);
+  ypos+=26;
+
+  srv_server_metadata_port_label->setGeometry(10,ypos,180,24);
+  srv_server_metadata_port_spin->setGeometry(195,ypos,100,24);
   ypos+=35;
 
   srv_close_button->setGeometry(size().width()-80,size().height()-50,70,40);

@@ -28,6 +28,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QSpinBox>
 #include <QString>
 #include <QStringList>
 
@@ -73,6 +74,8 @@ class ServerDialog : public QDialog
   QLineEdit *srv_server_script_up_edit;
   QLabel *srv_server_script_down_label;
   QLineEdit *srv_server_script_down_edit;
+  QLabel *srv_server_metadata_port_label;
+  QSpinBox *srv_server_metadata_port_spin;
 
   QPushButton *srv_close_button;
 };
