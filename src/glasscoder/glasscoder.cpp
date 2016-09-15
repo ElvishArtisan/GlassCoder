@@ -18,9 +18,11 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <fcntl.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include <QCoreApplication>
 
@@ -60,6 +62,16 @@ MainObject::MainObject(QObject *parent)
   }
 
   //
+  // Stdin Interface
+  //
+  int flags=fcntl(0,F_GETFL,NULL);
+  flags=flags|O_NONBLOCK;
+  fcntl(0,F_SETFL,flags);
+  sir_stdin_notify=new QSocketNotifier(0,QSocketNotifier::Read,this);
+  connect(sir_stdin_notify,SIGNAL(activated(int)),
+	  this,SLOT(stdinActivatedData(int)));
+
+  //
   // Metadata Processor
   //
   if(sir_config->metadataPort()>0) {
@@ -97,6 +109,31 @@ MainObject::MainObject(QObject *parent)
   sir_exit_timer->start(250);
   ::signal(SIGINT,SignalHandler);
   ::signal(SIGTERM,SignalHandler);
+}
+
+
+void MainObject::stdinActivatedData(int sock)
+{
+  char data[1501];
+  int n;
+
+  while((n=read(sock,data,1500))>0) {
+    for(int i=0;i<n;i++) {
+      switch(0xFF&data[i]) {
+      case 10:
+	ProcessCommand(sir_stdin_accum);
+	sir_stdin_accum="";
+	break;
+
+      case 13:
+	break;
+
+      default:
+	sir_stdin_accum+=data[i];
+	break;
+      }
+    }
+  }
 }
 
 
@@ -342,6 +379,22 @@ bool MainObject::StartMultiStream()
   StartServerConnection(sir_config->serverUrl().path(),true);
 
   return true;
+}
+
+
+void MainObject::ProcessCommand(const QString &cmd)
+{
+  QStringList cmds=cmd.split(" ");
+
+  if(cmds[0]=="MD") {  // Metadata update
+    MetaEvent *e=new MetaEvent();
+    cmds.erase(cmds.begin());
+    e->setField(MetaEvent::StreamTitle,cmds.join(" "));
+    for(unsigned i=0;i<sir_connectors.size();i++) {
+      sir_connectors[i]->sendMetadata(e);
+    }
+    delete e;
+  }
 }
 
 

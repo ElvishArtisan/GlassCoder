@@ -604,3 +604,10 @@
 	* Added a 'Local Metadata Port' control to the Server Settings
 	dialog in 'src/glassgui/serversettings.cpp' and
 	'src/glassgui/serversettings.h'.
+2016-09-15 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Stream Metadata' control to the glassgui(1) main
+	window in 'src/glassgui/glassgui.cpp' and
+	'src/glassgui/glassgui.h'.
+	* Implemented a send metadata command via standard input for
+	glasscoder(1) in 'src/glasscoder/glasscoder.cpp' and
+	'src/glasscoder/glasscoder.h'.

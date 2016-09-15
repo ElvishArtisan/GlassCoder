@@ -26,6 +26,7 @@
 #include <vector>
 
 #include <QObject>
+#include <QSocketNotifier>
 #include <QStringList>
 #include <QTimer>
 #include <QUrl>
@@ -46,6 +47,7 @@ class MainObject : public QObject
   MainObject(QObject *parent=0);
 
  private slots:
+  void stdinActivatedData(int sock);
   void audioDeviceStoppedData();
   void connectorStoppedData();
   void meterData();
@@ -87,6 +89,13 @@ class MainObject : public QObject
   QTimer *sir_meter_timer;
   QTimer *sir_exit_timer;
   unsigned sir_exit_count;
+
+  //
+  // Stdin Processor
+  //
+  void ProcessCommand(const QString &cmd);
+  QSocketNotifier *sir_stdin_notify;
+  QString sir_stdin_accum;
 };
 
 

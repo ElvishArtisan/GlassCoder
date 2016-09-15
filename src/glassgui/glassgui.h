@@ -63,6 +63,7 @@ class MainWidget : public QMainWindow
   void startEncodingData();
   void stopEncodingData();
   void showCodeData();
+  void metadataData();
   void serverTypeChangedData(Connector::ServerType type,bool multirate);
   void serverData();
   void codecData();
@@ -91,6 +92,9 @@ class MainWidget : public QMainWindow
   void ListInstances();
   StereoMeter *gui_meter;
   QPushButton *gui_start_button;
+  QLabel *gui_metadata_label;
+  QLineEdit *gui_metadata_edit;
+  QPushButton *gui_metadata_button;
   QPushButton *gui_code_button;
   ServerDialog *gui_server_dialog;
   QPushButton *gui_server_button;

@@ -106,6 +106,8 @@ MainWidget::MainWidget(QWidget *parent)
   label_font.setPixelSize(14);
   QFont message_font("helvetica",14,QFont::Normal);
   message_font.setPixelSize(14);
+  QFont metadata_font("helvetica",12,QFont::Bold);
+  metadata_font.setPixelSize(12);
 
   //
   // Set Size
@@ -153,6 +155,17 @@ MainWidget::MainWidget(QWidget *parent)
   gui_code_button->setFont(section_font);
   connect(gui_code_button,SIGNAL(clicked()),this,SLOT(showCodeData()));
   gui_code_button->setDisabled(true);
+
+  //
+  // Metadata Sender
+  //
+  gui_metadata_label=new QLabel(tr("Stream Metadata")+":",this);
+  gui_metadata_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  gui_metadata_label->setFont(label_font);
+  gui_metadata_edit=new QLineEdit(this);
+  gui_metadata_button=new QPushButton(tr("Send"),this);
+  gui_metadata_button->setFont(label_font);
+  connect(gui_metadata_button,SIGNAL(clicked()),this,SLOT(metadataData()));
 
   //
   // Server Settings
@@ -219,7 +232,7 @@ MainWidget::MainWidget(QWidget *parent)
 
 QSize MainWidget::sizeHint() const
 {
-  return QSize(500,175);
+  return QSize(500,205);
 }
 
 
@@ -260,6 +273,12 @@ void MainWidget::resizeEvent(QResizeEvent *e)
   ypos+=(gui_meter->sizeHint().height()+10);
 
   int w_edge=(size().width()-60)/5;
+
+  gui_metadata_label->setGeometry(10,ypos,125,20);
+  gui_metadata_edit->setGeometry(140,ypos,size().width()-230,20);
+  gui_metadata_button->setGeometry(size().width()-80,ypos-5,70,30);
+  ypos+=30;
+
   gui_server_button->setGeometry(10,ypos,w_edge,55);
   gui_codec_button->setGeometry(20+w_edge,ypos,w_edge,55);
   gui_stream_button->setGeometry(30+2*w_edge,ypos,w_edge,55);
@@ -329,6 +348,12 @@ void MainWidget::showCodeData()
   gui_source_dialog->makeArgs(&args,true);
 
   gui_codeviewer_dialog->exec(args);
+}
+
+
+void MainWidget::metadataData()
+{
+  gui_process->write(("MD "+gui_metadata_edit->text()+"\n").toUtf8());
 }
 
 
