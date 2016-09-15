@@ -86,6 +86,11 @@ AC_CHECK_PROG(MOC_NAME,moc-qt4,[moc-qt4],[moc])
 AC_SUBST(MOC,$MOC_NAME)
 
 #
+# Check for WebHost Library (Mandatory)
+#
+PKG_CHECK_MODULES(WEBHOST,webhost,[],[AC_MSG_ERROR([*** WebHost library not found ***])])
+
+#
 # Check for Jack Audio Connection Kit
 #
 AC_CHECK_HEADER(jack/jack.h,[JACK_FOUND=y],[])
@@ -301,6 +306,11 @@ ln -s ../../src/common/logging.cpp src/glasscoder/logging.cpp
 rm -f src/glasscoder/logging.h
 ln -s ../../src/common/logging.h src/glasscoder/logging.h
 
+rm -f src/glasscoder/metaevent.cpp
+ln -s ../../src/common/metaevent.cpp src/glasscoder/metaevent.cpp
+rm -f src/glasscoder/metaevent.h
+ln -s ../../src/common/metaevent.h src/glasscoder/metaevent.h
+
 rm -f src/glasscoder/ringbuffer.cpp
 ln -s ../../src/common/ringbuffer.cpp src/glasscoder/ringbuffer.cpp
 rm -f src/glasscoder/ringbuffer.h
@@ -339,6 +349,11 @@ rm -f src/glassgui/logging.cpp
 ln -s ../../src/common/logging.cpp src/glassgui/logging.cpp
 rm -f src/glassgui/logging.h
 ln -s ../../src/common/logging.h src/glassgui/logging.h
+
+rm -f src/glassgui/metaevent.cpp
+ln -s ../../src/common/metaevent.cpp src/glassgui/metaevent.cpp
+rm -f src/glassgui/metaevent.h
+ln -s ../../src/common/metaevent.h src/glassgui/metaevent.h
 
 rm -f src/glassgui/ringbuffer.cpp
 ln -s ../../src/common/ringbuffer.cpp src/glassgui/ringbuffer.cpp

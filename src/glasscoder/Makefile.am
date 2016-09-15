@@ -20,7 +20,7 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing @QT4_CFLAGS@ @SNDFILE_CFLAGS@ @ALSA_CFLAGS@
+AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing @QT4_CFLAGS@ @SNDFILE_CFLAGS@ @ALSA_CFLAGS@ @WEBHOST_CFLAGS@
 MOC = @QT4_MOC@
 
 # The dependency for qt's Meta Object Compiler (moc)
@@ -37,6 +37,7 @@ dist_glasscoder_SOURCES = aaccodec.cpp aaccodec.h\
                           audiodevicefactory.cpp audiodevicefactory.h\
                           codec.cpp codec.h\
                           codecfactory.cpp codecfactory.h\
+                          config.cpp config.h\
                           connector.cpp connector.h\
                           connectorfactory.cpp connectorfactory.h\
                           fdkcodec.cpp fdkcodec.h\
@@ -49,6 +50,7 @@ dist_glasscoder_SOURCES = aaccodec.cpp aaccodec.h\
                           iceconnector.cpp iceconnector.h\
                           icyconnector.cpp icyconnector.h\
                           jackdevice.cpp jackdevice.h\
+                          metaserver.cpp metaserver.h\
                           meteraverage.cpp meteraverage.h\
                           mpegl2codec.cpp mpegl2codec.h\
                           mpegl3codec.cpp mpegl3codec.h\
@@ -61,6 +63,7 @@ nodist_glasscoder_SOURCES = asihpi.cpp asihpi.h\
                             cmdswitch.cpp cmdswitch.h\
                             glasslimits.h\
                             logging.cpp logging.h\
+                            metaevent.cpp metaevent.h\
                             moc_aaccodec.cpp\
                             moc_alsadevice.cpp\
                             moc_asihpidevice.cpp\
@@ -77,6 +80,7 @@ nodist_glasscoder_SOURCES = asihpi.cpp asihpi.h\
                             moc_iceconnector.cpp\
                             moc_icyconnector.cpp\
                             moc_jackdevice.cpp\
+                            moc_metaserver.cpp\
                             moc_mpegl2codec.cpp\
                             moc_mpegl3codec.cpp\
                             moc_opuscodec.cpp\
@@ -84,7 +88,7 @@ nodist_glasscoder_SOURCES = asihpi.cpp asihpi.h\
                             moc_vorbiscodec.cpp\
                             ringbuffer.cpp ringbuffer.h
 
-glasscoder_LDADD = @SIRLIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ -lpthread
+glasscoder_LDADD = @SIRLIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ @WEBHOST_LIBS@ -lpthread
 glasscoder_LDFLAGS = @SIRFLAGS@
 
 CLEANFILES = *~\
@@ -101,6 +105,7 @@ DISTCLEANFILES = asihpi.cpp asihpi.h\
                  connector.cpp connector.h\
                  glasslimits.h\
                  logging.cpp logging.h\
+                 metaevent.cpp metaevent.h\
                  ringbuffer.cpp ringbuffer.h
 
 MAINTAINERCLEANFILES = *~\

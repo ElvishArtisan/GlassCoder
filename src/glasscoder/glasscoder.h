@@ -32,12 +32,12 @@
 
 #include "audiodevice.h"
 #include "codec.h"
+#include "config.h"
 #include "connector.h"
 #include "fileconveyor.h"
 #include "glasslimits.h"
+#include "metaserver.h"
 #include "ringbuffer.h"
-
-#define GLASSCODER_USAGE "[options]\n"
 
 class MainObject : public QObject
 {
@@ -53,36 +53,7 @@ class MainObject : public QObject
   void exitTimerData();
 
  private:
-  //
-  // Arguments
-  //
-  std::vector<unsigned> audio_bitrate;
-  AudioDevice::DeviceType audio_device;
-  unsigned audio_channels;
-  Codec::Type audio_format;
-  double audio_quality;
-  unsigned audio_samplerate;
-  bool audio_atomic_frames;
-  QString stream_description;
-  QString stream_genre;
-  QString stream_name;
-  QString stream_url;
-  QString stream_irc;
-  QString stream_icq;
-  QString stream_aim;
-  int stream_timestamp_offset;
-  Connector::ServerType server_type;
-  QUrl server_url;
-  QString server_username;
-  QString server_password;
-  QString server_script_up;
-  QString server_script_down;
-  QStringList device_keys;
-  QStringList device_values;
-  bool list_codecs;
-  bool list_devices;
-  bool meter_data;
-
+  Config *sir_config;
   //
   // Audio Device
   //
@@ -104,12 +75,15 @@ class MainObject : public QObject
   std::vector<Codec *> sir_codecs;
 
   //
+  // Metadata Processor
+  //
+  MetaServer *sir_meta_server;
+
+  //
   // Miscelaneous
   //
   bool StartSingleStream();
   bool StartMultiStream();
-  void ListCodecs();
-  void ListDevices();
   QTimer *sir_meter_timer;
   QTimer *sir_exit_timer;
   unsigned sir_exit_count;

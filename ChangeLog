@@ -588,3 +588,11 @@
 	* Modified glassgui(1) to use the --instance-name value for logging.
 	* Fixed a bug in 'src/glasscoder/asihpidevice.cpp' that returned
 	an error when passed negative values for '--asihpi-input-gain'.
+2016-09-15 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Config' class in 'src/glasscoder/config.cpp' and
+	'src/glasscoder/config.h'.
+	* Added a '--metadata-port' option to glasscoder(1).
+	* Added a WebHost library dependency.
+	* Added an overloaded 'FileConveyor::push()' method in
+	'glasscoder/fileconveyor.cpp' and 'glasscoder/fileconveyor.h'.
+	* Implemented metadata updates for Icecast2.

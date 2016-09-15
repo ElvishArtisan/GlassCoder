@@ -50,271 +50,35 @@ void SignalHandler(int signo)
 MainObject::MainObject(QObject *parent)
   : QObject(parent)
 {
-  bool ok=false;
   sir_exit_count=0;
-  audio_device=DEFAULT_AUDIO_DEVICE;
-  audio_channels=MAX_AUDIO_CHANNELS;
-  audio_format=Codec::TypeVorbis;
-  audio_quality=-1.0;
-  audio_samplerate=DEFAULT_AUDIO_SAMPLERATE;
-  audio_atomic_frames=false;
-  server_type=Connector::Icecast2Server;
-  server_password="";
-  server_script_up="";
-  server_script_down="";
-  stream_genre="";
-  stream_name="";
-  stream_url="";
-  stream_irc="";
-  stream_icq="";
-  stream_aim="";
-  stream_timestamp_offset=0;
-  list_codecs=false;
-  list_devices=false;
-  global_log_string="";
-  meter_data=false;
+  sir_meta_server=NULL;
 
-  unsigned num;
-
-  CmdSwitch *cmd=
-    new CmdSwitch(qApp->argc(),qApp->argv(),"glasscoder",GLASSCODER_USAGE);
-  for(unsigned i=0;i<cmd->keys();i++) {
-    if(cmd->key(i)=="--audio-atomic-frames") {
-      audio_atomic_frames=true;
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--audio-bitrate") {
-      num=cmd->value(i).toUInt(&ok);
-      if(ok) {
-	audio_bitrate.push_back(num);
-      }
-      else {
-	Log(LOG_ERR,"invalid --audio-bitrate value");
-	exit(256);
-      }
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--audio-channels") {
-      audio_channels=cmd->value(i).toUInt(&ok);
-      if((!ok)||(audio_channels==0)||(audio_channels>MAX_AUDIO_CHANNELS)) {
-	Log(LOG_ERR,"invalid --audio-channels value");
-	exit(256);
-      }
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--audio-device") {
-      for(unsigned j=0;j<AudioDevice::LastType;j++) {
-	if(cmd->value(i).toLower()==
-	   AudioDevice::optionKeyword((AudioDevice::DeviceType)j)) {
-	  audio_device=(AudioDevice::DeviceType)j;
-	  cmd->setProcessed(i,true);
-	}
-      }
-    }
-    if(cmd->key(i)=="--audio-format") {
-      for(int j=0;j<Codec::TypeLast;j++) {
-	if(Codec::optionKeyword((Codec::Type)j)==
-	   cmd->value(i).toLower()) {
-	  audio_format=(Codec::Type)j;
-	  cmd->setProcessed(i,true);
-	}
-      }
-      if(!cmd->processed(i)) {
-	Log(LOG_ERR,
-	    QString().sprintf("unknown --audio-format value \"%s\"",
-			      (const char *)cmd->value(i).toAscii()));
-	exit(256);
-      }
-    }
-    if(cmd->key(i)=="--audio-quality") {
-      audio_quality=cmd->value(i).toDouble(&ok);
-      if((!ok)||(audio_quality<0.0)||(audio_quality>1.0)) {
-	Log(LOG_ERR,"invalid --audio-quality value");
-	exit(256);
-      }
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--audio-samplerate") {
-      audio_samplerate=cmd->value(i).toUInt(&ok);
-      if(!ok) {
-	Log(LOG_ERR,"invalid --audio-samplerate value");
-	exit(256);
-      }
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--errors-string") {
-      global_log_string=cmd->value(i);
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--errors-to") {
-      if(cmd->value(i).toLower()=="stderr") {
-	global_log_to=LOG_TO_STDERR;
-	cmd->setProcessed(i,true);
-      }
-      if(cmd->value(i).toLower()=="syslog") {
-	global_log_to=LOG_TO_SYSLOG;
-	openlog("glasscoder",0,LOG_DAEMON);
-	cmd->setProcessed(i,true);
-      }
-      if(cmd->value(i).toLower()=="stdout") {
-	global_log_to=LOG_TO_STDOUT;
-	cmd->setProcessed(i,true);
-      }
-    }
-    if(cmd->key(i)=="--list-codecs") {
-      list_codecs=true;
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--list-devices") {
-      list_devices=true;
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--meter-data") {
-      meter_data=true;
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--server-auth") {
-      QStringList f0=cmd->value(i).split(":");
-      if(f0.size()==2) {
-	server_username=f0[0];
-	server_password=f0[1];
-      }
-      else {
-	server_username=f0[0];
-      }
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--server-url") {
-      server_url.setUrl(cmd->value(i));
-      if(!server_url.isValid()) {
-	Log(LOG_ERR,"invalid argument for --server-url");
-	exit(256);
-      }
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--server-script-down") {
-      server_script_down=cmd->value(i);
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--server-script-up") {
-      server_script_up=cmd->value(i);
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--server-type") {
-      for(int j=0;j<Connector::LastServer;j++) {
-	if(Connector::optionKeyword((Connector::ServerType)j)==
-	   cmd->value(i).toLower()) {
-	  server_type=(Connector::ServerType)j;
-	  cmd->setProcessed(i,true);
-	}
-      }
-      if(!cmd->processed(i)) {
-	Log(LOG_ERR,
-	    QString().sprintf("unknown --server-type value \"%s\"",
-			      (const char *)cmd->value(i).toAscii()));
-	exit(256);
-      }
-    }
-    if(cmd->key(i)=="--stream-description") {
-      stream_description=cmd->value(i);
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--stream-genre") {
-      stream_genre=cmd->value(i);
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--stream-name") {
-      stream_name=cmd->value(i);
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--stream-url") {
-      stream_url=cmd->value(i);
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--stream-irc") {
-      stream_irc=cmd->value(i);
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--stream-icq") {
-      stream_icq=cmd->value(i);
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--stream-aim") {
-      stream_aim=cmd->value(i);
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--stream-timestamp-offset") {
-      stream_timestamp_offset=cmd->value(i).toInt(&ok);
-      if(!ok) {
-	fprintf(stderr,"invalid --stream-timestamp-offset\n");
-	exit(256);
-      }
-      cmd->setProcessed(i,true);
-    }
-    if(cmd->key(i)=="--verbose") {
-      global_log_verbose=true;
-      cmd->setProcessed(i,true);
-    }
-    if(!cmd->processed(i)) {
-      device_keys.push_back(cmd->key(i));
-      device_values.push_back(cmd->value(i));
-    }
-  }
-
-  //
-  // Resource Enumerations
-  //
-  if(list_codecs) {
-    ListCodecs();
-    exit(0);
-  }
-  if(list_devices) {
-    ListDevices();
-    exit(0);
-  }
-
-  //
-  // Sanity Checks
-  //
-  for(int i=0;i<device_keys.size();i++) {
-    if(device_keys[i].split("-",QString::SkipEmptyParts)[0]!=
-       AudioDevice::optionKeyword(audio_device)) {
-      Log(LOG_ERR,
-	  QString().sprintf("glasscoder: unknown/inappropriate option \"%s\"",
-			    (const char *)device_keys[i].toAscii()));
-      exit(256);
-    }
-  }
-
-  if(server_url.isEmpty()) {
-    Log(LOG_ERR,"missing --server-url parameter");
-    exit(256);
-  }
-  if((audio_quality>=0.0)&&(audio_bitrate.size()>0)) {
-    Log(LOG_ERR,"--audio-quality and --audio-bitrate are mutually exclusive");
-    exit(256);
-  }
-  if((audio_bitrate.size()>1)&&(server_type!=Connector::HlsServer)) {
-    Log(LOG_ERR,"only HLS streams can have multiple bitrates");
-    exit(256);
-  }
-
-  if((audio_quality<0.0)&&(audio_bitrate.size()==0)) {
-    audio_bitrate.push_back(DEFAULT_AUDIO_BITRATE);
-  }
+  sir_config=new Config();
 
   if(!StartAudioDevice()) {
     exit(256);
   }
 
   //
+  // Metadata Processor
+  //
+  if(sir_config->metadataPort()>0) {
+    sir_meta_server=new MetaServer(sir_config,this);
+    if(!sir_meta_server->listen(sir_config->metadataPort())) {
+      Log(LOG_ERR,QString().sprintf("unable to bind port %u",
+				    sir_config->metadataPort()));
+      exit(256);
+    }
+  }
+
+  //
   // Start Server Connections
   //
   sir_conveyor=new FileConveyor(this);
-  sir_conveyor->setUsername(server_username);
-  sir_conveyor->setPassword(server_password);
+  sir_conveyor->setUsername(sir_config->serverUsername());
+  sir_conveyor->setPassword(sir_config->serverPassword());
   connect(sir_conveyor,SIGNAL(stopped()),this,SLOT(connectorStoppedData()));
-  if(audio_bitrate.size()>1) {
+  if(sir_config->audioBitrateQuantity()>1) {
     if(!StartMultiStream()) {
       exit(256);
     }
@@ -402,12 +166,14 @@ bool MainObject::StartAudioDevice()
   //
   // Create Ringbuffers
   //
-  if(audio_bitrate.size()==0) {   // For VBR modes
-    sir_ringbuffers.push_back(new Ringbuffer(RINGBUFFER_SIZE,audio_channels));
+  if(sir_config->audioBitrateQuantity()==0) {   // For VBR modes
+    sir_ringbuffers.
+      push_back(new Ringbuffer(RINGBUFFER_SIZE,sir_config->audioChannels()));
   }
   else {
-    for(unsigned i=0;i<audio_bitrate.size();i++) {
-      sir_ringbuffers.push_back(new Ringbuffer(RINGBUFFER_SIZE,audio_channels));
+    for(unsigned i=0;i<sir_config->audioBitrateQuantity();i++) {
+      sir_ringbuffers.
+	push_back(new Ringbuffer(RINGBUFFER_SIZE,sir_config->audioChannels()));
     }
   }
 
@@ -416,16 +182,18 @@ bool MainObject::StartAudioDevice()
   //
   QString err;
   if((sir_audio_device=
-      AudioDeviceFactory(audio_device,audio_channels,audio_samplerate,
+      AudioDeviceFactory(sir_config->audioDevice(),sir_config->audioChannels(),
+			 sir_config->audioSamplerate(),
 			 &sir_ringbuffers,this))==NULL) {
     Log(LOG_ERR,
 	QString().sprintf("%s devices not supported",
-	    (const char *)AudioDevice::deviceTypeText(audio_device).toUtf8()));
+	    (const char *)AudioDevice::deviceTypeText(sir_config->audioDevice()).toUtf8()));
     exit(256);
   }
   connect(sir_audio_device,SIGNAL(hasStopped()),
 	  this,SLOT(audioDeviceStoppedData()));
-  if(!sir_audio_device->processOptions(&err,device_keys,device_values)) {
+  if(!sir_audio_device->processOptions(&err,sir_config->deviceKeys(),
+				       sir_config->deviceValues())) {
     Log(LOG_ERR,err);
     exit(256);
   }
@@ -435,7 +203,7 @@ bool MainObject::StartAudioDevice()
   }
   sir_meter_timer=new QTimer(this);
   connect(sir_meter_timer,SIGNAL(timeout()),this,SLOT(meterData()));
-  if(meter_data) {
+  if(sir_config->meterData()) {
     sir_meter_timer->start(AUDIO_METER_INTERVAL);
   }
 
@@ -448,23 +216,25 @@ bool MainObject::StartCodec()
   Codec *codec;
 
   if((codec=
-    CodecFactory(audio_format,sir_ringbuffers[sir_codecs.size()],this))==NULL) {
+    CodecFactory(sir_config->audioFormat(),sir_ringbuffers[sir_codecs.size()],
+		 this))==NULL) {
     Log(LOG_ERR,
 	QString().sprintf("unsupported codec type \"%s\"",
 	      (const char *)Codec::codecTypeText(Codec::TypeMpegL3).toUtf8()));
     return false;
   }
-  if(audio_bitrate.size()>0) {
-    codec->setBitrate(audio_bitrate[sir_codecs.size()]);
+  if(sir_config->audioBitrateQuantity()>0) {
+    codec->
+     setBitrate(sir_config->audioBitrate(sir_config->audioBitrateQuantity()-1));
   }
   else {
     codec->setBitrate(0);
   }
-  codec->setChannels(audio_channels);
-  codec->setQuality(audio_quality);
+  codec->setChannels(sir_config->audioChannels());
+  codec->setQuality(sir_config->audioQuality());
   codec->setSourceSamplerate(sir_audio_device->deviceSamplerate());
-  codec->setStreamSamplerate(audio_samplerate);
-  codec->setCompleteFrames(audio_atomic_frames);
+  codec->setStreamSamplerate(sir_config->audioSamplerate());
+  codec->setCompleteFrames(sir_config->audioAtomicFrames());
 
   sir_codecs.push_back(codec);
 
@@ -479,29 +249,31 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
   //
   // Create Connector Instance
   //
-  conn=ConnectorFactory(server_type,is_top,sir_conveyor,this);
+  conn=ConnectorFactory(sir_config->serverType(),is_top,sir_conveyor,this);
   connect(conn,SIGNAL(stopped()),this,SLOT(connectorStoppedData()));
   if(!is_top) {
     connect(conn,SIGNAL(dataRequested(Connector *)),
 	    sir_codecs[sir_connectors.size()],SLOT(encode(Connector *)));
     connect(conn,SIGNAL(connected(bool)),this,SLOT(connectedData(bool)));
     sir_codecs[sir_connectors.size()]->
-      setCompleteFrames(server_type==Connector::HlsServer);
+      setCompleteFrames(sir_config->serverType()==Connector::HlsServer);
+    connect(sir_meta_server,SIGNAL(metadataReceived(MetaEvent *)),
+	    conn,SLOT(sendMetadata(MetaEvent *)));
   }
 
   //
   // Set Configuration
   //
   if(mntpt.isEmpty()) {
-    conn->setServerMountpoint(server_url.path());
+    conn->setServerMountpoint(sir_config->serverUrl().path());
   }
   else {
     conn->setServerMountpoint(mntpt);
   }
-  conn->setServerUsername(server_username);
-  conn->setServerPassword(server_password);
+  conn->setServerUsername(sir_config->serverUsername());
+  conn->setServerPassword(sir_config->serverPassword());
   if(is_top) {
-    conn->setAudioBitrates(&audio_bitrate);
+    conn->setAudioBitrates(sir_config->audioBitrates());
     conn->setFormatIdentifier(sir_codecs[0]->formatIdentifier());
   }
   else {
@@ -509,35 +281,30 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
     conn->setExtension(sir_codecs[sir_connectors.size()]->defaultExtension());
     conn->setFormatIdentifier(sir_codecs[sir_connectors.size()]->
 			      formatIdentifier());
-    if(audio_bitrate.size()>0) {
-      conn->setAudioBitrate(audio_bitrate[sir_connectors.size()]);
-    }
-    else {
-      conn->setAudioBitrate(0);
-    }
+    conn->setAudioBitrate(sir_config->audioBitrate());
   }
-  conn->setAudioChannels(audio_channels);
-  conn->setAudioSamplerate(audio_samplerate);
-  conn->setScriptUp(server_script_up);
-  conn->setScriptDown(server_script_down);
-  conn->setStreamDescription(stream_description);
-  conn->setStreamGenre(stream_genre);
-  conn->setStreamName(stream_name);
-  conn->setStreamUrl(stream_url);
-  conn->setStreamIrc(stream_irc);
-  conn->setStreamIcq(stream_icq);
-  conn->setStreamAim(stream_aim);
-  conn->setStreamTimestampOffset(stream_timestamp_offset);
+  conn->setAudioChannels(sir_config->audioChannels());
+  conn->setAudioSamplerate(sir_config->audioSamplerate());
+  conn->setScriptUp(sir_config->serverScriptUp());
+  conn->setScriptDown(sir_config->serverScriptDown());
+  conn->setStreamDescription(sir_config->streamDescription());
+  conn->setStreamGenre(sir_config->streamGenre());
+  conn->setStreamName(sir_config->streamName());
+  conn->setStreamUrl(sir_config->streamUrl());
+  conn->setStreamIrc(sir_config->streamIrc());
+  conn->setStreamIcq(sir_config->streamIcq());
+  conn->setStreamAim(sir_config->streamAim());
+  conn->setStreamTimestampOffset(sir_config->streamTimestampOffset());
 
   //
   // Open the server connection
   //
   sir_connectors.push_back(conn);
   uint16_t port=DEFAULT_SERVER_PORT;
-  if(server_url.port()>0) {
-    port=server_url.port();
+  if(sir_config->serverUrl().port()>0) {
+    port=sir_config->serverUrl().port();
   }
-  sir_connectors.back()->connectToServer(server_url.host(),port);
+  sir_connectors.back()->connectToServer(sir_config->serverUrl().host(),port);
 }
 
 
@@ -557,43 +324,24 @@ bool MainObject::StartMultiStream()
   //
   // Media streams
   //
-  for(unsigned i=0;i<audio_bitrate.size();i++) {
+  for(unsigned i=0;i<sir_config->audioBitrateQuantity();i++) {
     if(!StartCodec()) {
       return false;
     }
   }
-  for(unsigned i=0;i<audio_bitrate.size();i++) {
-    StartServerConnection(Connector::subMountpointName(server_url.path(),
-						       audio_bitrate[i]));
+  for(unsigned i=0;i<sir_config->audioBitrateQuantity();i++) {
+    StartServerConnection(Connector::subMountpointName(sir_config->serverUrl().
+						       path(),
+						       sir_config->
+						       audioBitrate(i)));
   }
 
   //
   // Top-level playlist
   //
-  StartServerConnection(server_url.path(),true);
+  StartServerConnection(sir_config->serverUrl().path(),true);
 
   return true;
-}
-
-
-void MainObject::ListCodecs()
-{
-  for(int i=0;i<Codec::TypeLast;i++) {
-    if(CodecFactory((Codec::Type)i,NULL,this)->isAvailable()) {
-      printf("%s\n",
-	     (const char *)Codec::optionKeyword((Codec::Type)i).toUtf8());
-    }
-  }
-}
-
-
-void MainObject::ListDevices()
-{
-  for(int i=0;i<AudioDevice::LastType;i++) {
-    if(AudioDeviceFactory((AudioDevice::DeviceType)i,2,48000,NULL,this)!=NULL) {
-      printf("%s\n",(const char *)AudioDevice::optionKeyword((AudioDevice::DeviceType)i).toUtf8());
-    }
-  }
 }
 
 

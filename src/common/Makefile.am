@@ -27,6 +27,7 @@ EXTRA_DIST = asihpi.cpp asihpi.h\
              connector.cpp connector.h\
              glasslimits.h\
              logging.cpp logging.h\
+             metaevent.cpp metaevent.h\
              ringbuffer.cpp ringbuffer.h
 
 CLEANFILES = *~\

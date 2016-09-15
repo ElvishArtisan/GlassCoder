@@ -129,6 +129,21 @@ void FileConveyor::setPassword(const QString &str)
 }
 
 
+void FileConveyor::push(void *orig,const QString &filename,const QString &url,
+			ConveyorEvent::HttpMethod meth)
+{
+  ConveyorEvent evt(orig,filename,url,meth);
+  push(evt);
+}
+
+
+void FileConveyor::push(void *orig,const QString &url,
+			ConveyorEvent::HttpMethod meth)
+{
+  push(orig,"",url,meth);
+}
+
+
 void FileConveyor::push(const ConveyorEvent &evt)
 {
   if(!evt.filename().isEmpty()) {
@@ -146,14 +161,6 @@ void FileConveyor::push(const ConveyorEvent &evt)
   if(conv_events.size()==1) {
     Dispatch();
   }
-}
-
-
-void FileConveyor::push(void *orig,const QString &filename,const QString &url,
-			ConveyorEvent::HttpMethod meth)
-{
-  ConveyorEvent evt(orig,filename,url,meth);
-  push(evt);
 }
 
 

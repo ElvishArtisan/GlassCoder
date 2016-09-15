@@ -31,6 +31,8 @@
 #include <QTimer>
 #include <QProcess>
 
+#include "metaevent.h"
+
 #define RINGBUFFER_SERVICE_INTERVAL 50
 
 class Connector : public QObject
@@ -101,6 +103,9 @@ class Connector : public QObject
   static QString curlStrError(int exit_code);
   static QString httpStrError(int status_code);
   static QString timezoneOffset();
+
+ public slots:
+  virtual void sendMetadata(MetaEvent *e);
 
  signals:
   void connected(bool state);

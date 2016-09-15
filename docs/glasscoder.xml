@@ -6,7 +6,7 @@
   <refmeta>
     <refentrytitle>glasscoder</refentrytitle>
     <manvolnum>1</manvolnum>
-    <refmiscinfo class='source'>October 2015</refmiscinfo>
+    <refmiscinfo class='source'>September 2016</refmiscinfo>
     <refmiscinfo class='manual'>Linux Audio Manual</refmiscinfo>
   </refmeta>
   <refnamediv>
@@ -389,6 +389,21 @@
       <listitem>
 	<para>
 	  Print a list of available source devices and then exit.
+	</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>
+	<option>--metadata-port=</option><replaceable>port</replaceable>
+      </term>
+      <listitem>
+	<para>
+	  Accept metadata updates via HTTP at port
+	  <replaceable>port</replaceable>. Default value is
+	  <userinput>0</userinput>, which disables metadata updates.
+	  Both IceCast and ShoutCast style metadata updates are supported
+	  (but see the NOTES section below).
 	</para>
       </listitem>
     </varlistentry>
@@ -1029,6 +1044,12 @@
   <emphasis role="bold">DELETE</emphasis> methods on the publishing web server.
   See the GlassCoder documentation directory
   for a sample configuration for the Apache Web Server.
+</para>
+<para>
+  Not all server backends support all types of metadata.
+  <command>glasscoder</command><manvolnum>1</manvolnum> supports both
+  IceCast- and ShoutCast-style metadata updates and will attempt to
+  impedance-match updates to the server type as best as possible.
 </para>
 </refsect1>
 

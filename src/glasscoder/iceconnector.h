@@ -22,6 +22,7 @@
 #define ICECONNECTOR_H
 
 #include "connector.h"
+#include "fileconveyor.h"
 
 class IceConnector : public Connector
 {
@@ -30,6 +31,9 @@ class IceConnector : public Connector
   IceConnector(QObject *parent=0);
   ~IceConnector();
   IceConnector::ServerType serverType() const;
+
+ public slots:
+  void sendMetadata(MetaEvent *e);
 
  protected:
   void connectToHostConnector(const QString &hostname,uint16_t port);
@@ -41,12 +45,17 @@ class IceConnector : public Connector
   void socketDisconnectedData();
   void socketReadyReadData();
   void socketErrorData(QAbstractSocket::SocketError err);
+  void conveyorEventFinished(const ConveyorEvent &evt,int exit_code,
+			     int resp_code,const QStringList &args);
+  void conveyorError(const ConveyorEvent &evt,QProcess::ProcessError err,
+		     const QStringList &args);
 
  private:
   void ProcessHeaders(const QString &hdrs);
   void WriteHeader(const QString &str);
   QTcpSocket *ice_socket;
   QString ice_recv_buffer;
+  FileConveyor *ice_conveyor;
 };
 
 

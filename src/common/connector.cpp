@@ -1358,3 +1358,9 @@ QString Connector::timezoneOffset()
 
   return ret;
 }
+
+
+void Connector::sendMetadata(MetaEvent *e)
+{
+  printf("StreamTitle: %s\n",(const char *)e->field(MetaEvent::StreamTitle).toString().toUtf8());
+}

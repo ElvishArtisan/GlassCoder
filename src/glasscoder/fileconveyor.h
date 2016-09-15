@@ -61,6 +61,7 @@ class FileConveyor : public QObject
   void setUsername(const QString &str);
   void setPassword(const QString &str);
   void push(const ConveyorEvent &evt);
+  void push(void *orig,const QString &url,ConveyorEvent::HttpMethod meth);
   void push(void *orig,const QString &filename,const QString &url,
 	    ConveyorEvent::HttpMethod meth);
   void stop();

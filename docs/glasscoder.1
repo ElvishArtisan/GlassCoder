@@ -2,12 +2,12 @@
 .\"     Title: glasscoder
 .\"    Author: Fred Gleason <fredg@paravelsystems.com>
 .\" Generator: DocBook XSL-NS Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: 09/13/2016
+.\"      Date: 09/15/2016
 .\"    Manual: Linux Audio Manual
-.\"    Source: October 2015
+.\"    Source: September 2016
 .\"  Language: English
 .\"
-.TH "GLASSCODER" "1" "09/13/2016" "October 2015" "Linux Audio Manual"
+.TH "GLASSCODER" "1" "09/15/2016" "September 2016" "Linux Audio Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -200,6 +200,13 @@ Print a list of available codecs and then exit\&.
 \fB\-\-list\-devices\fR
 .RS 4
 Print a list of available source devices and then exit\&.
+.RE
+.PP
+\fB\-\-metadata\-port=\fR\fIport\fR
+.RS 4
+Accept metadata updates via HTTP at port
+\fIport\fR\&. Default value is
+\fB0\fR, which disables metadata updates\&. Both IceCast and ShoutCast style metadata updates are supported (but see the NOTES section below)\&.
 .RE
 .PP
 \fB\-\-meter\-data\fR
@@ -514,6 +521,10 @@ HTTP Live Streams [HLS] require support for the HTTP
 and
 \fBDELETE\fR
 methods on the publishing web server\&. See the GlassCoder documentation directory for a sample configuration for the Apache Web Server\&.
+.PP
+Not all server backends support all types of metadata\&.
+\fBglasscoder\fR(1)
+supports both IceCast\- and ShoutCast\-style metadata updates and will attempt to impedance\-match updates to the server type as best as possible\&.
 .SH "AUTHOR"
 .PP
 Fred Gleason <fredg@paravelsystems\&.com>

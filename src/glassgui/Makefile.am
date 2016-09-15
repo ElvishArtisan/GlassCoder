@@ -53,6 +53,7 @@ nodist_glassgui_SOURCES = asihpi.cpp asihpi.h\
                           connector.cpp connector.h\
                           glasslimits.h\
                           logging.cpp logging.h\
+                          metaevent.cpp metaevent.h\
                           moc_audiodevice.cpp\
                           moc_codec.cpp\
                           moc_codecdialog.cpp\
@@ -89,6 +90,7 @@ DISTCLEANFILES = asihpi.cpp asihpi.h\
                  connector.cpp connector.h\
                  glasslimits.h\
                  logging.cpp logging.h\
+                 metaevent.cpp metaevent.h\
                  ringbuffer.cpp ringbuffer.h
 
 MAINTAINERCLEANFILES = *~\

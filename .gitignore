@@ -30,6 +30,8 @@ src/glasscoder/glasscoder
 src/glasscoder/glasslimits.h
 src/glasscoder/logging.cpp
 src/glasscoder/logging.h
+src/glasscoder/metaevent.cpp
+src/glasscoder/metaevent.h
 src/glasscoder/ringbuffer.cpp
 src/glasscoder/ringbuffer.h
 src/glassgui/asihpi.cpp
@@ -46,5 +48,7 @@ src/glassgui/glassgui
 src/glassgui/glasslimits.h
 src/glassgui/logging.cpp
 src/glassgui/logging.h
+src/glassgui/metaevent.cpp
+src/glassgui/metaevent.h
 src/glassgui/ringbuffer.cpp
 src/glassgui/ringbuffer.h

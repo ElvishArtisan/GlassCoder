@@ -1,8 +1,8 @@
-// audiodevicefactory.h
+// metaserver.h
 //
-// Instantiate AudioDevice classes
+// HTTP Server for Metadata Processing
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+// (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -18,15 +18,31 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef AUDIODEVICEFACTORY_H
-#define AUDIODEVICEFACTORY_H
+#ifndef METASERVER_H
+#define METASERVER_H
 
-#include "audiodevice.h"
+#include <wh/whhttpserver.h>
 
-AudioDevice *AudioDeviceFactory(AudioDevice::DeviceType type,
-				unsigned chans,unsigned samprate,
-				std::vector<Ringbuffer *> *rings,
-				QObject *parent=0);
+#include "config.h"
+#include "metaevent.h"
+
+class MetaServer : public WHHttpServer
+{
+  Q_OBJECT;
+ public:
+  MetaServer(Config *config,QObject *parent=0);
+
+ signals:
+  void metadataReceived(MetaEvent *e);
+
+ protected:
+  void getRequestReceived(WHHttpConnection *conn);
+  bool authenticateUser(const QString &realm,const QString &name,
+			const QString &passwd);
+
+ private:
+  Config *meta_config;
+};
 
 
-#endif  // AUDIODEVICEFACTORY_H
+#endif  // METASERVER_H

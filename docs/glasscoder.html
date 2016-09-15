@@ -136,6 +136,14 @@
       </span></dt><dd><p>
 	  Print a list of available source devices and then exit.
 	</p></dd><dt><span class="term">
+	<code class="option">--metadata-port=</code><em class="replaceable"><code>port</code></em>
+      </span></dt><dd><p>
+	  Accept metadata updates via HTTP at port
+	  <em class="replaceable"><code>port</code></em>. Default value is
+	  <strong class="userinput"><code>0</code></strong>, which disables metadata updates.
+	  Both IceCast and ShoutCast style metadata updates are supported
+	  (but see the NOTES section below).
+	</p></dd><dt><span class="term">
 	<code class="option">--meter-data</code>
       </span></dt><dd><p>
 	  Output meter level updates on standard output.  Useful for
@@ -396,6 +404,11 @@
   <span class="bold"><strong>DELETE</strong></span> methods on the publishing web server.
   See the GlassCoder documentation directory
   for a sample configuration for the Apache Web Server.
+</p><p>
+  Not all server backends support all types of metadata.
+  <span class="command"><strong>glasscoder</strong></span>(1) supports both
+  IceCast- and ShoutCast-style metadata updates and will attempt to
+  impedance-match updates to the server type as best as possible.
 </p></div><div class="refsect1"><a id="author"></a><h2>Author</h2><p>
   Fred Gleason &lt;fredg@paravelsystems.com&gt;
 </p></div><div class="refsect1"><a id="see_also"></a><h2>See Also</h2><p>
