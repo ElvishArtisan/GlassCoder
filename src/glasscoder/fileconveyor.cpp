@@ -129,6 +129,12 @@ void FileConveyor::setPassword(const QString &str)
 }
 
 
+void FileConveyor::setAddedHeaders(const QStringList &hdrs)
+{
+  conv_added_headers=hdrs;
+}
+
+
 void FileConveyor::push(void *orig,const QString &filename,const QString &url,
 			ConveyorEvent::HttpMethod meth)
 {
@@ -229,6 +235,7 @@ void FileConveyor::Dispatch()
 
   conv_arguments.clear();
   AddCurlAuthArgs(&conv_arguments,evt);
+  AddHeaders(&conv_arguments,conv_added_headers);
   conv_arguments.push_back("--write-out");
   conv_arguments.push_back("%{http_code}");
   conv_arguments.push_back("--silent");
@@ -267,6 +274,15 @@ void FileConveyor::Dispatch()
   connect(conv_process,SIGNAL(finished(int,QProcess::ExitStatus)),
 	  this,SLOT(processFinishedData(int,QProcess::ExitStatus)));
   conv_process->start("curl",conv_arguments);
+}
+
+
+void FileConveyor::AddHeaders(QStringList *arglist,const QStringList &hdrs)
+{
+  for(int i=0;i<hdrs.size();i++) {
+    arglist->push_back("-H");
+    arglist->push_back(hdrs[i]);
+  }
 }
 
 

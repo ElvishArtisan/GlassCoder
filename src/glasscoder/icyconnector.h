@@ -22,6 +22,7 @@
 #define ICYCONNECTOR_H
 
 #include "connector.h"
+#include "fileconveyor.h"
 
 class IcyConnector : public Connector
 {
@@ -30,6 +31,9 @@ class IcyConnector : public Connector
   IcyConnector(int ver,QObject *parent=0);
   ~IcyConnector();
   IcyConnector::ServerType serverType() const;
+
+ public slots:
+  void sendMetadata(MetaEvent *e);
 
  protected:
   void connectToHostConnector(const QString &hostname,uint16_t port);
@@ -41,6 +45,10 @@ class IcyConnector : public Connector
   void socketDisconnectedData();
   void socketReadyReadData();
   void socketErrorData(QAbstractSocket::SocketError err);
+  void conveyorEventFinished(const ConveyorEvent &evt,int exit_code,
+			     int resp_code,const QStringList &args);
+  void conveyorError(const ConveyorEvent &evt,QProcess::ProcessError err,
+		     const QStringList &args);
 
  private:
   void ProcessHeaders(const QString &hdrs);
@@ -49,6 +57,7 @@ class IcyConnector : public Connector
   QString icy_recv_buffer;
   int icy_protocol_version;
   bool icy_authenticated;
+  FileConveyor *icy_conveyor;
 };
 
 

@@ -596,3 +596,7 @@
 	* Added an overloaded 'FileConveyor::push()' method in
 	'glasscoder/fileconveyor.cpp' and 'glasscoder/fileconveyor.h'.
 	* Implemented metadata updates for Icecast2.
+2016-09-15 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'FileConveyor::setAddedHeaders()' method in
+	'glasscoder/fileconveyor.cpp' and 'glasscoder/fileconveyor.h'.
+	* Implemented metadata updates for Shoutcast1.

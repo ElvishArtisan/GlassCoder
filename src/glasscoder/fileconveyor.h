@@ -60,6 +60,7 @@ class FileConveyor : public QObject
   ~FileConveyor();
   void setUsername(const QString &str);
   void setPassword(const QString &str);
+  void setAddedHeaders(const QStringList &hdrs);
   void push(const ConveyorEvent &evt);
   void push(void *orig,const QString &url,ConveyorEvent::HttpMethod meth);
   void push(void *orig,const QString &filename,const QString &url,
@@ -81,6 +82,7 @@ class FileConveyor : public QObject
 
  private:
   void Dispatch();
+  void AddHeaders(QStringList *arglist,const QStringList &hdrs);
   void AddCurlAuthArgs(QStringList *arglist,const ConveyorEvent &evt);
   QString Repath(const QString &filename) const;
   void AddPuttedFile(const QString &url);
@@ -94,6 +96,7 @@ class FileConveyor : public QObject
   QStringList conv_putted_files;
   QString conv_username;
   QString conv_password;
+  QStringList conv_added_headers;
 };
 
 

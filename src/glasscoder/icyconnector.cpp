@@ -37,6 +37,28 @@ IcyConnector::IcyConnector(int version,QObject *parent)
   connect(icy_socket,SIGNAL(readyRead()),this,SLOT(socketReadyReadData()));
   connect(icy_socket,SIGNAL(error(QAbstractSocket::SocketError)),
 	  this,SLOT(socketErrorData(QAbstractSocket::SocketError)));
+
+  //
+  // Metadata File Conveyor
+  //
+  icy_conveyor=new FileConveyor(this);
+  QStringList hdrs;
+  //
+  // D.N.A.S v1.9.8 refuses to process updates with the default CURL
+  // user-agent value, hence we lie to it.
+  //
+  hdrs.push_back("User-agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.2) Gecko/20070219 Firefox/2.0.0.2");
+  icy_conveyor->setAddedHeaders(hdrs);
+  connect(icy_conveyor,SIGNAL(eventFinished(const ConveyorEvent &,int,int,
+					    const QStringList &)),
+	  this,SLOT(conveyorEventFinished(const ConveyorEvent &,int,int,
+					  const QStringList &)));
+  connect(icy_conveyor,
+	  SIGNAL(error(const ConveyorEvent &,QProcess::ProcessError,
+		       const QStringList &)),
+	  this,
+	  SLOT(conveyorError(const ConveyorEvent &,QProcess::ProcessError,
+			     const QStringList &)));
 }
 
 
@@ -49,6 +71,19 @@ IcyConnector::~IcyConnector()
 IcyConnector::ServerType IcyConnector::serverType() const
 {
   return Connector::Shoutcast1Server;
+}
+
+
+void IcyConnector::sendMetadata(MetaEvent *e)
+{
+  QString url=QString("http://")+
+    hostHostname()+
+    QString().sprintf(":%u",hostPort())+
+    "/admin.cgi?"+
+    "pass="+Connector::urlEncode(serverPassword())+"&"+
+    "mode=updinfo&"+
+    "song="+Connector::urlEncode(e->field(MetaEvent::StreamTitle).toString());
+  icy_conveyor->push(this,url,ConveyorEvent::GetMethod);
 }
 
 
@@ -136,6 +171,62 @@ void IcyConnector::socketReadyReadData()
 void IcyConnector::socketErrorData(QAbstractSocket::SocketError err)
 {
   setError(err);
+}
+
+
+void IcyConnector::conveyorEventFinished(const ConveyorEvent &evt,int exit_code,
+					 int resp_code,const QStringList &args)
+{
+  if(evt.originator()==this) {
+    //
+    // Exit code handler
+    //
+    if((exit_code!=0)&&(exit_code!=CURLE_GOT_NOTHING)) {
+      setConnected(false);
+      if(global_log_verbose) {
+	Log(LOG_WARNING,
+	    QString().sprintf("curl(1) error: %s, cmd: \"curl %s\"",
+		   (const char *)Connector::curlStrError(exit_code).toUtf8(),
+		   (const char *)args.join(" ").toUtf8()));
+      }
+      else {
+	Log(LOG_WARNING,QString().sprintf("CURL error: %s",
+		   (const char *)Connector::curlStrError(exit_code).toUtf8()));
+      }
+    }
+    else {
+      //
+      // Response code handler
+      //
+      if(((resp_code<200)||(resp_code>299))&&(resp_code!=0)) {
+	setConnected(false);
+	if(global_log_verbose) {
+	  Log(LOG_WARNING,"curl(1) response error: "+
+	      Connector::httpStrError(resp_code)+
+	      ", cmd: \"curl "+args.join(" ")+"\"");
+	}
+	else {
+	  Log(LOG_WARNING,"curl(1) response error: "+
+	      Connector::httpStrError(resp_code));
+	}
+      }
+      else {
+	setConnected(true);
+      }
+    }
+  }
+}
+
+
+void IcyConnector::conveyorError(const ConveyorEvent &evt,
+				 QProcess::ProcessError err,
+				 const QStringList &args)
+{
+  Log(LOG_ERR,
+      QString().sprintf("curl(1) process error: %d, cmd: \"curl %s\"",err,
+			(const char *)args.join(" ").toUtf8()));
+  setConnected(false);
+  exit(256);
 }
 
 

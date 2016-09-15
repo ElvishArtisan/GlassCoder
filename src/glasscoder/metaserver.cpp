@@ -31,7 +31,7 @@ MetaServer::MetaServer(Config *config,QObject *parent)
 
 void MetaServer::getRequestReceived(WHHttpConnection *conn)
 {
-  //  printf("HTTP: %s\n",(const char *)conn->dump().toUtf8());
+  //printf("HTTP: %s\n",(const char *)conn->dump().toUtf8());
   int resp_code=404;
   QString resp_str="Not Found";
   QUrl url(conn->uri());
@@ -58,23 +58,17 @@ void MetaServer::getRequestReceived(WHHttpConnection *conn)
   }
 
   if(url.path()=="/admin/metadata") {   // Icecast Style
-    if(url.queryItemValue("mount")==meta_config->serverUrl().path()) {
-      if(url.queryItemValue("mode")=="updinfo") {
-	MetaEvent *e=new MetaEvent();
-	e->setField(MetaEvent::StreamTitle,url.queryItemValue("song"));
-	emit metadataReceived(e);
-	delete e;
-	conn->sendError(200,"OK");
-	return;
-      }
-      else {
-	resp_code=403;
-	resp_str="Unrecognized Mode";
-      }
+    if(url.queryItemValue("mode")=="updinfo") {
+      MetaEvent *e=new MetaEvent();
+      e->setField(MetaEvent::StreamTitle,url.queryItemValue("song"));
+      emit metadataReceived(e);
+      delete e;
+      conn->sendError(200,"OK");
+      return;
     }
     else {
       resp_code=403;
-      resp_str="Unknown Mountpoint";
+      resp_str="Unrecognized Mode";
     }
   }
 
