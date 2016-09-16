@@ -613,3 +613,7 @@
 	'src/glasscoder/glasscoder.h'.
 2016-09-16 Fred Gleason <fredg@paravelsystems.com>
 	* Added a glasscoder-ipc(7) man page.
+2016-09-16 Fred Gleason <fredg@paravelsystems.com>
+	* Updated 'INSTALL'.
+	* Updated 'NEWS'.
+	* Incremented the package version to 0.9.16.

@@ -1,6 +1,24 @@
 The NEWS file for the GlassCoder package.
 
 -------------------------------------------------------------------------------
+v0.9.16 -- 9/16/2016
+
+Changes:
+   Webhost Library. Beginning with this release, GlassCoder requires
+   the Webhost library. See the 'INSTALL' file for details.
+
+   Metadata Update Support. It is now possible to update stream metadata
+   for Icecast and Shoutcast stream by means of HTTP messages as well as
+   commands sent to standard input of glasscoder(1) instances. See the
+   glasscoder-ipc(7) man page for details. Also added is a live metadata
+   update control to glassgui(1).
+
+   Enhanced Logging. Added the ability to add text tags to log entries
+   to allow disambiguation of messages from multiple glasscoder(1)
+   instances. See the --errrors-string option in the glasscoder(1)
+   man page for details.
+
+-------------------------------------------------------------------------------
 v0.9.15 -- 2/16/2016
 
 Changes:

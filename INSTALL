@@ -11,6 +11,10 @@ Secret Rabbit Code
 A sample-rate converter library, written by Erik de Castro Lopo.  Included
 with most distros, or you can find it at http://www.mega-nerd.com/SRC/.
 
+WebHost Library, v1.2.0 or better
+A library for embedding HTTP interfaces. Available at
+https://github.com/ElvishArtisan/webhost
+
 
 OPTIONAL PREREQUISITES
 ---------------------------------------------------------------------------
