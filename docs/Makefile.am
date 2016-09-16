@@ -25,24 +25,34 @@
 # The dependency for man pages
 %.1:	%.xml
 	xsltproc $(DOCBOOK_STYLESHEETS)/manpages/docbook.xsl $<
+%.7:	%.xml
+	xsltproc $(DOCBOOK_STYLESHEETS)/manpages/docbook.xsl $<
 %.html:	%.xml
 	xsltproc -o $@ $(DOCBOOK_STYLESHEETS)/xhtml/docbook.xsl $<
 
 all-local:	glasscoder.1 glasscoder.html\
+                glasscoder-ipc.7 glasscoder-ipc.xml\
                 glassgui.1 glassgui.html
 
 man_MANS = glasscoder.1\
+           glasscoder-ipc.7\
            glassgui.1
 
 EXTRA_DIST = glasscoder.1\
              glasscoder.html\
              glasscoder.xml\
+             glasscoder-ipc.7\
+             glasscoder-ipc.html\
+             glasscoder-ipc.xml\
              glassgui.1\
              glassgui.html\
              glassgui.xml
 
 CLEANFILES = *~
-DISTCLEANFILES = moc_*
+DISTCLEANFILES = *.1\
+                 *.7\
+                 *.html\
+                 moc_*
 MAINTAINERCLEANFILES = *~\
                        *.fo\
                        *.pdf\

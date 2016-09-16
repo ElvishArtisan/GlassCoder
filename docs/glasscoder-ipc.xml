@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<refentry id="stdin" xmlns="http://docbook.org/ns/docbook" version="5.0">
+  <!--
+      Header
+  -->
+  <refmeta>
+    <refentrytitle>glasscoder-ipc</refentrytitle>
+    <manvolnum>7</manvolnum>
+    <refmiscinfo class='source'>September 2016</refmiscinfo>
+    <refmiscinfo class='manual'>Linux Audio Manual</refmiscinfo>
+  </refmeta>
+  <refnamediv>
+    <refname>glasscoder-ipc</refname>
+    <refpurpose>IPC methods for the GlassCoder stream encoder</refpurpose>
+  </refnamediv>
+  <info>
+    <author>
+      <personname>
+	<firstname>Fred</firstname>
+	<surname>Gleason</surname>
+	<email>fredg@paravelsystems.com</email>
+      </personname>
+      <contrib>Application Author</contrib>
+    </author>
+  </info>
+
+  <!--
+      Body
+  -->
+  <refsynopsisdiv id='synopsis'>
+    <cmdsynopsis>
+      <command>glasscoder</command>
+      <arg choice='opt'><replaceable>OPTIONS</replaceable></arg>
+      <sbr/>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1 id='description'><title>Description</title>
+  <para>
+    <command>glasscoder</command><manvolnum>1</manvolnum> is an audio encoder
+    that is capable of generating live streams using a variety of formats and
+    sending them to an Icecast or Shoutcast audio streaming server or posting
+    them as HTTP Live Streams [HLS]. For more information regarding its
+    overall capabilities, see the
+    <command>glasscoder</command><manvolnum>1</manvolnum> man page.
+  </para>
+  <para>
+    A running <command>glasscoder</command><manvolnum>1</manvolnum>
+    instance can be monitored and controlled by means of two different IPC
+    methods: its standard input/output streams and HTTP calls.
+  </para>
+  </refsect1>
+
+  <refsect1 id='stdoout-control'><title>Monitoring via Standard Output</title>
+  <para>
+    <command>glasscoder</command><manvolnum>1</manvolnum> can output
+    realtime information about current operating state via its standard
+    output and/or error streams. The location and format in which this
+    information is generated is controlled by means of the
+    <option>--errors-to</option> and <option>--meter-data</option> options.
+  </para>
+  <para>
+    When <userinput>--errors-to=STDOUT</userinput> is specified,
+    <command>glasscoder</command><manvolnum>1</manvolnum> will output
+    error messages on standard output in the following machine-readable
+    format:
+  </para>
+  <para>
+    <synopsis>
+      ER <arg><replaceable>priority</replaceable></arg> <arg><replaceable>msg</replaceable></arg>
+    </synopsis>
+  </para>
+  <para>
+    where <arg><replaceable>priority</replaceable></arg> is an
+    integer the indicates the priority level of the error as defined by
+    the <command>syslog</command><manvolnum>3</manvolnum> interface and
+    <arg><replaceable>msg</replaceable></arg> is a text
+    string describing the error. Each message is terminated by a newline
+    character.
+  </para>
+  <para>
+    When <userinput>--meter-data</userinput> is specified,
+    <command>glasscoder</command><manvolnum>1</manvolnum> will output
+    realtime audio level information suitable for being rendered as an
+    audio meter display in the following format:
+  </para>
+  <para>
+    <synopsis>
+      ME <arg><replaceable>left-lvl</replaceable><replaceable>right-lvl</replaceable></arg>
+    </synopsis>
+  </para>
+  <para>
+    where each argument is the current audio level of the corresponding
+    channel in hexidecimal, referenced to 0 dBFS. Each message is terminated
+    by a newline character.
+  </para>
+  </refsect1>
+
+  <refsect1 id='stdin-control'><title>Control via Standard Input</title>
+  <para>
+    <command>glasscoder</command><manvolnum>1</manvolnum> supports the
+    following command, sent via standard input:
+  </para>
+  <para>
+    <synopsis>
+      MD <arg><replaceable>text</replaceable></arg>
+    </synopsis>
+  </para>
+  <para>
+    Send the metadata
+    <arg choice='opt'><replaceable>text</replaceable></arg> to the stream.
+    The command should be terminated by newline.
+  </para>
+  </refsect1>
+
+  <refsect1 id='http-control'><title>Control via HTTP GET</title>
+  <para>
+    If the <option>--metadata-port=<replaceable>port</replaceable></option>
+    option is given a non-zero value, metadata updates can be sent to the
+    stream by means of one of the following HTTP GET calls
+  </para>
+  <para>
+    <uri>
+      http://<replaceable>hostname</replaceable>:<replaceable>port</replaceable>/admin.cgi?pass=<replaceable>password</replaceable>&amp;mode=updinfo&amp;song=<replaceable>text</replaceable>
+    </uri>
+  </para>
+  <para>
+    <uri>
+      http://<replaceable>hostname</replaceable>:<replaceable>port</replaceable>/admin/metadata?mount=<replaceable>mountpt</replaceable>&amp;mode=updinfo&amp;song=<replaceable>text</replaceable>
+    </uri>
+  </para>
+  </refsect1>
+
+
+
+  <refsect1 id='author'><title>Author</title>
+  <para>
+    Fred Gleason &lt;fredg@paravelsystems.com&gt;
+  </para>
+  </refsect1>
+
+  <refsect1 id='see_also'><title>See Also</title>
+  <para>
+    <citerefentry>
+      <refentrytitle>glasscoder</refentrytitle><manvolnum>1</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+	<refentrytitle>syslog</refentrytitle><manvolnum>3</manvolnum>
+      </citerefentry>
+  </para>
+  </refsect1>
+</refentry>
+

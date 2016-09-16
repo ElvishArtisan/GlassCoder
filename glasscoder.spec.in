@@ -79,6 +79,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/glasscoder
 %{_mandir}/man1/glasscoder.1.gz
 %{_mandir}/man1/glassgui.1.gz
+%{_mandir}/man7/glasscoder-ipc.7.gz
 %doc AUTHORS
 %doc ChangeLog
 %doc COPYING 

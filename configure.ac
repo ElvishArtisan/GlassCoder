@@ -70,6 +70,7 @@ AC_ARG_ENABLE(alsa,[  --disable-alsa          disable ALSA sound support],
 		      [ALSA_DISABLED=yes],[])
 AC_ARG_ENABLE(asihpi,[  --disable-asihpi        disable AudioScience HPI sound support],
 		      [ASIHPI_DISABLED=yes],[])
+AC_ARG_ENABLE(docbook,[  --disable-docbook       disable building of documentation],[DOCBOOK_DISABLED=yes],[])
 AC_ARG_ENABLE(file,[  --disable-file          disable FILE sound support],
 		      [SNDFILE_DISABLED=yes],[])
 AC_ARG_ENABLE(jack,[  --disable-jack          disable JACK sound support],
@@ -211,6 +212,14 @@ if test $FDKAAC_FOUND ; then
     USING_FDKAAC=yes
   fi
 fi
+
+#
+# Build DocBook Items?
+#
+if test -z $DOCBOOK_DISABLED ; then
+  USING_DOCBOOK=yes
+fi
+AM_CONDITIONAL([DOCBOOK_AM], [test "$USING_DOCBOOK" = yes])
 
 #
 # Determine the target architecture

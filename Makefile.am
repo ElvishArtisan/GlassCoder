@@ -22,8 +22,11 @@
 ##   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 ##
 
-SUBDIRS = conf\
-          docs\
+if DOCBOOK_AM
+  DOCBOOK_AM_OPT = docs
+endif
+
+SUBDIRS = $(DOCBOOK_AM_OPT) conf\
           icons\
           src\
           xdg

@@ -611,3 +611,5 @@
 	* Implemented a send metadata command via standard input for
 	glasscoder(1) in 'src/glasscoder/glasscoder.cpp' and
 	'src/glasscoder/glasscoder.h'.
+2016-09-16 Fred Gleason <fredg@paravelsystems.com>
+	* Added a glasscoder-ipc(7) man page.
