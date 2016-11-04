@@ -294,8 +294,10 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
     connect(conn,SIGNAL(connected(bool)),this,SLOT(connectedData(bool)));
     sir_codecs[sir_connectors.size()]->
       setCompleteFrames(sir_config->serverType()==Connector::HlsServer);
-    connect(sir_meta_server,SIGNAL(metadataReceived(MetaEvent *)),
-	    conn,SLOT(sendMetadata(MetaEvent *)));
+    if(sir_meta_server!=NULL) {
+      connect(sir_meta_server,SIGNAL(metadataReceived(MetaEvent *)),
+	      conn,SLOT(sendMetadata(MetaEvent *)));
+    }
   }
 
   //

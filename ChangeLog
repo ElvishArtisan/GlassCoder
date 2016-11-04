@@ -617,3 +617,7 @@
 	* Updated 'INSTALL'.
 	* Updated 'NEWS'.
 	* Incremented the package version to 0.9.16.
+2016-11-04 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/glasscoder/glasscoder.cpp' that caused a spurious
+	'metadataReceived' error to be generated when starting a connection
+	with no metadata port.
