@@ -404,6 +404,10 @@ QString Connector::serverTypeText(Connector::ServerType type)
     ret=tr("Local File Archive");
     break;
 
+  case Connector::IcecastStreamerServer:
+    ret=tr("Integrated Icecast Server");
+    break;
+
   case Connector::LastServer:
     break;
   }
@@ -439,6 +443,10 @@ QString Connector::optionKeyword(Connector::ServerType type)
 
   case Connector::FileArchiveServer:
     ret="filearchive";
+    break;
+
+  case Connector::IcecastStreamerServer:
+    ret="icestreamer";
     break;
 
   case Connector::LastServer:

@@ -281,6 +281,7 @@ void ServerDialog::serverTypeChanged(int index)
   case Connector::Shoutcast1Server:
   case Connector::Shoutcast2Server:
   case Connector::Icecast2Server:
+  case Connector::IcecastStreamerServer:
   case Connector::FileServer:
   case Connector::FileArchiveServer:
     multirate=false;

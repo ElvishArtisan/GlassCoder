@@ -22,6 +22,7 @@
 #include "fileconnector.h"
 #include "hlsconnector.h"
 #include "iceconnector.h"
+#include "icestreamconnector.h"
 #include "icyconnector.h"
 #include "connectorfactory.h"
 
@@ -45,6 +46,10 @@ Connector *ConnectorFactory(Connector::ServerType type,bool is_top,
 
   case Connector::Icecast2Server:
     conn=new IceConnector(parent);
+    break;
+
+  case Connector::IcecastStreamerServer:
+    conn=new IceStreamConnector(parent);
     break;
 
   case Connector::FileServer:

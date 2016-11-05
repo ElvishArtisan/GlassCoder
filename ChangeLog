@@ -621,3 +621,7 @@
 	* Fixed a bug in 'src/glasscoder/glasscoder.cpp' that caused a spurious
 	'metadataReceived' error to be generated when starting a connection
 	with no metadata port.
+2016-11-04 Fred Gleason <fredg@paravelsystems.com>
+	* Added an 'IcecastStreamerServer' connector in
+	'src/glasscoder/icestreamconnector.cpp' and
+	'src/glasscoder/icestreamconnector.h'.

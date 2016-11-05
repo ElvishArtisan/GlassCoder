@@ -48,6 +48,7 @@ dist_glasscoder_SOURCES = aaccodec.cpp aaccodec.h\
                           glasscoder.cpp glasscoder.h\
                           hlsconnector.cpp hlsconnector.h\
                           iceconnector.cpp iceconnector.h\
+                          icestreamconnector.cpp icestreamconnector.h\
                           icyconnector.cpp icyconnector.h\
                           jackdevice.cpp jackdevice.h\
                           metaserver.cpp metaserver.h\
@@ -78,6 +79,7 @@ nodist_glasscoder_SOURCES = asihpi.cpp asihpi.h\
                             moc_glasscoder.cpp\
                             moc_hlsconnector.cpp\
                             moc_iceconnector.cpp\
+                            moc_icestreamconnector.cpp\
                             moc_icyconnector.cpp\
                             moc_jackdevice.cpp\
                             moc_metaserver.cpp\

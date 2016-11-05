@@ -260,6 +260,26 @@ void StreamDialog::setServerType(Connector::ServerType type)
     gui_stream_timestamp_offset_unit->setEnabled(false);
     break;
 
+  case Connector::IcecastStreamerServer:
+    gui_stream_name_label->setEnabled(true);
+    gui_stream_name_edit->setEnabled(true);
+    gui_stream_description_label->setEnabled(true);
+    gui_stream_description_edit->setEnabled(true);
+    gui_stream_url_label->setEnabled(true);
+    gui_stream_url_edit->setEnabled(true);
+    gui_stream_genre_label->setEnabled(true);
+    gui_stream_genre_edit->setEnabled(true);
+    gui_stream_icq_label->setEnabled(false);
+    gui_stream_icq_edit->setEnabled(false);
+    gui_stream_aim_label->setEnabled(false);
+    gui_stream_aim_edit->setEnabled(false);
+    gui_stream_irc_label->setEnabled(false);
+    gui_stream_irc_edit->setEnabled(false);
+    gui_stream_timestamp_offset_label->setEnabled(false);
+    gui_stream_timestamp_offset_spin->setEnabled(false);
+    gui_stream_timestamp_offset_unit->setEnabled(false);
+    break;
+
   case Connector::LastServer:
     break;
   }
