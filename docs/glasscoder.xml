@@ -40,13 +40,18 @@
     <command>glasscoder</command><manvolnum>1</manvolnum> is an audio encoder
     that is capable of generating live streams using a variety of formats and
     sending them to an Icecast or Shoutcast audio streaming server or posting
-    them as HTTP Live Streams [HLS].
+    them as HTTP Live Streams [HLS]. It is also capable of acting as an
+    Icecast-compatible server in its own right, serving streams directly to
+    client players and thus eliminating the need for an intervening Icecast
+    server instance.
   </para>
 
   <para>
     <command>glasscoder</command><manvolnum>1</manvolnum> has no GUI or
-    configuration file components at all; its sole 'user interface' is its
-    command-line invocation.
+    configuration file components at all; its sole 'user interface' being its
+    command-line invocation. As such, it is particularly well suited for
+    being driven by an external process or controller such as
+    <command>glassgui</command><manvolnum>1</manvolnum>.
   </para>
   </refsect1>
 
@@ -426,7 +431,9 @@
       </term>
       <listitem>
 	<para>
-	  The authentication parameters to use.  This parameter has no default.
+	  The authentication parameters to use.  This parameter is ignored
+          when used with a <option>--server-type</option> of
+	  <userinput>IceStreamer</userinput>, and has no default.
 	</para>
       </listitem>
     </varlistentry>
@@ -516,6 +523,18 @@
 
 	    <varlistentry>
 	      <term>
+		<userinput>IceStreamer</userinput>
+	      </term>
+	      <listitem>
+		<para>
+		  Stream directly to players using the internal
+		  Icecast-compatible server.
+		</para>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	      <term>
 		<userinput>Shout1</userinput>
 	      </term>
 	      <listitem>
@@ -546,8 +565,12 @@
       </term>
       <listitem>
 	<para>
-	  The URL describing the server resource to stream to.  This parameter
-	  has no default.
+	  The URL describing the server resource to stream to. When used
+	  with a <option>--server-type</option> of
+	  <userinput>IceStreamer</userinput>, the host part of the URL
+	  is used to specify the address of the network interface to
+	  use for streaming (use <userinput>0.0.0.0</userinput> to indicate
+	  ALL interfaces). This parameter has no default.
 	</para>
       </listitem>
     </varlistentry>

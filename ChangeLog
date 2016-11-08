@@ -625,3 +625,6 @@
 	* Added an 'IcecastStreamerServer' connector in
 	'src/glasscoder/icestreamconnector.cpp' and
 	'src/glasscoder/icestreamconnector.h'.
+2016-11-08 Fred Gleason <fredg@paravelsystems.com>
+	* Documented the 'IcecastStreamer' server type in the glasscoder(1)
+	man page.
