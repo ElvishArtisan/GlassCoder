@@ -27,6 +27,8 @@ IceStream::IceStream(QTcpSocket *sock)
 {
   ice_socket=sock;
   ice_is_negotiated=false;
+  ice_metadata_enabled=false;
+  ice_metadata_bytes=0;
 }
 
 
@@ -66,11 +68,37 @@ void IceStream::setMountpoint(const QString &str)
 }
 
 
+bool IceStream::metadataEnabled() const
+{
+  return ice_metadata_enabled;
+}
+
+
+void IceStream::setMetadataEnabled(bool state)
+{
+  ice_metadata_enabled=state;
+}
+
+
+int IceStream::addMetadataBytes(int bytes)
+{
+  ice_metadata_bytes+=bytes;
+  if((!metadataEnabled())||(ice_metadata_bytes<ICESTREAM_METADATA_INTERVAL)) {
+    return -1;
+  }
+  ice_metadata_bytes-=ICESTREAM_METADATA_INTERVAL;
+
+  return bytes-ice_metadata_bytes;
+}
+
+
 
 
 IceStreamConnector::IceStreamConnector(QObject *parent)
   : Connector(parent)
 {
+  iceserv_metadata=QString().sprintf("%cStreamTitle=''; ",1).toUtf8();
+
   iceserv_server=new QTcpServer(this);
   connect(iceserv_server,SIGNAL(newConnection()),
 	  this,SLOT(newConnectionData()));
@@ -104,6 +132,22 @@ Connector::ServerType IceStreamConnector::serverType() const
 }
 
 
+void IceStreamConnector::sendMetadata(MetaEvent *e)
+{
+  //
+  // This has to be the most retarded metadata protocol in existence.
+  // Codecs have ancillary channels for this sort of thing!  BAD LLAMA!!
+  //
+  iceserv_metadata=("StreamTitle='"+
+		    e->field(MetaEvent::StreamTitle).toString()+"';").toUtf8();
+  while((iceserv_metadata.length()%16)!=0) {
+    iceserv_metadata.append((char)0);
+  }
+  iceserv_metadata.prepend((char)(iceserv_metadata.length()/16));
+  //  printf("Metadata: %s\n",(const char *)e->field(MetaEvent::StreamTitle).toString().toUtf8());
+}
+
+
 void IceStreamConnector::newConnectionData()
 {
   //
@@ -125,7 +169,6 @@ void IceStreamConnector::newConnectionData()
   }
   iceserv_readyread_mapper->setMapping(sock,id);
   connect(sock,SIGNAL(readyRead()),iceserv_readyread_mapper,SLOT(map()));
-
 }
 
 
@@ -200,9 +243,20 @@ int64_t IceStreamConnector::writeDataConnector(int frames,
 					       const unsigned char *data,
 					       int64_t len)
 {
+  IceStream *strm=NULL;
+  int offset=0;
+
   for(unsigned i=0;i<iceserv_streams.size();i++) {
-    if((iceserv_streams.at(i)!=NULL)&&(iceserv_streams.at(i)->isNegotiated())) {
-      iceserv_streams.at(i)->socket()->write((const char *)data,len);
+    strm=iceserv_streams.at(i);
+    if((strm!=NULL)&&(strm->isNegotiated())) {
+      if((offset=strm->addMetadataBytes(len))<0) {
+	strm->socket()->write((const char *)data,len);
+      }
+      else {
+	strm->socket()->write((const char *)data,offset);
+	strm->socket()->write(iceserv_metadata);
+	strm->socket()->write((const char *)data+offset,len-offset);
+      }
     }
   }
   return len;
@@ -258,12 +312,25 @@ void IceStreamConnector::ProcessHeader(IceStream *strm)
 	SendHeader(strm,"icy-name: "+streamName());
 	SendHeader(strm,"icy-pub: "+QString().sprintf("%u",streamPublic()));
 	SendHeader(strm,"icy-url: "+streamUrl());
+	if(strm->metadataEnabled()) {
+	  SendHeader(strm,"icy-metaint: "+
+		     QString().sprintf("%u",ICESTREAM_METADATA_INTERVAL));
+	}
 	SendHeader(strm);
 
 	strm->setNegotiated();
       }
       else {
 	DenyConnection(strm,404,"No such stream");
+      }
+    }
+    else {
+      f0=strm->accum.split(":",QString::SkipEmptyParts);
+      if((f0.size()==2)&&(f0.at(0).trimmed()=="icy-metadata")) {
+	bool state=f0.at(1).trimmed().toUInt(&ok);
+	if(ok) {
+	  strm->setMetadataEnabled(state);
+	}
       }
     }
   }

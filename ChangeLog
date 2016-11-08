@@ -631,3 +631,7 @@
 2016-11-08 Fred Gleason <fredg@paravelsystems.com>
 	* Added code to the 'Server Settings' dialog to disable irrelevant
 	fields when using the IceStreamer server.
+2016-11-08 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented stream metadata updates for the 'IceStreamer' server
+	type in 'src/glasscoder/icestreamconnector.cpp' and
+	'src/glasscoder/icestreamconnector.h'.

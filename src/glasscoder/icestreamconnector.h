@@ -30,6 +30,8 @@
 
 #include "connector.h"
 
+#define ICESTREAM_METADATA_INTERVAL 16000
+
 class IceStream
 {
  public:
@@ -40,6 +42,9 @@ class IceStream
   void setNegotiated();
   QString mountpoint() const;
   void setMountpoint(const QString &str);
+  bool metadataEnabled() const;
+  void setMetadataEnabled(bool state);
+  int addMetadataBytes(int bytes);
   QString accum;
 
  private:
@@ -47,6 +52,8 @@ class IceStream
   QTcpSocket *ice_socket;
   bool ice_is_negotiated;
   QString ice_mountpoint;
+  bool ice_metadata_enabled;
+  int ice_metadata_bytes;
 };
 
 
@@ -59,6 +66,9 @@ class IceStreamConnector : public Connector
   IceStreamConnector(QObject *parent=0);
   ~IceStreamConnector();
   Connector::ServerType serverType() const;
+
+ public slots:
+  void sendMetadata(MetaEvent *e);
 
  private slots:
   void newConnectionData();
@@ -79,6 +89,7 @@ class IceStreamConnector : public Connector
   std::vector<IceStream *> iceserv_streams;
   QSignalMapper *iceserv_readyread_mapper;
   QTimer *iceserv_garbage_timer;
+  QByteArray iceserv_metadata;
 };
 
 
