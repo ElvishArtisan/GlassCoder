@@ -31,6 +31,7 @@
 #include "connector.h"
 
 #define ICESTREAM_METADATA_INTERVAL 16000
+#define ICESTREAM_CONNECTION_TIMEOUT 10000
 
 class IceStream
 {
@@ -38,6 +39,7 @@ class IceStream
   IceStream(QTcpSocket *sock);
   ~IceStream();
   QTcpSocket *socket() const;
+  QTimer *timeoutTimer() const;
   bool isNegotiated() const;
   void setNegotiated();
   QString mountpoint() const;
@@ -50,6 +52,7 @@ class IceStream
  private:
   unsigned ice_id;
   QTcpSocket *ice_socket;
+  QTimer *ice_timeout_timer;
   bool ice_is_negotiated;
   QString ice_mountpoint;
   bool ice_metadata_enabled;
@@ -73,6 +76,7 @@ class IceStreamConnector : public Connector
  private slots:
   void newConnectionData();
   void readyReadData(int id);
+  void timeoutData(int id);
   void disconnectedData();
   void garbageData();
 
@@ -88,6 +92,7 @@ class IceStreamConnector : public Connector
   QTcpServer *iceserv_server;
   std::vector<IceStream *> iceserv_streams;
   QSignalMapper *iceserv_readyread_mapper;
+  QSignalMapper *iceserv_timeout_mapper;
   QTimer *iceserv_garbage_timer;
   QByteArray iceserv_metadata;
 };

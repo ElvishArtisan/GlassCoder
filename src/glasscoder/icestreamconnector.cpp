@@ -29,18 +29,28 @@ IceStream::IceStream(QTcpSocket *sock)
   ice_is_negotiated=false;
   ice_metadata_enabled=false;
   ice_metadata_bytes=0;
+  ice_timeout_timer=new QTimer();
+  ice_timeout_timer->setSingleShot(true);
+  ice_timeout_timer->start(ICESTREAM_CONNECTION_TIMEOUT);
 }
 
 
 IceStream::~IceStream()
 {
   delete ice_socket;
+  delete ice_timeout_timer;
 }
 
 
 QTcpSocket *IceStream::socket() const
 {
   return ice_socket;
+}
+
+
+QTimer *IceStream::timeoutTimer() const
+{
+  return ice_timeout_timer;
 }
 
 
@@ -52,6 +62,7 @@ bool IceStream::isNegotiated() const
 
 void IceStream::setNegotiated()
 {
+  ice_timeout_timer->stop();
   ice_is_negotiated=true;
 }
 
@@ -106,6 +117,10 @@ IceStreamConnector::IceStreamConnector(QObject *parent)
   iceserv_readyread_mapper=new QSignalMapper(this);
   connect(iceserv_readyread_mapper,SIGNAL(mapped(int)),
 	  this,SLOT(readyReadData(int)));
+
+  iceserv_timeout_mapper=new QSignalMapper(this);
+  connect(iceserv_timeout_mapper,SIGNAL(mapped(int)),
+	  this,SLOT(timeoutData(int)));
 
   iceserv_garbage_timer=new QTimer(this);
   iceserv_garbage_timer->setSingleShot(true);
@@ -169,6 +184,10 @@ void IceStreamConnector::newConnectionData()
   }
   iceserv_readyread_mapper->setMapping(sock,id);
   connect(sock,SIGNAL(readyRead()),iceserv_readyread_mapper,SLOT(map()));
+
+  iceserv_timeout_mapper->setMapping(iceserv_streams.at(id)->timeoutTimer(),id);
+  connect(iceserv_streams.at(id)->timeoutTimer(),SIGNAL(timeout()),
+	  iceserv_timeout_mapper,SLOT(map()));
 }
 
 
@@ -193,6 +212,13 @@ void IceStreamConnector::readyReadData(int id)
       }
     }
   }
+}
+
+
+void IceStreamConnector::timeoutData(int id)
+{
+  iceserv_streams.at(id)->socket()->disconnectFromHost();
+  iceserv_garbage_timer->start(1);
 }
 
 
@@ -349,6 +375,6 @@ void IceStreamConnector::DenyConnection(IceStream *strm,int code,
 	     QString().sprintf("Content-Length: %d",str.toUtf8().length()));
   SendHeader(strm);
   strm->socket()->write(str.toUtf8());
-  strm->socket()->disconnect();
+  strm->socket()->disconnectFromHost();
   iceserv_garbage_timer->start(1);
 }

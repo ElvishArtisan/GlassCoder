@@ -635,3 +635,7 @@
 	* Implemented stream metadata updates for the 'IceStreamer' server
 	type in 'src/glasscoder/icestreamconnector.cpp' and
 	'src/glasscoder/icestreamconnector.h'.
+2016-11-08 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented an idle connection timeout for the 'IceStreamer' server
+	type in 'src/glasscoder/icestreamconnector.cpp' and
+	'src/glasscoder/icestreamconnector.h'.
