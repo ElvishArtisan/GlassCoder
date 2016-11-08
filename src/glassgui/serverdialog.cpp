@@ -272,24 +272,39 @@ void ServerDialog::serverTypeChanged(int index)
   Connector::ServerType type=
     (Connector::ServerType)srv_server_type_box->itemData(index).toInt();
   bool multirate=false;
+  bool authfields=false;
 
   switch(type) {
   case Connector::HlsServer:
     multirate=true;
+    authfields=true;
+    break;
+
+  case Connector::IcecastStreamerServer:
+    multirate=false;
+    authfields=false;
     break;
 
   case Connector::Shoutcast1Server:
   case Connector::Shoutcast2Server:
   case Connector::Icecast2Server:
-  case Connector::IcecastStreamerServer:
   case Connector::FileServer:
   case Connector::FileArchiveServer:
     multirate=false;
+    authfields=true;
     break;
 
   case Connector::LastServer:
     break;
   }
+  srv_server_username_label->setEnabled(authfields);
+  srv_server_username_edit->setEnabled(authfields);
+  srv_server_password_label->setEnabled(authfields);
+  srv_server_password_edit->setEnabled(authfields);
+  srv_server_script_up_label->setEnabled(authfields);
+  srv_server_script_up_edit->setEnabled(authfields);
+  srv_server_script_down_label->setEnabled(authfields);
+  srv_server_script_down_edit->setEnabled(authfields);
   emit typeChanged(type,multirate);
 }
 

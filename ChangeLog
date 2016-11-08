@@ -628,3 +628,6 @@
 2016-11-08 Fred Gleason <fredg@paravelsystems.com>
 	* Documented the 'IcecastStreamer' server type in the glasscoder(1)
 	man page.
+2016-11-08 Fred Gleason <fredg@paravelsystems.com>
+	* Added code to the 'Server Settings' dialog to disable irrelevant
+	fields when using the IceStreamer server.
