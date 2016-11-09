@@ -335,7 +335,6 @@ void IceStreamConnector::ProcessHeader(IceStream *strm)
   bool ok=false;
 
   if(strm->type()==IceStream::New) {
-  printf("ACCUM: %s\n",(const char *)strm->accum.toUtf8());
     f0=strm->accum.split(" ",QString::SkipEmptyParts);
     if(f0.size()==3) {
       if(f0.at(0)=="GET") {
