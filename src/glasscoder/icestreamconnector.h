@@ -36,14 +36,19 @@
 class IceStream
 {
  public:
+  enum Type {New=0,Player=1,Updinfo=2};
   IceStream(QTcpSocket *sock);
   ~IceStream();
   QTcpSocket *socket() const;
   QTimer *timeoutTimer() const;
+  Type type() const;
+  void setType(Type type);
   bool isNegotiated() const;
   void setNegotiated();
-  QString mountpoint() const;
-  void setMountpoint(const QString &str);
+  bool isAuthenticated() const;
+  void setAuthenticated(bool state);
+  QString streamTitle() const;
+  void setStreamTitle(const QString &str);
   bool metadataEnabled() const;
   void setMetadataEnabled(bool state);
   int addMetadataBytes(int bytes);
@@ -53,8 +58,10 @@ class IceStream
   unsigned ice_id;
   QTcpSocket *ice_socket;
   QTimer *ice_timeout_timer;
+  Type ice_type;
   bool ice_is_negotiated;
-  QString ice_mountpoint;
+  bool ice_is_authenticated;
+  QString ice_stream_title;
   bool ice_metadata_enabled;
   int ice_metadata_bytes;
 };
@@ -86,9 +93,11 @@ class IceStreamConnector : public Connector
   int64_t writeDataConnector(int frames,const unsigned char *data,int64_t len);
 
  private:
+  void SetMetadata(const QString &title);
   void SendHeader(IceStream *strm,const QString &hdr="") const;
   void ProcessHeader(IceStream *strm);
-  void DenyConnection(IceStream *strm,int code,const QString &str);
+  void CloseConnection(IceStream *strm,int code,const QString &str,
+		       const QStringList &hdrs=QStringList());
   QTcpServer *iceserv_server;
   std::vector<IceStream *> iceserv_streams;
   QSignalMapper *iceserv_readyread_mapper;

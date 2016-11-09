@@ -639,3 +639,9 @@
 	* Implemented an idle connection timeout for the 'IceStreamer' server
 	type in 'src/glasscoder/icestreamconnector.cpp' and
 	'src/glasscoder/icestreamconnector.h'.
+2016-11-09 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Connector::serverBasicAuthString()' method in
+	'src/common/connector.cpp' and 'src/common/connector.h'.
+	* Implemented the 'mount' administrative interface in the IceStreamer
+	server type in 'src/glasscoder/icestreamconnector.cpp' and
+	'src/glasscoder/icestreamconnector.h'.

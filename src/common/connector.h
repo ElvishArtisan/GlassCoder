@@ -50,6 +50,7 @@ class Connector : public QObject
   void setServerUsername(const QString &str);
   QString serverPassword() const;
   void setServerPassword(const QString &str);
+  QString serverBasicAuthString() const;
   QString serverMountpoint() const;
   void setServerMountpoint(const QString &str);
   QString contentType() const;

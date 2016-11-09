@@ -108,6 +108,15 @@ void Connector::setServerPassword(const QString &str)
 }
 
 
+QString Connector::serverBasicAuthString() const
+{
+  //
+  // As per RFC 2617 (2)
+  //
+  return Connector::base64Encode(serverUsername()+":"+serverPassword());
+}
+
+
 QString Connector::serverMountpoint() const
 {
   return conn_server_mountpoint;

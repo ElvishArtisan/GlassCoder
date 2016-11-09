@@ -18,8 +18,10 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <QCoreApplication>
 #include <QDateTime>
 #include <QHostAddress>
+#include <QUrl>
 
 #include "icestreamconnector.h"
 
@@ -27,6 +29,8 @@ IceStream::IceStream(QTcpSocket *sock)
 {
   ice_socket=sock;
   ice_is_negotiated=false;
+  ice_is_authenticated=false;
+  ice_type=IceStream::New;
   ice_metadata_enabled=false;
   ice_metadata_bytes=0;
   ice_timeout_timer=new QTimer();
@@ -54,6 +58,18 @@ QTimer *IceStream::timeoutTimer() const
 }
 
 
+IceStream::Type IceStream::type() const
+{
+  return ice_type;
+}
+
+
+void IceStream::setType(IceStream::Type type)
+{
+  ice_type=type;
+}
+
+
 bool IceStream::isNegotiated() const
 {
   return ice_is_negotiated;
@@ -67,15 +83,27 @@ void IceStream::setNegotiated()
 }
 
 
-QString IceStream::mountpoint() const
+bool IceStream::isAuthenticated() const
 {
-  return ice_mountpoint;
+  return ice_is_authenticated;
 }
 
 
-void IceStream::setMountpoint(const QString &str)
+void IceStream::setAuthenticated(bool state)
 {
-  ice_mountpoint=str;
+  ice_is_authenticated=state;
+}
+
+
+QString IceStream::streamTitle() const
+{
+  return ice_stream_title;
+}
+
+
+void IceStream::setStreamTitle(const QString &str)
+{
+  ice_stream_title=str;
 }
 
 
@@ -149,17 +177,7 @@ Connector::ServerType IceStreamConnector::serverType() const
 
 void IceStreamConnector::sendMetadata(MetaEvent *e)
 {
-  //
-  // This has to be the most retarded metadata protocol in existence.
-  // Codecs have ancillary channels for this sort of thing!  BAD LLAMA!!
-  //
-  iceserv_metadata=("StreamTitle='"+
-		    e->field(MetaEvent::StreamTitle).toString()+"';").toUtf8();
-  while((iceserv_metadata.length()%16)!=0) {
-    iceserv_metadata.append((char)0);
-  }
-  iceserv_metadata.prepend((char)(iceserv_metadata.length()/16));
-  //  printf("Metadata: %s\n",(const char *)e->field(MetaEvent::StreamTitle).toString().toUtf8());
+  SetMetadata(e->field(MetaEvent::StreamTitle).toString());
 }
 
 
@@ -289,6 +307,20 @@ int64_t IceStreamConnector::writeDataConnector(int frames,
 }
 
 
+void IceStreamConnector::SetMetadata(const QString &title)
+{
+  //
+  // This has to be the lamest metadata protocol in existence.
+  // Codecs have ancillary channels for this sort of thing!  ** BAD LLAMA!! **
+  //
+  iceserv_metadata=("StreamTitle='"+title+"';").toUtf8();
+  while((iceserv_metadata.length()%16)!=0) {
+    iceserv_metadata.append((char)0);
+  }
+  iceserv_metadata.prepend((char)(iceserv_metadata.length()/16));
+}
+
+
 void IceStreamConnector::SendHeader(IceStream *strm,const QString &hdr) const
 {
   strm->socket()->write((hdr+"\r\n").toUtf8());
@@ -299,26 +331,41 @@ void IceStreamConnector::ProcessHeader(IceStream *strm)
 {
   QStringList f0;
   QStringList f1;
+  QStringList hdrs;
   bool ok=false;
 
-  if(strm->mountpoint().isEmpty()) {
+  if(strm->type()==IceStream::New) {
+  printf("ACCUM: %s\n",(const char *)strm->accum.toUtf8());
     f0=strm->accum.split(" ",QString::SkipEmptyParts);
     if(f0.size()==3) {
       if(f0.at(0)=="GET") {
 	f1=f0.at(2).split("/");
 	if((f1.size()==2)&&(f1.at(0)=="HTTP")) {
-	  strm->setMountpoint(f0.at(1));
-	  ok=true;
+	  QUrl url(f0.at(1));
+	  if(url.path()==serverMountpoint()) {
+	    strm->setType(IceStream::Player);
+	    ok=true;
+	  }
+	  if(url.path()=="/admin/metadata") {
+	    if(("/"+url.queryItemValue("mount")==serverMountpoint())&&
+	       (url.queryItemValue("mode")=="updinfo")) {
+	      strm->setType(IceStream::Updinfo);
+	      strm->setStreamTitle(url.queryItemValue("song"));
+	      //	      printf("SONG: %s\n",(const char *)url.queryItemValue("song").toUtf8());
+	      ok=true;
+	    }
+	  }
 	}
       }
     }
     if(!ok) {
-      DenyConnection(strm,400,"Malformed request");
+      CloseConnection(strm,400,"Malformed request");
     }
   }
   else {
     if(strm->accum.isEmpty()) {
-      if(strm->mountpoint()==serverMountpoint()) {
+      switch(strm->type()) {
+      case IceStream::Player:
 	//
 	// Send Headers
 	//
@@ -345,9 +392,22 @@ void IceStreamConnector::ProcessHeader(IceStream *strm)
 	SendHeader(strm);
 
 	strm->setNegotiated();
-      }
-      else {
-	DenyConnection(strm,404,"No such stream");
+	break;
+
+      case IceStream::Updinfo:
+	if(strm->isAuthenticated()) {
+	  SetMetadata(strm->streamTitle());
+	  CloseConnection(strm,200,"OK");
+	}
+	else {
+	  hdrs.push_back("WWW-Authenticate: Basic realm="+
+			 serverMountpoint().right(serverMountpoint().length()-1));
+	  CloseConnection(strm,401,"Unauthorized",hdrs);
+	}
+	break;
+	
+      default:
+	CloseConnection(strm,404,"Not Found");
       }
     }
     else {
@@ -358,23 +418,34 @@ void IceStreamConnector::ProcessHeader(IceStream *strm)
 	  strm->setMetadataEnabled(state);
 	}
       }
+      if((f0.size()==2)&&(f0.at(0).trimmed()=="Authorization")) {
+	f1=f0.at(1).trimmed().split(" ");
+	if((f1.size()==2)&&(f1.at(0).toLower()=="basic")) {
+	  strm->setAuthenticated(f1.at(1)==serverBasicAuthString());
+	}
+      }
     }
   }
 }
 
 
-void IceStreamConnector::DenyConnection(IceStream *strm,int code,
-					const QString &str)
+void IceStreamConnector::CloseConnection(IceStream *strm,int code,
+					 const QString &str,
+					 const QStringList &hdrs)
 {
+  QString msg=QString().sprintf("%d ",code)+str+"\r\n";
   SendHeader(strm,QString().sprintf("HTTP/1.0 %d ",code)+str);
-  SendHeader(strm,"Server: Icecast 2.4.0");
+  SendHeader(strm,"Server: GlassCoder "+QString(VERSION));
   SendHeader(strm,"Date: "+
 	     QDateTime::currentDateTime().addSecs(4*3600).
 	     toString("ddd, dd MM yyyy hh:mm:ss GMT").toUtf8());
   SendHeader(strm,
-	     QString().sprintf("Content-Length: %d",str.toUtf8().length()));
+	     QString().sprintf("Content-Length: %d",msg.toUtf8().length()));
+  for(int i=0;i<hdrs.size();i++) {
+    SendHeader(strm,hdrs.at(i));
+  }
   SendHeader(strm);
-  strm->socket()->write(str.toUtf8());
+  strm->socket()->write(msg.toUtf8());
   strm->socket()->disconnectFromHost();
   iceserv_garbage_timer->start(1);
 }
