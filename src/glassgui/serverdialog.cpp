@@ -297,10 +297,6 @@ void ServerDialog::serverTypeChanged(int index)
   case Connector::LastServer:
     break;
   }
-  srv_server_username_label->setEnabled(authfields);
-  srv_server_username_edit->setEnabled(authfields);
-  srv_server_password_label->setEnabled(authfields);
-  srv_server_password_edit->setEnabled(authfields);
   srv_server_script_up_label->setEnabled(authfields);
   srv_server_script_up_edit->setEnabled(authfields);
   srv_server_script_down_label->setEnabled(authfields);

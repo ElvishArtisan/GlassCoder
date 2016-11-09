@@ -645,3 +645,7 @@
 	* Implemented the 'mount' administrative interface in the IceStreamer
 	server type in 'src/glasscoder/icestreamconnector.cpp' and
 	'src/glasscoder/icestreamconnector.h'.
+2016-11-09 Fred Gleason <fredg@paravelsystems.com>
+	* Updated the glasscoder(1) man page.
+	* Enabled the 'Username' and 'Password fields in the 'Server Settings'
+	dialog for the 'IceStreamer' server type.

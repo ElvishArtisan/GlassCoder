@@ -431,9 +431,7 @@
       </term>
       <listitem>
 	<para>
-	  The authentication parameters to use.  This parameter is ignored
-          when used with a <option>--server-type</option> of
-	  <userinput>IceStreamer</userinput>, and has no default.
+	  The authentication parameters to use. This parameter has no default.
 	</para>
       </listitem>
     </varlistentry>
