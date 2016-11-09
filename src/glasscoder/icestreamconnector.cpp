@@ -260,6 +260,18 @@ void IceStreamConnector::garbageData()
 }
 
 
+void IceStreamConnector::startStopping()
+{
+  for(unsigned i=0;i<iceserv_streams.size();i++) {
+    delete iceserv_streams.at(i);
+    iceserv_streams[i]=NULL;
+  }
+  iceserv_streams.clear();
+
+  emit stopped();
+}
+
+
 void IceStreamConnector::connectToHostConnector(const QString &hostname,
 						uint16_t port)
 {

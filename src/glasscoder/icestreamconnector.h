@@ -88,6 +88,7 @@ class IceStreamConnector : public Connector
   void garbageData();
 
  protected:
+  void startStopping();
   void connectToHostConnector(const QString &hostname,uint16_t port);
   void disconnectFromHostConnector();
   int64_t writeDataConnector(int frames,const unsigned char *data,int64_t len);
