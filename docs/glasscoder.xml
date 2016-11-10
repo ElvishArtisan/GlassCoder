@@ -550,6 +550,17 @@
 
 	    <varlistentry>
 	      <term>
+		<userinput>IceOut</userinput>
+	      </term>
+	      <listitem>
+		<para>
+		  Output an Icecast-compatible stream on standard output.
+		</para>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	      <term>
 		<userinput>IceStreamer</userinput>
 	      </term>
 	      <listitem>

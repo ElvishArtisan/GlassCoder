@@ -42,7 +42,7 @@ class Connector : public QObject
   enum ServerType {HlsServer=0,Icecast2Server=1,
 		   Shoutcast1Server=2,Shoutcast2Server=3,FileServer=4,
 		   FileArchiveServer=5,IcecastStreamerServer=6,
-		   LastServer=7};
+		   IcecastOutServer=7,LastServer=8};
   Connector(QObject *parent=0);
   ~Connector();
   virtual Connector::ServerType serverType() const=0;

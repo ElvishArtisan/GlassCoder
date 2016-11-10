@@ -442,6 +442,10 @@ QString Connector::serverTypeText(Connector::ServerType type)
     ret=tr("Integrated Icecast Server");
     break;
 
+  case Connector::IcecastOutServer:
+    ret=tr("Icecast Direct Stream");
+    break;
+
   case Connector::LastServer:
     break;
   }
@@ -481,6 +485,10 @@ QString Connector::optionKeyword(Connector::ServerType type)
 
   case Connector::IcecastStreamerServer:
     ret="icestreamer";
+    break;
+
+  case Connector::IcecastOutServer:
+    ret="iceout";
     break;
 
   case Connector::LastServer:
