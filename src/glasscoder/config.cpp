@@ -40,6 +40,7 @@ Config::Config()
   server_type=Connector::Icecast2Server;
   server_script_down="";
   server_script_up="";
+  server_pipe="";
   stream_aim="";
   stream_genre="";
   stream_icq="";
@@ -199,6 +200,10 @@ Config::Config()
 			      (const char *)cmd->value(i).toAscii()));
 	exit(256);
       }
+    }
+    if(cmd->key(i)=="--server-pipe") {
+      server_pipe=cmd->value(i);
+      cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--stream-description") {
       stream_description=cmd->value(i);
@@ -386,6 +391,12 @@ QUrl Config::serverUrl() const
 QString Config::serverUsername() const
 {
   return server_username;
+}
+
+
+QString Config::serverPipe() const
+{
+  return server_pipe;
 }
 
 

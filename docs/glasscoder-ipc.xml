@@ -131,7 +131,19 @@
   </para>
   </refsect1>
 
-
+  <refsect1 id='http-control'><title>Proxy Connections</title>
+  <para>
+    It is possible to implement proxy connectors for
+    <command>glasscoder</command><manvolnum>1</manvolnum>'s IceStreamer server
+    through use of the <option>--server-pipe</option> command switch. This
+    switch will create a UNIX socket which can be used to pipe in open
+    descriptors for player connections by means of ancilliary socket messages
+    with the <userinput>SCM_RIGHTS</userinput> message type. See the
+    <command>unix</command><manvolnum>7</manvolnum> man page for more
+    information. A fully worked-out example is also available in the
+    GlassCoder source package in the 'src/tests/' subdirectory.
+  </para>
+  </refsect1>
 
   <refsect1 id='author'><title>Author</title>
   <para>
@@ -145,7 +157,16 @@
       <refentrytitle>glasscoder</refentrytitle><manvolnum>1</manvolnum>
       </citerefentry>,
       <citerefentry>
+	<refentrytitle>cmsg</refentrytitle><manvolnum>3</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+	<refentrytitle>sendmsg</refentrytitle><manvolnum>2</manvolnum>
+      </citerefentry>,
+      <citerefentry>
 	<refentrytitle>syslog</refentrytitle><manvolnum>3</manvolnum>
+      </citerefentry>,
+      <citerefentry>
+	<refentrytitle>unix</refentrytitle><manvolnum>7</manvolnum>
       </citerefentry>
   </para>
   </refsect1>

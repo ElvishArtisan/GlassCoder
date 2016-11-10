@@ -438,6 +438,23 @@
 
     <varlistentry>
       <term>
+	<option>--server-pipe=</option><replaceable>pathname</replaceable>
+      </term>
+      <listitem>
+	<para>
+	  Location to create a UNIX socket for piping connection
+	  socket descriptors. Useful for implementing proxy connectors for the
+	  IceStreamer server. For further details about this feature, see the
+	  Proxy Connections section of the
+	  <command>glasscoder-ipc</command><manvolnum>7</manvolnum> man page.
+	  The default is to create no UNIX socket. This setting is used only
+	  by the IceStreamer server. 
+	</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>
 	<option>--server-script-down=</option><replaceable>cmd</replaceable>
       </term>
       <listitem>

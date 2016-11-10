@@ -18,6 +18,8 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <errno.h>
+
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QHostAddress>
@@ -25,9 +27,10 @@
 
 #include "icestreamconnector.h"
 
-IceStream::IceStream(QTcpSocket *sock)
+IceStream::IceStream(QTcpSocket *sock,IceStream::Type type)
 {
   ice_socket=sock;
+  ice_type=type;
   ice_is_negotiated=false;
   ice_is_authenticated=false;
   ice_type=IceStream::New;
@@ -137,6 +140,7 @@ IceStreamConnector::IceStreamConnector(QObject *parent)
   : Connector(parent)
 {
   iceserv_metadata=QString().sprintf("%cStreamTitle=''; ",1).toUtf8();
+  iceserv_socket_server=NULL;
 
   iceserv_server=new QTcpServer(this);
   connect(iceserv_server,SIGNAL(newConnection()),
@@ -158,6 +162,9 @@ IceStreamConnector::IceStreamConnector(QObject *parent)
 
 IceStreamConnector::~IceStreamConnector()
 {
+  if(iceserv_socket_server!=NULL) {
+    delete iceserv_socket_server;
+  }
   delete iceserv_garbage_timer;
   delete iceserv_readyread_mapper;
   for(unsigned i=0;i<iceserv_streams.size();i++) {
@@ -186,26 +193,29 @@ void IceStreamConnector::newConnectionData()
   //
   // Accept Connection
   //
-  int id=-1;
   QTcpSocket *sock=iceserv_server->nextPendingConnection();
+  int id=GetFreeStreamId();
+  iceserv_streams[id]=new IceStream(sock);
   connect(sock,SIGNAL(disconnected()),this,SLOT(disconnectedData()));
-  for(unsigned i=0;i<iceserv_streams.size();i++) {
-    if(iceserv_streams.at(i)==NULL) {
-      iceserv_streams[i]=new IceStream(sock);
-      id=i;
-      break;
-    }
-  }
-  if(id<0) {
-    iceserv_streams.push_back(new IceStream(sock));
-    id=iceserv_streams.size()-1;
-  }
   iceserv_readyread_mapper->setMapping(sock,id);
   connect(sock,SIGNAL(readyRead()),iceserv_readyread_mapper,SLOT(map()));
 
   iceserv_timeout_mapper->setMapping(iceserv_streams.at(id)->timeoutTimer(),id);
   connect(iceserv_streams.at(id)->timeoutTimer(),SIGNAL(timeout()),
 	  iceserv_timeout_mapper,SLOT(map()));
+}
+
+
+void IceStreamConnector::newPipeConnectionData()
+{
+  //
+  // Accept Connection
+  //
+  QTcpSocket *sock=iceserv_socket_server->nextPendingConnection();
+  int id=GetFreeStreamId();
+  iceserv_streams[id]=new IceStream(sock,IceStream::Player);
+  connect(sock,SIGNAL(disconnected()),this,SLOT(disconnectedData()));
+  StartStream(iceserv_streams[id]);
 }
 
 
@@ -262,6 +272,10 @@ void IceStreamConnector::garbageData()
 
 void IceStreamConnector::startStopping()
 {
+  if(iceserv_socket_server!=NULL) {
+    delete iceserv_socket_server;
+    iceserv_socket_server=NULL;
+  }
   for(unsigned i=0;i<iceserv_streams.size();i++) {
     delete iceserv_streams.at(i);
     iceserv_streams[i]=NULL;
@@ -276,9 +290,20 @@ void IceStreamConnector::connectToHostConnector(const QString &hostname,
 						uint16_t port)
 {
   QHostAddress addr;
+
+  if(!serverPipe().isEmpty()) {
+    iceserv_socket_server=new SocketServer(this);
+    connect(iceserv_socket_server,SIGNAL(newConnection()),
+	    this,SLOT(newPipeConnectionData()));
+    if(!iceserv_socket_server->listen(serverPipe())) {
+      fprintf(stderr,"glasscoder: unable to create server pipe [%s]\n",
+	      strerror(errno));
+      exit(256);
+    }
+  }
   if(!addr.setAddress(hostname)) {
-    setConnected(false);
-    return;
+    fprintf(stderr,"glasscoder: invalid hostname in URL\n");
+    exit(256);
   }
   setConnected(iceserv_server->listen(addr,port));
 }
@@ -377,6 +402,8 @@ void IceStreamConnector::ProcessHeader(IceStream *strm)
     if(strm->accum.isEmpty()) {
       switch(strm->type()) {
       case IceStream::Player:
+	StartStream(strm);
+	/*
 	//
 	// Send Headers
 	//
@@ -403,6 +430,7 @@ void IceStreamConnector::ProcessHeader(IceStream *strm)
 	SendHeader(strm);
 
 	strm->setNegotiated();
+	*/
 	break;
 
       case IceStream::Updinfo:
@@ -459,4 +487,47 @@ void IceStreamConnector::CloseConnection(IceStream *strm,int code,
   strm->socket()->write(msg.toUtf8());
   strm->socket()->disconnectFromHost();
   iceserv_garbage_timer->start(1);
+}
+
+
+void IceStreamConnector::StartStream(IceStream *strm)
+{
+  //
+  // Send Headers
+  //
+  SendHeader(strm,"HTTP/1.0 200 OK");
+  SendHeader(strm,"Server: Icecast 2.4.0");
+  SendHeader(strm,"Date: "+
+	     QDateTime::currentDateTime().addSecs(4*3600).
+	     toString("ddd, dd MM yyyy hh:mm:ss GMT").toUtf8());
+  SendHeader(strm,"Content-Type: "+contentType());
+  SendHeader(strm,"Cache-Control: no-cache");
+  SendHeader(strm,"Pragma: no-cache");
+  SendHeader(strm,"icy-br: "+QString().sprintf("%u",audioBitrate()));
+  SendHeader(strm,"ice-audio-info: "+
+	     QString().sprintf("bitrate=%u",audioBitrate()));
+  SendHeader(strm,"icy-description: "+streamDescription());
+  SendHeader(strm,"icy-genre: "+streamGenre());
+  SendHeader(strm,"icy-name: "+streamName());
+  SendHeader(strm,"icy-pub: "+QString().sprintf("%u",streamPublic()));
+  SendHeader(strm,"icy-url: "+streamUrl());
+  if(strm->metadataEnabled()) {
+    SendHeader(strm,"icy-metaint: "+
+	       QString().sprintf("%u",ICESTREAM_METADATA_INTERVAL));
+  }
+  SendHeader(strm);
+
+  strm->setNegotiated();
+}
+
+
+int IceStreamConnector::GetFreeStreamId()
+{
+  for(unsigned i=0;i<iceserv_streams.size();i++) {
+    if(iceserv_streams.at(i)==NULL) {
+      return i;
+    }
+  }
+  iceserv_streams.push_back(NULL);
+  return iceserv_streams.size()-1;
 }

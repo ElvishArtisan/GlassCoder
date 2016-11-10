@@ -311,6 +311,7 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
   }
   conn->setServerUsername(sir_config->serverUsername());
   conn->setServerPassword(sir_config->serverPassword());
+  conn->setServerPipe(sir_config->serverPipe());
   if(is_top) {
     conn->setAudioBitrates(sir_config->audioBitrates());
     conn->setFormatIdentifier(sir_codecs[0]->formatIdentifier());

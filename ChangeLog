@@ -653,3 +653,6 @@
 	* Fixed a bug in 'src/glasscoder/icestreamconnector.cpp' and
 	'src/glasscoder/icestreamconnector.h' that threw a segfault when
 	stopping with active client connections.
+2016-11-10 Fred Gleason <fredg@paravelsystems.com>
+	* Added a pipe_connect(1) test harness in 'src/tests/'.
+	* Added a '--server-pipe=' parameter to glasscoder(1).

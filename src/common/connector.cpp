@@ -129,6 +129,18 @@ void Connector::setServerMountpoint(const QString &str)
 }
 
 
+QString Connector::serverPipe() const
+{
+  return conn_server_pipe;
+}
+
+
+void Connector::setServerPipe(const QString &str)
+{
+  conn_server_pipe=str;
+}
+
+
 QString Connector::contentType() const
 {
   return conn_content_type;

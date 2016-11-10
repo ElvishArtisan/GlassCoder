@@ -58,6 +58,7 @@ dist_glasscoder_SOURCES = aaccodec.cpp aaccodec.h\
                           pcm16codec.cpp pcm16codec.h\
                           opuscodec.cpp opuscodec.h\
                           profile.cpp profile.h\
+                          socketserver.cpp socketserver.h\
                           vorbiscodec.cpp vorbiscodec.h
 
 nodist_glasscoder_SOURCES = asihpi.cpp asihpi.h\
@@ -87,6 +88,7 @@ nodist_glasscoder_SOURCES = asihpi.cpp asihpi.h\
                             moc_mpegl3codec.cpp\
                             moc_opuscodec.cpp\
                             moc_pcm16codec.cpp\
+                            moc_socketserver.cpp\
                             moc_vorbiscodec.cpp\
                             ringbuffer.cpp ringbuffer.h
 

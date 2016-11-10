@@ -53,6 +53,8 @@ class Connector : public QObject
   QString serverBasicAuthString() const;
   QString serverMountpoint() const;
   void setServerMountpoint(const QString &str);
+  QString serverPipe() const;
+  void setServerPipe(const QString &str);
   QString contentType() const;
   void setContentType(const QString &str);
   unsigned audioChannels() const;
@@ -140,6 +142,7 @@ class Connector : public QObject
   QString conn_server_username;
   QString conn_server_password;
   QString conn_server_mountpoint;
+  QString conn_server_pipe;
   QString conn_content_type;
   unsigned conn_audio_channels;
   unsigned conn_audio_samplerate;

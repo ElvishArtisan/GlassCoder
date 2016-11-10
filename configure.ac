@@ -276,6 +276,7 @@ AC_CONFIG_FILES([ \
     src/common/Makefile \
     src/glasscoder/Makefile \
     src/glassgui/Makefile \
+    src/tests/Makefile \
     src/Makefile \
     xdg/Makefile \
     glasscoder.spec \
@@ -285,92 +286,9 @@ AC_OUTPUT()
 #
 # Link Common Elements
 #
-rm -f src/glasscoder/asihpi.cpp
-ln -s ../../src/common/asihpi.cpp src/glasscoder/asihpi.cpp
-rm -f src/glasscoder/asihpi.h
-ln -s ../../src/common/asihpi.h src/glasscoder/asihpi.h
-
-rm -f src/glasscoder/audiodevice.cpp
-ln -s ../../src/common/audiodevice.cpp src/glasscoder/audiodevice.cpp
-rm -f src/glasscoder/audiodevice.h
-ln -s ../../src/common/audiodevice.h src/glasscoder/audiodevice.h
-
-rm -f src/glasscoder/cmdswitch.cpp
-ln -s ../../src/common/cmdswitch.cpp src/glasscoder/cmdswitch.cpp
-rm -f src/glasscoder/cmdswitch.h
-ln -s ../../src/common/cmdswitch.h src/glasscoder/cmdswitch.h
-
-rm -f src/glasscoder/codec.cpp
-ln -s ../../src/common/codec.cpp src/glasscoder/codec.cpp
-rm -f src/glasscoder/codec.h
-ln -s ../../src/common/codec.h src/glasscoder/codec.h
-
-rm -f src/glasscoder/connector.cpp
-ln -s ../../src/common/connector.cpp src/glasscoder/connector.cpp
-rm -f src/glasscoder/connector.h
-ln -s ../../src/common/connector.h src/glasscoder/connector.h
-
-rm -f src/glasscoder/logging.cpp
-ln -s ../../src/common/logging.cpp src/glasscoder/logging.cpp
-rm -f src/glasscoder/logging.h
-ln -s ../../src/common/logging.h src/glasscoder/logging.h
-
-rm -f src/glasscoder/metaevent.cpp
-ln -s ../../src/common/metaevent.cpp src/glasscoder/metaevent.cpp
-rm -f src/glasscoder/metaevent.h
-ln -s ../../src/common/metaevent.h src/glasscoder/metaevent.h
-
-rm -f src/glasscoder/ringbuffer.cpp
-ln -s ../../src/common/ringbuffer.cpp src/glasscoder/ringbuffer.cpp
-rm -f src/glasscoder/ringbuffer.h
-ln -s ../../src/common/ringbuffer.h src/glasscoder/ringbuffer.h
-
-rm -f src/glasscoder/glasslimits.h
-ln -s ../../src/common/glasslimits.h src/glasscoder/glasslimits.h
-
-
-rm -f src/glassgui/asihpi.cpp
-ln -s ../../src/common/asihpi.cpp src/glassgui/asihpi.cpp
-rm -f src/glassgui/asihpi.h
-ln -s ../../src/common/asihpi.h src/glassgui/asihpi.h
-
-rm -f src/glassgui/audiodevice.cpp
-ln -s ../../src/common/audiodevice.cpp src/glassgui/audiodevice.cpp
-rm -f src/glassgui/audiodevice.h
-ln -s ../../src/common/audiodevice.h src/glassgui/audiodevice.h
-
-rm -f src/glassgui/cmdswitch.cpp
-ln -s ../../src/common/cmdswitch.cpp src/glassgui/cmdswitch.cpp
-rm -f src/glassgui/cmdswitch.h
-ln -s ../../src/common/cmdswitch.h src/glassgui/cmdswitch.h
-
-rm -f src/glassgui/codec.cpp
-ln -s ../../src/common/codec.cpp src/glassgui/codec.cpp
-rm -f src/glassgui/codec.h
-ln -s ../../src/common/codec.h src/glassgui/codec.h
-
-rm -f src/glassgui/connector.cpp
-ln -s ../../src/common/connector.cpp src/glassgui/connector.cpp
-rm -f src/glassgui/connector.h
-ln -s ../../src/common/connector.h src/glassgui/connector.h
-
-rm -f src/glassgui/logging.cpp
-ln -s ../../src/common/logging.cpp src/glassgui/logging.cpp
-rm -f src/glassgui/logging.h
-ln -s ../../src/common/logging.h src/glassgui/logging.h
-
-rm -f src/glassgui/metaevent.cpp
-ln -s ../../src/common/metaevent.cpp src/glassgui/metaevent.cpp
-rm -f src/glassgui/metaevent.h
-ln -s ../../src/common/metaevent.h src/glassgui/metaevent.h
-
-rm -f src/glassgui/ringbuffer.cpp
-ln -s ../../src/common/ringbuffer.cpp src/glassgui/ringbuffer.cpp
-rm -f src/glassgui/ringbuffer.h
-ln -s ../../src/common/ringbuffer.h src/glassgui/ringbuffer.h
-
-rm -f src/glassgui/glasslimits.h
-ln -s ../../src/common/glasslimits.h src/glassgui/glasslimits.h
+./link_common.sh glasscoder
+./link_common.sh glassgui
+./link_common.sh tests
 
 
 AC_MSG_NOTICE()

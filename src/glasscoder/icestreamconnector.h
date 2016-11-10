@@ -29,6 +29,7 @@
 #include <QTimer>
 
 #include "connector.h"
+#include "socketserver.h"
 
 #define ICESTREAM_METADATA_INTERVAL 16000
 #define ICESTREAM_CONNECTION_TIMEOUT 10000
@@ -37,7 +38,7 @@ class IceStream
 {
  public:
   enum Type {New=0,Player=1,Updinfo=2};
-  IceStream(QTcpSocket *sock);
+  IceStream(QTcpSocket *sock,Type type=New);
   ~IceStream();
   QTcpSocket *socket() const;
   QTimer *timeoutTimer() const;
@@ -82,6 +83,7 @@ class IceStreamConnector : public Connector
 
  private slots:
   void newConnectionData();
+  void newPipeConnectionData();
   void readyReadData(int id);
   void timeoutData(int id);
   void disconnectedData();
@@ -99,12 +101,15 @@ class IceStreamConnector : public Connector
   void ProcessHeader(IceStream *strm);
   void CloseConnection(IceStream *strm,int code,const QString &str,
 		       const QStringList &hdrs=QStringList());
+  void StartStream(IceStream *strm);
+  int GetFreeStreamId();
   QTcpServer *iceserv_server;
   std::vector<IceStream *> iceserv_streams;
   QSignalMapper *iceserv_readyread_mapper;
   QSignalMapper *iceserv_timeout_mapper;
   QTimer *iceserv_garbage_timer;
   QByteArray iceserv_metadata;
+  SocketServer *iceserv_socket_server;
 };
 
 

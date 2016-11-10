@@ -43,6 +43,7 @@ EXTRA_DIST = glasscoder.spec.in\
              autogen.sh\
              get_distro.sh\
              get_target.sh\
+             link_common.sh\
              PACKAGE_VERSION
 
 CLEANFILES = *~\

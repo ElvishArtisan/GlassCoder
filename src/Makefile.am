@@ -22,7 +22,8 @@
 
 SUBDIRS = common\
           glasscoder\
-          glassgui
+          glassgui\
+          tests
 
 CLEANFILES = *~\
              *.idb\

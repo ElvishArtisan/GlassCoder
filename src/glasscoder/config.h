@@ -49,6 +49,7 @@ class Config
   Connector::ServerType serverType() const;
   QUrl serverUrl() const;
   QString serverUsername() const;
+  QString serverPipe() const;
   QString streamAim() const;
   QString streamDescription() const;
   QString streamGenre() const;
@@ -88,6 +89,7 @@ class Config
   Connector::ServerType server_type;
   QUrl server_url;
   QString server_username;
+  QString server_pipe;
 
   //
   // Stream Arguments
