@@ -28,6 +28,7 @@
 Connector::Connector(QObject *parent)
   : QObject(parent)
 {
+  conn_server_exit_on_last=false;
   conn_server_username="source";
   conn_server_password="";
   conn_server_mountpoint="";
@@ -81,6 +82,18 @@ Connector::~Connector()
 {
   delete conn_stop_timer;
   delete conn_data_timer;
+}
+
+
+bool Connector::serverExitOnLast() const
+{
+  return conn_server_exit_on_last;
+}
+
+
+void Connector::setServerExitOnLast(bool state)
+{
+  conn_server_exit_on_last=state;
 }
 
 

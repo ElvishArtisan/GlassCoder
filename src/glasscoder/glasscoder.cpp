@@ -309,6 +309,7 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
   else {
     conn->setServerMountpoint(mntpt);
   }
+  conn->setServerExitOnLast(sir_config->serverExitOnLast());
   conn->setServerUsername(sir_config->serverUsername());
   conn->setServerPassword(sir_config->serverPassword());
   conn->setServerPipe(sir_config->serverPipe());

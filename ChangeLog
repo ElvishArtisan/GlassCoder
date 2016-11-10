@@ -656,3 +656,5 @@
 2016-11-10 Fred Gleason <fredg@paravelsystems.com>
 	* Added a pipe_connect(1) test harness in 'src/tests/'.
 	* Added a '--server-pipe=' parameter to glasscoder(1).
+2016-11-10 Fred Gleason <fredg@paravelsystems.com>
+	* Added a '--server-exit-on-last' parameter to glasscoder(1).

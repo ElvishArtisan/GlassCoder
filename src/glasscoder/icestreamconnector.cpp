@@ -19,6 +19,9 @@
 //
 
 #include <errno.h>
+#include <signal.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include <QCoreApplication>
 #include <QDateTime>
@@ -266,6 +269,14 @@ void IceStreamConnector::garbageData()
 	iceserv_streams[i]=NULL;
       }
     }
+  }
+  if(serverExitOnLast()) {
+    for(unsigned i=0;i<iceserv_streams.size();i++) {
+      if(iceserv_streams.at(i)!=NULL) {
+	return;
+      }
+    }
+    kill(getpid(),SIGTERM);
   }
 }
 

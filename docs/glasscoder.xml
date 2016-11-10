@@ -438,6 +438,18 @@
 
     <varlistentry>
       <term>
+	<option>--server-exit-on-last</option>
+      </term>
+      <listitem>
+	<para>
+	  Exit the program upon closure of the last player connection. This
+	  setting is used only by the IceStreamer server.
+	</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>
 	<option>--server-pipe=</option><replaceable>pathname</replaceable>
       </term>
       <listitem>

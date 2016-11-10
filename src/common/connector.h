@@ -46,6 +46,8 @@ class Connector : public QObject
   Connector(QObject *parent=0);
   ~Connector();
   virtual Connector::ServerType serverType() const=0;
+  bool serverExitOnLast() const;
+  void setServerExitOnLast(bool state);
   QString serverUsername() const;
   void setServerUsername(const QString &str);
   QString serverPassword() const;
@@ -139,6 +141,7 @@ class Connector : public QObject
   uint16_t hostPort() const;
 
  private:
+  bool conn_server_exit_on_last;
   QString conn_server_username;
   QString conn_server_password;
   QString conn_server_mountpoint;

@@ -43,6 +43,7 @@ class Config
   Codec::Type audioFormat() const;
   unsigned audioQuality() const;
   unsigned audioSamplerate() const;
+  bool serverExitOnLast() const;
   QString serverPassword() const;
   QString serverScriptDown() const;
   QString serverScriptUp() const;
@@ -83,6 +84,7 @@ class Config
   //
   // Server Arguments
   //
+  bool server_exit_on_last;
   QString server_password;
   QString server_script_down;
   QString server_script_up;

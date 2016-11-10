@@ -36,6 +36,7 @@ Config::Config()
   audio_format=Codec::TypeVorbis;
   audio_quality=-1.0;
   audio_samplerate=DEFAULT_AUDIO_SAMPLERATE;
+  server_exit_on_last=false;
   server_password="";
   server_type=Connector::Icecast2Server;
   server_script_down="";
@@ -168,6 +169,10 @@ Config::Config()
       else {
 	server_username=f0[0];
       }
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--server-exit-on-last") {
+      server_exit_on_last=true;
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--server-url") {
@@ -355,6 +360,12 @@ unsigned Config::audioQuality() const
 unsigned Config::audioSamplerate() const
 {
   return audio_samplerate;
+}
+
+
+bool Config::serverExitOnLast() const
+{
+  return server_exit_on_last;
 }
 
 
