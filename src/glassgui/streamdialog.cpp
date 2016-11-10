@@ -2,7 +2,7 @@
 //
 // Configuration dialog for stream metadata settings
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2016 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -241,6 +241,7 @@ void StreamDialog::setServerType(Connector::ServerType type)
     break;
 
   case Connector::Icecast2Server:
+  case Connector::IcecastOutServer:
     gui_stream_name_label->setEnabled(true);
     gui_stream_name_edit->setEnabled(true);
     gui_stream_description_label->setEnabled(true);

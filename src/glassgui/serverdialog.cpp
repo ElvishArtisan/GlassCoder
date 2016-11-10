@@ -287,6 +287,7 @@ void ServerDialog::serverTypeChanged(int index)
 
   case Connector::Shoutcast1Server:
   case Connector::Shoutcast2Server:
+  case Connector::IcecastOutServer:
   case Connector::Icecast2Server:
   case Connector::FileServer:
   case Connector::FileArchiveServer:
