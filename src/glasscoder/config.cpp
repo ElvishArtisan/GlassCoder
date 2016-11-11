@@ -293,7 +293,7 @@ Config::Config()
   //
   // Sanity Checks
   //
-  if(server_url.isEmpty()) {
+  if(Connector::requiresServerUrl(server_type)&&server_url.isEmpty()) {
     Log(LOG_ERR,"missing --server-url parameter");
     exit(256);
   }

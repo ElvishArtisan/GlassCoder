@@ -320,11 +320,17 @@ void IceStreamConnector::connectToHostConnector(const QString &hostname,
       exit(256);
     }
   }
-  if(!addr.setAddress(hostname)) {
-    fprintf(stderr,"glasscoder: invalid hostname in URL\n");
-    exit(256);
+  if(!hostname.isEmpty()) {
+    if(!addr.setAddress(hostname)) {
+      fprintf(stderr,"glasscoder: invalid interface address in URL\n");
+      exit(256);
+    }
+    if(!iceserv_server->listen(addr,port)) {
+      fprintf(stderr,"glasscoder: unable to bind TCP port %u\n",0xFFFF&port);
+      exit(256);
+    }
   }
-  setConnected(iceserv_server->listen(addr,port));
+  setConnected(true);
 }
 
 

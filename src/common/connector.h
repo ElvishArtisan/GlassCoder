@@ -100,6 +100,7 @@ class Connector : public QObject
   void setScriptDown(const QString &cmd);
   static QString serverTypeText(Connector::ServerType);
   static QString optionKeyword(Connector::ServerType type);
+  static bool requiresServerUrl(Connector::ServerType type);
   static Connector::ServerType serverType(const QString &key);
   static QString subMountpointName(const QString &mntpt,unsigned bitrate);
   static QString pathPart(const QString &fullpath);

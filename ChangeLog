@@ -670,3 +670,6 @@
 	* Added a 'Max Player Connections' control to the Server Settings
 	dialog in 'src/glasscoder/serverdialog.cpp' and
 	'src/glasscoder/serverdialog.h'.
+2016-11-11 Fred Gleason <fredg@paravelsystems.com>
+	* Relaxed the requirement that a --server-url parameter always be
+	provided for the IceStreamer server.

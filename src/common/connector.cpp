@@ -512,6 +512,31 @@ QString Connector::optionKeyword(Connector::ServerType type)
 }
 
 
+bool Connector::requiresServerUrl(Connector::ServerType type)
+{
+  bool ret=true;
+
+  switch(type) {
+  case Connector::HlsServer:
+  case Connector::Shoutcast1Server:
+  case Connector::Shoutcast2Server:
+  case Connector::Icecast2Server:
+  case Connector::FileServer:
+  case Connector::FileArchiveServer:
+  case Connector::LastServer:
+    ret=true;
+    break;
+
+  case Connector::IcecastStreamerServer:
+  case Connector::IcecastOutServer:
+    ret=false;
+    break;
+  }
+
+  return ret;
+}
+
+
 Connector::ServerType Connector::serverType(const QString &key)
 {
   Connector::ServerType ret=Connector::LastServer;
