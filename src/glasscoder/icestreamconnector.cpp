@@ -197,6 +197,10 @@ void IceStreamConnector::newConnectionData()
   // Accept Connection
   //
   QTcpSocket *sock=iceserv_server->nextPendingConnection();
+  if((int)iceserv_streams.size()==serverMaxConnections()) {
+    sock->disconnectFromHost();
+    return;
+  }
   int id=GetFreeStreamId();
   iceserv_streams[id]=new IceStream(sock);
   connect(sock,SIGNAL(disconnected()),this,SLOT(disconnectedData()));
@@ -215,6 +219,10 @@ void IceStreamConnector::newPipeConnectionData()
   // Accept Connection
   //
   QTcpSocket *sock=iceserv_socket_server->nextPendingConnection();
+  if((int)iceserv_streams.size()==serverMaxConnections()) {
+    sock->disconnectFromHost();
+    return;
+  }
   int id=GetFreeStreamId();
   iceserv_streams[id]=new IceStream(sock,IceStream::Player);
   connect(sock,SIGNAL(disconnected()),this,SLOT(disconnectedData()));

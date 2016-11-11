@@ -37,6 +37,7 @@ Config::Config()
   audio_quality=-1.0;
   audio_samplerate=DEFAULT_AUDIO_SAMPLERATE;
   server_exit_on_last=false;
+  server_max_connections=-1;
   server_password="";
   server_type=Connector::Icecast2Server;
   server_script_down="";
@@ -173,6 +174,14 @@ Config::Config()
     }
     if(cmd->key(i)=="--server-exit-on-last") {
       server_exit_on_last=true;
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--server-max-connections") {
+      server_max_connections=cmd->value(i).toInt(&ok);
+      if((!ok)||(server_max_connections<0)) {
+	Log(LOG_ERR,"invalid argument for --server-max-connections");
+	exit(256);
+      }
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--server-url") {
@@ -366,6 +375,12 @@ unsigned Config::audioSamplerate() const
 bool Config::serverExitOnLast() const
 {
   return server_exit_on_last;
+}
+
+
+int Config::serverMaxConnections() const
+{
+  return server_max_connections;
 }
 
 

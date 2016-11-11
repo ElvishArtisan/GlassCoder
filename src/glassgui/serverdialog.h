@@ -76,6 +76,8 @@ class ServerDialog : public QDialog
   QLineEdit *srv_server_script_down_edit;
   QLabel *srv_server_metadata_port_label;
   QSpinBox *srv_server_metadata_port_spin;
+  QLabel *srv_server_maxconns_label;
+  QSpinBox *srv_server_maxconns_spin;
 
   QPushButton *srv_close_button;
 };

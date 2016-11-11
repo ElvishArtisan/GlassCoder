@@ -665,3 +665,8 @@
 2016-11-11 Fred Gleason <fredg@paravelsystems.com>
 	* Removed HTTP negotiation parameters from the Icecast headers of
 	the 'IceOut' server type in 'src/glasscoder/iceoutconnector.cpp'.
+2016-11-11 Fred Gleason <fredg@paravelsystems.com>
+	* Added a '--server-max-connections' parameter to glasscoder(1).
+	* Added a 'Max Player Connections' control to the Server Settings
+	dialog in 'src/glasscoder/serverdialog.cpp' and
+	'src/glasscoder/serverdialog.h'.

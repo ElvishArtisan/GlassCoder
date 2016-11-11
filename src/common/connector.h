@@ -48,6 +48,8 @@ class Connector : public QObject
   virtual Connector::ServerType serverType() const=0;
   bool serverExitOnLast() const;
   void setServerExitOnLast(bool state);
+  int serverMaxConnections() const;
+  void setServerMaxConnections(int max);
   QString serverUsername() const;
   void setServerUsername(const QString &str);
   QString serverPassword() const;
@@ -144,6 +146,7 @@ class Connector : public QObject
   bool conn_server_exit_on_last;
   QString conn_server_username;
   QString conn_server_password;
+  int conn_server_max_connections;
   QString conn_server_mountpoint;
   QString conn_server_pipe;
   QString conn_content_type;

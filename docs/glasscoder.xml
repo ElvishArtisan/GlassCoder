@@ -450,6 +450,20 @@
 
     <varlistentry>
       <term>
+	<option>--server-max-connections=</option><replaceable>conns</replaceable>
+      </term>
+      <listitem>
+	<para>
+	  Allow a maximum of <replaceable>conns</replaceable> simultaneous
+	  player connections. Players beyond this maximum attempting to
+	  connect will receive an immediate TCP disconnect before the HTTP
+	  handshake. This setting is used only by the IceStreamer server.
+	</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>
 	<option>--server-pipe=</option><replaceable>pathname</replaceable>
       </term>
       <listitem>

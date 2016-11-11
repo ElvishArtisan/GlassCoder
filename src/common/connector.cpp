@@ -29,6 +29,7 @@ Connector::Connector(QObject *parent)
   : QObject(parent)
 {
   conn_server_exit_on_last=false;
+  conn_server_max_connections=-1;
   conn_server_username="source";
   conn_server_password="";
   conn_server_mountpoint="";
@@ -94,6 +95,18 @@ bool Connector::serverExitOnLast() const
 void Connector::setServerExitOnLast(bool state)
 {
   conn_server_exit_on_last=state;
+}
+
+
+int Connector::serverMaxConnections() const
+{
+  return conn_server_max_connections;
+}
+
+
+void Connector::setServerMaxConnections(int max)
+{
+  conn_server_max_connections=max;
 }
 
 

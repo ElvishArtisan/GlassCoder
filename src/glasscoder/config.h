@@ -44,6 +44,7 @@ class Config
   unsigned audioQuality() const;
   unsigned audioSamplerate() const;
   bool serverExitOnLast() const;
+  int serverMaxConnections() const;
   QString serverPassword() const;
   QString serverScriptDown() const;
   QString serverScriptUp() const;
@@ -85,6 +86,7 @@ class Config
   // Server Arguments
   //
   bool server_exit_on_last;
+  int server_max_connections;
   QString server_password;
   QString server_script_down;
   QString server_script_up;

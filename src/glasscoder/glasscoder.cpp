@@ -312,6 +312,7 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
   conn->setServerExitOnLast(sir_config->serverExitOnLast());
   conn->setServerUsername(sir_config->serverUsername());
   conn->setServerPassword(sir_config->serverPassword());
+  conn->setServerMaxConnections(sir_config->serverMaxConnections());
   conn->setServerPipe(sir_config->serverPipe());
   if(is_top) {
     conn->setAudioBitrates(sir_config->audioBitrates());
