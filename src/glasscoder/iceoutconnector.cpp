@@ -86,14 +86,7 @@ void IceOutConnector::StartStream()
   //
   // Send Headers
   //
-  SendHeader("HTTP/1.0 200 OK");
-  SendHeader("Server: Icecast 2.4.0");
-  SendHeader("Date: "+
-	     QDateTime::currentDateTime().addSecs(4*3600).
-	     toString("ddd, dd MM yyyy hh:mm:ss GMT").toUtf8());
   SendHeader("Content-Type: "+contentType());
-  SendHeader("Cache-Control: no-cache");
-  SendHeader("Pragma: no-cache");
   SendHeader("icy-br: "+QString().sprintf("%u",audioBitrate()));
   SendHeader("ice-audio-info: "+
 	     QString().sprintf("bitrate=%u",audioBitrate()));

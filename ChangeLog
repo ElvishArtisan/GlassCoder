@@ -662,3 +662,6 @@
 	* Added an 'iceout' server connector in
 	 'src/glasscoder/iceoutconnector.cpp' and
 	 'src/glasscoder/iceoutconnector.h'.
+2016-11-11 Fred Gleason <fredg@paravelsystems.com>
+	* Removed HTTP negotiation parameters from the Icecast headers of
+	the 'IceOut' server type in 'src/glasscoder/iceoutconnector.cpp'.
