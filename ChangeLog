@@ -673,3 +673,5 @@
 2016-11-11 Fred Gleason <fredg@paravelsystems.com>
 	* Relaxed the requirement that a --server-url parameter always be
 	provided for the IceStreamer server.
+2016-11-14 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.9.17.
