@@ -90,6 +90,7 @@ void IcyConnector::sendMetadata(MetaEvent *e)
 void IcyConnector::connectToHostConnector(const QString &hostname,uint16_t port)
 {
   icy_socket->connectToHost(hostname,port+1);
+  emit unmuteRequested();
 }
 
 

@@ -137,6 +137,7 @@ void FileArchiveConnector::connectToHostConnector(const QString &hostname,
     archive_sf.format=SF_FORMAT_WAV|SF_FORMAT_PCM_16;
   }
   rotateFile();
+  emit unmuteRequested();
 }
 
 

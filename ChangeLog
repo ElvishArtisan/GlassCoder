@@ -675,3 +675,6 @@
 	provided for the IceStreamer server.
 2016-11-14 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.9.17.
+2016-11-15 Fred Gleason <fredg@paravelsystems.com>
+	* Added a '--server-start-connections=' parameter to
+	glasscoder(1).

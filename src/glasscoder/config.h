@@ -48,6 +48,7 @@ class Config
   QString serverPassword() const;
   QString serverScriptDown() const;
   QString serverScriptUp() const;
+  int serverStartConnections() const;
   Connector::ServerType serverType() const;
   QUrl serverUrl() const;
   QString serverUsername() const;
@@ -90,6 +91,7 @@ class Config
   QString server_password;
   QString server_script_down;
   QString server_script_up;
+  int server_start_connections;
   Connector::ServerType server_type;
   QUrl server_url;
   QString server_username;

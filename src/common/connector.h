@@ -59,6 +59,8 @@ class Connector : public QObject
   void setServerMountpoint(const QString &str);
   QString serverPipe() const;
   void setServerPipe(const QString &str);
+  int serverStartConnections() const;
+  void setServerStartConnections(int conns);
   QString contentType() const;
   void setContentType(const QString &str);
   unsigned audioChannels() const;
@@ -118,6 +120,7 @@ class Connector : public QObject
 
  signals:
   void connected(bool state);
+  void unmuteRequested();
   void dataRequested(Connector *conn);
   void error(QAbstractSocket::SocketError err);
   void stopped();
@@ -149,6 +152,7 @@ class Connector : public QObject
   QString conn_server_password;
   int conn_server_max_connections;
   QString conn_server_mountpoint;
+  int conn_server_start_connections;
   QString conn_server_pipe;
   QString conn_content_type;
   unsigned conn_audio_channels;

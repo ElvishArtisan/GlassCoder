@@ -42,7 +42,9 @@ Config::Config()
   server_type=Connector::Icecast2Server;
   server_script_down="";
   server_script_up="";
+  server_start_connections=0;
   server_pipe="";
+  server_start_connections=0;
   stream_aim="";
   stream_genre="";
   stream_icq="";
@@ -198,6 +200,15 @@ Config::Config()
     }
     if(cmd->key(i)=="--server-script-up") {
       server_script_up=cmd->value(i);
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--server-start-connections") {
+      server_start_connections=cmd->value(i).toInt(&ok);
+      if((!ok)||(server_start_connections<0)) {
+	Log(LOG_ERR,"invalid --server-start-connections value \""+
+	    cmd->value(i)+"\"");
+	exit(256);
+      }
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--server-type") {
@@ -399,6 +410,12 @@ QString Config::serverScriptDown() const
 QString Config::serverScriptUp() const
 {
   return server_script_up;
+}
+
+
+int Config::serverStartConnections() const
+{
+  return server_start_connections;
 }
 
 

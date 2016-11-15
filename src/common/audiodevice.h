@@ -54,6 +54,9 @@ class AudioDevice : public QObject
  signals:
   void hasStopped();
 
+ public slots:
+  void unmute();
+
  protected:
   void setMeterLevels(float *lvls);
   void setMeterLevels(int *lvls);

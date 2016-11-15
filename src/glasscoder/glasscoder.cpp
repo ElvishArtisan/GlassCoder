@@ -288,6 +288,7 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
   //
   conn=ConnectorFactory(sir_config->serverType(),is_top,sir_conveyor,this);
   connect(conn,SIGNAL(stopped()),this,SLOT(connectorStoppedData()));
+  connect(conn,SIGNAL(unmuteRequested()),sir_audio_device,SLOT(unmute()));
   if(!is_top) {
     connect(conn,SIGNAL(dataRequested(Connector *)),
 	    sir_codecs[sir_connectors.size()],SLOT(encode(Connector *)));
@@ -314,6 +315,7 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
   conn->setServerPassword(sir_config->serverPassword());
   conn->setServerMaxConnections(sir_config->serverMaxConnections());
   conn->setServerPipe(sir_config->serverPipe());
+  conn->setServerStartConnections(sir_config->serverStartConnections());
   if(is_top) {
     conn->setAudioBitrates(sir_config->audioBitrates());
     conn->setFormatIdentifier(sir_codecs[0]->formatIdentifier());

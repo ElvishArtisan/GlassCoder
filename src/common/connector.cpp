@@ -33,6 +33,7 @@ Connector::Connector(QObject *parent)
   conn_server_username="source";
   conn_server_password="";
   conn_server_mountpoint="";
+  conn_server_start_connections=0;
   conn_content_type="";
   conn_audio_channels=2;
   conn_audio_samplerate=44100;
@@ -164,6 +165,18 @@ QString Connector::serverPipe() const
 void Connector::setServerPipe(const QString &str)
 {
   conn_server_pipe=str;
+}
+
+
+int Connector::serverStartConnections() const
+{
+  return conn_server_start_connections;
+}
+
+
+void Connector::setServerStartConnections(int conns)
+{
+  conn_server_start_connections=conns;
 }
 
 

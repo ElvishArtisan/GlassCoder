@@ -83,6 +83,7 @@ void IceConnector::connectToHostConnector(const QString &hostname,uint16_t port)
   ice_conveyor->setUsername(serverUsername());
   ice_conveyor->setPassword(serverPassword());
   ice_socket->connectToHost(hostname,port);
+  emit unmuteRequested();
 }
 
 

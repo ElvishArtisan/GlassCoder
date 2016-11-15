@@ -331,6 +331,9 @@ void IceStreamConnector::connectToHostConnector(const QString &hostname,
     }
   }
   setConnected(true);
+  if(serverStartConnections()==0) {
+    emit unmuteRequested();
+  }
 }
 
 
@@ -543,6 +546,9 @@ void IceStreamConnector::StartStream(IceStream *strm)
   SendHeader(strm);
 
   strm->setNegotiated();
+  if((int)iceserv_streams.size()==serverStartConnections()) {
+    emit unmuteRequested();
+  }
 }
 
 

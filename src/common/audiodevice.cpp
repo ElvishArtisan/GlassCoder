@@ -161,6 +161,11 @@ QString AudioDevice::formatString(AudioDevice::Format fmt)
 }
 
 
+void AudioDevice::unmute()
+{
+}
+
+
 void AudioDevice::setMeterLevels(float *lvls)
 {
   for(unsigned i=0;i<MAX_AUDIO_CHANNELS;i++) {

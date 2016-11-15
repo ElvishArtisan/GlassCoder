@@ -83,6 +83,7 @@ void FileConnector::connectToHostConnector(const QString &hostname,uint16_t port
       setConnected(false);
     }
   }
+  emit unmuteRequested();
 }
 
 

@@ -58,6 +58,7 @@ void IceOutConnector::connectToHostConnector(const QString &hostname,
 {
   StartStream();
   setConnected(true);
+  emit unmuteRequested();
 }
 
 

@@ -506,6 +506,21 @@
 
     <varlistentry>
       <term>
+	<option>--server-start-connections=</option><replaceable>conns</replaceable>
+      </term>
+      <listitem>
+	<para>
+	  Do not start the audio transport until at least
+	  <replaceable>conns</replaceable> connections have been established.
+	  Used only by the IceStreamer server in conjunction with the
+	  <userinput>FILE</userinput> audio device. Default value is
+	  <userinput>0</userinput> --i.e. start the transport immediately.
+	</para>	
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>
       <option>--server-type=</option><replaceable>type</replaceable>
       </term>
       <listitem>

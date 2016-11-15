@@ -52,6 +52,9 @@ class FileDevice : public AudioDevice
   bool start(QString *err);
   unsigned deviceSamplerate() const;
 
+ public slots:
+  void unmute();
+
  private slots:
   void readTimerData();
 
@@ -62,6 +65,7 @@ class FileDevice : public AudioDevice
   SF_INFO file_sfinfo;
   QTimer *file_read_timer;
   MeterAverage *file_meter_avg[MAX_AUDIO_CHANNELS];
+  bool file_muted;
 #endif  // SNDFILE
 };
 

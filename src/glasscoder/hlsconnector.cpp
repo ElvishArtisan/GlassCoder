@@ -145,6 +145,7 @@ void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
   }
 
   setConnected(true);
+  emit unmuteRequested();
 }
 
 

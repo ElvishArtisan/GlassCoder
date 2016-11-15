@@ -27,6 +27,7 @@ FileDevice::FileDevice(unsigned chans,unsigned samprate,
 {
 #ifdef SNDFILE
   file_sndfile=NULL;
+  file_muted=true;
   memset(&file_sfinfo,0,sizeof(file_sfinfo));
 
   for(int i=0;i<MAX_AUDIO_CHANNELS;i++) {
@@ -114,6 +115,12 @@ unsigned FileDevice::deviceSamplerate() const
 }
 
 
+void FileDevice::unmute()
+{
+  file_muted=false;
+}
+
+
 void FileDevice::readTimerData()
 {
 #ifdef SNDFILE
@@ -123,25 +130,33 @@ void FileDevice::readTimerData()
   sf_count_t nframes;
   float levels[MAX_AUDIO_CHANNELS];
 
-  if((nframes=sf_readf_float(file_sndfile,pcm1,SNDFILE_BUFFER_SIZE))>0) {
-    if(file_sfinfo.channels!=(int)channels()) {
-      remixChannels(pcm2,channels(),pcm1,file_sfinfo.channels,nframes);
-      pcm=pcm2;
-    }
+  if(file_muted) {
+    memset(pcm,0,sizeof(SNDFILE_BUFFER_SIZE*sizeof(float)*channels()));
     for(unsigned i=0;i<ringBufferQuantity();i++) {
-      ringBuffer(i)->write(pcm,nframes);
+      ringBuffer(i)->write(pcm,SNDFILE_BUFFER_SIZE);
     }
-    peakLevels(levels,pcm,nframes,channels());
-    for(unsigned i=0;i<channels();i++) {
-      file_meter_avg[i]->addValue(levels[i]);
-      levels[i]=file_meter_avg[i]->average();
-    }
-    setMeterLevels(levels);
   }
   else {
-    sf_close(file_sndfile);
-    file_sndfile=NULL;
-    emit hasStopped();
+    if((nframes=sf_readf_float(file_sndfile,pcm1,SNDFILE_BUFFER_SIZE))>0) {
+      if(file_sfinfo.channels!=(int)channels()) {
+	remixChannels(pcm2,channels(),pcm1,file_sfinfo.channels,nframes);
+	pcm=pcm2;
+      }
+      for(unsigned i=0;i<ringBufferQuantity();i++) {
+	ringBuffer(i)->write(pcm,nframes);
+      }
+      peakLevels(levels,pcm,nframes,channels());
+      for(unsigned i=0;i<channels();i++) {
+	file_meter_avg[i]->addValue(levels[i]);
+	levels[i]=file_meter_avg[i]->average();
+      }
+      setMeterLevels(levels);
+    }
+    else {
+      sf_close(file_sndfile);
+      file_sndfile=NULL;
+      emit hasStopped();
+    }
   }
 #endif  // SNDFILE
 }
