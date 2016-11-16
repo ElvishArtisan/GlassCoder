@@ -30,29 +30,21 @@ moc_%.cpp:	%.h
 
 bin_PROGRAMS = glassgui
 
-dist_glassgui_SOURCES = codecdialog.cpp codecdialog.h\
-                        codeviewer.cpp codeviewer.h\
-                        combobox.cpp combobox.h\
-                        glassgui.cpp glassgui.h\
-                        hpiinputlistview.cpp hpiinputlistview.h\
-                        hpiwidget.cpp hpiwidget.h\
-                        messagewidget.cpp messagewidget.h\
-                        profile.cpp profile.h\
-                        segmeter.cpp segmeter.h\
-                        serverdialog.cpp serverdialog.h\
-                        sourcedialog.cpp sourcedialog.h\
-                        spinbox.cpp spinbox.h\
-                        statuswidget.cpp statuswidget.h\
-                        stereometer.cpp stereometer.h\
-                        streamdialog.cpp streamdialog.h
+dist_glassgui_SOURCES = glassgui.cpp glassgui.h
 
 nodist_glassgui_SOURCES = asihpi.cpp asihpi.h\
                           audiodevice.cpp audiodevice.h\
                           cmdswitch.cpp cmdswitch.h\
                           codec.cpp codec.h\
+                          codecdialog.cpp codecdialog.h\
+                          codeviewer.cpp codeviewer.h\
+                          combobox.cpp combobox.h\
                           connector.cpp connector.h\
                           glasslimits.h\
+                          hpiinputlistview.cpp hpiinputlistview.h\
+                          hpiwidget.cpp hpiwidget.h\
                           logging.cpp logging.h\
+                          messagewidget.cpp messagewidget.h\
                           metaevent.cpp metaevent.h\
                           moc_audiodevice.cpp\
                           moc_codec.cpp\
@@ -71,7 +63,15 @@ nodist_glassgui_SOURCES = asihpi.cpp asihpi.h\
                           moc_statuswidget.cpp\
                           moc_stereometer.cpp\
                           moc_streamdialog.cpp\
-                          ringbuffer.cpp ringbuffer.h
+                          profile.cpp profile.h\
+                          ringbuffer.cpp ringbuffer.h\
+                          segmeter.cpp segmeter.h\
+                          serverdialog.cpp serverdialog.h\
+                          sourcedialog.cpp sourcedialog.h\
+                          spinbox.cpp spinbox.h\
+                          statuswidget.cpp statuswidget.h\
+                          stereometer.cpp stereometer.h\
+                          streamdialog.cpp streamdialog.h
 
 glassgui_LDADD = @GUILIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ -lpthread
 glassgui_LDFLAGS = @GUIFLAGS@
@@ -87,11 +87,26 @@ DISTCLEANFILES = asihpi.cpp asihpi.h\
                  audiodevice.cpp audiodevice.h\
                  cmdswitch.cpp cmdswitch.h\
                  codec.cpp codec.h\
+                 codecdialog.cpp codecdialog.h\
+                 codeviewer.cpp codeviewer.h\
+                 combobox.cpp combobox.h\
                  connector.cpp connector.h\
                  glasslimits.h\
+                 hpiinputlistview.cpp hpiinputlistview.h\
+                 hpiwidget.cpp hpiwidget.h\
                  logging.cpp logging.h\
+                 messagewidget.cpp messagewidget.h\
                  metaevent.cpp metaevent.h\
-                 ringbuffer.cpp ringbuffer.h
+                 profile.cpp profile.h\
+                 ringbuffer.cpp ringbuffer.h\
+                 segmeter.cpp segmeter.h\
+                 serverdialog.cpp serverdialog.h\
+                 sourcedialog.cpp sourcedialog.h\
+                 spinbox.cpp spinbox.h\
+                 statuswidget.cpp statuswidget.h\
+                 stereometer.cpp stereometer.h\
+                 streamdialog.cpp streamdialog.h
+
 
 MAINTAINERCLEANFILES = *~\
                        Makefile.in

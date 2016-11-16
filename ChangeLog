@@ -678,3 +678,5 @@
 2016-11-15 Fred Gleason <fredg@paravelsystems.com>
 	* Added a '--server-start-connections=' parameter to
 	glasscoder(1).
+2016-11-16 Fred Gleason <fredg@paravelsystems.com>
+	* Moved dialog elementsfrom 'src/glassgui/' into 'src/common/'.
