@@ -29,6 +29,7 @@ EXTRA_DIST = asihpi.cpp asihpi.h\
              combobox.cpp combobox.h\
              connector.cpp connector.h\
              glasslimits.h\
+             guiapplication.cpp guiapplication.h\
              hpiinputlistview.cpp hpiinputlistview.y\
              hpiwidget.cpp hpiwidget.h\
              logging.cpp logging.h\

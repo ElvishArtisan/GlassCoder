@@ -62,6 +62,11 @@ ln -s ../../src/common/connector.cpp src/$DESTDIR/connector.cpp
 rm -f src/$DESTDIR/connector.h
 ln -s ../../src/common/connector.h src/$DESTDIR/connector.h
 
+rm -f src/$DESTDIR/guiapplication.cpp
+ln -s ../../src/common/guiapplication.cpp src/$DESTDIR/guiapplication.cpp
+rm -f src/$DESTDIR/guiapplication.h
+ln -s ../../src/common/guiapplication.h src/$DESTDIR/guiapplication.h
+
 rm -f src/$DESTDIR/hpiinputlistview.cpp
 ln -s ../../src/common/hpiinputlistview.cpp src/$DESTDIR/hpiinputlistview.cpp
 rm -f src/$DESTDIR/hpiinputlistview.h

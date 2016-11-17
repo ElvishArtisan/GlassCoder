@@ -22,6 +22,7 @@
 
 SUBDIRS = common\
           glasscoder\
+          glasscommander\
           glassgui\
           tests
 

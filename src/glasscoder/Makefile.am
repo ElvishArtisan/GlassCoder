@@ -113,6 +113,7 @@ DISTCLEANFILES = asihpi.cpp asihpi.h\
                  combobox.cpp combobox.h\
                  connector.cpp connector.h\
                  glasslimits.h\
+                 guiapplication.cpp guiapplication.h\
                  hpiinputlistview.cpp hpiinputlistview.h\
                  hpiwidget.cpp hpiwidget.h\
                  logging.cpp logging.h\

@@ -41,7 +41,7 @@
 #include "../../icons/glasscoder-16x16.xpm"
 
 MainWidget::MainWidget(QWidget *parent)
-  : QMainWindow(parent)
+  : GuiApplication(parent)
 {
   instance_name="";
   QString delete_instance="";
@@ -82,7 +82,7 @@ MainWidget::MainWidget(QWidget *parent)
     exit(0);
   }
   if(!delete_instance.isEmpty()) {
-    DeleteInstance(delete_instance);
+    deleteInstance(delete_instance);
     exit(0);
   }
 
@@ -93,7 +93,6 @@ MainWidget::MainWidget(QWidget *parent)
   else {
     setWindowTitle(QString("GlassGui v")+VERSION+" - "+instance_name);
   }
-  gui_settings_dir=NULL;
 
   //
   // Fonts
@@ -639,9 +638,9 @@ void MainWidget::ProcessError(int exit_code,QProcess::ExitStatus exit_status)
 
 void MainWidget::LoadSettings()
 {
-  if(CheckSettingsDirectory()) {
+  if(checkSettingsDirectory()) {
     Profile *p=new Profile();
-    p->setSource(GetSettingsFilename());
+    p->setSource(settingsFilename(instance_name));
     gui_server_dialog->load(p);
     gui_codec_dialog->load(p);
     gui_source_dialog->load(p);
@@ -656,8 +655,8 @@ bool MainWidget::SaveSettings()
 {
   FILE *f;
 
-  if(CheckSettingsDirectory()) {
-    QString basepath=GetSettingsFilename();
+  if(checkSettingsDirectory()) {
+    QString basepath=settingsFilename(instance_name);
     if((f=fopen((basepath+".tmp").toUtf8(),"w"))==NULL) {
       return false;
     }
@@ -674,60 +673,12 @@ bool MainWidget::SaveSettings()
 }
 
 
-bool MainWidget::CheckSettingsDirectory()
-{
-  QString path=QString("/")+GLASSGUI_SETTINGS_DIR;
-
-  if(getenv("HOME")!=NULL) {
-    path=QString(getenv("HOME"))+"/"+GLASSGUI_SETTINGS_DIR;
-  }
-  gui_settings_dir=new QDir(path);
-  if(!gui_settings_dir->exists()) {
-    mkdir(path.toUtf8(),
-	  S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH);
-    if(!gui_settings_dir->exists()) {
-      return false;
-    }
-  }
-  return true;
-}
-
-
-QString MainWidget::GetSettingsFilename()
-{
-  if(!CheckSettingsDirectory()) {
-    QMessageBox::critical(this,"GlassGui - "+tr("Error"),
-			  tr("Unable to create settings directory!"));
-    exit(256);
-  }
-  QString ret=gui_settings_dir->path()+"/"+GLASSGUI_SETTINGS_FILE;
-  if(!instance_name.isEmpty()) {
-    ret+="-"+instance_name;
-  }
-
-  return ret;
-}
-
-
-void MainWidget::DeleteInstance(const QString &name)
-{
-  if(CheckSettingsDirectory()) {
-    unlink((gui_settings_dir->path()+"/"+GLASSGUI_SETTINGS_FILE+"-"+name).toUtf8());
-  }
-}
-
-
 void MainWidget::ListInstances()
 {
-  if(CheckSettingsDirectory()) {
-    QStringList files=gui_settings_dir->
-      entryList(QStringList(QString(GLASSGUI_SETTINGS_FILE)+"-*"),
-		QDir::Files,QDir::Name);
-    for(int i=0;i<files.size();i++) {
-      printf("%s\n",
-	     (const char *)files[i].right(files[i].length()-
-	                   sizeof(GLASSGUI_SETTINGS_FILE)-1+1).toUtf8());
-    }
+  QStringList files=GuiApplication::listInstances();
+  for(int i=0;i<files.size();i++) {
+    printf("%s\n",(const char *)files[i].right(files[i].length()-
+		   sizeof(GLASSGUI_SETTINGS_FILE)-1+1).toUtf8());
   }
 }
 

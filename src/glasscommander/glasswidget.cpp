@@ -1,0 +1,360 @@
+// glasswidget.cpp
+//
+// Encoder widget for GlassCommander(1)
+//
+//   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+//
+//   This program is free software; you can redistribute it and/or modify
+//   it under the terms of the GNU General Public License version 2 as
+//   published by the Free Software Foundation.
+//
+//   This program is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
+//
+//   You should have received a copy of the GNU General Public
+//   License along with this program; if not, write to the Free Software
+//   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+
+#include "glasswidget.h"
+#include "logging.h"
+
+GlassWidget::GlassWidget(const QString &instance_name,QWidget *parent)
+  : QFrame(parent)
+{
+  gw_process=NULL;
+
+  setFrameStyle(QFrame::Box|QFrame::Raised);
+  setMidLineWidth(2);
+
+  //
+  // Fonts
+  //
+  QFont bold_font(font().family(),font().pointSize(),QFont::Bold);
+
+  //
+  // Dialogs
+  //
+  gw_server_dialog=new ServerDialog(this);
+  gw_codec_dialog=new CodecDialog(this);
+  gw_source_dialog=new SourceDialog(this);
+  connect(gw_source_dialog,SIGNAL(updated()),this,SLOT(checkArgs()));
+  gw_stream_dialog=new StreamDialog(this);
+  gw_config_dialog=new ConfigDialog(instance_name,gw_server_dialog,
+				    gw_codec_dialog,gw_stream_dialog,
+				    gw_source_dialog,this);
+  connect(gw_server_dialog,SIGNAL(typeChanged(Connector::ServerType,bool)),
+	  this,SLOT(serverTypeChangedData(Connector::ServerType,bool)));
+  connect(gw_server_dialog,SIGNAL(settingsChanged()),this,SLOT(checkArgs()));
+
+  for(int i=0;i<2;i++) {
+    gw_meters[i]=new PlayMeter(SegMeter::Right,this);
+    gw_meters[i]->setRange(-3000,0);
+    gw_meters[i]->setHighThreshold(-800);
+    gw_meters[i]->setClipThreshold(-100);
+    gw_meters[i]->setMode(SegMeter::Peak);
+  }
+  gw_meters[0]->setLabel(tr("L"));
+  gw_meters[1]->setLabel(tr("R"));
+
+
+  gw_status_frame_widget=new QLabel(this);
+  gw_status_frame_widget->setFrameStyle(QFrame::Box|QFrame::Raised);
+  gw_status_widget=new StatusWidget(this);
+
+  gw_name_label=new QLabel(instance_name,this);
+  gw_name_label->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+  gw_name_label->setFont(bold_font);
+
+  gw_message_widget=new MessageWidget(this);
+  gw_message_widget->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+
+  gw_start_button=new QPushButton(tr("Start"),this);
+  gw_start_button->setFont(bold_font);
+  connect(gw_start_button,SIGNAL(clicked()),this,SLOT(startEncodingData()));
+
+  gw_config_button=new QPushButton(tr("Settings"),this);
+  gw_config_button->setFont(bold_font);
+  connect(gw_config_button,SIGNAL(clicked()),this,SLOT(configData()));
+}
+
+
+QSize GlassWidget::sizeHint() const
+{
+  return QSize(800,36);
+}
+
+
+QString GlassWidget::instanceName() const
+{
+  return gw_name_label->text();
+}
+
+
+void GlassWidget::addCodecTypes(const QString &codecs)
+{
+  gw_codec_dialog->addCodecTypes(codecs);
+}
+
+
+void GlassWidget::addSourceTypes(const QString &sources)
+{
+  gw_source_dialog->addSourceTypes(sources);
+}
+
+
+void GlassWidget::load(Profile *p)
+{
+  gw_server_dialog->load(p);
+  gw_codec_dialog->load(p);
+  gw_source_dialog->load(p);
+  gw_stream_dialog->load(p);
+}
+
+
+void GlassWidget::save(FILE *f) const
+{
+  gw_server_dialog->save(f);
+  gw_codec_dialog->save(f);
+  gw_source_dialog->save(f);
+  gw_stream_dialog->save(f);
+}
+
+
+void GlassWidget::startEncodingData()
+{
+  QStringList args;
+
+  /*
+  if(gw_process!=NULL) {
+    QMessageBox::warning(this,"GlassCommander - "+tr("Process Error"),
+			 tr("Process is not in ready state!"));
+    return;
+  }
+  */
+  gw_process=new QProcess(this);
+  gw_process->setReadChannel(QProcess::StandardOutput);
+  connect(gw_process,SIGNAL(readyRead()),
+	  this,SLOT(processReadyReadStandardOutputData()));
+  connect(gw_process,SIGNAL(error(QProcess::ProcessError)),
+	  this,SLOT(processErrorData(QProcess::ProcessError)));
+  connect(gw_process,SIGNAL(finished(int,QProcess::ExitStatus)),
+	  this,SLOT(processFinishedData(int,QProcess::ExitStatus)));
+  gw_server_dialog->makeArgs(&args,false);
+  gw_codec_dialog->makeArgs(&args);
+  gw_stream_dialog->makeArgs(&args,false);
+  gw_source_dialog->makeArgs(&args,false);
+  args.push_back("--meter-data");
+  args.push_back("--errors-to=STDOUT");
+  args.push_back("--errors-string="+gw_name_label->text());
+  gw_process->start("glasscoder",args);
+  gw_start_button->disconnect();
+  connect(gw_start_button,SIGNAL(clicked()),this,SLOT(stopEncodingData()));
+  gw_start_button->setText(tr("Stop"));
+  LockControls(true);
+}
+
+
+void GlassWidget::stopEncodingData()
+{
+  gw_process->terminate();
+}
+
+
+void GlassWidget::processReadyReadStandardOutputData()
+{
+  char data[1500];
+  int n=0;
+
+  if((n=gw_process->read(data,1500))>0) {
+    data[n]=0;
+    for(int i=0;i<n;i++) {
+      switch(0xFF&data[i]) {
+      case 13:
+	break;
+
+      case 10:
+	ProcessFeedback(gw_process_accum);
+	gw_process_accum="";
+	break;
+
+      default:
+	gw_process_accum+=data[i];
+      }
+    }
+  }
+}
+
+
+void GlassWidget::processFinishedData(int exit_code,
+				     QProcess::ExitStatus exit_status)
+{
+  if(exit_code==0) {
+    /*
+    if(gw_process_kill_timer->isActive()) {
+      exit(0);
+    }
+    */
+    gw_meters[0]->setPeakBar(-10000);
+    gw_meters[1]->setPeakBar(-10000);
+    gw_start_button->disconnect();
+    connect(gw_start_button,SIGNAL(clicked()),this,SLOT(startEncodingData()));
+    gw_start_button->setText(tr("Start"));
+    LockControls(false);
+  }
+  else {
+    ProcessError(exit_code,exit_status);
+  }
+  gw_status_widget->setStatus(CONNECTION_IDLE);
+  gw_process->deleteLater();
+  gw_process=NULL;
+}
+
+
+void GlassWidget::processErrorData(QProcess::ProcessError err)
+{
+  printf("processErrorData(%u)\n",err);
+  /*
+  QMessageBox::warning(this,"GlassGui - "+tr("Process Error"),
+		       tr("Received QProcess error")+
+		       QString().sprintf(": %d",err));
+  exit(256);
+  */
+}
+
+
+void GlassWidget::configData()
+{
+  gw_config_dialog->exec();
+  emit configurationChanged(this);
+}
+
+
+void GlassWidget::checkArgs()
+{
+  QStringList args;
+  bool state;
+
+  state=gw_server_dialog->makeArgs(&args,false);
+  state=state&&gw_source_dialog->makeArgs(&args,false);
+  gw_start_button->setEnabled(state);
+}
+
+
+void GlassWidget::serverTypeChangedData(Connector::ServerType type,
+					bool multirate)
+{
+  gw_stream_dialog->setServerType(type);
+  gw_codec_dialog->setMultirate(multirate);
+}
+
+
+void GlassWidget::resizeEvent(QResizeEvent *e)
+{
+  int w=size().width();
+  int h=size().height();
+
+  gw_meters[0]->setGeometry(4,4,300,h/2-4);
+  gw_meters[1]->setGeometry(4,h/2,300,h/2-4);
+
+  gw_status_frame_widget->setGeometry(307,4,134,h-8);
+  gw_status_widget->setGeometry(310,7,128,h-14);
+
+  gw_name_label->setGeometry(445,2,190,h-4);
+
+  gw_message_widget->setGeometry(640,2,w-810,h-4);
+
+  gw_start_button->setGeometry(w-160,5,70,h-9);
+
+  gw_config_button->setGeometry(w-80,5,70,h-9);
+}
+
+
+void GlassWidget::ProcessFeedback(const QString &str)
+{
+  QStringList f0;
+  bool ok=false;
+  int level;
+  int prio;
+  int status;
+  QString msg;
+
+  f0=str.split(" ");
+
+  if((f0[0]=="CS")&&(f0.size()==2)) {  // Connection Status
+    status=f0[1].toInt(&ok);
+    if(ok) {
+      if(!gw_status_widget->setStatus(status)) {
+	gw_message_widget->addMessage(tr("Unknown status code")+
+				       QString().sprintf(" \"%d\" ",status)+
+				       tr("received."));
+      }
+    }
+  }
+
+  if((f0[0]=="ER")&&(f0.size()>=2)) {  // Error Message
+    prio=f0[1].toInt();
+    f0.erase(f0.begin());
+    f0.erase(f0.begin());
+    msg=f0.join(" ");
+
+    switch(prio) {
+    case LOG_EMERG:
+    case LOG_ALERT:
+    case LOG_CRIT:
+    case LOG_ERR:
+      gw_message_widget->addMessage(msg);
+      break;
+
+    case LOG_WARNING:
+    case LOG_NOTICE:
+    case LOG_INFO:
+      gw_message_widget->addMessage(msg);
+      break;
+    }
+    return;
+  }
+
+  if(f0[0]=="ME") {  // Meter Levels
+    if((f0.size()==2)&&(f0[1].length()==8)) {
+      level=f0[1].left(4).toInt(&ok,16);
+      if(ok) {
+	gw_meters[0]->setPeakBar(-level);
+      }
+      level=f0[1].right(4).toInt(&ok,16);
+      if(ok) {
+	gw_meters[1]->setPeakBar(-level);
+      }
+    }
+  }
+}
+
+
+void GlassWidget::ProcessError(int exit_code,QProcess::ExitStatus exit_status)
+{
+  printf("ProcessError(%d,%d)\n",exit_code,exit_status);
+  /*
+  if(exit_status==QProcess::CrashExit) {
+    QMessageBox::warning(this,"GlassGui - "+tr("GlassCoder Error"),
+			 tr("GlassCoder crashed!"));
+  }
+  else {
+    QString msg=gw_process->readAllStandardError();
+    QMessageBox::warning(this,"GlassGui - "+tr("GlassCoder Error"),
+			 tr("GlassCoder returned a non-zero exit code")+
+			 "\n\""+msg+"\".");
+  }
+  exit(256);
+  */
+}
+
+
+void GlassWidget::LockControls(bool state)
+{
+  gw_server_dialog->setControlsLocked(state);
+  gw_codec_dialog->setControlsLocked(state);
+  gw_stream_dialog->setControlsLocked(state);
+  gw_source_dialog->setControlsLocked(state);
+}

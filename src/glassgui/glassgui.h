@@ -21,7 +21,6 @@
 #ifndef GLASSGUI_H
 #define GLASSGUI_H
 
-#include <QDir>
 #include <QLabel>
 #include <QLineEdit>
 #include <QListView>
@@ -35,6 +34,7 @@
 #include "codecdialog.h"
 #include "codeviewer.h"
 #include "combobox.h"
+#include "guiapplication.h"
 #include "hpiinputlistview.h"
 #include "messagewidget.h"
 #include "serverdialog.h"
@@ -48,7 +48,7 @@
 #define GLASSGUI_SETTINGS_FILE "glassguirc"
 #define GLASSGUI_TERMINATE_TIMEOUT 5000
 
-class MainWidget : public QMainWindow
+class MainWidget : public GuiApplication
 {
  Q_OBJECT;
  public:
@@ -86,9 +86,6 @@ class MainWidget : public QMainWindow
   void ProcessError(int exit_code,QProcess::ExitStatus exit_status);
   void LoadSettings();
   bool SaveSettings();
-  bool CheckSettingsDirectory();
-  QString GetSettingsFilename();
-  void DeleteInstance(const QString &name);
   void ListInstances();
   StereoMeter *gui_meter;
   QPushButton *gui_start_button;
@@ -109,7 +106,6 @@ class MainWidget : public QMainWindow
   QTimer *gui_process_cleanup_timer;
   QTimer *gui_process_kill_timer;
   QString gui_process_accum;
-  QDir *gui_settings_dir;
   MessageWidget *gui_message_widget;
   StatusWidget *gui_status_widget;
   QLabel *gui_status_frame_widget;

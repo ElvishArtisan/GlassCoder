@@ -275,6 +275,7 @@ AC_CONFIG_FILES([ \
     icons/Makefile \
     src/common/Makefile \
     src/glasscoder/Makefile \
+    src/glasscommander/Makefile \
     src/glassgui/Makefile \
     src/tests/Makefile \
     src/Makefile \
@@ -287,6 +288,7 @@ AC_OUTPUT()
 # Link Common Elements
 #
 ./link_common.sh glasscoder
+./link_common.sh glasscommander
 ./link_common.sh glassgui
 ./link_common.sh tests
 

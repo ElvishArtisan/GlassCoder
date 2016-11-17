@@ -41,6 +41,7 @@ nodist_glassgui_SOURCES = asihpi.cpp asihpi.h\
                           combobox.cpp combobox.h\
                           connector.cpp connector.h\
                           glasslimits.h\
+                          guiapplication.cpp guiapplication.h\
                           hpiinputlistview.cpp hpiinputlistview.h\
                           hpiwidget.cpp hpiwidget.h\
                           logging.cpp logging.h\
@@ -53,6 +54,7 @@ nodist_glassgui_SOURCES = asihpi.cpp asihpi.h\
                           moc_combobox.cpp\
                           moc_connector.cpp\
                           moc_glassgui.cpp\
+                          moc_guiapplication.cpp\
                           moc_hpiinputlistview.cpp\
                           moc_hpiwidget.cpp\
                           moc_messagewidget.cpp\
@@ -92,6 +94,7 @@ DISTCLEANFILES = asihpi.cpp asihpi.h\
                  combobox.cpp combobox.h\
                  connector.cpp connector.h\
                  glasslimits.h\
+                 guiapplication.cpp guiapplication.h\
                  hpiinputlistview.cpp hpiinputlistview.h\
                  hpiwidget.cpp hpiwidget.h\
                  logging.cpp logging.h\
