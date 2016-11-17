@@ -23,6 +23,7 @@
 
 #include <QList>
 #include <QProcess>
+#include <QToolBar>
 
 #include "glasswidget.h"
 #include "guiapplication.h"
@@ -39,6 +40,12 @@ class MainWidget : public GuiApplication
   QSize sizeHint() const;
 
  private slots:
+  void addInstanceData();
+  void removeInstanceData();
+  void abandonInstanceData();
+  void topInsertClickedData();
+  void insertClickedData(const QString &instance_name);
+  void removeClickedData(const QString &instance_name);
   void codecFinishedData(int exit_code,QProcess::ExitStatus exit_status);
   void deviceFinishedData(int exit_code,QProcess::ExitStatus exit_status);
   void processErrorData(QProcess::ProcessError err);
@@ -49,12 +56,17 @@ class MainWidget : public GuiApplication
   void resizeEvent(QResizeEvent *e);
 
  private:
+  void InitEncoder(GlassWidget *encoder);
   void LoadEncoders();
+  void SaveEncoders();
+  int GetEncoderPosition(const QString &instance_name) const;
   void ProcessError(int exit_code,QProcess::ExitStatus exit_status);
+  QToolBar *gui_toolbar;
   QList<GlassWidget *> gui_encoders;
   QString gui_codec_types;
   QString gui_source_types;
   QProcess *gui_process;
+  QPushButton *gui_insert_button;
 };
 
 

@@ -78,12 +78,56 @@ GlassWidget::GlassWidget(const QString &instance_name,QWidget *parent)
   gw_config_button=new QPushButton(tr("Settings"),this);
   gw_config_button->setFont(bold_font);
   connect(gw_config_button,SIGNAL(clicked()),this,SLOT(configData()));
+
+  gw_insert_button=new QPushButton(tr("Insert"),this);
+  gw_insert_button->setFont(bold_font);
+  gw_insert_button->setStyleSheet("background-color: yellow");
+  connect(gw_insert_button,SIGNAL(clicked()),this,SLOT(insertData()));
+  gw_insert_button->hide();
+
+  gw_remove_button=new QPushButton(tr("Remove"),this);
+  gw_remove_button->setFont(bold_font);
+  gw_remove_button->setStyleSheet("background-color: violet");
+  connect(gw_remove_button,SIGNAL(clicked()),this,SLOT(removeData()));
+  gw_remove_button->hide();
 }
 
 
 QSize GlassWidget::sizeHint() const
 {
   return QSize(800,36);
+}
+
+
+void GlassWidget::setMode(GlassWidget::Mode mode)
+{
+  if(mode!=gw_mode) {
+    switch(mode) {
+    case GlassWidget::NormalMode:
+      gw_insert_button->hide();
+      gw_remove_button->hide();
+      gw_start_button->show();
+      gw_config_button->show();
+      break;
+
+    case GlassWidget::InsertMode:
+      gw_insert_button->show();
+      gw_remove_button->hide();
+      gw_start_button->hide();
+      gw_config_button->hide();
+      break;
+
+    case GlassWidget::RemoveMode:
+      gw_insert_button->hide();
+      gw_remove_button->show();
+      gw_remove_button->setDisabled((gw_process!=NULL)&&
+				    (gw_process->state()==QProcess::Running));
+      gw_start_button->hide();
+      gw_config_button->hide();
+      break;
+    }
+    gw_mode=mode;
+  }
 }
 
 
@@ -120,6 +164,24 @@ void GlassWidget::save(FILE *f) const
   gw_codec_dialog->save(f);
   gw_source_dialog->save(f);
   gw_stream_dialog->save(f);
+}
+
+
+void GlassWidget::setNormalMode()
+{
+  setMode(GlassWidget::NormalMode);
+}
+
+
+void GlassWidget::setInsertMode()
+{
+  setMode(GlassWidget::InsertMode);
+}
+
+
+void GlassWidget::setRemoveMode()
+{
+  setMode(GlassWidget::RemoveMode);
 }
 
 
@@ -225,6 +287,18 @@ void GlassWidget::processErrorData(QProcess::ProcessError err)
 }
 
 
+void GlassWidget::insertData()
+{
+  emit insertClicked(gw_name_label->text());
+}
+
+
+void GlassWidget::removeData()
+{
+  emit removeClicked(gw_name_label->text());
+}
+
+
 void GlassWidget::configData()
 {
   gw_config_dialog->exec();
@@ -269,6 +343,8 @@ void GlassWidget::resizeEvent(QResizeEvent *e)
   gw_start_button->setGeometry(w-160,5,70,h-9);
 
   gw_config_button->setGeometry(w-80,5,70,h-9);
+  gw_insert_button->setGeometry(w-80,5,70,h-9);
+  gw_remove_button->setGeometry(w-80,5,70,h-9);
 }
 
 

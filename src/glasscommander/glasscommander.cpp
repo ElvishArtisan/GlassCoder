@@ -23,6 +23,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <QAction>
 #include <QApplication>
 #include <QCloseEvent>
 #include <QMessageBox>
@@ -33,7 +34,10 @@
 
 #include "glasscommander.h"
 
+#include "../../icons/back.xpm"
 #include "../../icons/glasscoder-16x16.xpm"
+#include "../../icons/minussign.xpm"
+#include "../../icons/plussign.xpm"
 
 MainWidget::MainWidget(QWidget *parent)
   : GuiApplication(parent)
@@ -51,6 +55,39 @@ MainWidget::MainWidget(QWidget *parent)
   }
   setWindowIcon(QPixmap(glasscoder_16x16_xpm));
   setWindowTitle(QString("GlassCommander v")+VERSION);
+
+  //
+  // Fonts
+  //
+  QFont bold_font(font().family(),font().pointSize(),QFont::Bold);
+
+  //
+  // Tool Bar
+  //
+  gui_toolbar=addToolBar("foo");
+  gui_toolbar->setAllowedAreas(Qt::TopToolBarArea);
+  QAction *action=new QAction(QIcon(plussign_xpm),tr("Add Instance"),this);
+  action->setStatusTip(tr("Add an encoder instance"));
+  connect(action,SIGNAL(triggered()),this,SLOT(addInstanceData()));
+  gui_toolbar->addAction(action);
+
+  action=new QAction(QIcon(minussign_xpm),tr("Remove Instance"),this);
+  action->setStatusTip(tr("Remove an encoder instance"));
+  connect(action,SIGNAL(triggered()),this,SLOT(removeInstanceData()));
+  gui_toolbar->addAction(action);
+
+  action=new QAction(QIcon(back_xpm),tr("Abandon change"),this);
+  action->setStatusTip(tr("Abandon Add or Removal of encoder instance"));
+  connect(action,SIGNAL(triggered()),this,SLOT(abandonInstanceData()));
+  gui_toolbar->addAction(action);
+
+  gui_insert_button=new QPushButton(tr("Insert"),this);
+  gui_insert_button->setFont(bold_font);
+  gui_insert_button->setStyleSheet("background-color: yellow");
+  connect(gui_insert_button,SIGNAL(clicked()),
+	  this,SLOT(topInsertClickedData()));
+  gui_insert_button->hide();
+
 
   LoadEncoders();
 
@@ -77,11 +114,73 @@ MainWidget::MainWidget(QWidget *parent)
 
 QSize MainWidget::sizeHint() const
 {
+  int encoder_height=0;
   if(gui_encoders.size()>0) {
-    return 
-      QSize(1000,gui_encoders.at(0)->sizeHint().height()*gui_encoders.size());
+    encoder_height=gui_encoders.at(0)->sizeHint().height()*gui_encoders.size();
   }
-  return QSize(1000,10);
+  return QSize(1000,10+encoder_height+gui_toolbar->size().height());
+}
+
+
+void MainWidget::addInstanceData()
+{
+  for(int i=0;i<gui_encoders.size();i++) {
+    gui_encoders.at(i)->setMode(GlassWidget::InsertMode);
+  }
+  gui_insert_button->show();
+}
+
+
+void MainWidget::removeInstanceData()
+{
+  for(int i=0;i<gui_encoders.size();i++) {
+    gui_encoders.at(i)->setMode(GlassWidget::RemoveMode);
+  }
+  gui_insert_button->hide();
+}
+
+
+void MainWidget::abandonInstanceData()
+{
+  for(int i=0;i<gui_encoders.size();i++) {
+    gui_encoders.at(i)->setMode(GlassWidget::NormalMode);
+  }
+  gui_insert_button->hide();
+}
+
+
+void MainWidget::topInsertClickedData()
+{
+  insertClickedData("");
+}
+
+
+void MainWidget::insertClickedData(const QString &instance_name)
+{
+  int pos=1+GetEncoderPosition(instance_name);
+  gui_encoders.insert(pos,new GlassWidget("new instance",this));
+  InitEncoder(gui_encoders.at(pos));
+  int w=size().width();
+  int h=size().height()+gui_encoders.at(pos)->sizeHint().height();
+  setMaximumHeight(h);
+  setMinimumSize(w,h);
+  abandonInstanceData();
+  SaveEncoders();
+}
+
+
+void MainWidget::removeClickedData(const QString &instance_name)
+{
+  int pos=GetEncoderPosition(instance_name);
+  int w=size().width();
+  int h=size().height()-gui_encoders.at(pos)->sizeHint().height();
+  delete gui_encoders.at(pos);
+  gui_encoders.erase(gui_encoders.begin()+pos);
+
+  setMaximumHeight(h);
+  setMinimumSize(w,h);
+  abandonInstanceData();
+  SaveEncoders();
 }
 
 
@@ -179,10 +278,25 @@ void MainWidget::closeEvent(QCloseEvent *e)
 
 void MainWidget::resizeEvent(QResizeEvent *e)
 {
+  gui_insert_button->setGeometry(size().width()-80,5,70,27);
+
   for(int i=0;i<gui_encoders.size();i++) {
     GlassWidget *enc=gui_encoders.at(i);
-    enc->setGeometry(0,i*enc->sizeHint().height(),size().width(),enc->sizeHint().height());
+    enc->setGeometry(0,gui_toolbar->size().height()+i*enc->sizeHint().height(),
+		     size().width(),enc->sizeHint().height());
   }
+}
+
+
+void MainWidget::InitEncoder(GlassWidget *encoder)
+{
+  connect(encoder,SIGNAL(configurationChanged(GlassWidget *)),
+	  this,SLOT(configurationChangedData(GlassWidget *)));
+  connect(encoder,SIGNAL(insertClicked(const QString &)),
+	  this,SLOT(insertClickedData(const QString &)));
+  connect(encoder,SIGNAL(removeClicked(const QString &)),
+	  this,SLOT(removeClickedData(const QString &)));
+  encoder->show();
 }
 
 
@@ -198,14 +312,46 @@ void MainWidget::LoadEncoders()
   name=p->stringValue(section,"InstanceName","",&ok);
   while(ok) {
     gui_encoders.push_back(new GlassWidget(name,this));
-    connect(gui_encoders.back(),SIGNAL(configurationChanged(GlassWidget *)),
-	    this,SLOT(configurationChangedData(GlassWidget *)));
+    InitEncoder(gui_encoders.back());
     count++;
     section=QString().sprintf("Encoder%d",count+1);
     name=p->stringValue(section,"InstanceName","",&ok);
   }
 
   delete p;
+}
+
+
+void MainWidget::SaveEncoders()
+{
+  FILE *f;
+
+  if(checkSettingsDirectory()) {
+    QString basepath=
+      settingsDirectory()->path()+"/"+GLASSCOMMANDER_SETTINGS_FILE;
+    if((f=fopen((basepath+".tmp").toUtf8(),"w"))==NULL) {
+      return;
+    }
+    for(int i=0;i<gui_encoders.size();i++) {
+      fprintf(f,"[Encoder%d]\n",i+1);
+      fprintf(f,"InstanceName=%s\n",
+	      (const char *)gui_encoders.at(i)->instanceName().toUtf8());
+      fprintf(f,"\n");
+    }
+    fclose(f);
+    rename((basepath+".tmp").toUtf8(),basepath.toUtf8());
+  }
+}
+
+
+int MainWidget::GetEncoderPosition(const QString &instance_name) const
+{
+  for(int i=0;i<gui_encoders.size();i++) {
+    if(gui_encoders.at(i)->instanceName()==instance_name) {
+      return i;
+    }
+  }
+  return -1;
 }
 
 

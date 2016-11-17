@@ -682,3 +682,6 @@
 	* Moved dialog elementsfrom 'src/glassgui/' into 'src/common/'.
 2016-11-17 Fred Gleason <fredg@paravelsystems.com>
 	* Added a glasscommander(1) application in 'src/glasscommander/'.
+2016-11-17 Fred Gleason <fredg@paravelsystems.com>
+	* Added 'Add', 'Remove' and 'Abandon' buttons for managing instances
+	in glasscommander(1).

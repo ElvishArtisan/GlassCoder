@@ -34,10 +34,13 @@ uninstall-local:
 	rm -f $(DESTDIR)@prefix@/share/icons/hicolor/22x22/apps/glasscoder.png
 	rm -f $(DESTDIR)@prefix@/share/icons/hicolor/48x48/apps/glasscoder.png
 
-EXTRA_DIST = glasscoder-16x16.png\
+EXTRA_DIST = back.xpm\
+             glasscoder-16x16.png\
              glasscoder-16x16.xpm\
              glasscoder-22x22.png\
-             glasscoder-48x48.png
+             glasscoder-48x48.png\
+             minussign.xpm\
+             plussign.xpm
 
 CLEANFILES = *~
 

@@ -42,8 +42,10 @@ class GlassWidget : public QFrame
 {
  Q_OBJECT;
  public:
+  enum Mode {NormalMode=0,InsertMode=1,RemoveMode=2};
   GlassWidget(const QString &instance_name,QWidget *parent=0);
   QSize sizeHint() const;
+  void setMode(Mode mode);
   QString instanceName() const;
   void addCodecTypes(const QString &codecs);
   void addSourceTypes(const QString &sources);
@@ -52,6 +54,13 @@ class GlassWidget : public QFrame
 
  signals:
   void configurationChanged(GlassWidget *encoder);
+  void insertClicked(const QString &instance_name);
+  void removeClicked(const QString &instance_name);
+
+ public slots:
+  void setNormalMode();
+  void setInsertMode();
+  void setRemoveMode();
 
  private slots:
   void startEncodingData();
@@ -59,6 +68,8 @@ class GlassWidget : public QFrame
   void processReadyReadStandardOutputData();
   void processFinishedData(int exit_code,QProcess::ExitStatus exit_status);
   void processErrorData(QProcess::ProcessError err);
+  void insertData();
+  void removeData();
 
   void configData();
   void checkArgs();
@@ -85,6 +96,9 @@ class GlassWidget : public QFrame
   SourceDialog *gw_source_dialog;
   QProcess *gw_process;
   QString gw_process_accum;
+  Mode gw_mode;
+  QPushButton *gw_insert_button;
+  QPushButton *gw_remove_button;
 };
 
 
