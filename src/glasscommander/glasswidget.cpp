@@ -149,6 +149,34 @@ void GlassWidget::addSourceTypes(const QString &sources)
 }
 
 
+bool GlassWidget::isActive()
+{
+  return (gw_process!=NULL)&&(gw_process->state()==QProcess::Running);
+}
+
+
+void GlassWidget::start()
+{
+  startEncodingData();
+}
+
+
+void GlassWidget::terminate()
+{
+  if(isActive()) {
+    gw_process->terminate();
+  }
+}
+
+
+void GlassWidget::kill()
+{
+  if(isActive()) {
+    gw_process->kill();
+  }
+}
+
+
 void GlassWidget::load(Profile *p)
 {
   gw_server_dialog->load(p);

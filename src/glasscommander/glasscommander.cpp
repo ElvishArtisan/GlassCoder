@@ -81,6 +81,16 @@ MainWidget::MainWidget(QWidget *parent)
   connect(action,SIGNAL(triggered()),this,SLOT(abandonInstanceData()));
   gui_toolbar->addAction(action);
 
+  gui_toolbar->addSeparator();
+
+  gui_startall_button=new QPushButton(tr("Start All"),this);
+  connect(gui_startall_button,SIGNAL(clicked()),this,SLOT(startAllData()));
+  gui_toolbar->addWidget(gui_startall_button);
+
+  gui_stopall_button=new QPushButton(tr("Stop All"),this);
+  connect(gui_stopall_button,SIGNAL(clicked()),this,SLOT(stopAllData()));
+  gui_toolbar->addWidget(gui_stopall_button);
+
   gui_insert_button=new QPushButton(tr("Insert"),this);
   gui_insert_button->setFont(bold_font);
   gui_insert_button->setStyleSheet("background-color: yellow");
@@ -124,6 +134,8 @@ QSize MainWidget::sizeHint() const
 
 void MainWidget::addInstanceData()
 {
+  gui_startall_button->setDisabled(true);
+  gui_stopall_button->setDisabled(true);
   for(int i=0;i<gui_encoders.size();i++) {
     gui_encoders.at(i)->setMode(GlassWidget::InsertMode);
   }
@@ -133,6 +145,8 @@ void MainWidget::addInstanceData()
 
 void MainWidget::removeInstanceData()
 {
+  gui_startall_button->setDisabled(true);
+  gui_stopall_button->setDisabled(true);
   for(int i=0;i<gui_encoders.size();i++) {
     gui_encoders.at(i)->setMode(GlassWidget::RemoveMode);
   }
@@ -142,6 +156,8 @@ void MainWidget::removeInstanceData()
 
 void MainWidget::abandonInstanceData()
 {
+  gui_startall_button->setEnabled(true);
+  gui_stopall_button->setEnabled(true);
   for(int i=0;i<gui_encoders.size();i++) {
     gui_encoders.at(i)->setMode(GlassWidget::NormalMode);
   }
@@ -266,6 +282,26 @@ void MainWidget::configurationChangedData(GlassWidget *encoder)
     encoder->save(f);
     fclose(f);
     rename((basepath+".tmp").toUtf8(),basepath.toUtf8());
+  }
+}
+
+
+void MainWidget::startAllData()
+{
+  for(int i=0;i<gui_encoders.size();i++) {
+    if(!gui_encoders.at(i)->isActive()) {
+      gui_encoders.at(i)->start();
+    }
+  }
+}
+
+
+void MainWidget::stopAllData()
+{
+  for(int i=0;i<gui_encoders.size();i++) {
+    if(gui_encoders.at(i)->isActive()) {
+      gui_encoders.at(i)->terminate();
+    }
   }
 }
 

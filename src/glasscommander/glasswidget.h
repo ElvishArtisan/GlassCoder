@@ -49,6 +49,10 @@ class GlassWidget : public QFrame
   QString instanceName() const;
   void addCodecTypes(const QString &codecs);
   void addSourceTypes(const QString &sources);
+  bool isActive();
+  void start();
+  void terminate();
+  void kill();
   void load(Profile *p);
   void save(FILE *f) const;
 
@@ -70,7 +74,6 @@ class GlassWidget : public QFrame
   void processErrorData(QProcess::ProcessError err);
   void insertData();
   void removeData();
-
   void configData();
   void checkArgs();
   void serverTypeChangedData(Connector::ServerType type,bool multirate);

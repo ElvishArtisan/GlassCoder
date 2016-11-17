@@ -50,6 +50,8 @@ class MainWidget : public GuiApplication
   void deviceFinishedData(int exit_code,QProcess::ExitStatus exit_status);
   void processErrorData(QProcess::ProcessError err);
   void configurationChangedData(GlassWidget *encoder);
+  void startAllData();
+  void stopAllData();
 
  protected:
   void closeEvent(QCloseEvent *e);
@@ -67,6 +69,8 @@ class MainWidget : public GuiApplication
   QString gui_source_types;
   QProcess *gui_process;
   QPushButton *gui_insert_button;
+  QPushButton *gui_startall_button;
+  QPushButton *gui_stopall_button;
 };
 
 

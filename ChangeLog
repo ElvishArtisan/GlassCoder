@@ -685,3 +685,5 @@
 2016-11-17 Fred Gleason <fredg@paravelsystems.com>
 	* Added 'Add', 'Remove' and 'Abandon' buttons for managing instances
 	in glasscommander(1).
+2016-11-17 Fred Gleason <fredg@paravelsystems.com>
+	* Added 'Start All' and 'Stop All' buttons to glasscommander(1).
