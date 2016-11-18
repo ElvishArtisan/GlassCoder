@@ -92,6 +92,13 @@ int InstanceDialog::exec(QString *inst_name,const QStringList &used_names)
 void InstanceDialog::textChangedData(const QString &str)
 {
   instance_ok_button->setDisabled(str.isEmpty());
+  QList<QListWidgetItem *>items=instance_list->findItems(str,Qt::MatchExactly);
+  if(items.size()>0) {
+    instance_list->setCurrentItem(items.at(0));
+  }
+  else {
+    instance_list->clearSelection();
+  }
 }
 
 

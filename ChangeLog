@@ -701,3 +701,6 @@
 	* Added code to check for duplicate/invalid instance names in
 	'src/glasscommander/instancedialog.cpp' and
 	'src/glasscommander/instancedialog.h'.
+2016-11-18 Fred Gleason <fredg@paravelsystems.com>
+	* Added code to select an item in the 'Pick Instance' dialog when
+	its name is keyed into the 'Instance' control.
