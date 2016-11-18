@@ -28,6 +28,7 @@
 
 #include "glasswidget.h"
 #include "guiapplication.h"
+#include "instancedialog.h"
 
 #define GLASSCOMMANDER_USAGE "[options]\n"
 #define GLASSCOMMANDER_SETTINGS_FILE QString("glasscommanderrc")
@@ -61,11 +62,14 @@ class MainWidget : public GuiApplication
   void resizeEvent(QResizeEvent *e);
 
  private:
-  void InitEncoder(GlassWidget *encoder);
+  void ConnectEncoder(GlassWidget *encoder);
   void LoadEncoders();
   void SaveEncoders();
+  void LoadEncoderConfig(GlassWidget *encoder);
   int GetEncoderPosition(const QString &instance_name) const;
   void ProcessError(int exit_code,QProcess::ExitStatus exit_status);
+  InstanceDialog *gui_instance_dialog;
+  QString gui_new_instance_name;
   QToolBar *gui_toolbar;
   QList<GlassWidget *> gui_encoders;
   QString gui_codec_types;

@@ -69,6 +69,11 @@ MainWidget::MainWidget(QWidget *parent)
   QFont bold_font(font().family(),font().pointSize(),QFont::Bold);
 
   //
+  // Dialogs
+  //
+  gui_instance_dialog=new InstanceDialog(settingsDirectory(),this);
+
+  //
   // Tool Bar
   //
   gui_toolbar=addToolBar("foo");
@@ -141,12 +146,14 @@ QSize MainWidget::sizeHint() const
 
 void MainWidget::addInstanceData()
 {
-  gui_startall_button->setDisabled(true);
-  gui_stopall_button->setDisabled(true);
-  for(int i=0;i<gui_encoders.size();i++) {
-    gui_encoders.at(i)->setMode(GlassWidget::InsertMode);
+  if(gui_instance_dialog->exec(&gui_new_instance_name)) {
+    gui_startall_button->setDisabled(true);
+    gui_stopall_button->setDisabled(true);
+    for(int i=0;i<gui_encoders.size();i++) {
+      gui_encoders.at(i)->setMode(GlassWidget::InsertMode);
+    }
+    gui_insert_button->show();
   }
-  gui_insert_button->show();
 }
 
 
@@ -181,8 +188,18 @@ void MainWidget::topInsertClickedData()
 void MainWidget::insertClickedData(const QString &instance_name)
 {
   int pos=1+GetEncoderPosition(instance_name);
-  gui_encoders.insert(pos,new GlassWidget("new instance",this));
-  InitEncoder(gui_encoders.at(pos));
+  gui_encoders.insert(pos,new GlassWidget(gui_new_instance_name,this));
+  ConnectEncoder(gui_encoders.at(pos));
+  gui_encoders.at(pos)->addCodecTypes(gui_codec_types);
+  gui_encoders.at(pos)->addSourceTypes(gui_source_types);
+
+  LoadEncoderConfig(gui_encoders.at(pos));
+  /*
+  Profile *p=new Profile();
+  p->setSource(settingsFilename(gui_encoders.at(pos)->instanceName()));
+  gui_encoders.at(pos)->load(p);
+  delete p;
+  */
   int w=size().width();
   int h=size().height()+gui_encoders.at(pos)->sizeHint().height();
   setMaximumHeight(h);
@@ -259,10 +276,13 @@ void MainWidget::deviceFinishedData(int exit_code,
     ProcessError(exit_code,exit_status);
   }
   for(int i=0;i<gui_encoders.size();i++) {
+    LoadEncoderConfig(gui_encoders.at(i));
+    /*
     Profile *p=new Profile();
     p->setSource(settingsFilename(gui_encoders.at(i)->instanceName()));
     gui_encoders.at(i)->load(p);
     delete p;
+    */
   }
 }
 
@@ -378,7 +398,7 @@ void MainWidget::resizeEvent(QResizeEvent *e)
 }
 
 
-void MainWidget::InitEncoder(GlassWidget *encoder)
+void MainWidget::ConnectEncoder(GlassWidget *encoder)
 {
   connect(encoder,SIGNAL(configurationChanged(GlassWidget *)),
 	  this,SLOT(configurationChangedData(GlassWidget *)));
@@ -402,7 +422,7 @@ void MainWidget::LoadEncoders()
   name=p->stringValue(section,"InstanceName","",&ok);
   while(ok) {
     gui_encoders.push_back(new GlassWidget(name,this));
-    InitEncoder(gui_encoders.back());
+    ConnectEncoder(gui_encoders.back());
     count++;
     section=QString().sprintf("Encoder%d",count+1);
     name=p->stringValue(section,"InstanceName","",&ok);
@@ -431,6 +451,15 @@ void MainWidget::SaveEncoders()
     fclose(f);
     rename((basepath+".tmp").toUtf8(),basepath.toUtf8());
   }
+}
+
+
+void MainWidget::LoadEncoderConfig(GlassWidget *encoder)
+{
+  Profile *p=new Profile();
+  p->setSource(settingsFilename(encoder->instanceName()));
+  encoder->load(p);
+  delete p;  
 }
 
 

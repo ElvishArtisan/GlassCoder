@@ -690,3 +690,7 @@
 2016-11-18 Fred Gleason <fredg@paravelsystems.com>
 	* Added a check for proper stream shutdown when exiting
 	glasscommander(1).
+2016-11-18 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Pick Instance' dialog for glasscommander(1) in
+	'src/glasscommander/instancedialog.cpp' and
+	'src/glasscommander/instancedialog.h'.

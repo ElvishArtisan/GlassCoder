@@ -33,6 +33,7 @@ bin_PROGRAMS = glasscommander
 dist_glasscommander_SOURCES = configdialog.cpp configdialog.h\
                               glasscommander.cpp glasscommander.h\
                               glasswidget.cpp glasswidget.h\
+                              instancedialog.cpp instancedialog.h\
                               playmeter.cpp playmeter.h
 
 nodist_glasscommander_SOURCES = asihpi.cpp asihpi.h\
@@ -62,6 +63,7 @@ nodist_glasscommander_SOURCES = asihpi.cpp asihpi.h\
                                 moc_guiapplication.cpp\
                                 moc_hpiinputlistview.cpp\
                                 moc_hpiwidget.cpp\
+                                moc_instancedialog.cpp\
                                 moc_messagewidget.cpp\
                                 moc_playmeter.cpp\
                                 moc_segmeter.cpp\
