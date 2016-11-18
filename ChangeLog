@@ -694,3 +694,10 @@
 	* Added a 'Pick Instance' dialog for glasscommander(1) in
 	'src/glasscommander/instancedialog.cpp' and
 	'src/glasscommander/instancedialog.h'.
+2016-11-18 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'FilenameValidator' class in
+	'src/glasscommander/filenamevalidator.cpp' and
+	'src/glasscommander/filenamevalidator.h'.
+	* Added code to check for duplicate/invalid instance names in
+	'src/glasscommander/instancedialog.cpp' and
+	'src/glasscommander/instancedialog.h'.

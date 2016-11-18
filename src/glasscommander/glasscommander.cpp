@@ -146,7 +146,11 @@ QSize MainWidget::sizeHint() const
 
 void MainWidget::addInstanceData()
 {
-  if(gui_instance_dialog->exec(&gui_new_instance_name)) {
+  QStringList used_names;
+  for(int i=0;i<gui_encoders.size();i++) {
+    used_names.push_back(gui_encoders.at(i)->instanceName());
+  }
+  if(gui_instance_dialog->exec(&gui_new_instance_name,used_names)) {
     gui_startall_button->setDisabled(true);
     gui_stopall_button->setDisabled(true);
     for(int i=0;i<gui_encoders.size();i++) {
@@ -194,12 +198,7 @@ void MainWidget::insertClickedData(const QString &instance_name)
   gui_encoders.at(pos)->addSourceTypes(gui_source_types);
 
   LoadEncoderConfig(gui_encoders.at(pos));
-  /*
-  Profile *p=new Profile();
-  p->setSource(settingsFilename(gui_encoders.at(pos)->instanceName()));
-  gui_encoders.at(pos)->load(p);
-  delete p;
-  */
+
   int w=size().width();
   int h=size().height()+gui_encoders.at(pos)->sizeHint().height();
   setMaximumHeight(h);
@@ -277,12 +276,6 @@ void MainWidget::deviceFinishedData(int exit_code,
   }
   for(int i=0;i<gui_encoders.size();i++) {
     LoadEncoderConfig(gui_encoders.at(i));
-    /*
-    Profile *p=new Profile();
-    p->setSource(settingsFilename(gui_encoders.at(i)->instanceName()));
-    gui_encoders.at(i)->load(p);
-    delete p;
-    */
   }
 }
 

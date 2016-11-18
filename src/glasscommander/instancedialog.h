@@ -27,6 +27,9 @@
 #include <QLineEdit>
 #include <QListWidget>
 #include <QPushButton>
+#include <QStringList>
+
+#include "filenamevalidator.h"
 
 class InstanceDialog : public QDialog
 {
@@ -36,7 +39,7 @@ class InstanceDialog : public QDialog
   QSize sizeHint() const;
 
  public slots:
-  int exec(QString *inst_name);
+  int exec(QString *inst_name,const QStringList &used_names);
 
  private slots:
   void textChangedData(const QString &str);
@@ -51,13 +54,16 @@ class InstanceDialog : public QDialog
 
  private:
   void RefreshList();
+  bool IsMemberOf(const QStringList &list,const QString &str) const;
   QLabel *instance_name_label;
   QLineEdit *instance_name_edit;
   QListWidget *instance_list;
   QPushButton *instance_ok_button;
   QPushButton *instance_cancel_button;
   QString *instance_name;
+  QStringList instance_used_names;
   QDir *instance_dir;
+  FilenameValidator *instance_validator;
 };
 
 

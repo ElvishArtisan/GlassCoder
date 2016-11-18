@@ -31,6 +31,7 @@ moc_%.cpp:	%.h
 bin_PROGRAMS = glasscommander
 
 dist_glasscommander_SOURCES = configdialog.cpp configdialog.h\
+                              filenamevalidator.cpp filenamevalidator.h\
                               glasscommander.cpp glasscommander.h\
                               glasswidget.cpp glasswidget.h\
                               instancedialog.cpp instancedialog.h\
@@ -58,6 +59,7 @@ nodist_glasscommander_SOURCES = asihpi.cpp asihpi.h\
                                 moc_combobox.cpp\
                                 moc_configdialog.cpp\
                                 moc_connector.cpp\
+                                moc_filenamevalidator.cpp\
                                 moc_glasscommander.cpp\
                                 moc_glasswidget.cpp\
                                 moc_guiapplication.cpp\
