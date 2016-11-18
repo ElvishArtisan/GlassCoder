@@ -26,6 +26,7 @@
 #include <QTimer>
 #include <QToolBar>
 
+#include "deletedialog.h"
 #include "glasswidget.h"
 #include "guiapplication.h"
 #include "instancedialog.h"
@@ -69,6 +70,7 @@ class MainWidget : public GuiApplication
   int GetEncoderPosition(const QString &instance_name) const;
   void ProcessError(int exit_code,QProcess::ExitStatus exit_status);
   InstanceDialog *gui_instance_dialog;
+  DeleteDialog *gui_delete_dialog;
   QString gui_new_instance_name;
   QToolBar *gui_toolbar;
   QList<GlassWidget *> gui_encoders;

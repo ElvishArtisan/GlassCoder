@@ -704,3 +704,7 @@
 2016-11-18 Fred Gleason <fredg@paravelsystems.com>
 	* Added code to select an item in the 'Pick Instance' dialog when
 	its name is keyed into the 'Instance' control.
+2016-11-18 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Remove Instance' dialog in
+	'src/glasscommander/deletedialog.cpp' and
+	'src/glasscommander/deletedialog.h'.

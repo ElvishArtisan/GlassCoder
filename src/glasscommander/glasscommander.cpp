@@ -72,6 +72,7 @@ MainWidget::MainWidget(QWidget *parent)
   // Dialogs
   //
   gui_instance_dialog=new InstanceDialog(settingsDirectory(),this);
+  gui_delete_dialog=new DeleteDialog(settingsDirectory(),this);
 
   //
   // Tool Bar
@@ -210,16 +211,23 @@ void MainWidget::insertClickedData(const QString &instance_name)
 
 void MainWidget::removeClickedData(const QString &instance_name)
 {
-  int pos=GetEncoderPosition(instance_name);
-  int w=size().width();
-  int h=size().height()-gui_encoders.at(pos)->sizeHint().height();
-  delete gui_encoders.at(pos);
-  gui_encoders.erase(gui_encoders.begin()+pos);
+  bool delete_instance=false;
+  if(gui_delete_dialog->exec(instance_name,&delete_instance)) {
+    int pos=GetEncoderPosition(instance_name);
+    int w=size().width();
+    int h=size().height()-gui_encoders.at(pos)->sizeHint().height();
+    delete gui_encoders.at(pos);
+    gui_encoders.erase(gui_encoders.begin()+pos);
 
-  setMaximumHeight(h);
-  setMinimumSize(w,h);
-  abandonInstanceData();
-  SaveEncoders();
+    setMaximumHeight(h);
+    setMinimumSize(w,h);
+    abandonInstanceData();
+    SaveEncoders();
+
+    if(delete_instance) {
+      deleteInstance(instance_name);
+    }
+  }
 }
 
 
