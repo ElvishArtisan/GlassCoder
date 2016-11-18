@@ -57,6 +57,13 @@ MainWidget::MainWidget(QWidget *parent)
   setWindowTitle(QString("GlassCommander v")+VERSION);
 
   //
+  // Stop Timer
+  //
+  gui_stop_timer=new QTimer(this);
+  gui_stop_timer->setSingleShot(true);
+  connect(gui_stop_timer,SIGNAL(timeout()),this,SLOT(stopTimeoutData()));
+
+  //
   // Fonts
   //
   QFont bold_font(font().family(),font().pointSize(),QFont::Bold);
@@ -306,8 +313,55 @@ void MainWidget::stopAllData()
 }
 
 
+void MainWidget::encoderStoppedData()
+{
+  if(--gui_stop_count==0) {
+    exit(0);
+  }
+}
+
+
+void MainWidget::stopTimeoutData()
+{
+  for(int i=0;i<gui_encoders.size();i++) {
+    if(gui_encoders.at(i)->isActive()) {
+      gui_encoders.at(i)->kill();
+    }
+  }
+  exit(1);
+}
+
+
 void MainWidget::closeEvent(QCloseEvent *e)
 {
+  bool active=false;
+
+  for(int i=0;i<gui_encoders.size();i++) {
+    active=active||gui_encoders.at(i)->isActive();
+  }
+  if(active) {
+    if(QMessageBox::question(this,"GlassCommander - "+tr("Close"),
+			     tr("There are still streams active.")+" "+
+			     tr("Shutting down will cause them to be stopped.")+
+			     "\n"+tr("Shut down?"),
+			     QMessageBox::Yes,QMessageBox::No)!=
+       QMessageBox::Yes) {
+      e->ignore();
+      return;
+    }
+    gui_stop_count=0;
+    for(int i=0;i<gui_encoders.size();i++) {
+      if(gui_encoders.at(i)->isActive()) {
+	connect(gui_encoders.at(i),SIGNAL(stopped()),
+		this,SLOT(encoderStoppedData()));
+	gui_encoders.at(i)->terminate();
+	gui_stop_count++;
+      }
+    }
+    gui_stop_timer->start(10000);
+    e->ignore();
+    return;
+  }
   e->accept();
 }
 

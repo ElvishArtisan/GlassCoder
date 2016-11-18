@@ -300,6 +300,7 @@ void GlassWidget::processFinishedData(int exit_code,
   gw_status_widget->setStatus(CONNECTION_IDLE);
   gw_process->deleteLater();
   gw_process=NULL;
+  emit stopped();
 }
 
 

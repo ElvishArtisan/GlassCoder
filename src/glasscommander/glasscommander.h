@@ -23,6 +23,7 @@
 
 #include <QList>
 #include <QProcess>
+#include <QTimer>
 #include <QToolBar>
 
 #include "glasswidget.h"
@@ -52,6 +53,8 @@ class MainWidget : public GuiApplication
   void configurationChangedData(GlassWidget *encoder);
   void startAllData();
   void stopAllData();
+  void encoderStoppedData();
+  void stopTimeoutData();
 
  protected:
   void closeEvent(QCloseEvent *e);
@@ -71,6 +74,8 @@ class MainWidget : public GuiApplication
   QPushButton *gui_insert_button;
   QPushButton *gui_startall_button;
   QPushButton *gui_stopall_button;
+  QTimer *gui_stop_timer;
+  int gui_stop_count;
 };
 
 

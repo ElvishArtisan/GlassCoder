@@ -58,6 +58,7 @@ class GlassWidget : public QFrame
 
  signals:
   void configurationChanged(GlassWidget *encoder);
+  void stopped();
   void insertClicked(const QString &instance_name);
   void removeClicked(const QString &instance_name);
 
