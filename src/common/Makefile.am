@@ -30,7 +30,7 @@ EXTRA_DIST = asihpi.cpp asihpi.h\
              connector.cpp connector.h\
              glasslimits.h\
              guiapplication.cpp guiapplication.h\
-             hpiinputlistview.cpp hpiinputlistview.y\
+             hpiinputlistview.cpp hpiinputlistview.h\
              hpiwidget.cpp hpiwidget.h\
              logging.cpp logging.h\
              messagewidget.cpp messagewidget.h\

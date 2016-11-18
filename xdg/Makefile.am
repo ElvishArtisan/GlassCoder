@@ -21,12 +21,15 @@
 
 install-exec-am:	
 	mkdir -p $(DESTDIR)@prefix@/share/applications
+	cp glasscommander.desktop $(DESTDIR)@prefix@/share/applications/
 	cp glassgui.desktop $(DESTDIR)@prefix@/share/applications/
 
 uninstall-local:	
+	rm -f $(DESTDIR)@prefix@/share/applications/glasscommander.desktop
 	rm -f $(DESTDIR)@prefix@/share/applications/glassgui.desktop
 
-EXTRA_DIST = glassgui.desktop
+EXTRA_DIST = glasscommander.desktop\
+             glassgui.desktop
 
 CLEANFILES = *~
 

@@ -2,7 +2,7 @@
 ##
 ##    Minimalist Audio Streaming Encoder
 ##
-##    Copyright (C) 2014-2015  Fred Gleason <fredg@paravelsystems.com>
+##    Copyright (C) 2014-2016  Fred Gleason <fredg@paravelsystems.com>
 ##
 ##    This program is free software; you can redistribute it and/or modify
 ##    it under the terms of version 2 of the GNU General Public License as
@@ -40,16 +40,21 @@ command-line, with no configuration files or GUI required.
 
 
 %package gui
-Summary: GlassGui control applet for GlassCoder
+Summary: GlassGui and GlassCommander control applets for GlassCoder
 Group: Productivity/Multimedia/Other
 Requires: glasscoder
 
 %description gui
-GlassGui is a control applet for driving the GlassCoder audio streaming
-encoder.  It provides a complete point-and-click interface for setting
-all of the GlassCoder parameters and can be used directly to instantiate an
-actual instance of GlassCoder or to generate a command-line invocation that
-can copy/pasted into another environment.
+GlassGui is a control applet for driving a single instance of the GlassCoder
+audio streaming encoder.  It provides a complete point-and-click interface
+for setting all of the GlassCoder parameters and can be used directly to
+instantiate an actual instance of GlassCoder or to generate a command-line
+invocation that can copy/pasted into another environment.
+
+GlassCommander is a control applet for driving multiple simultaneous
+instances (potentially dozens) of the GlassCoder audio streaming encoder.
+It provides full visibility and control of the operating state of each
+GlassCoder instance while conserving screen real estate.
 
 
 %prep
@@ -68,6 +73,9 @@ rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
 %post
+if [ -x %{_bindir}/gtk-update-icon-cache ] ; then
+  %{_bindir}/gtk-update-icon-cache -f --quiet %{_datadir}/icons/hicolor || :
+fi
 
 
 %clean
@@ -78,6 +86,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %{_bindir}/glasscoder
 %{_mandir}/man1/glasscoder.1.gz
+%{_mandir}/man1/glasscommander.1.gz
 %{_mandir}/man1/glassgui.1.gz
 %{_mandir}/man7/glasscoder-ipc.7.gz
 %doc AUTHORS
@@ -92,12 +101,16 @@ rm -rf $RPM_BUILD_ROOT
 
 %files gui
 %{_bindir}/glassgui
+%{_bindir}/glasscommander
 %{_datadir}/applications/glassgui.desktop
+%{_datadir}/applications/glasscommander.desktop
 %{_datadir}/icons/hicolor/16x16/apps/glasscoder.png
 %{_datadir}/icons/hicolor/22x22/apps/glasscoder.png
 %{_datadir}/icons/hicolor/48x48/apps/glasscoder.png
 
 %changelog
+* Fri Nov 18 2016 Fred Gleason <fredg@paravelsystems.com>
+-- Added glasscommander(1) to the 'gui' subpackage.
 * Wed Aug 26 2015 Fred Gleason <fredg@paravelsystems.com>
 -- Added a 'gui' subpackage.
 * Tue Aug 11 2015 Fred Gleason <fredg@paravelsystems.com>

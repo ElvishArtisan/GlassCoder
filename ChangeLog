@@ -714,3 +714,5 @@
 	and 'src/glasscommander/configdialog.h'.
 2016-11-18 Fred Gleason <fredg@paravelsystems.com>
 	* Added a glasscommander(1) man page.
+2016-11-18 Fred Gleason <fredg@paravelsystems.com>
+	* Added glasscommander(1) to 'glasscoder.spec.in'.
