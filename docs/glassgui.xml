@@ -6,12 +6,14 @@
   <refmeta>
     <refentrytitle>glassgui</refentrytitle>
     <manvolnum>1</manvolnum>
-    <refmiscinfo class='source'>October 2015</refmiscinfo>
+    <refmiscinfo class='source'>November 2016</refmiscinfo>
     <refmiscinfo class='manual'>Linux Audio Manual</refmiscinfo>
   </refmeta>
   <refnamediv>
     <refname>glassgui</refname>
-    <refpurpose>GUI front-end for <command>glasscoder</command><manvolnum>1</manvolnum> audio encoder</refpurpose>
+    <refpurpose>Single-stream GUI front-end for the 
+    <command>glasscoder</command><manvolnum>1</manvolnum> audio encoder
+    </refpurpose>
   </refnamediv>
   <info>
     <author>
@@ -37,11 +39,18 @@
   <refsect1 id='description'><title>Description</title>
   <para>
     <command>glassgui</command><manvolnum>1</manvolnum> is a GUI front end
-    for the <command>glasscoder</command><manvolnum>1</manvolnum> audio encoder.
+    for a single instance of the 
+    <command>glasscoder</command><manvolnum>1</manvolnum> audio encoder.
     It provides a convenient and discoverable means for creating and saving
     <command>glasscoder</command><manvolnum>1</manvolnum> invocations as
     well as an instance management system for
     saving multiple sets of configurations on the local system.
+  </para>
+  <para>
+    For a GUI front-end that is capable of managing dozens of
+    <command>glasscoder</command><manvolnum>1</manvolnum> instances
+    simultaneously, see
+    <command>glasscommander</command><manvolnum>1</manvolnum>.
   </para>
   </refsect1>
 
@@ -103,6 +112,9 @@
   <para>
   <citerefentry>
     <refentrytitle>glasscoder</refentrytitle><manvolnum>1</manvolnum>
+  </citerefentry>,
+  <citerefentry>
+    <refentrytitle>glasscommander</refentrytitle><manvolnum>1</manvolnum>
   </citerefentry>
   </para>
   </refsect1>

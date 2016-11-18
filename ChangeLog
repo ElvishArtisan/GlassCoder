@@ -712,3 +712,5 @@
 	* Added a 'Start this instance at application launch' control
 	to the Settings dialog in 'src/glasscommander/configdialog.cpp'
 	and 'src/glasscommander/configdialog.h'.
+2016-11-18 Fred Gleason <fredg@paravelsystems.com>
+	* Added a glasscommander(1) man page.

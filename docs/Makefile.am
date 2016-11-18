@@ -32,10 +32,12 @@
 
 all-local:	glasscoder.1 glasscoder.html\
                 glasscoder-ipc.7 glasscoder-ipc.xml\
+                glasscommander.1 glasscommander.html\
                 glassgui.1 glassgui.html
 
 man_MANS = glasscoder.1\
            glasscoder-ipc.7\
+           glasscommander.1\
            glassgui.1
 
 EXTRA_DIST = glasscoder.1\
@@ -44,6 +46,9 @@ EXTRA_DIST = glasscoder.1\
              glasscoder-ipc.7\
              glasscoder-ipc.html\
              glasscoder-ipc.xml\
+             glasscommander.1\
+             glasscommander.html\
+             glasscommander.xml\
              glassgui.1\
              glassgui.html\
              glassgui.xml

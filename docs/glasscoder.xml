@@ -6,7 +6,7 @@
   <refmeta>
     <refentrytitle>glasscoder</refentrytitle>
     <manvolnum>1</manvolnum>
-    <refmiscinfo class='source'>September 2016</refmiscinfo>
+    <refmiscinfo class='source'>November 2016</refmiscinfo>
     <refmiscinfo class='manual'>Linux Audio Manual</refmiscinfo>
   </refmeta>
   <refnamediv>
@@ -51,7 +51,8 @@
     configuration file components at all; its sole 'user interface' being its
     command-line invocation. As such, it is particularly well suited for
     being driven by an external process or controller such as
-    <command>glassgui</command><manvolnum>1</manvolnum>.
+    <command>glassgui</command><manvolnum>1</manvolnum> or
+    <command>glasscommander</command><manvolnum>1</manvolnum>.
   </para>
   </refsect1>
 
@@ -1152,11 +1153,14 @@
 <refsect1 id='see_also'><title>See Also</title>
 <para>
   <citerefentry>
+    <refentrytitle>glasscommander</refentrytitle><manvolnum>1</manvolnum>
+  </citerefentry>,
+  <citerefentry>
     <refentrytitle>glassgui</refentrytitle><manvolnum>1</manvolnum>
-    </citerefentry>,
-    <citerefentry>
-      <refentrytitle>jackd</refentrytitle><manvolnum>1</manvolnum>
-    </citerefentry>
+  </citerefentry>,
+  <citerefentry>
+    <refentrytitle>jackd</refentrytitle><manvolnum>1</manvolnum>
+  </citerefentry>
 </para>
 </refsect1>
 </refentry>
