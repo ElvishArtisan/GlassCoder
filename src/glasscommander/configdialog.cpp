@@ -63,17 +63,36 @@ ConfigDialog::ConfigDialog(const QString &instance_name,
   conf_source_button=new QPushButton(tr("Source")+"\n"+tr("Settings"),this);
   conf_source_button->setFont(bold_font);
   connect(conf_source_button,SIGNAL(clicked()),conf_source_dialog,SLOT(exec()));
+
+  //
+  // Autostart
+  //
+  conf_autostart_checkbox=new QCheckBox(this);
+  conf_autostart_label=
+    new QLabel(tr("Start this instance at application launch"),this);
+  conf_autostart_label->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+  conf_autostart_label->setFont(bold_font);
 }
 
 
 QSize ConfigDialog::sizeHint() const
 {
-  return QSize(370,70);
+  return QSize(370,100);
+}
+
+
+int ConfigDialog::exec(bool *autostart)
+{
+  conf_autostart=autostart;
+  conf_autostart_checkbox->setChecked(*autostart);
+
+  return QDialog::exec();
 }
 
 
 void ConfigDialog::closeEvent(QCloseEvent *e)
 {
+  *conf_autostart=conf_autostart_checkbox->isChecked();
   done(0);
 }
 
@@ -87,4 +106,7 @@ void ConfigDialog::resizeEvent(QResizeEvent *e)
   conf_stream_button->setGeometry(190,10,80,50);
 
   conf_source_button->setGeometry(280,10,80,50);
+
+  conf_autostart_checkbox->setGeometry(20,65,20,20);
+  conf_autostart_label->setGeometry(45,65,size().width()-45,20);
 }

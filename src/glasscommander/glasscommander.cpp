@@ -284,6 +284,9 @@ void MainWidget::deviceFinishedData(int exit_code,
   }
   for(int i=0;i<gui_encoders.size();i++) {
     LoadEncoderConfig(gui_encoders.at(i));
+    if(gui_encoders.at(i)->autoStart()) {
+      gui_encoders.at(i)->start();
+    }
   }
 }
 
@@ -311,6 +314,7 @@ void MainWidget::configurationChangedData(GlassWidget *encoder)
     fclose(f);
     rename((basepath+".tmp").toUtf8(),basepath.toUtf8());
   }
+  SaveEncoders();
 }
 
 
@@ -423,6 +427,7 @@ void MainWidget::LoadEncoders()
   name=p->stringValue(section,"InstanceName","",&ok);
   while(ok) {
     gui_encoders.push_back(new GlassWidget(name,this));
+    gui_encoders.back()->setAutoStart(p->boolValue(section,"AutoStart"));
     ConnectEncoder(gui_encoders.back());
     count++;
     section=QString().sprintf("Encoder%d",count+1);
@@ -447,6 +452,7 @@ void MainWidget::SaveEncoders()
       fprintf(f,"[Encoder%d]\n",i+1);
       fprintf(f,"InstanceName=%s\n",
 	      (const char *)gui_encoders.at(i)->instanceName().toUtf8());
+      fprintf(f,"AutoStart=%d\n",gui_encoders.at(i)->autoStart());
       fprintf(f,"\n");
     }
     fclose(f);

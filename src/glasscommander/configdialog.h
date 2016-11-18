@@ -21,8 +21,10 @@
 #ifndef CONFIGDIALOG_H
 #define CONFIGDIALOG_H
 
-#include <QPushButton>
+#include <QCheckBox>
 #include <QDialog>
+#include <QLabel>
+#include <QPushButton>
 
 #include "codecdialog.h"
 #include "serverdialog.h"
@@ -38,6 +40,9 @@ class ConfigDialog : public QDialog
 	       SourceDialog *source_dialog,QWidget *parent=0);
   QSize sizeHint() const;
 
+ public slots:
+  int exec(bool *autostart);
+
  protected:
   void closeEvent(QCloseEvent *e);
   void resizeEvent(QResizeEvent *e);
@@ -51,6 +56,9 @@ class ConfigDialog : public QDialog
   QPushButton *conf_stream_button;
   SourceDialog *conf_source_dialog;
   QPushButton *conf_source_button;
+  QLabel *conf_autostart_label;
+  QCheckBox *conf_autostart_checkbox;
+  bool *conf_autostart;
 };
 
 

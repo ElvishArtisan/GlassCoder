@@ -45,6 +45,8 @@ class GlassWidget : public QFrame
   enum Mode {NormalMode=0,InsertMode=1,RemoveMode=2};
   GlassWidget(const QString &instance_name,QWidget *parent=0);
   QSize sizeHint() const;
+  bool autoStart() const;
+  void setAutoStart(bool state);
   void setMode(Mode mode);
   QString instanceName() const;
   void addCodecTypes(const QString &codecs);
@@ -103,6 +105,7 @@ class GlassWidget : public QFrame
   Mode gw_mode;
   QPushButton *gw_insert_button;
   QPushButton *gw_remove_button;
+  bool gw_auto_start;
 };
 
 

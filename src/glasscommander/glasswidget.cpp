@@ -25,6 +25,7 @@ GlassWidget::GlassWidget(const QString &instance_name,QWidget *parent)
   : QFrame(parent)
 {
   gw_process=NULL;
+  gw_auto_start=false;
 
   setFrameStyle(QFrame::Box|QFrame::Raised);
   setMidLineWidth(2);
@@ -96,6 +97,18 @@ GlassWidget::GlassWidget(const QString &instance_name,QWidget *parent)
 QSize GlassWidget::sizeHint() const
 {
   return QSize(800,36);
+}
+
+
+bool GlassWidget::autoStart() const
+{
+  return gw_auto_start;
+}
+
+
+void GlassWidget::setAutoStart(bool state)
+{
+  gw_auto_start=state;
 }
 
 
@@ -330,7 +343,9 @@ void GlassWidget::removeData()
 
 void GlassWidget::configData()
 {
-  gw_config_dialog->exec();
+  bool autostart=autoStart();
+  gw_config_dialog->exec(&autostart);
+  setAutoStart(autostart);
   emit configurationChanged(this);
 }
 

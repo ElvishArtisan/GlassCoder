@@ -708,3 +708,7 @@
 	* Added a 'Remove Instance' dialog in
 	'src/glasscommander/deletedialog.cpp' and
 	'src/glasscommander/deletedialog.h'.
+2016-11-18 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Start this instance at application launch' control
+	to the Settings dialog in 'src/glasscommander/configdialog.cpp'
+	and 'src/glasscommander/configdialog.h'.
