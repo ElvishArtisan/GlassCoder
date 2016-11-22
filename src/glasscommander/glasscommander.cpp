@@ -43,6 +43,7 @@ MainWidget::MainWidget(QWidget *parent)
   : GuiApplication(parent)
 {
   gui_process=NULL;
+  gui_starting_all=false;
 
   CmdSwitch *cmd=
     new CmdSwitch(qApp->argc(),qApp->argv(),"glasscommander",GLASSCOMMANDER_USAGE);
@@ -57,11 +58,16 @@ MainWidget::MainWidget(QWidget *parent)
   setWindowTitle(QString("GlassCommander v")+VERSION);
 
   //
-  // Stop Timer
+  // Timers
   //
   gui_stop_timer=new QTimer(this);
   gui_stop_timer->setSingleShot(true);
   connect(gui_stop_timer,SIGNAL(timeout()),this,SLOT(stopTimeoutData()));
+
+  gui_autostart_timer=new QTimer(this);
+  gui_autostart_timer->setSingleShot(true);
+  connect(gui_autostart_timer,SIGNAL(timeout()),this,SLOT(autostartData()));
+  gui_autostart_index=0;
 
   //
   // Fonts
@@ -284,10 +290,8 @@ void MainWidget::deviceFinishedData(int exit_code,
   }
   for(int i=0;i<gui_encoders.size();i++) {
     LoadEncoderConfig(gui_encoders.at(i));
-    if(gui_encoders.at(i)->autoStart()) {
-      gui_encoders.at(i)->start();
-    }
   }
+  autostartData();
 }
 
 
@@ -318,13 +322,26 @@ void MainWidget::configurationChangedData(GlassWidget *encoder)
 }
 
 
-void MainWidget::startAllData()
+void MainWidget::autostartData()
 {
-  for(int i=0;i<gui_encoders.size();i++) {
-    if(!gui_encoders.at(i)->isActive()) {
+  for(int i=gui_autostart_index;i<gui_encoders.size();i++) {
+    if((!gui_encoders.at(i)->isActive())&&
+       (gui_starting_all||gui_encoders.at(i)->autoStart())) {
       gui_encoders.at(i)->start();
+      gui_autostart_timer->start(1000);
+      gui_autostart_index=i+1;
+      return;
     }
   }
+  gui_starting_all=false;
+}
+
+
+void MainWidget::startAllData()
+{
+  gui_starting_all=true;
+  gui_autostart_index=0;
+  autostartData();
 }
 
 

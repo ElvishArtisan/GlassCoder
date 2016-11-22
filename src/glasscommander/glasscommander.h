@@ -53,6 +53,7 @@ class MainWidget : public GuiApplication
   void deviceFinishedData(int exit_code,QProcess::ExitStatus exit_status);
   void processErrorData(QProcess::ProcessError err);
   void configurationChangedData(GlassWidget *encoder);
+  void autostartData();
   void startAllData();
   void stopAllData();
   void encoderStoppedData();
@@ -82,6 +83,9 @@ class MainWidget : public GuiApplication
   QPushButton *gui_stopall_button;
   QTimer *gui_stop_timer;
   int gui_stop_count;
+  QTimer *gui_autostart_timer;
+  int gui_autostart_index;
+  bool gui_starting_all;
 };
 
 
