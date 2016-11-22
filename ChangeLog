@@ -720,3 +720,7 @@
 	* Incremented the package version to 0.9.18.
 2016-11-22 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented staggered startup in glasscommander(1).
+2016-11-22 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/glasscoder/icestreamconnector.cpp' that caused
+	incorrect an date-time header to be emitted for timezones other than
+	UTC+0400.

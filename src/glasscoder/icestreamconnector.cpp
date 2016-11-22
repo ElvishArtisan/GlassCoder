@@ -431,34 +431,6 @@ void IceStreamConnector::ProcessHeader(IceStream *strm)
       switch(strm->type()) {
       case IceStream::Player:
 	StartStream(strm);
-	/*
-	//
-	// Send Headers
-	//
-	SendHeader(strm,"HTTP/1.0 200 OK");
-	SendHeader(strm,"Server: Icecast 2.4.0");
-	SendHeader(strm,"Date: "+
-		   QDateTime::currentDateTime().addSecs(4*3600).
-		   toString("ddd, dd MM yyyy hh:mm:ss GMT").toUtf8());
-	SendHeader(strm,"Content-Type: "+contentType());
-	SendHeader(strm,"Cache-Control: no-cache");
-	SendHeader(strm,"Pragma: no-cache");
-	SendHeader(strm,"icy-br: "+QString().sprintf("%u",audioBitrate()));
-	SendHeader(strm,"ice-audio-info: "+
-		   QString().sprintf("bitrate=%u",audioBitrate()));
-	SendHeader(strm,"icy-description: "+streamDescription());
-	SendHeader(strm,"icy-genre: "+streamGenre());
-	SendHeader(strm,"icy-name: "+streamName());
-	SendHeader(strm,"icy-pub: "+QString().sprintf("%u",streamPublic()));
-	SendHeader(strm,"icy-url: "+streamUrl());
-	if(strm->metadataEnabled()) {
-	  SendHeader(strm,"icy-metaint: "+
-		     QString().sprintf("%u",ICESTREAM_METADATA_INTERVAL));
-	}
-	SendHeader(strm);
-
-	strm->setNegotiated();
-	*/
 	break;
 
       case IceStream::Updinfo:
@@ -526,7 +498,7 @@ void IceStreamConnector::StartStream(IceStream *strm)
   SendHeader(strm,"HTTP/1.0 200 OK");
   SendHeader(strm,"Server: Icecast 2.4.0");
   SendHeader(strm,"Date: "+
-	     QDateTime::currentDateTime().addSecs(4*3600).
+	     QDateTime::currentDateTime().toUTC().
 	     toString("ddd, dd MM yyyy hh:mm:ss GMT").toUtf8());
   SendHeader(strm,"Content-Type: "+contentType());
   SendHeader(strm,"Cache-Control: no-cache");
