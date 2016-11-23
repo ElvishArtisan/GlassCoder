@@ -724,3 +724,5 @@
 	* Fixed a bug in 'src/glasscoder/icestreamconnector.cpp' that caused
 	incorrect an date-time header to be emitted for timezones other than
 	UTC+0400.
+2016-11-23 Fred Gleason <fredg@paravelsystems.com>
+	* Added a '--server-user-agent' option to glasscoder(1).

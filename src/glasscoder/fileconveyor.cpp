@@ -129,6 +129,12 @@ void FileConveyor::setPassword(const QString &str)
 }
 
 
+void FileConveyor::setUserAgent(const QString &str)
+{
+  conv_user_agent=str;
+}
+
+
 void FileConveyor::setAddedHeaders(const QStringList &hdrs)
 {
   conv_added_headers=hdrs;
@@ -235,6 +241,10 @@ void FileConveyor::Dispatch()
 
   conv_arguments.clear();
   AddCurlAuthArgs(&conv_arguments,evt);
+  if((!conv_user_agent.isEmpty())&&(!conv_password.isEmpty())) {
+    conv_arguments.push_back("--user-agent");
+    conv_arguments.push_back(conv_user_agent);
+  }
   AddHeaders(&conv_arguments,conv_added_headers);
   conv_arguments.push_back("--write-out");
   conv_arguments.push_back("%{http_code}");

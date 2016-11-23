@@ -111,6 +111,18 @@ void Connector::setServerMaxConnections(int max)
 }
 
 
+QString Connector::serverUserAgent() const
+{
+  return conn_server_user_agent;
+}
+
+
+void Connector::setServerUserAgent(const QString &str)
+{
+  conn_server_user_agent=str;
+}
+
+
 QString Connector::serverUsername() const
 {
   return conn_server_username;

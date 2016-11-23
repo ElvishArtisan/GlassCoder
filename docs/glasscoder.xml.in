@@ -645,6 +645,22 @@
 
     <varlistentry>
       <term>
+	<option>--server-user-agent=</option><replaceable>agent-string</replaceable>
+      </term>
+      <listitem>
+	<para>
+	  The <computeroutput>User-Agent</computeroutput> header value to
+	  use when connecting to external servers. Default value is
+	  <userinput>GlassCoder/@VERSION@</userinput>. This setting
+	  is used only by the <userinput>IceCast2</userinput>, 
+	  <userinput>HLS</userinput> and <userinput>IceStreamer</userinput>
+	  servers.
+	</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>
 	<option>--stream-aim=</option><replaceable>aim</replaceable>
       </term>
       <listitem>

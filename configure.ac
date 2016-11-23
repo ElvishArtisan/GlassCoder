@@ -272,6 +272,7 @@ AC_CONFIG_FILES([ \
     conf/Makefile \
     conf/httpd/Makefile \
     docs/Makefile \
+    docs/glasscoder.xml \
     icons/Makefile \
     src/common/Makefile \
     src/glasscoder/Makefile \

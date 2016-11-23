@@ -89,6 +89,7 @@ MainObject::MainObject(QObject *parent)
   sir_conveyor=new FileConveyor(this);
   sir_conveyor->setUsername(sir_config->serverUsername());
   sir_conveyor->setPassword(sir_config->serverPassword());
+  sir_conveyor->setUserAgent(sir_config->serverUserAgent());
   connect(sir_conveyor,SIGNAL(stopped()),this,SLOT(connectorStoppedData()));
   if(sir_config->audioBitrateQuantity()>1) {
     if(!StartMultiStream()) {
@@ -316,6 +317,7 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
   conn->setServerMaxConnections(sir_config->serverMaxConnections());
   conn->setServerPipe(sir_config->serverPipe());
   conn->setServerStartConnections(sir_config->serverStartConnections());
+  conn->setServerUserAgent(sir_config->serverUserAgent());
   if(is_top) {
     conn->setAudioBitrates(sir_config->audioBitrates());
     conn->setFormatIdentifier(sir_codecs[0]->formatIdentifier());

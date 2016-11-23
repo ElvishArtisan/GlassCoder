@@ -42,7 +42,7 @@ man_MANS = glasscoder.1\
 
 EXTRA_DIST = glasscoder.1\
              glasscoder.html\
-             glasscoder.xml\
+             glasscoder.xml.in\
              glasscoder-ipc.7\
              glasscoder-ipc.html\
              glasscoder-ipc.xml\
@@ -57,6 +57,7 @@ CLEANFILES = *~
 DISTCLEANFILES = *.1\
                  *.7\
                  *.html\
+                 glasscoder.xml\
                  moc_*
 MAINTAINERCLEANFILES = *~\
                        *.fo\

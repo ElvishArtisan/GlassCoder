@@ -57,6 +57,7 @@ Config::Config()
   metadata_port=0;
   global_log_string="";
   meter_data=false;
+  server_user_agent=QString("GlassCoder/")+VERSION;
 
   CmdSwitch *cmd=
     new CmdSwitch(qApp->argc(),qApp->argv(),"glasscoder",GLASSCODER_USAGE);
@@ -192,6 +193,10 @@ Config::Config()
 	Log(LOG_ERR,"invalid argument for --server-url");
 	exit(256);
       }
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--server-user-agent") {
+      server_user_agent=cmd->value(i);
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--server-script-down") {
@@ -428,6 +433,12 @@ Connector::ServerType Config::serverType() const
 QUrl Config::serverUrl() const
 {
   return server_url;
+}
+
+
+QString Config::serverUserAgent() const
+{
+  return server_user_agent;
 }
 
 

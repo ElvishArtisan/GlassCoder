@@ -109,7 +109,8 @@ void IceConnector::socketConnectedData()
   WriteHeader("SOURCE "+serverMountpoint()+" HTTP/1.0");
   WriteHeader(QString("Authorization: Basic ")+
 	      Connector::base64Encode(username+":"+serverPassword()));
-  WriteHeader(QString("User-Agent: GlassCoder/")+VERSION);
+  //  WriteHeader(QString("User-Agent: GlassCoder/")+VERSION);
+  WriteHeader("User-Agent: "+serverUserAgent());
   WriteHeader("Content-Type: "+contentType());
   WriteHeader("ice-name: "+streamName());
   WriteHeader("ice-description: "+streamDescription());

@@ -50,6 +50,8 @@ class Connector : public QObject
   void setServerExitOnLast(bool state);
   int serverMaxConnections() const;
   void setServerMaxConnections(int max);
+  QString serverUserAgent() const;
+  void setServerUserAgent(const QString &str);
   QString serverUsername() const;
   void setServerUsername(const QString &str);
   QString serverPassword() const;
@@ -152,6 +154,7 @@ class Connector : public QObject
   QString conn_server_password;
   int conn_server_max_connections;
   QString conn_server_mountpoint;
+  QString conn_server_user_agent;
   int conn_server_start_connections;
   QString conn_server_pipe;
   QString conn_content_type;

@@ -51,6 +51,7 @@ class Config
   int serverStartConnections() const;
   Connector::ServerType serverType() const;
   QUrl serverUrl() const;
+  QString serverUserAgent() const;
   QString serverUsername() const;
   QString serverPipe() const;
   QString streamAim() const;
@@ -94,6 +95,7 @@ class Config
   int server_start_connections;
   Connector::ServerType server_type;
   QUrl server_url;
+  QString server_user_agent;
   QString server_username;
   QString server_pipe;
 
