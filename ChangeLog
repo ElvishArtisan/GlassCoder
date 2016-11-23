@@ -728,3 +728,7 @@
 	* Added a '--server-user-agent' option to glasscoder(1).
 2016-11-23 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a typo in 'docs/glasscoder.xml.in'.
+2016-11-23 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/common/serverdialog.cpp' that caused the
+	'Max Player Connections' spin box to default to '0' instead of
+	'unlimited'.

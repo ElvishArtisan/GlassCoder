@@ -218,7 +218,7 @@ void ServerDialog::load(Profile *p)
   srv_server_script_up_edit->
     setText(p->stringValue("GlassGui","ServerScriptUp"));
   srv_server_maxconns_spin->
-    setValue(p->intValue("GlassGui","ServerMaxConnections"));
+    setValue(p->intValue("GlassGui","ServerMaxConnections",-1));
   srv_verbose_check->setChecked(p->boolValue("GlassGui","VerboseLogging"));
   srv_server_metadata_port_spin->
     setValue(p->intValue("GlassGui","MetadataPort",-1));
