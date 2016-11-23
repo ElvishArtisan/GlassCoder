@@ -652,9 +652,8 @@
 	  The <computeroutput>User-Agent</computeroutput> header value to
 	  use when connecting to external servers. Default value is
 	  <userinput>GlassCoder/@VERSION@</userinput>. This setting
-	  is used only by the <userinput>IceCast2</userinput>, 
-	  <userinput>HLS</userinput> and <userinput>IceStreamer</userinput>
-	  servers.
+	  is used only by <userinput>IceCast2</userinput> and
+	  <userinput>HLS</userinput> servers.
 	</para>
       </listitem>
     </varlistentry>
