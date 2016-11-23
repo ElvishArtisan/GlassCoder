@@ -16,6 +16,7 @@ config.log
 config.status
 configure
 depcomp
+docs/glasscoder.xml
 install-sh
 Makefile
 Makefile.in
