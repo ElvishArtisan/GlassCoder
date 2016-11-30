@@ -740,3 +740,6 @@
 2016-11-30 Fred Gleason <fredg@paravelsystems.com>
 	* Added a compile-time define for encoder complexity in
 	'src/glasscoder/opuscodec.cpp' and 'src/glasscoder/opuscodec.h'.
+2016-11-30 Fred Gleason <fredg@paravelsystems.com>
+	* Added configuration values for the Opus codec in
+	'src/glassgui/codecdialog.cpp'.

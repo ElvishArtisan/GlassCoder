@@ -192,6 +192,12 @@ void CodecDialog::codecTypeChanged(int n)
     break;
 
   case Codec::TypeOpus:
+    gui_codec_samplerate_box->insertItem(-1,"48000 samples/sec",48000);
+
+    gui_codec_channels_box->insertItem(-1,"1",1);
+    gui_codec_channels_box->insertItem(-1,"2",2);
+
+    gui_codec_bitrate_label->setText(tr("Quality")+":");
     break;
 
   case Codec::TypeLast:
@@ -264,6 +270,7 @@ void CodecDialog::codecSamplerateChanged(int n)
       gui_codec_bitrate_box[i]->insertItem(-1,"320 kbits/sec",320);
       break;
 
+    case Codec::TypeOpus:
     case Codec::TypeVorbis:
       gui_codec_bitrate_box[i]->insertItem(-1,"0",0);
       gui_codec_bitrate_box[i]->insertItem(-1,"1",1);
@@ -280,9 +287,6 @@ void CodecDialog::codecSamplerateChanged(int n)
 
     case Codec::TypePcm16:
       gui_codec_bitrate_box[i]->insertItem(-1,tr("None",0));
-      break;
-
-    case Codec::TypeOpus:
       break;
 
     case Codec::TypeLast:
