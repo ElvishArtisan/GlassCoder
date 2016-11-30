@@ -177,7 +177,7 @@ QString Codec::codecTypeText(Codec::Type type)
     break;
  
   case Codec::TypeOpus:
-    ret=tr("Opus [RFC 6716]");
+    ret=tr("Ogg Opus");
     break;
 
   case Codec::TypePcm16:

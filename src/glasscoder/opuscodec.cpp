@@ -191,7 +191,12 @@ bool OpusCodec::startCodec()
     opus_encoder_ctl(opus_encoder,OPUS_SET_VBR(0));
     opus_encoder_ctl(opus_encoder,OPUS_SET_BITRATE(1000*bitrate()));
   }
+  opus_encoder_ctl(opus_encoder,
+		   OPUS_SET_COMPLEXITY(OPUSCODEC_ENCODER_COMPLEXITY));
 
+  //
+  // Initialize the stream
+  //
   ogg_stream_init(&opus_ogg_stream,rand());
 
   //
@@ -206,8 +211,10 @@ bool OpusCodec::startCodec()
   opus_ogg_packet.packetno=opus_packet_number++;
   ogg_stream_packetin(&opus_ogg_stream,&opus_ogg_packet);
   while(ogg_stream_flush(&opus_ogg_stream,&opus_ogg_page)) {
-    opus_header_pages.append((const char *)opus_ogg_page.header,opus_ogg_page.header_len);
-    opus_header_pages.append((const char *)opus_ogg_page.body,opus_ogg_page.body_len);
+    opus_header_pages.append((const char *)opus_ogg_page.header,
+			     opus_ogg_page.header_len);
+    opus_header_pages.append((const char *)opus_ogg_page.body,
+			     opus_ogg_page.body_len);
   }
 
   //
@@ -222,8 +229,10 @@ bool OpusCodec::startCodec()
   opus_ogg_packet.packetno=opus_packet_number++;
   ogg_stream_packetin(&opus_ogg_stream,&opus_ogg_packet);
   while(ogg_stream_flush(&opus_ogg_stream,&opus_ogg_page)!=0) {
-    opus_header_pages.append((const char *)opus_ogg_page.header,opus_ogg_page.header_len);
-    opus_header_pages.append((const char *)opus_ogg_page.body,opus_ogg_page.body_len);
+    opus_header_pages.append((const char *)opus_ogg_page.header,
+			     opus_ogg_page.header_len);
+    opus_header_pages.append((const char *)opus_ogg_page.body,
+			     opus_ogg_page.body_len);
   }
 
   return true;

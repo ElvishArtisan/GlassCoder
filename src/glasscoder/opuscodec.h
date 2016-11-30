@@ -28,6 +28,8 @@
 
 #include "codec.h"
 
+#define OPUSCODEC_ENCODER_COMPLEXITY 0
+
 class OpusCodec : public Codec
 {
   Q_OBJECT;
