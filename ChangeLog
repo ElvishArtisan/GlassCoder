@@ -734,3 +734,6 @@
 	'unlimited'.
 2016-11-23 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the player version to 0.9.19.
+2016-11-30 Fred Gleason <fredg@paravelsystems.com>
+	* Added a codec for OggOpus in 'src/glasscoder/opuscodec.cpp' and
+	'src/glasscoder/opuscodec.h'.

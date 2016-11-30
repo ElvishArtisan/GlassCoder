@@ -238,6 +238,20 @@
 	  <variablelist remap='TP'>
 	    <varlistentry>
 	      <term>
+		<userinput>OPUS</userinput>
+	      </term>
+	      <listitem>
+		<para>
+		  Ogg Opus (RFC-6716)
+		</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</blockquote> <!-- remap='RE' -->
+	<blockquote remap='RS'>
+	  <variablelist remap='TP'>
+	    <varlistentry>
+	      <term>
 		<userinput>PCM16</userinput>
 	      </term>
 	      <listitem>
