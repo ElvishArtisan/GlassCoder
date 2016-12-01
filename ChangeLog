@@ -745,3 +745,5 @@
 	'src/glassgui/codecdialog.cpp'.
 2016-12-01 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed typo in vendor string in 'src/glasscoder/opuscodec.cpp'.
+2016-12-01 Fred Gleason <fredg@paravelsystems.com>
+	* Updated 'INSTALL'.

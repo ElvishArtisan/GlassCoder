@@ -34,6 +34,10 @@ LAME - MPEG-1 Layer 3 Encoder Library, v3.99.3 or later.  Needed for
 generating MPEG-1 Layer 3 (MP3) streams.  Available at
 http://lame.sourceforge.net/.
 
+OggOpus -  A free, patent-clear audio codec, formally defined in RFC-6716.
+Both 'libogg' and 'libogg' libraries are required.  Available at
+http://www.xiph.org.
+
 OggVorbis -  A free, patent-clear audio codec.  Both 'libogg' and 'libvorbis'
 libraries are required.  Available at http://www.xiph.org.
 
