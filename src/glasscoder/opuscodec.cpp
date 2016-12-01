@@ -303,7 +303,7 @@ QByteArray OpusCodec::MakeInfoHeader(unsigned chans,unsigned samprate)
 
 QByteArray OpusCodec::MakeCommentHeader()
 {
-  QString version=QString("GlassCoder | ")+VERSION;
+  QString version=QString("GlassCoder ")+VERSION;
   QByteArray hdr(12,0);
   hdr[0]='O';
   hdr[1]='p';

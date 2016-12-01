@@ -743,3 +743,5 @@
 2016-11-30 Fred Gleason <fredg@paravelsystems.com>
 	* Added configuration values for the Opus codec in
 	'src/glassgui/codecdialog.cpp'.
+2016-12-01 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed typo in vendor string in 'src/glasscoder/opuscodec.cpp'.
