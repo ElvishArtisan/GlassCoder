@@ -79,6 +79,7 @@ class IceStreamConnector : public Connector
   Connector::ServerType serverType() const;
 
  public slots:
+  void setStreamPrologue(const QByteArray &data);
   void sendMetadata(MetaEvent *e);
 
  private slots:
@@ -110,6 +111,7 @@ class IceStreamConnector : public Connector
   QTimer *iceserv_garbage_timer;
   QByteArray iceserv_metadata;
   SocketServer *iceserv_socket_server;
+  QByteArray iceserv_stream_prologue;
 };
 
 

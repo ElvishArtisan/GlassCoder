@@ -26,6 +26,7 @@
 VorbisCodec::VorbisCodec(Ringbuffer *ring,QObject *parent)
   : Codec(Codec::TypeAac,ring,parent)
 {
+  vorbis_prologue_sent=false;
   vorbis_buffer=NULL;
 }
 
@@ -69,6 +70,12 @@ QString VorbisCodec::defaultExtension() const
 QString VorbisCodec::formatIdentifier() const
 {
   return QString();
+}
+
+
+QByteArray VorbisCodec::streamPrologue() const
+{
+  return vorbis_stream_prologue;
 }
 
 
@@ -233,7 +240,7 @@ bool VorbisCodec::startCodec()
     dlsym(vorbis_ogg_handle,"ogg_stream_packetin");
   *(void **)(&ogg_stream_iovecin)=dlsym(vorbis_ogg_handle,"ogg_stream_iovecin");
   *(void **)(&ogg_stream_pageout)=dlsym(vorbis_ogg_handle,"ogg_stream_pageout");
-  *(void **)(&ogg_stream_flush)=dlsym(vorbis_ogg_handle,"ogg_stream_flus");
+  *(void **)(&ogg_stream_flush)=dlsym(vorbis_ogg_handle,"ogg_stream_flush");
   *(void **)(&ogg_sync_init)=dlsym(vorbis_ogg_handle,"ogg_sync_init");
   *(void **)(&ogg_sync_clear)=dlsym(vorbis_ogg_handle,"ogg_sync_clear");
   *(void **)(&ogg_sync_reset)=dlsym(vorbis_ogg_handle,"ogg_sync_reset");
@@ -298,6 +305,12 @@ bool VorbisCodec::startCodec()
   ogg_stream_packetin(&vorbis_ogg_stream,&header);
   ogg_stream_packetin(&vorbis_ogg_stream,&comment);
   ogg_stream_packetin(&vorbis_ogg_stream,&codebook);
+  while(ogg_stream_flush(&vorbis_ogg_stream,&vorbis_ogg_page)!=0) {
+    vorbis_stream_prologue.append((const char *)vorbis_ogg_page.header,
+			     vorbis_ogg_page.header_len);
+    vorbis_stream_prologue.append((const char *)vorbis_ogg_page.body,
+			     vorbis_ogg_page.body_len);
+  }
 
   return true;
 #else
@@ -311,6 +324,12 @@ void VorbisCodec::encodeData(Connector *conn,const float *pcm,int frames)
 {
 #ifdef HAVE_VORBIS
   float **vorbis;
+
+  if(!vorbis_prologue_sent) {
+    conn->writeData(0,(const unsigned char *)vorbis_stream_prologue.constData(),
+		    vorbis_stream_prologue.size());
+    vorbis_prologue_sent=true;
+  }
 
   if((vorbis=vorbis_analysis_buffer(&vorbis_vorbis_dsp,frames))==NULL) {
     Log(LOG_ERR,"unable to allocate stream buffer");

@@ -294,6 +294,8 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
     connect(conn,SIGNAL(dataRequested(Connector *)),
 	    sir_codecs[sir_connectors.size()],SLOT(encode(Connector *)));
     connect(conn,SIGNAL(connected(bool)),this,SLOT(connectedData(bool)));
+    conn->setStreamPrologue(sir_codecs[sir_connectors.size()]->
+			    streamPrologue());
     sir_codecs[sir_connectors.size()]->
       setCompleteFrames(sir_config->serverType()==Connector::HlsServer);
     if(sir_meta_server!=NULL) {

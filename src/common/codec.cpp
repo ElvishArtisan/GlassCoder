@@ -120,6 +120,12 @@ void Codec::setCompleteFrames(bool state)
 }
 
 
+QByteArray Codec::streamPrologue() const
+{
+  return QByteArray();
+}
+
+
 bool Codec::start()
 {
   int err;

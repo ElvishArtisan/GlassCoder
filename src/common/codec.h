@@ -29,6 +29,7 @@
 
 #include <samplerate.h>
 
+#include <QByteArray>
 #include <QObject>
 
 #include "connector.h"
@@ -57,6 +58,7 @@ class Codec : public QObject
   void setStreamSamplerate(unsigned rate);
   bool completeFrames() const;
   void setCompleteFrames(bool state);
+  virtual QByteArray streamPrologue() const;
   virtual bool isAvailable() const=0;
   virtual QString contentType() const=0;
   virtual unsigned pcmFrames() const=0;

@@ -747,3 +747,6 @@
 	* Fixed typo in vendor string in 'src/glasscoder/opuscodec.cpp'.
 2016-12-01 Fred Gleason <fredg@paravelsystems.com>
 	* Updated 'INSTALL'.
+2016-12-02 Fred Gleason <fredg@paravelsystems.com>
+	* Enabled 'Opus' and 'Vorbis' codec types to work with IceStreamer
+	server.

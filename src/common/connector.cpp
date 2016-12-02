@@ -1477,3 +1477,8 @@ void Connector::sendMetadata(MetaEvent *e)
 {
   printf("StreamTitle: %s\n",(const char *)e->field(MetaEvent::StreamTitle).toString().toUtf8());
 }
+
+
+void Connector::setStreamPrologue(const QByteArray &data)
+{
+}

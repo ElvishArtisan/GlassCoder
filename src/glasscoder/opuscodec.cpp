@@ -31,6 +31,12 @@ OpusCodec::OpusCodec(Ringbuffer *ring,QObject *parent)
 }
 
 
+QByteArray OpusCodec::streamPrologue() const
+{
+  return opus_stream_prologue;
+}
+
+
 bool OpusCodec::isAvailable() const
 {
 #ifdef HAVE_OPUS
@@ -211,9 +217,9 @@ bool OpusCodec::startCodec()
   opus_ogg_packet.packetno=opus_packet_number++;
   ogg_stream_packetin(&opus_ogg_stream,&opus_ogg_packet);
   while(ogg_stream_flush(&opus_ogg_stream,&opus_ogg_page)) {
-    opus_header_pages.append((const char *)opus_ogg_page.header,
+    opus_stream_prologue.append((const char *)opus_ogg_page.header,
 			     opus_ogg_page.header_len);
-    opus_header_pages.append((const char *)opus_ogg_page.body,
+    opus_stream_prologue.append((const char *)opus_ogg_page.body,
 			     opus_ogg_page.body_len);
   }
 
@@ -229,12 +235,11 @@ bool OpusCodec::startCodec()
   opus_ogg_packet.packetno=opus_packet_number++;
   ogg_stream_packetin(&opus_ogg_stream,&opus_ogg_packet);
   while(ogg_stream_flush(&opus_ogg_stream,&opus_ogg_page)!=0) {
-    opus_header_pages.append((const char *)opus_ogg_page.header,
+    opus_stream_prologue.append((const char *)opus_ogg_page.header,
 			     opus_ogg_page.header_len);
-    opus_header_pages.append((const char *)opus_ogg_page.body,
+    opus_stream_prologue.append((const char *)opus_ogg_page.body,
 			     opus_ogg_page.body_len);
   }
-
   return true;
 #else
   Log(LOG_ERR,"unsupported audio format (no build support)");
@@ -249,10 +254,10 @@ void OpusCodec::encodeData(Connector *conn,const float *pcm,int frames)
   int s;
   unsigned char data[4096];
 
-  if(opus_header_pages.size()>0) {
-    conn->writeData(0,(const unsigned char *)opus_header_pages.constData(),
-		    opus_header_pages.size());
-    opus_header_pages.clear();
+  if(!opus_prologue_sent) {
+    conn->writeData(0,(const unsigned char *)opus_stream_prologue.constData(),
+		    opus_stream_prologue.size());
+    opus_prologue_sent=true;
   }
 
   if((s=opus_encode_float(opus_encoder,pcm,frames,data,4096))>1) {

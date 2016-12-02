@@ -185,6 +185,12 @@ Connector::ServerType IceStreamConnector::serverType() const
 }
 
 
+void IceStreamConnector::setStreamPrologue(const QByteArray &data)
+{
+  iceserv_stream_prologue=data;
+}
+
+
 void IceStreamConnector::sendMetadata(MetaEvent *e)
 {
   SetMetadata(e->field(MetaEvent::StreamTitle).toString());
@@ -453,7 +459,7 @@ void IceStreamConnector::ProcessHeader(IceStream *strm)
       f0=strm->accum.split(":",QString::SkipEmptyParts);
       if((f0.size()==2)&&(f0.at(0).trimmed()=="icy-metadata")) {
 	bool state=f0.at(1).trimmed().toUInt(&ok);
-	if(ok) {
+	if(ok&&((contentType()=="audio/mpeg")||(contentType()=="audio/aacp"))) {
 	  strm->setMetadataEnabled(state);
 	}
       }
@@ -505,7 +511,9 @@ void IceStreamConnector::StartStream(IceStream *strm)
   SendHeader(strm,"Pragma: no-cache");
   SendHeader(strm,"icy-br: "+QString().sprintf("%u",audioBitrate()));
   SendHeader(strm,"ice-audio-info: "+
-	     QString().sprintf("bitrate=%u",audioBitrate()));
+	     QString().sprintf("bitrate=%u",audioBitrate())+
+	     QString().sprintf(";channels=%u",audioChannels())+
+	     QString().sprintf(";samplerate=%u",audioSamplerate()));
   SendHeader(strm,"icy-description: "+streamDescription());
   SendHeader(strm,"icy-genre: "+streamGenre());
   SendHeader(strm,"icy-name: "+streamName());
@@ -518,6 +526,7 @@ void IceStreamConnector::StartStream(IceStream *strm)
   SendHeader(strm);
 
   strm->setNegotiated();
+  strm->socket()->write(iceserv_stream_prologue);
   if((int)iceserv_streams.size()==serverStartConnections()) {
     emit unmuteRequested();
   }

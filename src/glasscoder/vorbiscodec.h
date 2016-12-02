@@ -39,6 +39,7 @@ class VorbisCodec : public Codec
   unsigned pcmFrames() const;
   QString defaultExtension() const;
   QString formatIdentifier() const;
+  QByteArray streamPrologue() const;
   bool startCodec();
 
  protected:
@@ -178,6 +179,8 @@ class VorbisCodec : public Codec
   unsigned long vorbis_input_samples;
   unsigned long vorbis_buffer_size;
   unsigned char *vorbis_buffer;
+  QByteArray vorbis_stream_prologue;
+  bool vorbis_prologue_sent;
 };
 
 

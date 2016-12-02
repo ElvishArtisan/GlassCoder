@@ -35,6 +35,7 @@ class OpusCodec : public Codec
   Q_OBJECT;
  public:
   OpusCodec(Ringbuffer *ring,QObject *parent=0);
+  QByteArray streamPrologue() const;
   bool isAvailable() const;
   QString contentType() const;
   unsigned pcmFrames() const;
@@ -139,7 +140,8 @@ class OpusCodec : public Codec
   ogg_packet opus_ogg_packet;
   uint64_t opus_packet_number;
   uint64_t opus_packet_granulepos;
-  QByteArray opus_header_pages;
+  QByteArray opus_stream_prologue;
+  bool opus_prologue_sent;
 #endif  // HAVE_OPUS
 };
 

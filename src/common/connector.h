@@ -118,6 +118,7 @@ class Connector : public QObject
   static QString timezoneOffset();
 
  public slots:
+  virtual void setStreamPrologue(const QByteArray &data);
   virtual void sendMetadata(MetaEvent *e);
 
  signals:
