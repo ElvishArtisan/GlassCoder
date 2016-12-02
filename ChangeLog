@@ -759,3 +759,5 @@
 	* Altered dynamic library targets to include major version numbers.
 2016-12-02 Fred Gleason <fredg@paravelsystems.com>
 	* Removed MPEG-2/AAC support.
+2016-12-02 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.9.20.
