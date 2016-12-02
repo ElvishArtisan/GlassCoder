@@ -34,7 +34,7 @@ MpegL3Codec::MpegL3Codec(Ringbuffer *ring,QObject *parent)
 bool MpegL3Codec::isAvailable() const
 {
 #ifdef HAVE_LAME
-  return dlopen("libmp3lame.so",RTLD_LAZY)!=NULL;
+  return dlopen("libmp3lame.so.0",RTLD_LAZY)!=NULL;
 #else
   return false;
 #endif  // HAVE_LAME
@@ -77,7 +77,7 @@ bool MpegL3Codec::startCodec()
   //
   // Load Library
   //
-  l3_lame_handle=dlopen("libmp3lame.so",RTLD_LAZY);
+  l3_lame_handle=dlopen("libmp3lame.so.0",RTLD_LAZY);
 
   if(l3_lame_handle==NULL) {
     Log(LOG_ERR,"unsupported audio format (library not found)");

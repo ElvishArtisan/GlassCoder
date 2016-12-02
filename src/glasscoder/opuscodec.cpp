@@ -40,7 +40,8 @@ QByteArray OpusCodec::streamPrologue() const
 bool OpusCodec::isAvailable() const
 {
 #ifdef HAVE_OPUS
-  return dlopen("libopus.so",RTLD_LAZY)!=NULL;
+  return (dlopen("libopus.so.0",RTLD_LAZY)!=NULL)&&
+    (dlopen("libogg.so.0",RTLD_LAZY)!=NULL);
 #else
   return false;
 #endif  // HAVE_OPUS
@@ -79,7 +80,7 @@ bool OpusCodec::startCodec()
   //
   // Load Libraries
   //
-  opus_handle=dlopen("libopus.so",RTLD_LAZY);
+  opus_handle=dlopen("libopus.so.0",RTLD_LAZY);
 
   if(opus_handle==NULL) {
     Log(LOG_ERR,"unsupported audio format (library not found)");
@@ -93,7 +94,7 @@ bool OpusCodec::startCodec()
   *(void **)(&opus_encoder_ctl)=dlsym(opus_handle,"opus_encoder_ctl");
   *(void **)(&opus_strerror)=dlsym(opus_handle,"opus_strerror");
 
-  opus_ogg_handle=dlopen("libogg.so",RTLD_LAZY);
+  opus_ogg_handle=dlopen("libogg.so.0",RTLD_LAZY);
   if(opus_ogg_handle==NULL) {
     Log(LOG_ERR,"unsupported audio format (library not found)");
     return false;

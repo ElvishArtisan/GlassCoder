@@ -755,3 +755,5 @@
 2016-12-02 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/glasscoder/opuscodec.cpp' that broke compilation
 	when building without Opus support.
+2016-12-02 Fred Gleason <fredg@paravelsystems.com>
+	* Altered dynamic library targets to include major version numbers.

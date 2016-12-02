@@ -42,7 +42,9 @@ VorbisCodec::~VorbisCodec()
 bool VorbisCodec::isAvailable() const
 {
 #ifdef HAVE_VORBIS
-  return dlopen("libvorbisenc.so",RTLD_LAZY)!=NULL;
+  return (dlopen("libvorbisenc.so.2",RTLD_LAZY)!=NULL)&&
+    (dlopen("libvorbis.so.0",RTLD_LAZY)!=NULL)&&
+    (dlopen("libogg.so.0",RTLD_LAZY)!=NULL);
 #else
   return false;
 #endif  // HAVE_VORBIS
@@ -90,17 +92,17 @@ bool VorbisCodec::startCodec()
   //
   // Load Library
   //
-  vorbis_vorbisenc_handle=dlopen("libvorbisenc.so",RTLD_LAZY);
+  vorbis_vorbisenc_handle=dlopen("libvorbisenc.so.2",RTLD_LAZY);
   if(vorbis_vorbisenc_handle==NULL) {
     Log(LOG_ERR,"unsupported audio format (library not found)");
     return false;
   }
-  vorbis_vorbis_handle=dlopen("libvorbis.so",RTLD_LAZY);
+  vorbis_vorbis_handle=dlopen("libvorbis.so.0",RTLD_LAZY);
   if(vorbis_vorbis_handle==NULL) {
     Log(LOG_ERR,"unsupported audio format (library not found)");
     return false;
   }
-  vorbis_ogg_handle=dlopen("libogg.so",RTLD_LAZY);
+  vorbis_ogg_handle=dlopen("libogg.so.0",RTLD_LAZY);
   if(vorbis_ogg_handle==NULL) {
     Log(LOG_ERR,"unsupported audio format (library not found)");
     return false;

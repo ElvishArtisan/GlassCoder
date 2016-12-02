@@ -33,7 +33,7 @@ MpegL2Codec::MpegL2Codec(Ringbuffer *ring,QObject *parent)
 bool MpegL2Codec::isAvailable() const
 {
 #ifdef HAVE_TWOLAME
-  return dlopen("libtwolame.so",RTLD_LAZY)!=NULL;
+  return dlopen("libtwolame.so.0",RTLD_LAZY)!=NULL;
 #else
   return false;
 #endif  // HAVE_TWOLAME
@@ -74,7 +74,7 @@ bool MpegL2Codec::startCodec()
   //
   // Load Library
   //
-  if((twolame_handle=dlopen("libtwolame.so",RTLD_LAZY))==NULL) {
+  if((twolame_handle=dlopen("libtwolame.so.0",RTLD_LAZY))==NULL) {
     Log(LOG_ERR,"unsupported audio format (library not found)");
     return false;
   }

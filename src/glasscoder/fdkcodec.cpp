@@ -49,7 +49,7 @@ FdkCodec::~FdkCodec()
 bool FdkCodec::isAvailable() const
 {
 #ifdef HAVE_FDKAAC
-  return dlopen("libfdk-aac.so",RTLD_LAZY)!=NULL;
+  return dlopen("libfdk-aac.so.1",RTLD_LAZY)!=NULL;
 #else
   return false;
 #endif  // HAVE_FDKAAC
@@ -104,7 +104,7 @@ bool FdkCodec::startCodec()
   //
   // Load Library
   //
-  fdk_handle=dlopen("libfdk-aac.so",RTLD_LAZY);
+  fdk_handle=dlopen("libfdk-aac.so.1",RTLD_LAZY);
 
   if(fdk_handle==NULL) {
     Log(LOG_ERR,"unsupported audio format (library not found)");

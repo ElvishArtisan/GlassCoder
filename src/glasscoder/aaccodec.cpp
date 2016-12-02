@@ -41,7 +41,7 @@ AacCodec::~AacCodec()
 bool AacCodec::isAvailable() const
 {
 #ifdef HAVE_FAAC
-  return dlopen("libfaac.so",RTLD_LAZY)!=NULL;
+  return dlopen("libfaac.so.0",RTLD_LAZY)!=NULL;
 #else
   return false;
 #endif  // HAVE_FAAC
@@ -84,7 +84,7 @@ bool AacCodec::startCodec()
   //
   // Load Library
   //
-  aac_handle=dlopen("libfaac.so",RTLD_LAZY);
+  aac_handle=dlopen("libfaac.so.0",RTLD_LAZY);
 
   if(aac_handle==NULL) {
     Log(LOG_ERR,"unsupported audio format (library not found)");
