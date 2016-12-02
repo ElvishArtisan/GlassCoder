@@ -752,3 +752,6 @@
 	server.
 2016-12-02 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a memory leak in 'src/glasscommander/playmeter.cpp'.
+2016-12-02 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/glasscoder/opuscodec.cpp' that broke compilation
+	when building without Opus support.

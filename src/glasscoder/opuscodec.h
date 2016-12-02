@@ -138,11 +138,11 @@ class OpusCodec : public Codec
   ogg_stream_state opus_ogg_stream;
   ogg_page opus_ogg_page;
   ogg_packet opus_ogg_packet;
+#endif  // HAVE_OPUS
   uint64_t opus_packet_number;
   uint64_t opus_packet_granulepos;
   QByteArray opus_stream_prologue;
   bool opus_prologue_sent;
-#endif  // HAVE_OPUS
 };
 
 
