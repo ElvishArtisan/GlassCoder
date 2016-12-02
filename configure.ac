@@ -60,8 +60,6 @@ AC_ARG_ENABLE(twolame,[  --disable-twolame       disable MPEG-1 Layer 2 support]
 		      [TWOLAME_DISABLED=yes],[])
 AC_ARG_ENABLE(lame,[  --disable-lame          disable MPEG-1 Layer 3 support],
 	      [LAME_DISABLED=yes],[]) 
-AC_ARG_ENABLE(faac,[  --disable-faac          disable MPEG-2 AAC support],
-	      [FAAC_DISABLED=yes],[]) 
 AC_ARG_ENABLE(fdkaac,[  --disable-fdkaac        disable MPEG-4 HE-AAC+ support],
 	      [FDKAAC_DISABLED=yes],[]) 
 AC_ARG_ENABLE(vorbis,[  --disable-vorbis        disable Ogg Vorbis support],
@@ -191,17 +189,6 @@ if test $LAME_FOUND ; then
 fi
 
 #
-# Check for FAAC (Optional, required for MPEG-2/4 AAC support)
-#
-AC_CHECK_HEADER(faac.h,[FAAC_FOUND=yes],[])
-if test $FAAC_FOUND ; then
-  if test -z $FAAC_DISABLED ; then
-    AC_DEFINE(HAVE_FAAC)
-    USING_FAAC=yes
-  fi
-fi
-
-#
 # Check for Fraunhofer FDK (Optional, required for MPEG-4 AAC-HE support)
 #
 AC_CHECK_HEADER(fdk-aac/aacenc_lib.h,[FDKAAC_FOUND=yes],[])
@@ -307,11 +294,6 @@ if test -z $USING_LAME ; then
 AC_MSG_NOTICE("|                 MPEG-1 Layer 3 (via LAME) ... No    |")
 else
 AC_MSG_NOTICE("|                 MPEG-1 Layer 3 (via LAME) ... Yes   |")
-fi
-if test -z $USING_FAAC ; then
-AC_MSG_NOTICE("|                     MPEG-2 AAC (via FAAC) ... No    |")
-else
-AC_MSG_NOTICE("|                     MPEG-2 AAC (via FAAC) ... Yes   |")
 fi
 if test -z $USING_FDKAAC ; then
 AC_MSG_NOTICE("|               MPEG-4 HE-AAC+ (via FDKAAC) ... No    |")

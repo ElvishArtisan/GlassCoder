@@ -30,8 +30,7 @@ moc_%.cpp:	%.h
 
 bin_PROGRAMS = glasscoder
 
-dist_glasscoder_SOURCES = aaccodec.cpp aaccodec.h\
-                          alsadevice.cpp alsadevice.h\
+dist_glasscoder_SOURCES = alsadevice.cpp alsadevice.h\
                           asihpidevice.cpp asihpidevice.h\
                           audiodevice.cpp audiodevice.h\
                           audiodevicefactory.cpp audiodevicefactory.h\
@@ -67,7 +66,6 @@ nodist_glasscoder_SOURCES = asihpi.cpp asihpi.h\
                             glasslimits.h\
                             logging.cpp logging.h\
                             metaevent.cpp metaevent.h\
-                            moc_aaccodec.cpp\
                             moc_alsadevice.cpp\
                             moc_asihpidevice.cpp\
                             moc_audiodevice.cpp\

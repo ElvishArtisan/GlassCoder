@@ -24,7 +24,7 @@
 #include "vorbiscodec.h"
 
 VorbisCodec::VorbisCodec(Ringbuffer *ring,QObject *parent)
-  : Codec(Codec::TypeAac,ring,parent)
+  : Codec(Codec::TypeVorbis,ring,parent)
 {
   vorbis_prologue_sent=false;
   vorbis_buffer=NULL;

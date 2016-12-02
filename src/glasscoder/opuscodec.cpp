@@ -24,7 +24,7 @@
 #include "opuscodec.h"
 
 OpusCodec::OpusCodec(Ringbuffer *ring,QObject *parent)
-  : Codec(Codec::TypeAac,ring,parent)
+  : Codec(Codec::TypeOpus,ring,parent)
 {
   opus_packet_number=0;
   opus_packet_granulepos=0;

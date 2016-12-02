@@ -166,10 +166,6 @@ QString Codec::codecTypeText(Codec::Type type)
   QString ret=tr("Unknown");
 
   switch(type) {
-  case Codec::TypeAac:
-    ret=tr("MPEG-2 AAC Main Profile");
-    break;
-
   case Codec::TypeFdk:
     ret=tr("MPEG-4 AAC High Efficiency");
     break;
@@ -207,10 +203,6 @@ QString Codec::optionKeyword(Codec::Type type)
   QString ret;
 
   switch(type) {
-  case Codec::TypeAac:
-    ret="aac";
-    break;
-
   case Codec::TypeFdk:
     ret="aacp";
     break;

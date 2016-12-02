@@ -182,25 +182,11 @@
 	  <variablelist remap='TP'>
 	    <varlistentry>
 	      <term>
-		<userinput>AAC</userinput>
-	      </term>
-	      <listitem>
-		<para>
-		  MPEG-2 Advanced Audio Coding (Main Profile)
-		</para>
-	      </listitem>
-	    </varlistentry>
-	  </variablelist>
-	</blockquote> <!-- remap='RE' -->
-	<blockquote remap='RS'>
-	  <variablelist remap='TP'>
-	    <varlistentry>
-	      <term>
 		<userinput>AACP</userinput>
 	      </term>
 	      <listitem>
 		<para>
-		  MPEG-4 Advanced Audio Coding (High Efficiency Profile)
+		  MPEG-4 Advanced Audio Coding &quot;Plus&quot; (High Efficiency Profile)
 		</para>
 	      </listitem>
 	    </varlistentry>

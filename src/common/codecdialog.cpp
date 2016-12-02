@@ -136,17 +136,6 @@ void CodecDialog::codecTypeChanged(int n)
   }
 
   switch(type) {
-  case Codec::TypeAac:
-    gui_codec_samplerate_box->insertItem(-1,"32000 samples/sec",32000);
-    gui_codec_samplerate_box->insertItem(-1,"44100 samples/sec",44100);
-    gui_codec_samplerate_box->insertItem(-1,"48000 samples/sec",48000);
-
-    gui_codec_channels_box->insertItem(-1,"1",1);
-    gui_codec_channels_box->insertItem(-1,"2",2);
-
-    gui_codec_bitrate_label->setText(tr("Bit Rate(s)")+":");
-    break;
-
   case Codec::TypeFdk:
   case Codec::TypeMpegL2:
   case Codec::TypeMpegL3:
@@ -218,7 +207,6 @@ void CodecDialog::codecSamplerateChanged(int n)
       gui_codec_bitrate_box[i]->insertItem(-1,"None",0);
     }
     switch(type) {
-    case Codec::TypeAac:
     case Codec::TypeFdk:
       gui_codec_bitrate_box[i]->insertItem(-1,"16 kbits/sec",16);
       gui_codec_bitrate_box[i]->insertItem(-1,"24 kbits/sec",24);
@@ -320,7 +308,6 @@ void CodecDialog::makeArgs(QStringList *args)
     switch(type) {
     case Codec::TypeMpegL2:
     case Codec::TypeMpegL3:
-    case Codec::TypeAac:
     case Codec::TypeFdk:
     case Codec::TypeOpus:
     case Codec::TypeLast:

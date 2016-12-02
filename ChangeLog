@@ -757,3 +757,5 @@
 	when building without Opus support.
 2016-12-02 Fred Gleason <fredg@paravelsystems.com>
 	* Altered dynamic library targets to include major version numbers.
+2016-12-02 Fred Gleason <fredg@paravelsystems.com>
+	* Removed MPEG-2/AAC support.
