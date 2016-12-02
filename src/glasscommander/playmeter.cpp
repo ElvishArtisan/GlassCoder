@@ -230,6 +230,7 @@ void PlayMeter::paintEvent(QPaintEvent *paintEvent)
     }
   }
   p->end();
+  delete p;
 }
 
 

@@ -750,3 +750,5 @@
 2016-12-02 Fred Gleason <fredg@paravelsystems.com>
 	* Enabled 'Opus' and 'Vorbis' codec types to work with IceStreamer
 	server.
+2016-12-02 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a memory leak in 'src/glasscommander/playmeter.cpp'.
