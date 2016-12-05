@@ -18,6 +18,7 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include "glasslimits.h"
 #include "glasswidget.h"
 #include "logging.h"
 
@@ -91,6 +92,13 @@ GlassWidget::GlassWidget(const QString &instance_name,QWidget *parent)
   gw_remove_button->setStyleSheet("background-color: violet");
   connect(gw_remove_button,SIGNAL(clicked()),this,SLOT(removeData()));
   gw_remove_button->hide();
+
+  //
+  // Kill Timer
+  //
+  gw_kill_timer=new QTimer(this);
+  gw_kill_timer->setSingleShot(true);
+  connect(gw_kill_timer,SIGNAL(timeout()),this,SLOT(killData()));
 }
 
 
@@ -230,13 +238,6 @@ void GlassWidget::startEncodingData()
 {
   QStringList args;
 
-  /*
-  if(gw_process!=NULL) {
-    QMessageBox::warning(this,"GlassCommander - "+tr("Process Error"),
-			 tr("Process is not in ready state!"));
-    return;
-  }
-  */
   gw_process=new QProcess(this);
   gw_process->setReadChannel(QProcess::StandardOutput);
   connect(gw_process,SIGNAL(readyRead()),
@@ -263,6 +264,7 @@ void GlassWidget::startEncodingData()
 void GlassWidget::stopEncodingData()
 {
   gw_process->terminate();
+  gw_kill_timer->start(PROCESS_TERMINATION_TIMEOUT);
 }
 
 
@@ -295,11 +297,6 @@ void GlassWidget::processFinishedData(int exit_code,
 				     QProcess::ExitStatus exit_status)
 {
   if(exit_code==0) {
-    /*
-    if(gw_process_kill_timer->isActive()) {
-      exit(0);
-    }
-    */
     gw_meters[0]->setPeakBar(-10000);
     gw_meters[1]->setPeakBar(-10000);
     gw_start_button->disconnect();
@@ -310,6 +307,7 @@ void GlassWidget::processFinishedData(int exit_code,
   else {
     ProcessError(exit_code,exit_status);
   }
+  gw_kill_timer->stop();
   gw_status_widget->setStatus(CONNECTION_IDLE);
   gw_process->deleteLater();
   gw_process=NULL;
@@ -366,6 +364,13 @@ void GlassWidget::serverTypeChangedData(Connector::ServerType type,
 {
   gw_stream_dialog->setServerType(type);
   gw_codec_dialog->setMultirate(multirate);
+}
+
+
+void GlassWidget::killData()
+{
+  gw_message_widget->addMessage(tr("Invoked process kill!"));
+  kill();
 }
 
 

@@ -27,6 +27,7 @@
 #include <QLabel>
 #include <QProcess>
 #include <QPushButton>
+#include <QTimer>
 
 #include "codecdialog.h"
 #include "configdialog.h"
@@ -80,6 +81,7 @@ class GlassWidget : public QFrame
   void configData();
   void checkArgs();
   void serverTypeChangedData(Connector::ServerType type,bool multirate);
+  void killData();
 
  protected:
   void resizeEvent(QResizeEvent *e);
@@ -106,6 +108,7 @@ class GlassWidget : public QFrame
   QPushButton *gw_insert_button;
   QPushButton *gw_remove_button;
   bool gw_auto_start;
+  QTimer *gw_kill_timer;
 };
 
 

@@ -761,3 +761,7 @@
 	* Removed MPEG-2/AAC support.
 2016-12-02 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.9.20.
+2016-12-05 Fred Gleason <fredg@paravelsystems.com>
+	* Added a termination timeout to glasscommander(1) in
+	'src/glasscommander/glasswidget.cpp' and
+	'src/glasscommander/glasswidget.h'.
