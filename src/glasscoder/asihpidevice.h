@@ -28,6 +28,13 @@
 #include <asihpi/hpi.h>
 #endif  // ASIHPI
 
+#ifdef STEREOTOOL
+#define _ST_LINUX
+#define __int32 int32_t
+#include <stereotool/Generic_StereoTool.h>
+#include <stereotool/ParameterEnum.h>
+#endif  // STEREOTOOL
+
 #include <QTimer>
 
 #include "audiodevice.h"
@@ -75,6 +82,9 @@ class AsiHpiDevice : public AudioDevice
   uint8_t *asihpi_pcm_buffer;
   QTimer *asihpi_read_timer;
   QTimer *asihpi_meter_timer;
+#ifdef STEREOTOOL
+  gStereoTool *asihpi_stereo_tool;
+#endif  // STEREOTOOL
 #endif  // ASIHPI
 };
 

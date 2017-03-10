@@ -767,3 +767,6 @@
 	'src/glasscommander/glasswidget.h'.
 2016-12-05 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.9.21.
+2017-03-10 Fred Gleason <fredg@paravelsystems.com>
+	* Added proof-of-concept StereoTool support in
+	'src/glasscoder/asihpidevice.cpp' and 'src/glasscoder/asihpidevice.h'.

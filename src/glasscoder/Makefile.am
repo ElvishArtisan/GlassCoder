@@ -92,7 +92,7 @@ nodist_glasscoder_SOURCES = asihpi.cpp asihpi.h\
                             moc_vorbiscodec.cpp\
                             ringbuffer.cpp ringbuffer.h
 
-glasscoder_LDADD = @SIRLIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ @WEBHOST_LIBS@ -lpthread
+glasscoder_LDADD = @SIRLIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ @WEBHOST_LIBS@ @STEREOTOOL_LIBS@ -lpthread
 glasscoder_LDFLAGS = @SIRFLAGS@
 
 CLEANFILES = *~\

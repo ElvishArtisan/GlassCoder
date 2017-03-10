@@ -75,6 +75,8 @@ AC_ARG_ENABLE(jack,[  --disable-jack          disable JACK sound support],
 		      [JACK_DISABLED=yes],[])
 AC_ARG_ENABLE(opus,[  --disable-opus          disable Opus support],
 	      [OPUS_DISABLED=yes],[]) 
+AC_ARG_ENABLE(stereotool,[  --disable-stereotool    disable StereoTool support],
+	      [STEREOTOOL_DISABLED=yes],[]) 
 
 #
 # Check for Qt (Mandatory)
@@ -197,6 +199,22 @@ if test $FDKAAC_FOUND ; then
     AC_DEFINE(HAVE_FDKAAC)
     USING_FDKAAC=yes
   fi
+fi
+
+#
+# Check for StereoTool processor
+#
+AC_CHECK_HEADER(stereotool/ParameterEnum.h,[STEREOTOOL_FOUND=yes],[])
+if test $STEREOTOOL_FOUND ; then
+  if test -z $STEREOTOOL_DISABLED ; then
+    AC_DEFINE(STEREOTOOL,yes)
+    AC_SUBST(STEREOTOOL_LIBS,-lStereoTool)
+    USING_STEREOTOOL=yes
+  else 
+    AC_SUBST(STEREOTOOL_LIBS,"")
+  fi
+else 
+  AC_SUBST(LIBSTEREOTOOL,"")
 fi
 
 #
@@ -336,6 +354,13 @@ if test -z $USING_JACK ; then
 AC_MSG_NOTICE("|          Jack Audio Connection Kit (JACK) ... No    |")
 else
 AC_MSG_NOTICE("|          Jack Audio Connection Kit (JACK) ... Yes   |")
+fi
+AC_MSG_NOTICE("|                                                     |")
+AC_MSG_NOTICE("| Audio Processors:                                   |")
+if test -z $USING_STEREOTOOL ; then
+AC_MSG_NOTICE("|                                StereoTool ... No    |")
+else
+AC_MSG_NOTICE("|                                StereoTool ... Yes   |")
 fi
 AC_MSG_NOTICE("|-----------------------------------------------------|")
 AC_MSG_NOTICE()
