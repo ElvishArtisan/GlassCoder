@@ -770,3 +770,5 @@
 2017-03-10 Fred Gleason <fredg@paravelsystems.com>
 	* Added proof-of-concept StereoTool support in
 	'src/glasscoder/asihpidevice.cpp' and 'src/glasscoder/asihpidevice.h'.
+2017-03-13 Fred Gleason <fredg@paravelsystems.com>
+	* Added StereoTool GUI display to glasscoder(1).

@@ -46,7 +46,10 @@ AsiHpiDevice::AsiHpiDevice(unsigned chans,unsigned samprate,
   connect(asihpi_meter_timer,SIGNAL(timeout()),this,SLOT(meterData()));
 
 #ifdef STEREOTOOL
-  asihpi_stereo_tool=stereoTool_Create();
+  asihpi_stereo_tool=stereoTool_Create("<3f1ca7df5fd82164a0ddb969798b1d51d179b1018131592967d32a3247e430fbcc>");
+  asihpi_stereo_tool_gui=stereoTool_GUI_Create(asihpi_stereo_tool);
+  stereoTool_GUI_Show(asihpi_stereo_tool_gui,NULL);
+  stereoTool_GUI_SetSize(asihpi_stereo_tool_gui,1200,770);
 #endif  // STEREOTOOL
 #endif  // ASIHPI
 }

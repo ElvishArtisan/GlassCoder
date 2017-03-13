@@ -84,6 +84,7 @@ class AsiHpiDevice : public AudioDevice
   QTimer *asihpi_meter_timer;
 #ifdef STEREOTOOL
   gStereoTool *asihpi_stereo_tool;
+  gStereoToolGUI *asihpi_stereo_tool_gui;
 #endif  // STEREOTOOL
 #endif  // ASIHPI
 };
