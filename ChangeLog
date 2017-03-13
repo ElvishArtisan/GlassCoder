@@ -772,3 +772,5 @@
 	'src/glasscoder/asihpidevice.cpp' and 'src/glasscoder/asihpidevice.h'.
 2017-03-13 Fred Gleason <fredg@paravelsystems.com>
 	* Added StereoTool GUI display to glasscoder(1).
+2017-03-13 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.9.21stool0.
