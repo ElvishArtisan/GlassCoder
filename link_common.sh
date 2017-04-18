@@ -132,6 +132,11 @@ ln -s ../../src/common/stereometer.cpp src/$DESTDIR/stereometer.cpp
 rm -f src/$DESTDIR/stereometer.h
 ln -s ../../src/common/stereometer.h src/$DESTDIR/stereometer.h
 
+rm -f src/$DESTDIR/stereotool.cpp
+ln -s ../../src/common/stereotool.cpp src/$DESTDIR/stereotool.cpp
+rm -f src/$DESTDIR/stereotool.h
+ln -s ../../src/common/stereotool.h src/$DESTDIR/stereotool.h
+
 rm -f src/$DESTDIR/streamdialog.cpp
 ln -s ../../src/common/streamdialog.cpp src/$DESTDIR/streamdialog.cpp
 rm -f src/$DESTDIR/streamdialog.h

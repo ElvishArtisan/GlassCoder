@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <QCoreApplication>
+#include <QApplication>
 
 #include "audiodevicefactory.h"
 #include "cmdswitch.h"
@@ -405,6 +405,15 @@ void MainObject::ProcessCommand(const QString &cmd)
       sir_connectors[i]->sendMetadata(e);
     }
     delete e;
+  }
+
+  if((cmds[0]=="ST")&&(cmds.size()==2)) {  // Metadata update
+    if(cmds[1]=="0") {
+      sir_audio_device->stereoTool()->hide();
+    }
+    if(cmds[1]=="1") {
+      sir_audio_device->stereoTool()->show();
+    }
   }
 }
 

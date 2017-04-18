@@ -73,9 +73,10 @@ nodist_glassgui_SOURCES = asihpi.cpp asihpi.h\
                           spinbox.cpp spinbox.h\
                           statuswidget.cpp statuswidget.h\
                           stereometer.cpp stereometer.h\
+                          stereotool.cpp stereotool.h\
                           streamdialog.cpp streamdialog.h
 
-glassgui_LDADD = @GUILIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ -lpthread
+glassgui_LDADD = @GUILIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ @STEREOTOOL_LIBS@ -lpthread
 glassgui_LDFLAGS = @GUIFLAGS@
 
 CLEANFILES = *~\
@@ -108,6 +109,7 @@ DISTCLEANFILES = asihpi.cpp asihpi.h\
                  spinbox.cpp spinbox.h\
                  statuswidget.cpp statuswidget.h\
                  stereometer.cpp stereometer.h\
+                 stereotool.cpp stereotool.h\
                  streamdialog.cpp streamdialog.h
 
 

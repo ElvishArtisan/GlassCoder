@@ -65,6 +65,7 @@ nodist_glasscoder_SOURCES = asihpi.cpp asihpi.h\
                             cmdswitch.cpp cmdswitch.h\
                             glasslimits.h\
                             logging.cpp logging.h\
+                            stereotool.cpp stereotool.h\
                             metaevent.cpp metaevent.h\
                             moc_alsadevice.cpp\
                             moc_asihpidevice.cpp\
@@ -122,6 +123,7 @@ DISTCLEANFILES = asihpi.cpp asihpi.h\
                  segmeter.cpp segmeter.h\
                  serverdialog.cpp serverdialog.h\
                  sourcedialog.cpp sourcedialog.h\
+                 stereotool.cpp stereotool.h\
                  spinbox.cpp spinbox.h\
                  statuswidget.cpp statuswidget.h\
                  stereometer.cpp stereometer.h\

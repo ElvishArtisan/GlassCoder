@@ -307,9 +307,11 @@ void MainWidget::startEncodingData()
   }
   gui_process=new QProcess(this);
   QProcessEnvironment env=QProcessEnvironment::systemEnvironment();
+  /*
   if(getenv("DISPLAY")!=NULL) {
     env.insert("DISPLAY",getenv("DISPLAY"));
   }
+  */
   gui_process->setProcessEnvironment(env);
   gui_process->setReadChannel(QProcess::StandardOutput);
   connect(gui_process,SIGNAL(readyRead()),

@@ -68,6 +68,7 @@ DISTCLEANFILES = asihpi.cpp asihpi.h\
                  spinbox.cpp spinbox.h\
                  statuswidget.cpp statuswidget.h\
                  stereometer.cpp stereometer.h\
+                 stereotool.cpp stereotool.h\
                  streamdialog.cpp streamdialog.h
 
 MAINTAINERCLEANFILES = *~\

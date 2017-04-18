@@ -774,3 +774,5 @@
 	* Added StereoTool GUI display to glasscoder(1).
 2017-03-13 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.9.21stool0.
+2017-04-18 Fred Gleason <fredg@paravelsystems.com>
+	* Removed the 'StereoTool::setSize() method.

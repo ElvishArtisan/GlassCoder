@@ -44,13 +44,6 @@ AsiHpiDevice::AsiHpiDevice(unsigned chans,unsigned samprate,
 
   asihpi_meter_timer=new QTimer(this);
   connect(asihpi_meter_timer,SIGNAL(timeout()),this,SLOT(meterData()));
-
-#ifdef STEREOTOOL
-  asihpi_stereo_tool=stereoTool_Create("<3f1ca7df5fd82164a0ddb969798b1d51d179b1018131592967d32a3247e430fbcc>");
-  asihpi_stereo_tool_gui=stereoTool_GUI_Create(asihpi_stereo_tool);
-  stereoTool_GUI_Show(asihpi_stereo_tool_gui,NULL);
-  stereoTool_GUI_SetSize(asihpi_stereo_tool_gui,1200,770);
-#endif  // STEREOTOOL
 #endif  // ASIHPI
 }
 
@@ -174,6 +167,9 @@ bool AsiHpiDevice::start(QString *err)
 
   hpi_handle_t handle;
   short lvls[HPI_MAX_CHANNELS];
+
+  stereoTool()->start();
+  stereoTool()->show();
 
   //
   // Open Mixer
@@ -301,9 +297,12 @@ void AsiHpiDevice::readData()
   if(state==HPI_STATE_RECORDING) {
     if(HpiLog(HPI_InStreamReadBuf(NULL,asihpi_input_stream,asihpi_pcm_buffer,
 				  data_recorded))==0) {
-#ifdef STEREOTOOL
-      stereoTool_Process(asihpi_stereo_tool,(float *)asihpi_pcm_buffer,data_recorded/(sizeof(float)*channels()),channels(),samplerate());
-#endif  // STEREOTOOL      
+      if(stereoTool()->isActive()) {
+	stereoTool()->
+	  process((float *)asihpi_pcm_buffer,
+		  data_recorded/(sizeof(float)*channels()),
+		  channels(),samplerate());
+      }
       for(unsigned i=0;i<ringBufferQuantity();i++) {
 	ringBuffer(i)->write((float *)asihpi_pcm_buffer,
 			     data_recorded/(sizeof(float)*channels()));

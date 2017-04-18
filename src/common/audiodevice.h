@@ -2,7 +2,7 @@
 //
 // Abstract base class for audio input sources.
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2017 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -28,6 +28,7 @@
 
 #include "glasslimits.h"
 #include "ringbuffer.h"
+#include "stereotool.h"
 
 #define AUDIO_METER_INTERVAL 50
 
@@ -46,6 +47,7 @@ class AudioDevice : public QObject
   virtual bool start(QString *err)=0;
   virtual unsigned deviceSamplerate() const;
   void meterLevels(int *lvls) const;
+  StereoTool *stereoTool() const;
   static QString deviceTypeText(AudioDevice::DeviceType type);
   static QString optionKeyword(AudioDevice::DeviceType type);
   static AudioDevice::DeviceType deviceType(const QString &key);
@@ -73,6 +75,7 @@ class AudioDevice : public QObject
   void peakLevels(int *lvls,const float *pcm,unsigned nframes,unsigned chans);
 
  private:
+  StereoTool *audio_stereotool;
   std::vector<Ringbuffer *> *audio_rings;
   unsigned audio_channels;
   unsigned audio_samplerate;

@@ -36,6 +36,7 @@ AudioDevice::AudioDevice(unsigned chans,unsigned samprate,
   audio_rings=rings;
   audio_channels=chans;
   audio_samplerate=samprate;
+  audio_stereotool=new StereoTool();
 }
 
 
@@ -61,6 +62,12 @@ void AudioDevice::meterLevels(int *lvls) const
   for(unsigned i=0;i<MAX_AUDIO_CHANNELS;i++) {
     lvls[i]=audio_meter_levels[i];
   }
+}
+
+
+StereoTool *AudioDevice::stereoTool() const
+{
+  return audio_stereotool;
 }
 
 
