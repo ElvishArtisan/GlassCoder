@@ -51,6 +51,10 @@ void *AlsaCallback(void *ptr)
 			    dev->alsa_channels);
       }
       if(dev->alsa_channels==dev->channels()) {
+	if(dev->stereoTool()->isActive()) {
+	  dev->stereoTool()->
+	    process(pcm1,n,dev->channels(),dev->samplerate());
+	}
 	for(unsigned i=0;i<dev->ringBufferQuantity();i++) {
 	  dev->ringBuffer(i)->write(pcm1,n);
 	}
@@ -58,6 +62,10 @@ void *AlsaCallback(void *ptr)
       }
       else {
 	dev->remixChannels(pcm2,dev->channels(),pcm1,dev->alsa_channels,n);
+	if(dev->stereoTool()->isActive()) {
+	  dev->stereoTool()->
+	    process(pcm2,n,dev->channels(),dev->samplerate());
+	}
 	for(unsigned i=0;i<dev->ringBufferQuantity();i++) {
 	  dev->ringBuffer(i)->write(pcm2,n);
 	}
@@ -136,6 +144,11 @@ bool AlsaDevice::start(QString *err)
   int dir;
   int aerr;
   pthread_attr_t pthread_attr;
+
+  if(stereoTool()->isActive()) {
+    stereoTool()->start();
+    //    stereoTool()->show();
+  }
 
   if(snd_pcm_open(&alsa_pcm,alsa_device.toUtf8(),SND_PCM_STREAM_CAPTURE,0)!=0) {
     *err=tr("unable to open ALSA device")+" \""+alsa_device+"\"";
