@@ -23,6 +23,7 @@
 
 #include <stdio.h>
 
+#include <QCheckBox>
 #include <QDialog>
 #include <QLabel>
 #include <QLineEdit>
@@ -57,12 +58,19 @@ class SourceDialog : public QDialog
   void resizeEvent(QResizeEvent *e);
 
  private slots:
+  void stereotoolToggledData(bool state);
   void sourceTypeChanged(int n);
   void fileSelectName();
   void checkArgs(const QString &str);
 
  private:
   void ChangeSize();
+
+  QLabel *gui_use_stereotool_label;
+  QCheckBox *gui_use_stereotool_check;
+
+  QLabel *gui_stereotool_key_label;
+  QLineEdit*gui_stereotool_key_edit;
 
   QLabel *gui_source_type_label;
   ComboBox *gui_source_type_box;

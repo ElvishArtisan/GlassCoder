@@ -781,3 +781,6 @@
 	parameters for glasscoder(1).
 2017-04-19 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented StereoTool support for ALSA devices.
+2017-04-19 Fred Gleason <fredg@paravelsystems.com>
+	* Added 'Use StereoTool Processor' and 'StereoTool Key' controls
+	to the Source Settings dialog.

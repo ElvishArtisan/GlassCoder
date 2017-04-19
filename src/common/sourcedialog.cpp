@@ -35,6 +35,25 @@ SourceDialog::SourceDialog(QWidget *parent)
   setWindowTitle("GlassGui - "+tr("Audio Sources"));
 
   //
+  // Use StereoTool
+  //
+  gui_use_stereotool_check=new QCheckBox(this);
+  connect(gui_use_stereotool_check,SIGNAL(toggled(bool)),
+	  this,SLOT(stereotoolToggledData(bool)));
+  gui_use_stereotool_label=new QLabel(tr("Use StereoTool Processor"),this);
+  gui_use_stereotool_label->setFont(label_font);
+  gui_use_stereotool_label->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+
+  //
+  // StereoTool Key
+  //
+  gui_stereotool_key_label=
+    new QLabel(tr("StereoTool Registration Key")+":",this);
+  gui_stereotool_key_label->setFont(label_font);
+  gui_stereotool_key_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  gui_stereotool_key_edit=new QLineEdit(this);
+
+  //
   // Source Type
   //
   gui_source_type_label=new QLabel(tr("Type")+":",this);
@@ -118,7 +137,7 @@ QSize SourceDialog::sizeHint() const
   case AudioDevice::Alsa:
   case AudioDevice::File:
   case AudioDevice::Jack:
-    ret=QSize(500,150);
+    ret=QSize(500,220);
     break;
 
   case AudioDevice::LastType:
@@ -134,6 +153,12 @@ bool SourceDialog::makeArgs(QStringList *args,bool escape_args)
   if(escape_args) {
     quote="\"";
   }
+
+  if(gui_use_stereotool_check->isChecked()) {
+    args->push_back("--stereotool-enable");
+  }
+  args->push_back("--stereotool-key="+gui_stereotool_key_edit->text());
+
   AudioDevice::DeviceType type=(AudioDevice::DeviceType)
     gui_source_type_box->itemData(gui_source_type_box->currentIndex()).toInt();
   args->push_back("--audio-device="+AudioDevice::optionKeyword(type));
@@ -211,6 +236,8 @@ bool SourceDialog::makeArgs(QStringList *args,bool escape_args)
 
 void SourceDialog::setControlsLocked(bool state)
 {
+  gui_stereotool_key_edit->setReadOnly(state);
+
   gui_source_type_box->setReadOnly(state);
 
   gui_jack_server_name_edit->setReadOnly(state);
@@ -244,6 +271,12 @@ void SourceDialog::addSourceTypes(const QString &types)
 
 void SourceDialog::load(Profile *p)
 {
+  gui_use_stereotool_check->
+    setChecked(p->intValue("GlassGui","StereotoolEnable"));
+  gui_stereotool_key_edit->
+    setText(p->stringValue("GlassGui","StereotoolKey"));
+  stereotoolToggledData(gui_use_stereotool_check->isChecked());
+
   gui_source_type_box->
     setCurrentItemData(AudioDevice::deviceType(p->stringValue("GlassGui",
 							      "AudioDevice")));
@@ -281,6 +314,9 @@ void SourceDialog::load(Profile *p)
 
 void SourceDialog::save(FILE *f)
 {
+  fprintf(f,"StereotoolEnable=%d\n",gui_use_stereotool_check->isChecked());
+  fprintf(f,"StereotoolKey=%s\n",
+	  (const char *)gui_stereotool_key_edit->text().toUtf8());
   fprintf(f,"AudioDevice=%s\n",
 	  (const char *)AudioDevice::optionKeyword((AudioDevice::DeviceType)
 		    gui_source_type_box->currentItemData().toInt()).toUtf8());
@@ -316,11 +352,27 @@ void SourceDialog::resizeEvent(QResizeEvent *e)
 {
   int ypos=10;
 
+  //
+  // StereoTool Controls
+  //
+  gui_use_stereotool_check->setGeometry(10,ypos,20,20);
+  gui_use_stereotool_label->setGeometry(35,ypos,300,20);
+  ypos+=22;
+
+  gui_stereotool_key_label->setGeometry(15,ypos,200,24);
+  gui_stereotool_key_edit->setGeometry(220,ypos,size().width()-235,24);
+  ypos+=33;
+
+  int ypos_base=ypos;
+
+  //
+  // Device Type
+  //
   gui_source_type_label->setGeometry(10,ypos,60,20);
   gui_source_type_box->setGeometry(75,ypos,350,24);
   ypos+=26;
 
-  int ypos_base=ypos;
+  ypos_base=ypos;
 
   //
   // ALSA Controls
@@ -358,6 +410,13 @@ void SourceDialog::resizeEvent(QResizeEvent *e)
   ypos+=26;
 
   gui_close_button->setGeometry(size().width()-80,size().height()-50,70,40);
+}
+
+
+void SourceDialog::stereotoolToggledData(bool state)
+{
+  gui_stereotool_key_label->setEnabled(state);
+  gui_stereotool_key_edit->setEnabled(state);
 }
 
 
@@ -437,12 +496,7 @@ void SourceDialog::checkArgs(const QString &str)
 
 void SourceDialog::ChangeSize()
 {
-  QRect g=geometry();
-
-  setGeometry(g.x(),g.y(),sizeHint().width(),sizeHint().height());
-  /*
   setMinimumHeight(sizeHint().height());
   setMaximumHeight(sizeHint().height());
-  setMinimumSize(sizeHint());
-  */
+  setMinimumWidth(sizeHint().width());
 }
