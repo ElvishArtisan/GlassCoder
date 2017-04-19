@@ -36,9 +36,9 @@
 class StereoTool
 {
  public:
-  StereoTool();
+  StereoTool(bool activate,const QString &key);
   ~StereoTool();
-  bool start(const char *key=0);
+  bool start();
   bool isActive() const;
   void show();
   void hide();
@@ -53,6 +53,8 @@ class StereoTool
 
  private:
 #ifdef STEREOTOOL
+  bool st_activate;
+  QString st_key;
   gStereoTool *st_stereotool;
   gStereoToolGUI *st_stereotool_gui;
   friend void __StereoToolCallback(void *priv,gStereoTool *st,void *c);

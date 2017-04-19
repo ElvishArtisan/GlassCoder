@@ -27,8 +27,11 @@
 #include "logging.h"
 
 AsiHpiDevice::AsiHpiDevice(unsigned chans,unsigned samprate,
-			   std::vector<Ringbuffer *> *rings,QObject *parent)
-  : AudioDevice(chans,samprate,rings,parent)
+			   bool enable_stereotool,
+			   const QString &st_key,const QString &st_preset,
+			   std::vector<Ringbuffer *> *rings,
+			   QObject *parent)
+  : AudioDevice(chans,samprate,enable_stereotool,st_key,st_preset,rings,parent)
 {
 #ifdef ASIHPI
   asihpi_adapter_index=ASIHPI_DEFAULT_INDEX;
@@ -168,8 +171,10 @@ bool AsiHpiDevice::start(QString *err)
   hpi_handle_t handle;
   short lvls[HPI_MAX_CHANNELS];
 
-  stereoTool()->start();
-  stereoTool()->show();
+  if(stereoTool()->isActive()) {
+    stereoTool()->start();
+    //    stereoTool()->show();
+  }
 
   //
   // Open Mixer

@@ -26,6 +26,8 @@
 
 AudioDevice *AudioDeviceFactory(AudioDevice::DeviceType type,
 				unsigned chans,unsigned samprate,
+                                bool enable_stereotool,
+				const QString &st_key,const QString &st_preset,
 				std::vector<Ringbuffer *> *rings,
 				QObject *parent)
 {
@@ -34,25 +36,29 @@ AudioDevice *AudioDeviceFactory(AudioDevice::DeviceType type,
   switch(type) {
   case AudioDevice::Alsa:
 #ifdef ALSA
-    dev=new AlsaDevice(chans,samprate,rings,parent);
+    dev=new AlsaDevice(chans,samprate,enable_stereotool,st_key,st_preset,
+		       rings,parent);
 #endif  // ALSA
     break;
 
   case AudioDevice::AsiHpi:
 #ifdef ASIHPI
-    dev=new AsiHpiDevice(chans,samprate,rings,parent);
+    dev=new AsiHpiDevice(chans,samprate,enable_stereotool,st_key,st_preset,
+			 rings,parent);
 #endif  // ASIHPI
     break;
 
   case AudioDevice::File:
 #ifdef SNDFILE
-    dev=new FileDevice(chans,samprate,rings,parent);
+    dev=new FileDevice(chans,samprate,enable_stereotool,st_key,st_preset,
+		       rings,parent);
 #endif  // SNDFILE
     break;
 
   case AudioDevice::Jack:
 #ifdef JACK
-    dev=new JackDevice(chans,samprate,rings,parent);
+    dev=new JackDevice(chans,samprate,enable_stereotool,st_key,st_preset,
+		       rings,parent);
 #endif  // JACK
     break;
 

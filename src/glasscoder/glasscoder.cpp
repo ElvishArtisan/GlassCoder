@@ -222,6 +222,9 @@ bool MainObject::StartAudioDevice()
   if((sir_audio_device=
       AudioDeviceFactory(sir_config->audioDevice(),sir_config->audioChannels(),
 			 sir_config->audioSamplerate(),
+			 sir_config->stereoToolEnabled(),
+			 sir_config->stereoToolKey(),
+			 "",
 			 &sir_ringbuffers,this))==NULL) {
     Log(LOG_ERR,
 	QString().sprintf("%s devices not supported",

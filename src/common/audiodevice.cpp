@@ -2,7 +2,7 @@
 //
 // Abstract base class for audio input sources.
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2017 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -28,15 +28,30 @@
 
 #include "audiodevice.h"
 #include "logging.h"
-
+/*
 AudioDevice::AudioDevice(unsigned chans,unsigned samprate,
+			 bool enable_stereotool,
 			 std::vector<Ringbuffer *> *rings,QObject *parent)
   : QObject(parent)
 {
   audio_rings=rings;
   audio_channels=chans;
   audio_samplerate=samprate;
-  audio_stereotool=new StereoTool();
+  audio_stereotool=new StereoTool(enable_stereotool);
+}
+*/
+
+AudioDevice::AudioDevice(unsigned chans,unsigned samprate,
+			 bool enable_stereotool,
+			 const QString &st_key,const QString &st_preset,
+			 std::vector<Ringbuffer *> *rings,
+			 QObject *parent)
+  : QObject(parent)
+{
+  audio_rings=rings;
+  audio_channels=chans;
+  audio_samplerate=samprate;
+  audio_stereotool=new StereoTool(enable_stereotool,st_key);
 }
 
 

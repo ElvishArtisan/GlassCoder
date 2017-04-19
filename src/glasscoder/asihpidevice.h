@@ -40,8 +40,9 @@ class AsiHpiDevice : public AudioDevice
 {
   Q_OBJECT;
  public:
-  AsiHpiDevice(unsigned chans,unsigned samprate,
-	      std::vector<Ringbuffer *> *rings,QObject *parent=0);
+  AsiHpiDevice(unsigned chans,unsigned samprate,bool enable_stereotool,
+	       const QString &st_key,const QString &st_preset,
+	       std::vector<Ringbuffer *> *rings,QObject *parent=0);
   ~AsiHpiDevice();
   bool isAvailable() const;
   bool processOptions(QString *err,const QStringList &keys,

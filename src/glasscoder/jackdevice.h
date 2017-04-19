@@ -38,7 +38,8 @@ class JackDevice : public AudioDevice
 {
   Q_OBJECT;
  public:
-  JackDevice(unsigned chans,unsigned samprate,
+  JackDevice(unsigned chans,unsigned samprate,bool enable_stereotool,
+	     const QString &st_key,const QString &st_preset,
 	     std::vector<Ringbuffer *> *rings,QObject *parent=0);
   ~JackDevice();
   bool processOptions(QString *err,const QStringList &keys,

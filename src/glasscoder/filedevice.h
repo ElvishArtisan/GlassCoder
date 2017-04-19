@@ -44,7 +44,8 @@ class FileDevice : public AudioDevice
 {
   Q_OBJECT;
  public:
-  FileDevice(unsigned chans,unsigned samprate,
+  FileDevice(unsigned chans,unsigned samprate,bool enable_stereotool,
+	     const QString &st_key,const QString &st_preset,
 	     std::vector<Ringbuffer *> *rings,QObject *parent=0);
   ~FileDevice();
   bool processOptions(QString *err,const QStringList &keys,

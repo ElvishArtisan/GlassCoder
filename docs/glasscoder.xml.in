@@ -660,6 +660,30 @@
 
     <varlistentry>
       <term>
+	<option>--stereotool-enable</option>
+      </term>
+      <listitem>
+	<para>
+	  Use the embedded StereoTool audio processor.
+	</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>
+	<option>--stereotool-key=</option><replaceable>key</replaceable>
+      </term>
+      <listitem>
+	<para>
+	  Use the registration key <replaceable>key</replaceable> for the
+	  StereoTool processor. If this option is omitted, StereoTool will
+	  be started in <userinput>UNREGISTERED</userinput> mode.
+	</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>
 	<option>--stream-aim=</option><replaceable>aim</replaceable>
       </term>
       <listitem>

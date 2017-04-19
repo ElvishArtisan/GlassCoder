@@ -40,6 +40,8 @@ src/glasscoder/metaevent.cpp
 src/glasscoder/metaevent.h
 src/glasscoder/ringbuffer.cpp
 src/glasscoder/ringbuffer.h
+src/glasscoder/stereotool.cpp
+src/glasscoder/stereotool.h
 src/glasscoder/codecdialog.cpp
 src/glasscoder/codecdialog.h
 src/glasscoder/codeviewer.cpp
@@ -116,6 +118,8 @@ src/glassgui/statuswidget.cpp
 src/glassgui/statuswidget.h
 src/glassgui/stereometer.cpp
 src/glassgui/stereometer.h
+src/glassgui/stereotool.cpp
+src/glassgui/stereotool.h
 src/glassgui/streamdialog.cpp
 src/glassgui/streamdialog.h
 src/glasscommander/asihpi.cpp
@@ -164,6 +168,8 @@ src/glasscommander/statuswidget.cpp
 src/glasscommander/statuswidget.h
 src/glasscommander/stereometer.cpp
 src/glasscommander/stereometer.h
+src/glasscommander/stereotool.cpp
+src/glasscommander/stereotool.h
 src/glasscommander/streamdialog.cpp
 src/glasscommander/streamdialog.h
 src/tests/asihpi.cpp
@@ -210,6 +216,8 @@ src/tests/spinbox.cpp
 src/tests/spinbox.h
 src/tests/statuswidget.cpp
 src/tests/statuswidget.h
+src/tests/stereotool.cpp
+src/tests/stereotool.h
 src/tests/stereometer.cpp
 src/tests/stereometer.h
 src/tests/streamdialog.cpp

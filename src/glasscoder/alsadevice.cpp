@@ -74,9 +74,11 @@ void *AlsaCallback(void *ptr)
 }
 
 
-AlsaDevice::AlsaDevice(unsigned chans,unsigned samprate,
-		       std::vector<Ringbuffer *> *rings,QObject *parent)
-  : AudioDevice(chans,samprate,rings,parent)
+AlsaDevice::AlsaDevice(unsigned chans,unsigned samprate,bool enable_stereotool,
+		       const QString &st_key,const QString &st_preset,
+		       std::vector<Ringbuffer *> *rings,
+		       QObject *parent)
+  : AudioDevice(chans,samprate,enable_stereotool,st_key,st_preset,rings,parent)
 {
 #ifdef ALSA
   alsa_device=ALSA_DEFAULT_DEVICE;

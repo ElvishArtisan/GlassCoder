@@ -33,8 +33,10 @@ void __StereoToolCallback(void *priv,gStereoTool *st,void *c)
 }
 #endif  // STEREOTOOL
 
-StereoTool::StereoTool()
+StereoTool::StereoTool(bool activate,const QString &key)
 {
+  st_activate=activate;
+  st_key=key;
   st_stereotool=NULL;
 #ifdef STEREOTOOL
   st_stereotool=NULL;
@@ -56,11 +58,11 @@ StereoTool::~StereoTool()
 }
 
 
-bool StereoTool::start(const char *key)
+bool StereoTool::start()
 {
-  if(st_stereotool==NULL) {
+  if((st_stereotool==NULL)&&st_activate) {
 #ifdef STEREOTOOL
-    st_stereotool=stereoTool_Create(key);
+    st_stereotool=stereoTool_Create(st_key.toUtf8());
     stereoTool_SetCallback(st_stereotool,__StereoToolCallback,this);
     return true;
 #endif  // STEREOTOOL
@@ -71,14 +73,14 @@ bool StereoTool::start(const char *key)
 
 bool StereoTool::isActive() const
 {
-  return st_stereotool!=NULL;
+  return st_activate;
 }
 
 
 void StereoTool::show()
 {
 #ifdef STEREOTOOL
-  if(st_stereotool_gui==NULL) {
+  if((st_stereotool!=NULL)&&(st_stereotool_gui==NULL)) {
     st_stereotool_gui=stereoTool_GUI_Create(st_stereotool);
     stereoTool_GUI_Show(st_stereotool_gui,NULL);
   }

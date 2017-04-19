@@ -25,6 +25,8 @@
 
 AudioDevice *AudioDeviceFactory(AudioDevice::DeviceType type,
 				unsigned chans,unsigned samprate,
+				bool enable_stereotool,
+				const QString &st_key,const QString &st_preset,
 				std::vector<Ringbuffer *> *rings,
 				QObject *parent=0);
 

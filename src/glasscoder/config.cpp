@@ -45,6 +45,7 @@ Config::Config()
   server_start_connections=0;
   server_pipe="";
   server_start_connections=0;
+  stereotool_enable=false;
   stream_aim="";
   stream_genre="";
   stream_icq="";
@@ -233,6 +234,14 @@ Config::Config()
     }
     if(cmd->key(i)=="--server-pipe") {
       server_pipe=cmd->value(i);
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--stereotool-enable") {
+      stereotool_enable=true;
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--stereotool-key") {
+      stereotool_key=cmd->value(i);
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--stream-description") {
@@ -454,6 +463,18 @@ QString Config::serverPipe() const
 }
 
 
+bool Config::stereoToolEnabled() const
+{
+  return stereotool_enable;
+}
+
+
+QString Config::stereoToolKey() const
+{
+  return stereotool_key;
+}
+
+
 QString Config::streamAim() const
 {
   return stream_aim;
@@ -552,7 +573,8 @@ void Config::ListCodecs() const
 void Config::ListDevices() const
 {
   for(int i=0;i<AudioDevice::LastType;i++) {
-    if(AudioDeviceFactory((AudioDevice::DeviceType)i,2,48000,NULL)!=NULL) {
+    if(AudioDeviceFactory((AudioDevice::DeviceType)i,2,48000,false,"","",NULL)!=
+       NULL) {
       printf("%s\n",(const char *)AudioDevice::optionKeyword((AudioDevice::DeviceType)i).toUtf8());
     }
   }

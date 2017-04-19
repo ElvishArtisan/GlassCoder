@@ -54,6 +54,8 @@ class Config
   QString serverUserAgent() const;
   QString serverUsername() const;
   QString serverPipe() const;
+  bool stereoToolEnabled() const;
+  QString stereoToolKey() const;
   QString streamAim() const;
   QString streamDescription() const;
   QString streamGenre() const;
@@ -116,6 +118,12 @@ class Config
   //
   QStringList device_keys;
   QStringList device_values;
+
+  //
+  // Stereotool Arguments
+  //
+  bool stereotool_enable;
+  QString stereotool_key;
 
   //
   // Miscellaneous Arguments

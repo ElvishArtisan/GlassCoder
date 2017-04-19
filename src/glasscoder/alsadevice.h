@@ -37,8 +37,9 @@ class AlsaDevice : public AudioDevice
 {
   Q_OBJECT;
  public:
-  AlsaDevice(unsigned chans,unsigned samprate,
-	      std::vector<Ringbuffer *> *rings,QObject *parent=0);
+  AlsaDevice(unsigned chans,unsigned samprate,bool enable_stereotool,
+	     const QString &st_key,const QString &st_preset,
+	     std::vector<Ringbuffer *> *rings,QObject *parent=0);
   ~AlsaDevice();
   bool processOptions(QString *err,const QStringList &keys,
 		      const QStringList &values);

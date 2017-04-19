@@ -38,7 +38,8 @@ class AudioDevice : public QObject
  public:
   enum DeviceType {Alsa=0,AsiHpi=1,File=2,Jack=3,LastType=4};
   enum Format {FLOAT=0,S16_LE=1,S32_LE=2,LastFormat=3};
-  AudioDevice(unsigned chans,unsigned samprate,
+  AudioDevice(unsigned chans,unsigned samprate,bool enable_stereotool,
+  	      const QString &st_key,const QString &st_preset,
 	      std::vector<Ringbuffer *> *rings,QObject *parent=0);
   ~AudioDevice();
   virtual bool isAvailable() const;

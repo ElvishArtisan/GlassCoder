@@ -75,9 +75,11 @@ int JackProcess(jack_nframes_t nframes, void *arg)
 #endif  // JACK
 
 
-JackDevice::JackDevice(unsigned chans,unsigned samprate,
-		       std::vector<Ringbuffer *> *rings,QObject *parent)
-  : AudioDevice(chans,samprate,rings,parent)
+JackDevice::JackDevice(unsigned chans,unsigned samprate,bool enable_stereotool,
+		       const QString &st_key,const QString &st_preset,
+		       std::vector<Ringbuffer *> *rings,
+		       QObject *parent)
+  : AudioDevice(chans,samprate,enable_stereotool,st_key,st_preset,rings,parent)
 {
 #ifdef JACK
   jack_server_name="";
