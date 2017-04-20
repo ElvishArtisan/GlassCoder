@@ -787,3 +787,6 @@
 2017-04-20 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/common/sourcedialog.cpp' that caused the
 	StereoTool key value to be exported without being properly escaped.
+2017-04-20 Fred Gleason <fredg@paravelsystems.com>
+	* Overloaded the 'Show Code' button to display the StereoTool
+	interface when the encoder is active.

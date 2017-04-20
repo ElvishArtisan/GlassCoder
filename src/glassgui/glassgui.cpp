@@ -332,7 +332,8 @@ void MainWidget::startEncodingData()
   gui_process->start("glasscoder",args);
   gui_start_button->disconnect();
   connect(gui_start_button,SIGNAL(clicked()),this,SLOT(stopEncodingData()));
-  gui_start_button->setText(tr("Stop"));
+  gui_start_button->setText(tr("Stop")); 
+  gui_code_button->setText(tr("Stereo\nTool"));
   LockControls(true);
 }
 
@@ -340,6 +341,7 @@ void MainWidget::startEncodingData()
 void MainWidget::stopEncodingData()
 {
   gui_process->terminate();
+  gui_code_button->setText(tr("Show\nCode"));
 }
 
 
@@ -347,13 +349,18 @@ void MainWidget::showCodeData()
 {
   QStringList args;
 
-  args.push_back("glasscoder");
-  gui_server_dialog->makeArgs(&args,true);
-  gui_codec_dialog->makeArgs(&args);
-  gui_stream_dialog->makeArgs(&args,true);
-  gui_source_dialog->makeArgs(&args,true);
+  if((gui_process!=NULL)&&(gui_process->state()==QProcess::Running)) {
+    gui_process->write("ST 1\n");
+  }
+  else {
+    args.push_back("glasscoder");
+    gui_server_dialog->makeArgs(&args,true);
+    gui_codec_dialog->makeArgs(&args);
+    gui_stream_dialog->makeArgs(&args,true);
+    gui_source_dialog->makeArgs(&args,true);
 
-  gui_codeviewer_dialog->exec(args);
+    gui_codeviewer_dialog->exec(args);
+  }
 }
 
 
@@ -442,6 +449,7 @@ void MainWidget::codecFinishedData(int exit_code,
   else {
     ProcessError(exit_code,exit_status);
   }
+  gui_code_button->setText(tr("Show\nCode"));
 }
 
 

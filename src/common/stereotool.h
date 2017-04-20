@@ -55,6 +55,7 @@ class StereoTool
 #ifdef STEREOTOOL
   bool st_activate;
   QString st_key;
+  bool st_visibility;
   gStereoTool *st_stereotool;
   gStereoToolGUI *st_stereotool_gui;
   friend void __StereoToolCallback(void *priv,gStereoTool *st,void *c);
