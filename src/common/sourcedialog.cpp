@@ -157,7 +157,12 @@ bool SourceDialog::makeArgs(QStringList *args,bool escape_args)
   if(gui_use_stereotool_check->isChecked()) {
     args->push_back("--stereotool-enable");
   }
-  args->push_back("--stereotool-key="+gui_stereotool_key_edit->text());
+  if(escape_args) {
+    args->push_back("--stereotool-key=\""+gui_stereotool_key_edit->text()+"\"");
+  }
+  else {
+    args->push_back("--stereotool-key="+gui_stereotool_key_edit->text());
+  }
 
   AudioDevice::DeviceType type=(AudioDevice::DeviceType)
     gui_source_type_box->itemData(gui_source_type_box->currentIndex()).toInt();
