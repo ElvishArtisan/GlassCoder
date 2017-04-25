@@ -791,4 +791,4 @@
 	* Overloaded the 'Show Code' button to display the StereoTool
 	interface when the encoder is active.
 2017-04-25 Fred Gleason <fredg@paravelsystems.com>
-	* Incremented the package version to 0.9.21stool0.
+	* Incremented the package version to 0.9.21stool1.
