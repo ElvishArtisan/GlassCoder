@@ -794,3 +794,5 @@
 	* Incremented the package version to 0.9.21stool1.
 2017-05-01 Fred Gleason <fredg@paravelsystems.com>
 	* Documented the 'ST' command in the glasscoder-ipc(7) man page.
+2017-05-01 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed size error for the Source Settings dialog.

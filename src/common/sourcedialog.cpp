@@ -131,7 +131,7 @@ QSize SourceDialog::sizeHint() const
     break;
 
   case AudioDevice::AsiHpi:
-    ret=QSize(500,320);
+    ret=QSize(500,340);
     break;
 
   case AudioDevice::Alsa:
