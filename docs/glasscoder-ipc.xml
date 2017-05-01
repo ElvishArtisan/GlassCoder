@@ -99,7 +99,7 @@
   <refsect1 id='stdin-control'><title>Control via Standard Input</title>
   <para>
     <command>glasscoder</command><manvolnum>1</manvolnum> supports the
-    following command, sent via standard input:
+    following commands, sent via standard input and terminated by newline:
   </para>
   <para>
     <synopsis>
@@ -109,7 +109,15 @@
   <para>
     Send the metadata
     <arg choice='opt'><replaceable>text</replaceable></arg> to the stream.
-    The command should be terminated by newline.
+  </para>
+  <para>
+    <synopsis>
+      ST <arg><userinput>0</userinput>|<userinput>1</userinput></arg>
+    </synopsis>
+  </para>
+  <para>
+    Display (<userinput>1</userinput>) or hide (<userinput>0</userinput>)
+    the StereoTool GUI.
   </para>
   </refsect1>
 
