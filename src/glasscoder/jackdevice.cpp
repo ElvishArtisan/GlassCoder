@@ -60,14 +60,26 @@ int JackProcess(jack_nframes_t nframes, void *arg)
   }
 
   //
+  // Update Meter
+  //
+  obj->peakLevels(lvls,jack_cb_interleave_buffer,nframes,obj->channels());
+  for(i=0;i<obj->channels();i++) {
+    obj->jack_meter_avg[i]->addValue(lvls[i]);
+  }
+
+  //
+  // StereoTool Processing
+  //
+  if(obj->stereoTool()->isActive()) {
+    obj->stereoTool()->process(jack_cb_interleave_buffer,nframes,
+			       obj->channels(),obj->samplerate());
+  }
+
+  //
   // Write It
   //
   for(i=0;i<obj->ringBufferQuantity();i++) {
     obj->ringBuffer(i)->write(jack_cb_interleave_buffer,nframes);
-  }
-  obj->peakLevels(lvls,jack_cb_interleave_buffer,nframes,obj->channels());
-  for(i=0;i<obj->channels();i++) {
-    obj->jack_meter_avg[i]->addValue(lvls[i]);
   }
 
   return 0;
@@ -138,6 +150,13 @@ bool JackDevice::start(QString *err)
 #ifdef JACK
   jack_options_t jackopts=JackNullOption;
   jack_status_t jackstat=JackFailure;
+
+  //
+  // StereoTool
+  //
+  if(stereoTool()->isActive()) {
+    stereoTool()->start();
+  }
 
   //
   // Connect to JACK Instance

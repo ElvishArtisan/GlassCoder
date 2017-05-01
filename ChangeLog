@@ -800,3 +800,5 @@
 	* Fixed a bug in 'src/glassgui/glassgui.cpp' that caused the
 	'StereoTool' button to be active even when StereoTool was not
 	enabled.
+2017-05-01 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented StereoTool support for JACK devices.
