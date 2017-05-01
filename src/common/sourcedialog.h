@@ -43,6 +43,7 @@ class SourceDialog : public QDialog
   SourceDialog(QWidget *parent=0);
   QSize sizeHint() const;
   bool makeArgs(QStringList *args,bool escape_args);
+  bool stereotoolActive() const;
   void setControlsLocked(bool state);
   void addSourceTypes(const QString &types);
   void load(Profile *p);

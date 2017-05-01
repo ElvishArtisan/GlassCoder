@@ -796,3 +796,7 @@
 	* Documented the 'ST' command in the glasscoder-ipc(7) man page.
 2017-05-01 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed size error for the Source Settings dialog.
+2017-05-01 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/glassgui/glassgui.cpp' that caused the
+	'StereoTool' button to be active even when StereoTool was not
+	enabled.

@@ -307,11 +307,6 @@ void MainWidget::startEncodingData()
   }
   gui_process=new QProcess(this);
   QProcessEnvironment env=QProcessEnvironment::systemEnvironment();
-  /*
-  if(getenv("DISPLAY")!=NULL) {
-    env.insert("DISPLAY",getenv("DISPLAY"));
-  }
-  */
   gui_process->setProcessEnvironment(env);
   gui_process->setReadChannel(QProcess::StandardOutput);
   connect(gui_process,SIGNAL(readyRead()),
@@ -333,7 +328,9 @@ void MainWidget::startEncodingData()
   gui_start_button->disconnect();
   connect(gui_start_button,SIGNAL(clicked()),this,SLOT(stopEncodingData()));
   gui_start_button->setText(tr("Stop")); 
-  gui_code_button->setText(tr("Stereo\nTool"));
+  if(gui_source_dialog->stereotoolActive()) {
+    gui_code_button->setText(tr("Stereo\nTool"));
+  }
   LockControls(true);
 }
 

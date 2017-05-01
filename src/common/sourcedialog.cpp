@@ -239,6 +239,12 @@ bool SourceDialog::makeArgs(QStringList *args,bool escape_args)
 }
 
 
+bool SourceDialog::stereotoolActive() const
+{
+  return gui_use_stereotool_check->isChecked();
+}
+
+
 void SourceDialog::setControlsLocked(bool state)
 {
   gui_stereotool_key_edit->setReadOnly(state);
