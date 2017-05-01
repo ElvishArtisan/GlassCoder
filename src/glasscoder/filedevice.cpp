@@ -2,7 +2,7 @@
 //
 // Audio source for streaming direct from a file.
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2017 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -88,6 +88,10 @@ bool FileDevice::processOptions(QString *err,const QStringList &keys,
 bool FileDevice::start(QString *err)
 {
 #ifdef SNDFILE
+  if(stereoTool()->isActive()) {
+    stereoTool()->start();
+  }
+
   if((file_sndfile=sf_open(file_name.toUtf8(),SFM_READ,&file_sfinfo))==NULL) {
     *err=sf_strerror(file_sndfile);
     return false;
@@ -144,15 +148,18 @@ void FileDevice::readTimerData()
 	remixChannels(pcm2,channels(),pcm1,file_sfinfo.channels,nframes);
 	pcm=pcm2;
       }
-      for(unsigned i=0;i<ringBufferQuantity();i++) {
-	ringBuffer(i)->write(pcm,nframes);
-      }
       peakLevels(levels,pcm,nframes,channels());
       for(unsigned i=0;i<channels();i++) {
 	file_meter_avg[i]->addValue(levels[i]);
 	levels[i]=file_meter_avg[i]->average();
       }
       setMeterLevels(levels);
+      if(stereoTool()->isActive()) {
+	stereoTool()->process(pcm,nframes,channels(),samplerate());
+      }
+      for(unsigned i=0;i<ringBufferQuantity();i++) {
+	ringBuffer(i)->write(pcm,nframes);
+      }
     }
     else {
       sf_close(file_sndfile);

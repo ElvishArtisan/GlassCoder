@@ -802,3 +802,5 @@
 	enabled.
 2017-05-01 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented StereoTool support for JACK devices.
+2017-05-01 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented StereoTool support for FILE devices.
