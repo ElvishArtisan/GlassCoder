@@ -804,3 +804,6 @@
 	* Implemented StereoTool support for JACK devices.
 2017-05-01 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented StereoTool support for FILE devices.
+2017-05-01 Fred Gleason <fredg@paravelsystems.com>
+	* Overloaded the 'Settings' button in glasscommander(1) to display
+	the StereoTool interface when the encoder is active.

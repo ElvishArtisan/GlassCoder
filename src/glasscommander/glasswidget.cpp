@@ -257,6 +257,9 @@ void GlassWidget::startEncodingData()
   gw_start_button->disconnect();
   connect(gw_start_button,SIGNAL(clicked()),this,SLOT(stopEncodingData()));
   gw_start_button->setText(tr("Stop"));
+  if(gw_source_dialog->stereotoolActive()) {
+    gw_config_button->setText(tr("StereoTool"));
+  }
   LockControls(true);
 }
 
@@ -302,6 +305,7 @@ void GlassWidget::processFinishedData(int exit_code,
     gw_start_button->disconnect();
     connect(gw_start_button,SIGNAL(clicked()),this,SLOT(startEncodingData()));
     gw_start_button->setText(tr("Start"));
+    gw_config_button->setText(tr("Settings"));
     LockControls(false);
   }
   else {
@@ -341,10 +345,15 @@ void GlassWidget::removeData()
 
 void GlassWidget::configData()
 {
-  bool autostart=autoStart();
-  gw_config_dialog->exec(&autostart);
-  setAutoStart(autostart);
-  emit configurationChanged(this);
+  if((gw_process!=NULL)&&(gw_process->state()==QProcess::Running)) {
+    gw_process->write("ST 1\n");
+  }
+  else {
+    bool autostart=autoStart();
+    gw_config_dialog->exec(&autostart);
+    setAutoStart(autostart);
+    emit configurationChanged(this);
+  }
 }
 
 
@@ -385,13 +394,13 @@ void GlassWidget::resizeEvent(QResizeEvent *e)
   gw_status_frame_widget->setGeometry(307,4,134,h-8);
   gw_status_widget->setGeometry(310,7,128,h-14);
 
-  gw_name_label->setGeometry(445,2,190,h-4);
+  gw_name_label->setGeometry(445,2,180,h-4);
 
-  gw_message_widget->setGeometry(640,2,w-810,h-4);
+  gw_message_widget->setGeometry(630,2,w-815,h-4);
 
-  gw_start_button->setGeometry(w-160,5,70,h-9);
+  gw_start_button->setGeometry(w-175,5,70,h-9);
 
-  gw_config_button->setGeometry(w-80,5,70,h-9);
+  gw_config_button->setGeometry(w-95,5,90,h-9);
   gw_insert_button->setGeometry(w-80,5,70,h-9);
   gw_remove_button->setGeometry(w-80,5,70,h-9);
 }
