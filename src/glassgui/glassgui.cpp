@@ -479,6 +479,36 @@ void MainWidget::deviceFinishedData(int exit_code,
     //
     gui_source_dialog->addSourceTypes(gui_process->readAllStandardOutput());
     gui_process=NULL;
+
+    //
+    // Get Device List
+    //
+    gui_process=new QProcess(this);
+    connect(gui_process,SIGNAL(error(QProcess::ProcessError)),
+	    this,SLOT(processErrorData(QProcess::ProcessError)));
+    connect(gui_process,SIGNAL(finished(int,QProcess::ExitStatus)),
+	    this,SLOT(presetFinishedData(int,QProcess::ExitStatus)));
+
+    QStringList args;
+    args.push_back("--list-presets");
+    gui_process->start("glasscoder",args);
+  }
+  else {
+    ProcessError(exit_code,exit_status);
+  }
+}
+
+
+void MainWidget::presetFinishedData(int exit_code,QProcess::ExitStatus exit_status)
+{
+  QStringList f0;
+
+  if(exit_code==0) {
+    //
+    // Populate Device Types
+    //
+    gui_source_dialog->addPresets(gui_process->readAllStandardOutput());
+    gui_process=NULL;
     LoadSettings();
     if(gui_autostart) {
       gui_autostart_timer->start(0);

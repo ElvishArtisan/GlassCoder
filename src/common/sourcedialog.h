@@ -25,6 +25,7 @@
 
 #include <QCheckBox>
 #include <QDialog>
+#include <QGroupBox>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
@@ -46,6 +47,7 @@ class SourceDialog : public QDialog
   bool stereotoolActive() const;
   void setControlsLocked(bool state);
   void addSourceTypes(const QString &types);
+  void addPresets(const QString &presets);
   void load(Profile *p);
   void save(FILE *f);
 
@@ -67,8 +69,13 @@ class SourceDialog : public QDialog
  private:
   void ChangeSize();
 
-  QLabel *gui_use_stereotool_label;
-  QCheckBox *gui_use_stereotool_check;
+  QGroupBox *gui_stereotool_group;
+
+  QLabel *gui_stereotool_preset_label;
+  QComboBox *gui_stereotool_preset_box;
+
+  QLabel *gui_stereotool_custompreset_label;
+  QLineEdit *gui_stereotool_custompreset_edit;
 
   QLabel *gui_stereotool_key_label;
   QLineEdit*gui_stereotool_key_edit;

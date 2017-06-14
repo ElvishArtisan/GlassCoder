@@ -56,6 +56,7 @@ class Config
   QString serverPipe() const;
   bool stereoToolEnabled() const;
   QString stereoToolKey() const;
+  QString stereoToolBuiltInPreset() const;
   QString streamAim() const;
   QString streamDescription() const;
   QString streamGenre() const;
@@ -68,12 +69,14 @@ class Config
   QStringList deviceValues() const;
   bool listCodecs() const;
   bool listDevices() const;
+  bool listPresets() const;
   unsigned metadataPort() const;
   bool meterData() const;
 
  private:
   void ListCodecs() const;
   void ListDevices() const;
+  void ListPresets() const;
 
   //
   // Audio Arguments
@@ -124,12 +127,14 @@ class Config
   //
   bool stereotool_enable;
   QString stereotool_key;
+  QString stereotool_builtin_preset;
 
   //
   // Miscellaneous Arguments
   //
   bool list_codecs;
   bool list_devices;
+  bool list_presets;
   unsigned metadata_port;
   bool meter_data;
 };

@@ -73,6 +73,7 @@ class MainWidget : public GuiApplication
   void checkArgs();
   void checkArgs(const QString &str);
   void deviceFinishedData(int exit_code,QProcess::ExitStatus exit_status);
+  void presetFinishedData(int exit_code,QProcess::ExitStatus exit_status);
   void processReadyReadStandardOutputData();
   void processFinishedData(int exit_code,QProcess::ExitStatus exit_status);
   void processErrorData(QProcess::ProcessError err);

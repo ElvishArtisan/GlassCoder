@@ -64,6 +64,7 @@ bool StereoTool::start()
 #ifdef STEREOTOOL
     st_stereotool=stereoTool_Create(st_key.toUtf8());
     stereoTool_SetCallback(st_stereotool,__StereoToolCallback,this);
+    BuildPresetList();
     return true;
 #endif  // STEREOTOOL
   }
@@ -131,11 +132,28 @@ int StereoTool::latency(int32_t samprate,bool silence) const
 }
 
 
-bool StereoTool::loadPreset(const QString &preset,int type)
+QStringList StereoTool::presetList() const
+{
+  return st_presets;
+}
+
+
+bool StereoTool::setBuiltInPreset(const QString &preset)
+{
+  for(int i=0;i<st_presets.size();i++) {
+    if(preset.trimmed()==st_presets.at(i)) {
+      return true;
+    }
+  }
+  return true;
+}
+
+
+bool StereoTool::loadPreset(const QString &filename,int type)
 {
   if(st_stereotool!=NULL) {
 #ifdef STEREOTOOL
-    return stereoTool_LoadPreset(st_stereotool,preset.toUtf8(),type);
+    return stereoTool_LoadPreset(st_stereotool,filename.toUtf8(),type);
 #endif  // STEREOTOOL
   }
   return false;
@@ -178,4 +196,21 @@ int StereoTool::apiVersion() const
 #endif  // STEREOTOOL
   }
   return 0; 
+}
+
+
+void StereoTool::BuildPresetList()
+{
+  int pos=0;
+  int level=0;
+  bool is_preset=false;
+  char name[1024];
+  st_presets.clear();
+  while(stereoTool_GetBuiltInPresetName(st_stereotool,pos,&level,&is_preset,
+					name)) {
+    if(is_preset) {
+      st_presets.push_back(QString(name).trimmed());
+    }
+    pos++;
+  }
 }

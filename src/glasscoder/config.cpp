@@ -24,6 +24,7 @@
 #include "codecfactory.h"
 #include "config.h"
 #include "logging.h"
+#include "stereotool.h"
 
 Config::Config()
 {
@@ -46,6 +47,7 @@ Config::Config()
   server_pipe="";
   server_start_connections=0;
   stereotool_enable=false;
+  stereotool_builtin_preset="";
   stream_aim="";
   stream_genre="";
   stream_icq="";
@@ -55,6 +57,7 @@ Config::Config()
   stream_url="";
   list_codecs=false;
   list_devices=false;
+  list_presets=false;
   metadata_port=0;
   global_log_string="";
   meter_data=false;
@@ -153,6 +156,10 @@ Config::Config()
       list_devices=true;
       cmd->setProcessed(i,true);
     }
+    if(cmd->key(i)=="--list-presets") {
+      list_presets=true;
+      cmd->setProcessed(i,true);
+    }
     if(cmd->key(i)=="--metadata-port") {
       metadata_port=cmd->value(i).toUInt(&ok);
       if((!ok)||(metadata_port>0xFFFF)) {
@@ -244,6 +251,10 @@ Config::Config()
       stereotool_key=cmd->value(i);
       cmd->setProcessed(i,true);
     }
+    if(cmd->key(i)=="--stereotool-builtin-preset") {
+      stereotool_builtin_preset=cmd->value(i);
+      cmd->setProcessed(i,true);
+    }
     if(cmd->key(i)=="--stream-description") {
       stream_description=cmd->value(i);
       cmd->setProcessed(i,true);
@@ -312,6 +323,10 @@ Config::Config()
   }
   if(listDevices()) {
     ListDevices();
+    exit(0);
+  }
+  if(listPresets()) {
+    ListPresets();
     exit(0);
   }
 
@@ -475,6 +490,12 @@ QString Config::stereoToolKey() const
 }
 
 
+QString Config::stereoToolBuiltInPreset() const
+{
+  return stereotool_builtin_preset;
+}
+
+
 QString Config::streamAim() const
 {
   return stream_aim;
@@ -547,6 +568,12 @@ bool Config::listDevices() const
 }
 
 
+bool Config::listPresets() const
+{
+  return list_presets;
+}
+
+
 unsigned Config::metadataPort() const
 {
   return metadata_port;
@@ -577,5 +604,18 @@ void Config::ListDevices() const
        NULL) {
       printf("%s\n",(const char *)AudioDevice::optionKeyword((AudioDevice::DeviceType)i).toUtf8());
     }
+  }
+}
+
+
+void Config::ListPresets() const
+{
+  StereoTool *st=new StereoTool(true,"");
+  st->start();
+  QStringList presets=st->presetList();
+  delete st;
+
+  for(int i=0;i<presets.size();i++) {
+    printf("%s\n",(const char *)presets.at(i).toUtf8());
   }
 }

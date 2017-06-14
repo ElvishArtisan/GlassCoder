@@ -242,6 +242,14 @@ bool MainObject::StartAudioDevice()
     Log(LOG_ERR,err);
     exit(256);
   }
+  if(sir_audio_device->stereoTool()->isActive()&&
+     (!sir_config->stereoToolBuiltInPreset().isEmpty())) {
+    if(!sir_audio_device->stereoTool()->setBuiltInPreset(sir_config->stereoToolBuiltInPreset())) {
+      Log(LOG_ERR,"preset \""+sir_config->stereoToolBuiltInPreset()+
+	  "\" does not exist");
+      exit(256);
+    }
+  }
   sir_meter_timer=new QTimer(this);
   connect(sir_meter_timer,SIGNAL(timeout()),this,SLOT(meterData()));
   if(sir_config->meterData()) {

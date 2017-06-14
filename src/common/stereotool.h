@@ -25,6 +25,7 @@
 
 #include <QSize>
 #include <QString>
+#include <QStringList>
 
 #ifdef STEREOTOOL
 #define _ST_LINUX
@@ -45,7 +46,9 @@ class StereoTool
   void process(float *pcm,int32_t frames,int32_t chans,int32_t samprate);
   int latency() const;
   int latency(int32_t samprate,bool silence) const;
-  bool loadPreset(const QString &preset,int type);
+  QStringList presetList() const;
+  bool setBuiltInPreset(const QString &preset);
+  bool loadPreset(const QString &filename,int type);
   void reset(int type);
   bool licenseValid() const;
   int softwareVersion() const;
@@ -53,9 +56,11 @@ class StereoTool
 
  private:
 #ifdef STEREOTOOL
+  void BuildPresetList();
   bool st_activate;
   QString st_key;
   bool st_visibility;
+  QStringList st_presets;
   gStereoTool *st_stereotool;
   gStereoToolGUI *st_stereotool_gui;
   friend void __StereoToolCallback(void *priv,gStereoTool *st,void *c);

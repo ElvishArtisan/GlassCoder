@@ -20,7 +20,9 @@
 
 #include <QFileDialog>
 
+#ifdef ASIHPI
 #include "asihpi.h"
+#endif  // ASIHPI
 #include "sourcedialog.h"
 
 SourceDialog::SourceDialog(QWidget *parent)
@@ -31,27 +33,45 @@ SourceDialog::SourceDialog(QWidget *parent)
   //
   QFont label_font("helvetica",14,QFont::Bold);
   label_font.setPixelSize(14);
+  QFont small_label_font("helvetica",13,QFont::Bold);
+  small_label_font.setPixelSize(13);
 
   setWindowTitle("GlassGui - "+tr("Audio Sources"));
 
   //
-  // Use StereoTool
+  // StereoTool Processing
   //
-  gui_use_stereotool_check=new QCheckBox(this);
-  connect(gui_use_stereotool_check,SIGNAL(toggled(bool)),
-	  this,SLOT(stereotoolToggledData(bool)));
-  gui_use_stereotool_label=new QLabel(tr("Use StereoTool Processor"),this);
-  gui_use_stereotool_label->setFont(label_font);
-  gui_use_stereotool_label->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+  gui_stereotool_group=new QGroupBox(tr("Enable StereoTool Processing"),this);
+  gui_stereotool_group->setCheckable(true);
+  gui_stereotool_group->setFont(label_font);
+
+  //
+  // StereoTool Preset
+  //
+  gui_stereotool_preset_label=
+    new QLabel(tr("Preset")+":",gui_stereotool_group);
+  gui_stereotool_preset_label->setFont(small_label_font);
+  gui_stereotool_preset_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  gui_stereotool_preset_box=new QComboBox(gui_stereotool_group);
+
+  //
+  // StereoTool Custom Preset
+  //
+  gui_stereotool_custompreset_label=
+    new QLabel(tr("Custom Preset")+":",gui_stereotool_group);
+  gui_stereotool_custompreset_label->setFont(small_label_font);
+  gui_stereotool_custompreset_label->
+    setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  gui_stereotool_custompreset_edit=new QLineEdit(gui_stereotool_group);
 
   //
   // StereoTool Key
   //
   gui_stereotool_key_label=
-    new QLabel(tr("StereoTool Registration Key")+":",this);
-  gui_stereotool_key_label->setFont(label_font);
+    new QLabel(tr("Registration Key")+":",gui_stereotool_group);
+  gui_stereotool_key_label->setFont(small_label_font);
   gui_stereotool_key_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  gui_stereotool_key_edit=new QLineEdit(this);
+  gui_stereotool_key_edit=new QLineEdit(gui_stereotool_group);
 
   //
   // Source Type
@@ -131,13 +151,16 @@ QSize SourceDialog::sizeHint() const
     break;
 
   case AudioDevice::AsiHpi:
-    ret=QSize(500,340);
+    ret=QSize(500,390);
     break;
 
   case AudioDevice::Alsa:
+    ret=QSize(500,250);
+    break;
+
   case AudioDevice::File:
   case AudioDevice::Jack:
-    ret=QSize(500,220);
+    ret=QSize(500,260);
     break;
 
   case AudioDevice::LastType:
@@ -154,14 +177,18 @@ bool SourceDialog::makeArgs(QStringList *args,bool escape_args)
     quote="\"";
   }
 
-  if(gui_use_stereotool_check->isChecked()) {
+  if(gui_stereotool_group->isChecked()) {
     args->push_back("--stereotool-enable");
   }
   if(escape_args) {
     args->push_back("--stereotool-key=\""+gui_stereotool_key_edit->text()+"\"");
+    args->push_back("--stereotool-builtin-preset=\""+
+		    gui_stereotool_preset_box->currentText()+"\"");
   }
   else {
     args->push_back("--stereotool-key="+gui_stereotool_key_edit->text());
+    args->push_back("--stereotool-builtin-preset="+
+		    gui_stereotool_preset_box->currentText());
   }
 
   AudioDevice::DeviceType type=(AudioDevice::DeviceType)
@@ -241,7 +268,7 @@ bool SourceDialog::makeArgs(QStringList *args,bool escape_args)
 
 bool SourceDialog::stereotoolActive() const
 {
-  return gui_use_stereotool_check->isChecked();
+  return gui_stereotool_group->isChecked();
 }
 
 
@@ -280,13 +307,24 @@ void SourceDialog::addSourceTypes(const QString &types)
 }
 
 
+void SourceDialog::addPresets(const QString &presets)
+{
+  gui_stereotool_preset_box->clear();
+  gui_stereotool_preset_box->insertItem(-1,tr("[none]"));
+  QStringList ps=presets.split("\n",QString::SkipEmptyParts);
+  for(int i=0;i<ps.size();i++) {
+    gui_stereotool_preset_box->insertItem(i,ps.at(i).trimmed());
+  }
+}
+
+
 void SourceDialog::load(Profile *p)
 {
-  gui_use_stereotool_check->
-    setChecked(p->intValue("GlassGui","StereotoolEnable"));
+  gui_stereotool_group->setChecked(p->intValue("GlassGui","StereotoolEnable"));
+  gui_stereotool_preset_box->setCurrentIndex(gui_stereotool_preset_box->findText(p->stringValue("GlassGui","StereotoolBuiltInPreset")));
   gui_stereotool_key_edit->
     setText(p->stringValue("GlassGui","StereotoolKey"));
-  stereotoolToggledData(gui_use_stereotool_check->isChecked());
+  //  stereotoolToggledData(gui_use_stereotool_check->isChecked());
 
   gui_source_type_box->
     setCurrentItemData(AudioDevice::deviceType(p->stringValue("GlassGui",
@@ -325,9 +363,11 @@ void SourceDialog::load(Profile *p)
 
 void SourceDialog::save(FILE *f)
 {
-  fprintf(f,"StereotoolEnable=%d\n",gui_use_stereotool_check->isChecked());
+  fprintf(f,"StereotoolEnable=%d\n",gui_stereotool_group->isChecked());
   fprintf(f,"StereotoolKey=%s\n",
 	  (const char *)gui_stereotool_key_edit->text().toUtf8());
+  fprintf(f,"StereotoolBuiltInPreset=%s\n",
+	  (const char *)gui_stereotool_preset_box->currentText().toUtf8());
   fprintf(f,"AudioDevice=%s\n",
 	  (const char *)AudioDevice::optionKeyword((AudioDevice::DeviceType)
 		    gui_source_type_box->currentItemData().toInt()).toUtf8());
@@ -361,18 +401,26 @@ void SourceDialog::show()
 
 void SourceDialog::resizeEvent(QResizeEvent *e)
 {
-  int ypos=10;
+  int ypos=5;
 
   //
   // StereoTool Controls
   //
-  gui_use_stereotool_check->setGeometry(10,ypos,20,20);
-  gui_use_stereotool_label->setGeometry(35,ypos,300,20);
-  ypos+=22;
+  gui_stereotool_group->setGeometry(10,ypos,size().width()-20,110);
+  ypos+=27;
 
-  gui_stereotool_key_label->setGeometry(15,ypos,200,24);
-  gui_stereotool_key_edit->setGeometry(220,ypos,size().width()-235,24);
-  ypos+=33;
+  gui_stereotool_preset_label->setGeometry(15,ypos,120,24);
+  gui_stereotool_preset_box->setGeometry(140,ypos,size().width()-160,24);
+  ypos+=27;
+
+  gui_stereotool_custompreset_label->setGeometry(15,ypos,120,24);
+  gui_stereotool_custompreset_edit->setGeometry(140,ypos,size().width()-160,24);
+  ypos+=27;
+
+  gui_stereotool_key_label->setGeometry(15,ypos,120,24);
+  gui_stereotool_key_edit->setGeometry(140,ypos,size().width()-160,24);
+  ypos+=37;
+  //  ypos+=107;
 
   int ypos_base=ypos;
 
