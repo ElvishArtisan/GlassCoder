@@ -68,13 +68,13 @@ class AsiHpiDevice : public AudioDevice
   uint16_t asihpi_channel_mode;
   uint16_t asihpi_input_source;
   uint16_t asihpi_input_type;
-
   hpi_handle_t asihpi_input_stream;
   hpi_handle_t asihpi_mixer;
   hpi_handle_t asihpi_input_meter;
   uint8_t *asihpi_pcm_buffer;
   QTimer *asihpi_read_timer;
   QTimer *asihpi_meter_timer;
+  uint32_t asihpi_dma_buffer_size;
 #endif  // ASIHPI
 };
 

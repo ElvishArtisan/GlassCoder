@@ -767,3 +767,5 @@
 	'src/glasscommander/glasswidget.h'.
 2016-12-05 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.9.21.
+2018-03-20 Fred Gleason <fredg@paravelsystems.com>
+	* Added support for DMA bus-mastering to the ASIHPI driver.

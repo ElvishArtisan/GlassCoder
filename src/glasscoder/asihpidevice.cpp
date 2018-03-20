@@ -31,6 +31,8 @@ AsiHpiDevice::AsiHpiDevice(unsigned chans,unsigned samprate,
   : AudioDevice(chans,samprate,rings,parent)
 {
 #ifdef ASIHPI
+  struct hpi_format fmt;
+
   asihpi_adapter_index=ASIHPI_DEFAULT_INDEX;
   asihpi_input_index=ASIHPI_DEFAULT_INPUT_INDEX;
   asihpi_input_gain=0;
@@ -38,6 +40,18 @@ AsiHpiDevice::AsiHpiDevice(unsigned chans,unsigned samprate,
   asihpi_input_source=HPI_SOURCENODE_LINEIN;
   asihpi_input_type=HPI_SOURCENODE_LINEIN;
   asihpi_pcm_buffer=NULL;
+  asihpi_dma_buffer_size=0;
+
+  //
+  // Calculate DMA Buffer Size
+  //
+  memset(&fmt,0,sizeof(fmt));  // Worst case situation
+  fmt.dwSampleRate=48000;
+  fmt.wChannels=2;
+  fmt.wFormat=HPI_FORMAT_PCM32_FLOAT;
+  if(HPI_StreamEstimateBufferSize(&fmt,ASIHPI_READ_INTERVAL,&asihpi_dma_buffer_size)!=0) {
+    asihpi_dma_buffer_size=0;
+  }
 
   asihpi_read_timer=new QTimer(this);
   connect(asihpi_read_timer,SIGNAL(timeout()),this,SLOT(readData()));
@@ -232,6 +246,11 @@ bool AsiHpiDevice::start(QString *err)
   if((herr=HPI_InStreamOpen(NULL,asihpi_adapter_index,asihpi_input_index,&asihpi_input_stream))!=0) {
     *err=tr("HPI error")+": "+hpi_strerror(herr);
     return false;
+  }
+  if(asihpi_dma_buffer_size>0) {
+    if(HpiLog(HPI_InStreamHostBufferAllocate(NULL,asihpi_input_stream,asihpi_dma_buffer_size))!=0) {
+      return false;
+    }
   }
 
   //
