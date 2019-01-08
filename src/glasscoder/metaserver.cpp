@@ -40,7 +40,8 @@ void MetaServer::getRequestReceived(WHHttpConnection *conn)
     if(url.queryItemValue("pass")==meta_config->serverPassword()) {
       if(url.queryItemValue("mode")=="updinfo") {
 	MetaEvent *e=new MetaEvent();
-	e->setField(MetaEvent::StreamTitle,url.queryItemValue("song"));
+	e->setField(MetaEvent::StreamTitle,
+		    Connector::urlDecode(url.queryItemValue("song")));
 	emit metadataReceived(e);
 	delete e;
 	conn->sendError(200,"OK");
@@ -60,7 +61,8 @@ void MetaServer::getRequestReceived(WHHttpConnection *conn)
   if(url.path()=="/admin/metadata") {   // Icecast Style
     if(url.queryItemValue("mode")=="updinfo") {
       MetaEvent *e=new MetaEvent();
-      e->setField(MetaEvent::StreamTitle,url.queryItemValue("song"));
+      e->setField(MetaEvent::StreamTitle,
+		  Connector::urlDecode(url.queryItemValue("song")));
       emit metadataReceived(e);
       delete e;
       conn->sendError(200,"OK");

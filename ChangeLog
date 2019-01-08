@@ -772,3 +772,6 @@
 2018-03-20 Fred Gleason <fredg@paravelsystems.com>
 	* Updated 'NEWS'.
 	* Incremented the package version to 0.9.22.
+2019-01-08 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug that caused double-escaped metadata strings to be
+	sent to	IceCast and Shoutcast servers.
