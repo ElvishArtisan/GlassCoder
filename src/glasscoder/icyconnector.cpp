@@ -109,8 +109,14 @@ int64_t IcyConnector::writeDataConnector(int frames,const unsigned char *data,
 
 void IcyConnector::socketConnectedData()
 {
-  icy_socket->write(serverPassword().toAscii()+"\r\n",
-		    serverPassword().length()+2);
+  QString auth=serverPassword()+"\r\n";
+  if(!serverUsername().isEmpty()) {
+    auth=serverUsername()+":"+serverPassword()+"\r\n";
+  }
+  icy_socket->write(auth.toAscii());
+
+  //  icy_socket->write(serverPassword().toAscii()+"\r\n",
+  //		    serverPassword().length()+2);
 }
 
 
@@ -238,7 +244,7 @@ void IcyConnector::ProcessHeaders(const QString &hdrs)
   QString txt;
 
   f0=hdrs.split("\r\n");
-  if(f0[0]!="OK2") {
+  if((!icy_authenticated)&&(f0[0]!="OK2")) {
     Log(LOG_WARNING,
 	QString().sprintf("login to \"%s:%d\" rejected: %s",
 			  (const char *)hostHostname().toUtf8(),

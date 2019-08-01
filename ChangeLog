@@ -775,3 +775,6 @@
 2019-01-08 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug that caused double-escaped metadata strings to be
 	sent to	IceCast and Shoutcast servers.
+2019-08-01 Fred Gleason <fredg@paravelsystems.com>
+	* Added the ability to the Shoutcast connector to utilize a
+	username in addition to a password to authenticate connections.
