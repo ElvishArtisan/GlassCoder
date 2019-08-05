@@ -782,3 +782,5 @@
 	* Added a '--jack-gain=' directive to glasscoder(1).
 	* Added a 'Gain' control for JACK to the 'Audio Sources' dialog
 	in glassgui(1).
+2019-08-05 Fred Gleason <fredg@paravelsystems.com>
+	* Removed the example environment for RHEL 5 from 'INSTALL'.
