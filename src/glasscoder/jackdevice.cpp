@@ -18,6 +18,7 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -54,7 +55,7 @@ int JackProcess(jack_nframes_t nframes, void *arg)
     if(jack_cb_buffers[i]!=NULL) {
       for(j=0;j<nframes;j++) {
 	jack_cb_interleave_buffer[obj->channels()*j+i]=
-	  (float)jack_cb_buffers[i][j];
+	  (float)jack_cb_buffers[i][j]*obj->jack_gain;
       }
     }
   }
@@ -82,6 +83,7 @@ JackDevice::JackDevice(unsigned chans,unsigned samprate,
 #ifdef JACK
   jack_server_name="";
   jack_client_name=DEFAULT_JACK_CLIENT_NAME;
+  jack_gain=1.0;
 
   for(int i=0;i<MAX_AUDIO_CHANNELS;i++) {
     jack_meter_avg[i]=new MeterAverage(8);
@@ -107,14 +109,30 @@ bool JackDevice::processOptions(QString *err,const QStringList &keys,
 				const QStringList &values)
 {
 #ifdef JACK
+  bool ok=false;
+
   for(int i=0;i<keys.size();i++) {
     bool processed=false;
-    if(keys[i]=="--jack-server-name") {
+    if(keys.at(i)=="--jack-server-name") {
       jack_server_name=values[i];
       processed=true;
     }
-    if(keys[i]=="--jack-client-name") {
+    if(keys.at(i)=="--jack-client-name") {
       jack_client_name=values[i];
+      processed=true;
+    }
+    if(keys.at(i)=="--jack-gain") {
+      float db=values[i].toFloat(&ok);
+      if(!ok) {
+	*err=tr("invalid value for \"--jack-gain\"");
+	return false;
+      }
+      if(db<=-100.0) {
+	jack_gain=0.0;
+      }
+      else {
+	jack_gain=powf(10.0,db/20.0);
+      }
       processed=true;
     }
     if(!processed) {

@@ -53,6 +53,7 @@ class JackDevice : public AudioDevice
 #ifdef JACK
   QString jack_server_name;
   QString jack_client_name;
+  float jack_gain;
   jack_client_t *jack_jack_client;
   jack_nframes_t jack_jack_sample_rate;
   jack_port_t *jack_jack_ports[MAX_AUDIO_CHANNELS];

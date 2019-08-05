@@ -778,3 +778,7 @@
 2019-08-01 Fred Gleason <fredg@paravelsystems.com>
 	* Added the ability to the Shoutcast connector to utilize a
 	username in addition to a password to authenticate connections.
+2019-08-05 Fred Gleason <fredg@paravelsystems.com>
+	* Added a '--jack-gain=' directive to glasscoder(1).
+	* Added a 'Gain' control for JACK to the 'Audio Sources' dialog
+	in glassgui(1).

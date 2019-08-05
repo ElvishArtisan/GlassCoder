@@ -1117,22 +1117,33 @@
       <variablelist>
 	<varlistentry>
 	  <term>
-	    <option>--jack-server-name=</option><replaceable>name</replaceable>
-	  </term>
-	  <listitem>
-	    <para>
-	      The name of the JACK server instance to use.
-	    </para>
-	  </listitem>
-	</varlistentry>
-	<varlistentry>
-	  <term>
 	    <option>--jack-client-name=</option><replaceable>name</replaceable>
 	  </term>
 	  <listitem>
 	    <para>
 	      The name of the JACK client to use.  Default is
 	      <userinput>glasscoder</userinput>.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>
+	    <option>--jack-gain=</option><replaceable>gain</replaceable>
+	  </term>
+	  <listitem>
+	    <para>
+	      Apply a fixed gain of <replaceable>gain</replaceable> dB
+	      before encoding. Default is <userinput>0</userinput> dB.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>
+	    <option>--jack-server-name=</option><replaceable>name</replaceable>
+	  </term>
+	  <listitem>
+	    <para>
+	      The name of the JACK server instance to use.
 	    </para>
 	  </listitem>
 	</varlistentry>

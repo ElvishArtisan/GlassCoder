@@ -27,6 +27,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QSpinBox>
 #include <QString>
 #include <QStringList>
 
@@ -80,6 +81,8 @@ class SourceDialog : public QDialog
   QLineEdit *gui_jack_server_name_edit;
   QLabel *gui_jack_client_name_label;
   QLineEdit *gui_jack_client_name_edit;
+  QLabel *gui_jack_gain_label;
+  QSpinBox *gui_jack_gain_spin;
 
   QPushButton *gui_close_button;
 };

@@ -94,6 +94,14 @@ SourceDialog::SourceDialog(QWidget *parent)
   gui_jack_client_name_edit=new QLineEdit(this);
   gui_jack_client_name_edit->hide();
 
+  gui_jack_gain_label=new QLabel(tr("Gain")+":",this);
+  gui_jack_gain_label->setFont(label_font);
+  gui_jack_gain_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  gui_jack_gain_label->hide();
+  gui_jack_gain_spin=new QSpinBox(this);
+  gui_jack_gain_spin->setRange(-100,100);
+  gui_jack_gain_spin->hide();
+
   //
   // Close Button
   //
@@ -117,8 +125,11 @@ QSize SourceDialog::sizeHint() const
 
   case AudioDevice::Alsa:
   case AudioDevice::File:
-  case AudioDevice::Jack:
     ret=QSize(500,150);
+    break;
+
+  case AudioDevice::Jack:
+    ret=QSize(500,175);
     break;
 
   case AudioDevice::LastType:
@@ -199,6 +210,8 @@ bool SourceDialog::makeArgs(QStringList *args,bool escape_args)
       args->push_back("--jack-client-name="+quote+
 		      gui_jack_client_name_edit->text()+quote);
     }
+    args->push_back(QString().sprintf("--jack-gain=%d",
+				      gui_jack_gain_spin->value()));
     break;
 
   case AudioDevice::LastType:
@@ -215,6 +228,13 @@ void SourceDialog::setControlsLocked(bool state)
 
   gui_jack_server_name_edit->setReadOnly(state);
   gui_jack_client_name_edit->setReadOnly(state);
+  if(state) {
+    gui_jack_gain_spin->setRange(gui_jack_gain_spin->value(),
+				 gui_jack_gain_spin->value());
+  }
+  else {
+    gui_jack_gain_spin->setRange(-100,100);
+  }
 
   gui_file_name_edit->setReadOnly(state);
   gui_file_select_button->setDisabled(state);
@@ -275,6 +295,7 @@ void SourceDialog::load(Profile *p)
     setText(p->stringValue("GlassGui","JackServerName"));
   gui_jack_client_name_edit->
     setText(p->stringValue("GlassGui","JackClientName"));
+  gui_jack_gain_spin->setValue(p->intValue("GlassGui","JackGain"));
 #endif  // JACK
 }
 
@@ -302,6 +323,7 @@ void SourceDialog::save(FILE *f)
 	  (const char *)gui_jack_server_name_edit->text().toUtf8());
   fprintf(f,"JackClientName=%s\n",
 	  (const char *)gui_jack_client_name_edit->text().toUtf8());
+  fprintf(f,"JackGain=%d\n",gui_jack_gain_spin->value());
 }
 
 
@@ -356,6 +378,9 @@ void SourceDialog::resizeEvent(QResizeEvent *e)
   gui_jack_client_name_label->setGeometry(75,ypos,145,20);
   gui_jack_client_name_edit->setGeometry(225,ypos,size().width()-260,24);
   ypos+=26;
+  gui_jack_gain_label->setGeometry(75,ypos,145,20);
+  gui_jack_gain_spin->setGeometry(225,ypos,60,24);
+  ypos+=26;
 
   gui_close_button->setGeometry(size().width()-80,size().height()-50,70,40);
 }
@@ -376,6 +401,8 @@ void SourceDialog::sourceTypeChanged(int n)
   gui_jack_server_name_edit->hide();
   gui_jack_client_name_label->hide();
   gui_jack_client_name_edit->hide();
+  gui_jack_gain_label->hide();
+  gui_jack_gain_spin->hide();
 
   AudioDevice::DeviceType type=
     (AudioDevice::DeviceType)gui_source_type_box->itemData(n).toInt();
@@ -399,8 +426,12 @@ void SourceDialog::sourceTypeChanged(int n)
   case AudioDevice::Jack:
     gui_jack_server_name_label->show();
     gui_jack_server_name_edit->show();
+
     gui_jack_client_name_label->show();
     gui_jack_client_name_edit->show();
+
+    gui_jack_gain_label->show();
+    gui_jack_gain_spin->show();
     break;
 
   case AudioDevice::LastType:
