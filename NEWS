@@ -22,7 +22,7 @@ Changes:
 
    Enhanced Logging. Added the ability to add text tags to log entries
    to allow disambiguation of messages from multiple glasscoder(1)
-   instances. See the --errrors-string option in the glasscoder(1)
+   instances. See the --errors-string option in the glasscoder(1)
    man page for details.
 
 -------------------------------------------------------------------------------
