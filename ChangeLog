@@ -784,3 +784,5 @@
 	in glassgui(1).
 2019-08-05 Fred Gleason <fredg@paravelsystems.com>
 	* Removed the example environment for RHEL 5 from 'INSTALL'.
+2019-08-05 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.9.23.
