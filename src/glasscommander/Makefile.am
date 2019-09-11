@@ -2,7 +2,7 @@
 ##
 ## Makefile for the glasscommander(1) Audio Encoder front-end.
 ##
-## (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+## (C) Copyright 2016-2019 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -20,8 +20,8 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing @QT4_CFLAGS@ @SNDFILE_CFLAGS@ @ALSA_CFLAGS@
-MOC = @QT4_MOC@
+AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing -std=c++11 -fPIC @QT5_GUI_CFLAGS@ @SNDFILE_CFLAGS@ @ALSA_CFLAGS@
+MOC = @QT5_MOC@
 
 # The dependency for qt's Meta Object Compiler (moc)
 moc_%.cpp:	%.h
@@ -87,7 +87,7 @@ nodist_glasscommander_SOURCES = asihpi.cpp asihpi.h\
                                 stereometer.cpp stereometer.h\
                                 streamdialog.cpp streamdialog.h
 
-glasscommander_LDADD = @GUILIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ -lpthread
+glasscommander_LDADD = @GUILIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ @QT5_GUI_LIBS@ -lpthread
 glasscommander_LDFLAGS = @GUIFLAGS@
 
 CLEANFILES = *~\

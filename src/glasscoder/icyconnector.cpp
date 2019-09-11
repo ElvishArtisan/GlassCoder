@@ -113,9 +113,9 @@ void IcyConnector::socketConnectedData()
   if(!serverUsername().isEmpty()) {
     auth=serverUsername()+":"+serverPassword()+"\r\n";
   }
-  icy_socket->write(auth.toAscii());
+  icy_socket->write(auth.toUtf8());
 
-  //  icy_socket->write(serverPassword().toAscii()+"\r\n",
+  //  icy_socket->write(serverPassword().toUtf8()+"\r\n",
   //		    serverPassword().length()+2);
 }
 

@@ -160,12 +160,12 @@ bool JackDevice::start(QString *err)
   //
   if(jack_server_name.isEmpty()) {
     jack_jack_client=
-      jack_client_open(jack_client_name.toAscii(),jackopts,&jackstat);
+      jack_client_open(jack_client_name.toUtf8(),jackopts,&jackstat);
   }
   else {
     jack_jack_client=
-      jack_client_open(jack_client_name.toAscii(),jackopts,&jackstat,
-		       (const char *)jack_server_name.toAscii());
+      jack_client_open(jack_client_name.toUtf8(),jackopts,&jackstat,
+		       (const char *)jack_server_name.toUtf8());
   }
   if(jack_jack_client==NULL) {
     if((jackstat&JackInvalidOption)!=0) {
@@ -222,7 +222,7 @@ bool JackDevice::start(QString *err)
   for(unsigned i=0;i<channels();i++) {
     QString name=QString().sprintf("input_%d",i+1);
     jack_jack_ports[i]=
-      jack_port_register(jack_jack_client,name.toAscii(),JACK_DEFAULT_AUDIO_TYPE,
+      jack_port_register(jack_jack_client,name.toUtf8(),JACK_DEFAULT_AUDIO_TYPE,
 			 JackPortIsInput|JackPortIsTerminal,0);
   }
   Log(LOG_INFO,QString().sprintf("connected to JACK graph at %u samples/sec.",

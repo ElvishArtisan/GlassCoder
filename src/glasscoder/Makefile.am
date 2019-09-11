@@ -2,7 +2,7 @@
 ##
 ## Makefile for the glasscoder(1) Audio Encoder.
 ##
-## (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+## (C) Copyright 2014-2019 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -20,8 +20,8 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing @QT4_CFLAGS@ @SNDFILE_CFLAGS@ @ALSA_CFLAGS@ @WEBHOST_CFLAGS@
-MOC = @QT4_MOC@
+AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing -std=c++11 -fPIC @QT5_CLI_CFLAGS@ @SNDFILE_CFLAGS@ @ALSA_CFLAGS@ @WEBHOST_CFLAGS@
+MOC = @QT5_MOC@
 
 # The dependency for qt's Meta Object Compiler (moc)
 moc_%.cpp:	%.h
@@ -92,7 +92,7 @@ nodist_glasscoder_SOURCES = asihpi.cpp asihpi.h\
                             moc_vorbiscodec.cpp\
                             ringbuffer.cpp ringbuffer.h
 
-glasscoder_LDADD = @SIRLIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ @WEBHOST_LIBS@ -lpthread
+glasscoder_LDADD = @SIRLIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ @WEBHOST_LIBS@ @QT5_CLI_LIBS@ -lpthread
 glasscoder_LDFLAGS = @SIRFLAGS@
 
 CLEANFILES = *~\

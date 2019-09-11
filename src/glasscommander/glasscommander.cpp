@@ -45,8 +45,7 @@ MainWidget::MainWidget(QWidget *parent)
   gui_process=NULL;
   gui_starting_all=false;
 
-  CmdSwitch *cmd=
-    new CmdSwitch(qApp->argc(),qApp->argv(),"glasscommander",GLASSCOMMANDER_USAGE);
+  CmdSwitch *cmd=new CmdSwitch("glasscommander",GLASSCOMMANDER_USAGE);
   for(unsigned i=0;i<cmd->keys();i++) {
     if(!cmd->processed(i)) {
       QMessageBox::critical(this,"GlassCommander - "+tr("Error"),
@@ -85,17 +84,17 @@ MainWidget::MainWidget(QWidget *parent)
   //
   gui_toolbar=addToolBar("foo");
   gui_toolbar->setAllowedAreas(Qt::TopToolBarArea);
-  QAction *action=new QAction(QIcon(plussign_xpm),tr("Add Instance"),this);
+  QAction *action=new QAction(QIcon(QPixmap(plussign_xpm)),tr("Add Instance"),this);
   action->setStatusTip(tr("Add an encoder instance"));
   connect(action,SIGNAL(triggered()),this,SLOT(addInstanceData()));
   gui_toolbar->addAction(action);
 
-  action=new QAction(QIcon(minussign_xpm),tr("Remove Instance"),this);
+  action=new QAction(QIcon(QPixmap(minussign_xpm)),tr("Remove Instance"),this);
   action->setStatusTip(tr("Remove an encoder instance"));
   connect(action,SIGNAL(triggered()),this,SLOT(removeInstanceData()));
   gui_toolbar->addAction(action);
 
-  action=new QAction(QIcon(back_xpm),tr("Abandon change"),this);
+  action=new QAction(QIcon(QPixmap(back_xpm)),tr("Abandon change"),this);
   action->setStatusTip(tr("Abandon Add or Removal of encoder instance"));
   connect(action,SIGNAL(triggered()),this,SLOT(abandonInstanceData()));
   gui_toolbar->addAction(action);

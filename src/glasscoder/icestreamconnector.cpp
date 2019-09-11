@@ -27,6 +27,7 @@
 #include <QDateTime>
 #include <QHostAddress>
 #include <QUrl>
+#include <QUrlQuery>
 
 #include "icestreamconnector.h"
 
@@ -417,10 +418,11 @@ void IceStreamConnector::ProcessHeader(IceStream *strm)
 	    ok=true;
 	  }
 	  if(url.path()=="/admin/metadata") {
-	    if(("/"+url.queryItemValue("mount")==serverMountpoint())&&
-	       (url.queryItemValue("mode")=="updinfo")) {
+	    QUrlQuery query(url.query());
+	    if(("/"+query.queryItemValue("mount")==serverMountpoint())&&
+	       (query.queryItemValue("mode")=="updinfo")) {
 	      strm->setType(IceStream::Updinfo);
-	      strm->setStreamTitle(url.queryItemValue("song"));
+	      strm->setStreamTitle(query.queryItemValue("song"));
 	      //	      printf("SONG: %s\n",(const char *)url.queryItemValue("song").toUtf8());
 	      ok=true;
 	    }

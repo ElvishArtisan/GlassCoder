@@ -41,8 +41,7 @@ MainObject::MainObject(QObject *parent)
   //
   // Get Arguments
   //
-  CmdSwitch *cmd=
-    new CmdSwitch(qApp->argc(),qApp->argv(),"pipe_connect",PIPE_CONNECT_USAGE);
+  CmdSwitch *cmd=new CmdSwitch("pipe_connect",PIPE_CONNECT_USAGE);
   for(unsigned i=0;i<cmd->keys();i++) {
     if(cmd->key(i)=="--server-pipe") {
       pipe_server_pipe=cmd->value(i);

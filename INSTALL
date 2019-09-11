@@ -5,7 +5,7 @@ MANDATORY PREREQUISITES
 You will need the following installed and configured properly on your 
 system before building GlassCoder:
 
-Qt4 Toolkit, v4.6 or better (http://www.qt.io/).
+Qt5 Toolkit, v5.9 or better (http://www.qt.io/).
 
 Secret Rabbit Code
 A sample-rate converter library, written by Erik de Castro Lopo.  Included

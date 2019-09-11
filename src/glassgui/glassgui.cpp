@@ -48,8 +48,7 @@ MainWidget::MainWidget(QWidget *parent)
   bool list_instances=false;
   gui_autostart=false;
 
-  CmdSwitch *cmd=
-    new CmdSwitch(qApp->argc(),qApp->argv(),"glassgui",GLASSGUI_USAGE);
+  CmdSwitch *cmd=new CmdSwitch("glassgui",GLASSGUI_USAGE);
   for(unsigned i=0;i<cmd->keys();i++) {
     if(cmd->key(i)=="--autostart") {
       gui_autostart=true;

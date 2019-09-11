@@ -19,6 +19,7 @@
 //
 
 #include <QUrl>
+#include <QUrlQuery>
 
 #include "metaserver.h"
 
@@ -35,13 +36,14 @@ void MetaServer::getRequestReceived(WHHttpConnection *conn)
   int resp_code=404;
   QString resp_str="Not Found";
   QUrl url(conn->uri());
+  QUrlQuery query(url);
 
   if(url.path()=="/admin.cgi") {   // Shoutcast Style
-    if(url.queryItemValue("pass")==meta_config->serverPassword()) {
-      if(url.queryItemValue("mode")=="updinfo") {
+    if(query.queryItemValue("pass")==meta_config->serverPassword()) {
+      if(query.queryItemValue("mode")=="updinfo") {
 	MetaEvent *e=new MetaEvent();
 	e->setField(MetaEvent::StreamTitle,
-		    Connector::urlDecode(url.queryItemValue("song")));
+		    Connector::urlDecode(query.queryItemValue("song")));
 	emit metadataReceived(e);
 	delete e;
 	conn->sendError(200,"OK");
@@ -59,10 +61,10 @@ void MetaServer::getRequestReceived(WHHttpConnection *conn)
   }
 
   if(url.path()=="/admin/metadata") {   // Icecast Style
-    if(url.queryItemValue("mode")=="updinfo") {
+    if(query.queryItemValue("mode")=="updinfo") {
       MetaEvent *e=new MetaEvent();
       e->setField(MetaEvent::StreamTitle,
-		  Connector::urlDecode(url.queryItemValue("song")));
+		  Connector::urlDecode(query.queryItemValue("song")));
       emit metadataReceived(e);
       delete e;
       conn->sendError(200,"OK");

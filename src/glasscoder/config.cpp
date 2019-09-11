@@ -2,7 +2,7 @@
 //
 // Configuration Class for glasscoder(1)
 //
-// (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+// (C) Copyright 2016-2019 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -18,7 +18,7 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#include <QApplication>
+#include <QCoreApplication>
 
 #include "audiodevicefactory.h"
 #include "codecfactory.h"
@@ -59,8 +59,7 @@ Config::Config()
   meter_data=false;
   server_user_agent=QString("GlassCoder/")+VERSION;
 
-  CmdSwitch *cmd=
-    new CmdSwitch(qApp->argc(),qApp->argv(),"glasscoder",GLASSCODER_USAGE);
+  CmdSwitch *cmd=new CmdSwitch("glasscoder",GLASSCODER_USAGE);
   for(unsigned i=0;i<cmd->keys();i++) {
     if(cmd->key(i)=="--audio-atomic-frames") {
       audio_atomic_frames=true;
@@ -105,7 +104,7 @@ Config::Config()
       if(!cmd->processed(i)) {
 	Log(LOG_ERR,
 	    QString().sprintf("unknown --audio-format value \"%s\"",
-			      (const char *)cmd->value(i).toAscii()));
+			      (const char *)cmd->value(i).toUtf8()));
 	exit(256);
       }
     }
@@ -227,7 +226,7 @@ Config::Config()
       if(!cmd->processed(i)) {
 	Log(LOG_ERR,
 	    QString().sprintf("unknown --server-type value \"%s\"",
-			      (const char *)cmd->value(i).toAscii()));
+			      (const char *)cmd->value(i).toUtf8()));
 	exit(256);
       }
     }
@@ -289,7 +288,7 @@ Config::Config()
        AudioDevice::optionKeyword(audio_device)) {
       Log(LOG_ERR,
 	  QString().sprintf("glasscoder: unknown/inappropriate option \"%s\"",
-			    (const char *)device_keys[i].toAscii()));
+			    (const char *)device_keys[i].toUtf8()));
       exit(256);
     }
   }

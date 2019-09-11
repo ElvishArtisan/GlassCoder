@@ -78,7 +78,7 @@ HlsConnector::~HlsConnector()
   for(int i=0;i<files.size();i++) {
     unlink((hls_temp_dir->path()+"/"+files[i]).toUtf8());
   }
-  rmdir(hls_temp_dir->path().toAscii());
+  rmdir(hls_temp_dir->path().toUtf8());
   delete hls_temp_dir;
 }
 

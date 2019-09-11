@@ -786,3 +786,5 @@
 	* Removed the example environment for RHEL 5 from 'INSTALL'.
 2019-08-05 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.9.23.
+2019-09-10 Fred Gleason <fredg@paravelsystems.com>
+	* Updated Qt4 to Qt5.
