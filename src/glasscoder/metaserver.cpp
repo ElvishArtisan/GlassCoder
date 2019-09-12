@@ -2,7 +2,7 @@
 //
 // HTTP Server for Metadata Processing
 //
-// (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+// (C) Copyright 2016-2019 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -24,13 +24,13 @@
 #include "metaserver.h"
 
 MetaServer::MetaServer(Config *config,QObject *parent)
-  : WHHttpServer(parent)
+  : HttpServer(parent)
 {
   meta_config=config;
 }
 
 
-void MetaServer::getRequestReceived(WHHttpConnection *conn)
+void MetaServer::getRequestReceived(HttpConnection *conn)
 {
   //printf("HTTP: %s\n",(const char *)conn->dump().toUtf8());
   int resp_code=404;

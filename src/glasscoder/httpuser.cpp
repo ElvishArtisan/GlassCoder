@@ -1,8 +1,8 @@
-// metaserver.h
+// httpuser.cpp
 //
-// HTTP Server for Metadata Processing
+// Abstract an HTTP user
 //
-// (C) Copyright 2016-2019 Fred Gleason <fredg@paravelsystems.com>
+// (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -18,31 +18,34 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef METASERVER_H
-#define METASERVER_H
+#include "httpuser.h"
 
-
-#include "config.h"
-#include "httpserver.h"
-#include "metaevent.h"
-
-class MetaServer : public HttpServer
+HttpUser::HttpUser(const QString &name,const QString &passwd)
 {
-  Q_OBJECT;
- public:
-  MetaServer(Config *config,QObject *parent=0);
-
- signals:
-  void metadataReceived(MetaEvent *e);
-
- protected:
-  void getRequestReceived(HttpConnection *conn);
-  bool authenticateUser(const QString &realm,const QString &name,
-			const QString &passwd);
-
- private:
-  Config *meta_config;
-};
+  user_name=name;
+  user_password=passwd;
+}
 
 
-#endif  // METASERVER_H
+QString HttpUser::name() const
+{
+  return user_name;
+}
+
+
+QString HttpUser::password() const
+{
+  return user_password;
+}
+
+
+void HttpUser::setPassword(const QString &passwd)
+{
+  user_password=passwd;
+}
+
+
+bool HttpUser::isValid(const QString &name,const QString &passwd)
+{
+  return (name==user_name)&&(passwd==user_password);
+}

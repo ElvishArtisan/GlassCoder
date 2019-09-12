@@ -20,7 +20,7 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing -std=c++11 -fPIC @QT5_CLI_CFLAGS@ @SNDFILE_CFLAGS@ @ALSA_CFLAGS@ @WEBHOST_CFLAGS@
+AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing -std=c++11 -fPIC @QT5_CLI_CFLAGS@ @SNDFILE_CFLAGS@ @OPENSSL_CFLAGS@ @ALSA_CFLAGS@
 MOC = @QT5_MOC@
 
 # The dependency for qt's Meta Object Compiler (moc)
@@ -46,6 +46,9 @@ dist_glasscoder_SOURCES = alsadevice.cpp alsadevice.h\
                           filedevice.cpp filedevice.h\
                           glasscoder.cpp glasscoder.h\
                           hlsconnector.cpp hlsconnector.h\
+                          httpconnection.cpp httpconnection.h\
+                          httpserver.cpp httpserver.h\
+                          httpuser.cpp httpuser.h\
                           iceconnector.cpp iceconnector.h\
                           iceoutconnector.cpp iceoutconnector.h\
                           icestreamconnector.cpp icestreamconnector.h\
@@ -58,6 +61,7 @@ dist_glasscoder_SOURCES = alsadevice.cpp alsadevice.h\
                           pcm16codec.cpp pcm16codec.h\
                           opuscodec.cpp opuscodec.h\
                           profile.cpp profile.h\
+                          socketmessage.cpp socketmessage.h\
                           socketserver.cpp socketserver.h\
                           vorbiscodec.cpp vorbiscodec.h
 
@@ -78,6 +82,8 @@ nodist_glasscoder_SOURCES = asihpi.cpp asihpi.h\
                             moc_filedevice.cpp\
                             moc_glasscoder.cpp\
                             moc_hlsconnector.cpp\
+                            moc_httpconnection.cpp\
+                            moc_httpserver.cpp\
                             moc_iceconnector.cpp\
                             moc_iceoutconnector.cpp\
                             moc_icestreamconnector.cpp\
@@ -92,8 +98,8 @@ nodist_glasscoder_SOURCES = asihpi.cpp asihpi.h\
                             moc_vorbiscodec.cpp\
                             ringbuffer.cpp ringbuffer.h
 
-glasscoder_LDADD = @SIRLIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ @WEBHOST_LIBS@ @QT5_CLI_LIBS@ -lpthread
-glasscoder_LDFLAGS = @SIRFLAGS@
+glasscoder_LDADD = @LIBJACK@ @SNDFILE_LIBS@ @OPENSSL_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ @QT5_CLI_LIBS@ -lsamplerate -ldl -lpthread
+#glasscoder_LDFLAGS = 
 
 CLEANFILES = *~\
              moc_*\

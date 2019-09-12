@@ -788,3 +788,8 @@
 	* Incremented the package version to 0.9.23.
 2019-09-10 Fred Gleason <fredg@paravelsystems.com>
 	* Updated Qt4 to Qt5.
+2019-09-11 Fred Gleason <fredg@paravelsystems.com>
+	* Swallowed the 'WHHttpServer' class and dependent classes
+	from 'webhost'.
+	* Removed the 'webhost' dependency.
+	* Added an 'OpenSSL' dependency.

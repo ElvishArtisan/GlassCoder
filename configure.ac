@@ -85,9 +85,9 @@ AC_CHECK_PROG(MOC_NAME,moc-qt5,[moc-qt5],[moc])
 AC_SUBST(MOC,$MOC_NAME)
 
 #
-# Check for WebHost Library (Mandatory)
+# Check for OpenSSL
 #
-PKG_CHECK_MODULES(WEBHOST,webhost,[],[AC_MSG_ERROR([*** WebHost library not found ***])])
+PKG_CHECK_MODULES(OPENSSL,libcrypto,[],[AC_MSG_ERROR([*** OpenSSL not found ***])])
 
 #
 # Check for Jack Audio Connection Kit

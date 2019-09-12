@@ -1,6 +1,6 @@
-// metaserver.h
+// socketmessage.cpp
 //
-// HTTP Server for Metadata Processing
+// Abstract a WebSockets message
 //
 // (C) Copyright 2016-2019 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -18,31 +18,45 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef METASERVER_H
-#define METASERVER_H
+#include "socketmessage.h"
 
-
-#include "config.h"
-#include "httpserver.h"
-#include "metaevent.h"
-
-class MetaServer : public HttpServer
+SocketMessage::SocketMessage()
 {
-  Q_OBJECT;
- public:
-  MetaServer(Config *config,QObject *parent=0);
-
- signals:
-  void metadataReceived(MetaEvent *e);
-
- protected:
-  void getRequestReceived(HttpConnection *conn);
-  bool authenticateUser(const QString &realm,const QString &name,
-			const QString &passwd);
-
- private:
-  Config *meta_config;
-};
+  sock_op_code=SocketMessage::Close;
+}
 
 
-#endif  // METASERVER_H
+SocketMessage::OpCode SocketMessage::opCode() const
+{
+  return sock_op_code;
+}
+
+
+void SocketMessage::setOpCode(OpCode opcode)
+{
+  sock_op_code=opcode;
+}
+
+
+QByteArray SocketMessage::payload() const
+{
+  return sock_payload;
+}
+
+
+void SocketMessage::appendPayload(const char c)
+{
+  sock_payload+=c;
+}
+
+
+void SocketMessage::clearPayload()
+{
+  sock_payload.clear();
+}
+
+
+bool SocketMessage::isControlMessage(OpCode opcode)
+{
+  return opcode>=SocketMessage::Close;
+}

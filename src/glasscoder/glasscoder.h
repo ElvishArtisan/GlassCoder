@@ -2,7 +2,7 @@
 //
 // glasscoder(1) Audio Encoder
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2019 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -42,7 +42,7 @@
 
 class MainObject : public QObject
 {
- Q_OBJECT;
+  Q_OBJECT;
  public:
   MainObject(QObject *parent=0);
 

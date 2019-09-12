@@ -1,6 +1,6 @@
-// metaserver.h
+// socketmessage.h
 //
-// HTTP Server for Metadata Processing
+// Abstract a WebSockets message
 //
 // (C) Copyright 2016-2019 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -18,31 +18,30 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef METASERVER_H
-#define METASERVER_H
+#ifndef SOCKETMESSAGE_H
+#define SOCKETMESSAGE_H
 
+#include <QByteArray>
 
-#include "config.h"
-#include "httpserver.h"
-#include "metaevent.h"
-
-class MetaServer : public HttpServer
+class SocketMessage
 {
-  Q_OBJECT;
  public:
-  MetaServer(Config *config,QObject *parent=0);
-
- signals:
-  void metadataReceived(MetaEvent *e);
-
- protected:
-  void getRequestReceived(HttpConnection *conn);
-  bool authenticateUser(const QString &realm,const QString &name,
-			const QString &passwd);
+  enum OpCode {Continuation=0,Text=1,Binary=2,AppReserv3=3,
+	       AppReserv4=4,AppReserv5=5,AppReserv6=6,AppReserv7=7,
+	       Close=8,Ping=9,Pong=10,CntlReserv11=11,
+	       CntlReserv12=12,CntlReserv13=13,CntlReserv14=14,CntlReserv15=15};
+  SocketMessage();
+  OpCode opCode() const;
+  void setOpCode(OpCode opcode);
+  QByteArray payload() const;
+  void appendPayload(const char c);
+  void clearPayload();
+  static bool isControlMessage(OpCode opcode);
 
  private:
-  Config *meta_config;
+  OpCode sock_op_code;
+  QByteArray sock_payload;
 };
 
 
-#endif  // METASERVER_H
+#endif  // SOCKETMESSAGE_H

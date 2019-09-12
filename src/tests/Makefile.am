@@ -20,7 +20,7 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing -std=c++11 -fPIC @QT5_CLI_CFLAGS@ @SNDFILE_CFLAGS@ @ALSA_CFLAGS@ @WEBHOST_CFLAGS@
+AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing -std=c++11 -fPIC @QT5_CLI_CFLAGS@ @SNDFILE_CFLAGS@ @ALSA_CFLAGS@
 MOC = @QT5_MOC@
 
 # The dependency for qt's Meta Object Compiler (moc)
@@ -35,7 +35,7 @@ dist_pipe_connect_SOURCES = pipe_connect.cpp pipe_connect.h
 nodist_pipe_connect_SOURCES = cmdswitch.cpp cmdswitch.h\
                               moc_pipe_connect.cpp
 
-pipe_connect_LDADD = @SIRLIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ @WEBHOST_LIBS@ @QT5_CLI_LIBS@ -lpthread
+pipe_connect_LDADD = @SIRLIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ @QT5_CLI_LIBS@ -lpthread
 pipe_connect_LDFLAGS = @SIRFLAGS@
 
 CLEANFILES = *~\
