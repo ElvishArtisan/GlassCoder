@@ -276,8 +276,8 @@ void StereoMeter::paintEvent(QPaintEvent *paintEvent)
   // Setup
   //
   QPixmap pix(this->size());
-  pix.fill(this,0,0);
   QPainter *p=new QPainter(&pix);
+  p->fillRect(0,0,width(),height(),Qt::black);
   p->setBrush(QColor(Qt::white));
   p->setPen(QColor(Qt::white));
   p->setFont(meter_scale_font);

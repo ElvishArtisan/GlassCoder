@@ -2,7 +2,7 @@
 //
 //   An audio meter display widget.
 //
-//   (C) Copyright 2002-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2002-2019 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU Library General Public License 
@@ -159,16 +159,16 @@ void SegMeter::setMode(SegMeter::Mode mode)
 {
   seg_mode=mode;
   switch(seg_mode) {
-      case SegMeter::Independent:
-	if(peak_timer->isActive()) {
-	  peak_timer->stop();
-	}
-	break;
-      case SegMeter::Peak:
-	if(!peak_timer->isActive()) {
-	  peak_timer->start(PEAK_HOLD_TIME);
-	}
-	break;
+  case SegMeter::Independent:
+    if(peak_timer->isActive()) {
+      peak_timer->stop();
+    }
+    break;
+  case SegMeter::Peak:
+    if(!peak_timer->isActive()) {
+      peak_timer->start(PEAK_HOLD_TIME);
+    }
+    break;
   }
 }
 
@@ -220,7 +220,6 @@ void SegMeter::setSegmentGap(int gap)
 {
   if(seg_gap!=gap) {
     seg_gap=gap;
-    // repaint(false);
   }
 }
 
@@ -238,10 +237,10 @@ void SegMeter::paintEvent(QPaintEvent *paintEvent)
   // Setup
   //
   QPixmap pix(this->size());
-  pix.fill(this,0,0);
-
   int seg_total=seg_size+seg_gap;
   QPainter *p=new QPainter(&pix);
+  p->fillRect(0,0,width(),height(),Qt::black);
+
   low_region=0;
   high_region=0;
   clip_region=0;
@@ -252,14 +251,14 @@ void SegMeter::paintEvent(QPaintEvent *paintEvent)
   // Set Orientation
   //
   switch(orient) {
-      case SegMeter::Left:
-      case SegMeter::Up:
-	p->translate(width(),height());
-	p->rotate(180);
-	break;
+  case SegMeter::Left:
+  case SegMeter::Up:
+    p->translate(width(),height());
+    p->rotate(180);
+    break;
 
-      default:
-	break;
+  default:
+    break;
   }
 
   // 
@@ -272,26 +271,27 @@ void SegMeter::paintEvent(QPaintEvent *paintEvent)
     op_pt=solid_bar;
   }
   switch(orient) {
-      case SegMeter::Left:
-      case SegMeter::Right:
-	low_region=(int)((double)(op_pt-range_min)/
-			 (double)(range_max-range_min)*width()/seg_total);
-	if(op_pt>range_min) {
-	  for(int i=0;i<low_region;i++) {
-	    p->fillRect(i*seg_total,0,seg_size,height(),low_color);
-	  }
-	}
-	break;
-      case SegMeter::Down:
-      case SegMeter::Up:
-	low_region=(int)((double)(op_pt-range_min)/
-			 (double)(range_max-range_min)*height()/seg_total);
-	if(op_pt>range_min) {
-	  for(int i=0;i<low_region;i++) {
-	    p->fillRect(0,i*seg_total,width(),seg_size,low_color);
-	  }
-	}
-	break;
+  case SegMeter::Left:
+  case SegMeter::Right:
+    low_region=(int)((double)(op_pt-range_min)/
+		     (double)(range_max-range_min)*width()/seg_total);
+    if(op_pt>range_min) {
+      for(int i=0;i<low_region;i++) {
+	p->fillRect(i*seg_total,0,seg_size,height(),low_color);
+      }
+    }
+    break;
+
+  case SegMeter::Down:
+  case SegMeter::Up:
+    low_region=(int)((double)(op_pt-range_min)/
+		     (double)(range_max-range_min)*height()/seg_total);
+    if(op_pt>range_min) {
+      for(int i=0;i<low_region;i++) {
+	p->fillRect(0,i*seg_total,width(),seg_size,low_color);
+      }
+    }
+    break;
   }
 
   // 
@@ -304,26 +304,27 @@ void SegMeter::paintEvent(QPaintEvent *paintEvent)
     op_pt=solid_bar;
   }
   switch(orient) {
-      case SegMeter::Left:
-      case SegMeter::Right:
-	high_region=(int)((double)(op_pt-high_threshold)/
-			  (double)(range_max-range_min)*width()/seg_total);
-	if(op_pt>high_threshold) {
-	  for(int i=low_region;i<low_region+high_region;i++) {
-	    p->fillRect(i*seg_total,0,seg_size,height(),high_color);
-	  }
-	}
-	break;
-      case SegMeter::Down:
-      case SegMeter::Up:
-	high_region=(int)((double)(op_pt-high_threshold)/
-			  (double)(range_max-range_min)*height()/seg_total);
-	if(op_pt>high_threshold) {
-	  for(int i=low_region;i<low_region+high_region;i++) {
-	    p->fillRect(0,i*seg_total,width(),seg_size,high_color);
-	  }
-	}
-	break;
+  case SegMeter::Left:
+  case SegMeter::Right:
+    high_region=(int)((double)(op_pt-high_threshold)/
+		      (double)(range_max-range_min)*width()/seg_total);
+    if(op_pt>high_threshold) {
+      for(int i=low_region;i<low_region+high_region;i++) {
+	p->fillRect(i*seg_total,0,seg_size,height(),high_color);
+      }
+    }
+    break;
+
+  case SegMeter::Down:
+  case SegMeter::Up:
+    high_region=(int)((double)(op_pt-high_threshold)/
+		      (double)(range_max-range_min)*height()/seg_total);
+    if(op_pt>high_threshold) {
+      for(int i=low_region;i<low_region+high_region;i++) {
+	p->fillRect(0,i*seg_total,width(),seg_size,high_color);
+      }
+    }
+    break;
   }
 
   // 
@@ -336,54 +337,56 @@ void SegMeter::paintEvent(QPaintEvent *paintEvent)
     op_pt=solid_bar;
   }
   switch(orient) {
-      case SegMeter::Left:
-      case SegMeter::Right:
-	clip_region=(int)((double)(op_pt-clip_threshold)/
-			  (double)(range_max-range_min)*width()/seg_total);
-	if(op_pt>clip_threshold) {
-	  for(int i=low_region+high_region;
-	      i<low_region+high_region+clip_region;i++) {
-	    p->fillRect(i*seg_total,0,seg_size,height(),clip_color);
-	  }
-	}
-	break;
-      case SegMeter::Down:
-      case SegMeter::Up:
-	clip_region=(int)((double)(op_pt-range_min)/
-			  (double)(range_max-range_min)*height()/seg_total);
-	if(op_pt>clip_threshold) {
-	  for(int i=low_region+high_region;
-	      i<low_region+high_region+clip_region;i++) {
-	    p->fillRect(0,i*seg_total,width(),seg_size,clip_color);
-	  }
-	}
-	break;
+  case SegMeter::Left:
+  case SegMeter::Right:
+    clip_region=(int)((double)(op_pt-clip_threshold)/
+		      (double)(range_max-range_min)*width()/seg_total);
+    if(op_pt>clip_threshold) {
+      for(int i=low_region+high_region;
+	  i<low_region+high_region+clip_region;i++) {
+	p->fillRect(i*seg_total,0,seg_size,height(),clip_color);
+      }
+    }
+    break;
+
+  case SegMeter::Down:
+  case SegMeter::Up:
+    clip_region=(int)((double)(op_pt-range_min)/
+		      (double)(range_max-range_min)*height()/seg_total);
+    if(op_pt>clip_threshold) {
+      for(int i=low_region+high_region;
+	  i<low_region+high_region+clip_region;i++) {
+	p->fillRect(0,i*seg_total,width(),seg_size,clip_color);
+      }
+    }
+    break;
   }
 
   // 
   // The dark low range
   //
   switch(orient) {
-      case SegMeter::Left:
-      case SegMeter::Right:
-	dark_low_region=(int)((double)(high_threshold-range_min)/
-			      (double)(range_max-range_min)*width()/seg_total);
-	if(op_pt<high_threshold) {
-	  for(int i=low_region;i<dark_low_region;i++) {
-	    p->fillRect(i*seg_total,0,seg_size,height(),dark_low_color);
-	  }
-	}
-	break;
-      case SegMeter::Down:
-      case SegMeter::Up:
-	dark_low_region=(int)((double)(high_threshold-range_min)/
-		      (double)(range_max-range_min)*height()/seg_total);
-	if(op_pt<high_threshold) {
-	  for(int i=low_region;i<dark_low_region;i++) {
-	    p->fillRect(0,i*seg_total,width(),seg_size,dark_low_color);
-	  }
-	}
-	break;
+  case SegMeter::Left:
+  case SegMeter::Right:
+    dark_low_region=(int)((double)(high_threshold-range_min)/
+			  (double)(range_max-range_min)*width()/seg_total);
+    if(op_pt<high_threshold) {
+      for(int i=low_region;i<dark_low_region;i++) {
+	p->fillRect(i*seg_total,0,seg_size,height(),dark_low_color);
+      }
+    }
+    break;
+
+  case SegMeter::Down:
+  case SegMeter::Up:
+    dark_low_region=(int)((double)(high_threshold-range_min)/
+			  (double)(range_max-range_min)*height()/seg_total);
+    if(op_pt<high_threshold) {
+      for(int i=low_region;i<dark_low_region;i++) {
+	p->fillRect(0,i*seg_total,width(),seg_size,dark_low_color);
+      }
+    }
+    break;
   }
 
   // 
@@ -396,27 +399,28 @@ void SegMeter::paintEvent(QPaintEvent *paintEvent)
     op_pt=dark_low_region;
   }
   switch(orient) {
-      case SegMeter::Left:
-	case SegMeter::Right:
-	  dark_high_region=(int)((double)(clip_threshold-range_min)/
-			      (double)(range_max-range_min)*width()/seg_total);
-	  if(solid_bar<clip_threshold) {
-	    for(int i=op_pt;
-		i<dark_high_region;i++) {
-	      p->fillRect(i*seg_total,0,seg_size,height(),dark_high_color);
-	    }
-	  }
-	  break;
-      case SegMeter::Down:
-      case SegMeter::Up:
-	dark_high_region=(int)((double)(clip_threshold-range_min)/
-		       (double)(range_max-range_min)*height()/seg_total);
-	if(solid_bar<clip_threshold) {
-	  for(int i=op_pt;i<dark_high_region;i++) {
-	    p->fillRect(0,i*seg_total,width(),seg_size,dark_high_color);
-	  }
-	}
-	break;
+  case SegMeter::Left:
+  case SegMeter::Right:
+    dark_high_region=(int)((double)(clip_threshold-range_min)/
+			   (double)(range_max-range_min)*width()/seg_total);
+    if(solid_bar<clip_threshold) {
+      for(int i=op_pt;
+	  i<dark_high_region;i++) {
+	p->fillRect(i*seg_total,0,seg_size,height(),dark_high_color);
+      }
+    }
+    break;
+
+  case SegMeter::Down:
+  case SegMeter::Up:
+    dark_high_region=(int)((double)(clip_threshold-range_min)/
+			   (double)(range_max-range_min)*height()/seg_total);
+    if(solid_bar<clip_threshold) {
+      for(int i=op_pt;i<dark_high_region;i++) {
+	p->fillRect(0,i*seg_total,width(),seg_size,dark_high_color);
+      }
+    }
+    break;
   }
 
   // 
@@ -429,27 +433,28 @@ void SegMeter::paintEvent(QPaintEvent *paintEvent)
     op_pt=dark_high_region;
   }
   switch(orient) {
-      case SegMeter::Left:
-      case SegMeter::Right:
-	dark_clip_region=(int)((double)(range_max-range_min)/
-       		       (double)(range_max-range_min)*width()/seg_total);
-	if(solid_bar<range_max) {
-	  for(int i=op_pt;i<dark_clip_region;i++) {
-	    p->fillRect(i*seg_total,0,seg_size,height(),dark_clip_color);
-	  }
-	}
-	break;
-      case SegMeter::Down:
-      case SegMeter::Up:
-	dark_clip_region=(int)((double)(range_max-range_min)/
-			       (double)(range_max-range_min)*height()/seg_total);
-	if(solid_bar<range_max) {
-	  for(int i=op_pt;
-	      i<dark_clip_region;i++) {
-	    p->fillRect(0,i*seg_total,width(),seg_size,dark_clip_color);
-	  }
-	}
-	break;
+  case SegMeter::Left:
+  case SegMeter::Right:
+    dark_clip_region=(int)((double)(range_max-range_min)/
+			   (double)(range_max-range_min)*width()/seg_total);
+    if(solid_bar<range_max) {
+      for(int i=op_pt;i<dark_clip_region;i++) {
+	p->fillRect(i*seg_total,0,seg_size,height(),dark_clip_color);
+      }
+    }
+    break;
+
+  case SegMeter::Down:
+  case SegMeter::Up:
+    dark_clip_region=(int)((double)(range_max-range_min)/
+			   (double)(range_max-range_min)*height()/seg_total);
+    if(solid_bar<range_max) {
+      for(int i=op_pt;
+	  i<dark_clip_region;i++) {
+	p->fillRect(0,i*seg_total,width(),seg_size,dark_clip_color);
+      }
+    }
+    break;
   }
 
   //
@@ -466,21 +471,21 @@ void SegMeter::paintEvent(QPaintEvent *paintEvent)
       float_color=clip_color;
     }
     switch(orient) {
-	case SegMeter::Left:
-	case SegMeter::Right:
-	  float_region=(int)((double)(floating_bar-range_min)/
-			     (double)(range_max-range_min)*width());
-	  float_region=seg_total*(float_region/seg_total);
-	  p->fillRect(float_region,0,seg_size,height(),float_color); 
-	  break;
+    case SegMeter::Left:
+    case SegMeter::Right:
+      float_region=(int)((double)(floating_bar-range_min)/
+			 (double)(range_max-range_min)*width());
+      float_region=seg_total*(float_region/seg_total);
+      p->fillRect(float_region,0,seg_size,height(),float_color); 
+      break;
 
-	case SegMeter::Down:
-	case SegMeter::Up:
-	  float_region=(int)((double)(floating_bar-range_min)/
-			     (double)(range_max-range_min)*height());
-	  float_region=seg_total*(float_region/seg_total);
-	  p->fillRect(0,float_region,width(),seg_size,float_color); 
-	  break;
+    case SegMeter::Down:
+    case SegMeter::Up:
+      float_region=(int)((double)(floating_bar-range_min)/
+			 (double)(range_max-range_min)*height());
+      float_region=seg_total*(float_region/seg_total);
+      p->fillRect(0,float_region,width(),seg_size,float_color); 
+      break;
     }
   } 
 
@@ -497,6 +502,3 @@ void SegMeter::peakData()
   floating_bar=solid_bar;
   repaint();
 }
-
-
-
