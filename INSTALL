@@ -15,10 +15,6 @@ OpenSSL Library, a robust, commercial-grade, and full-featured toolkit for
 the Transport Layer Security (TLS) and Secure Sockets Layer (SSL) protocols.
 Available at: https://www.openssl.org/.
 
-WebHost Library, v1.2.0 or better
-A library for embedding HTTP interfaces. Available at
-https://github.com/ElvishArtisan/webhost
-
 
 OPTIONAL PREREQUISITES
 ---------------------------------------------------------------------------
@@ -28,25 +24,22 @@ at least one of each in order to build a functioning binary.
 
 CODECS
 ------
-FAAC - Free Advanced Audio Codec, v1.28 or later.  Needed for generating
-MPEG-2 AAC streams.  Available at http://www.audiocoding.com/faac.html.
-
 FDK-AAC - Fraunhofer FDK AAC codec for Android.  A codec for generating
 MPEG-4 HE-AAC+ streams.  Available at https://github.com/mstorsjo/fdk-aac.
 
-LAME - MPEG-1 Layer 3 Encoder Library, v3.99.3 or later.  Needed for
-generating MPEG-1 Layer 3 (MP3) streams.  Available at
+LAME - MPEG-1 Layer III Encoder Library, v3.99.3 or later.  Needed for
+generating MPEG-1 Layer III ("MP3") streams.  Available at
 http://lame.sourceforge.net/.
 
 OggOpus -  A free, patent-clear audio codec, formally defined in RFC-6716.
-Both 'libogg' and 'libogg' libraries are required.  Available at
+Both 'libogg' and 'libopus' libraries are required.  Available at
 http://www.xiph.org.
 
 OggVorbis -  A free, patent-clear audio codec.  Both 'libogg' and 'libvorbis'
 libraries are required.  Available at http://www.xiph.org.
 
-TwoLAME - MPEG-1 Layer 2 Encoder Library, v0.2.12 or later.  Needed for
-generating MPEG-1 Layer 2 (MP2) streams.  Available at
+TwoLAME - MPEG-1 Layer II Encoder Library, v0.2.12 or later.  Needed for
+generating MPEG-1 Layer II ("MP2") streams.  Available at
 http://www.twolame.org/.
 
 AUDIO SOURCES

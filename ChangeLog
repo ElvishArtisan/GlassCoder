@@ -793,3 +793,5 @@
 	from 'webhost'.
 	* Removed the 'webhost' dependency.
 	* Added an 'OpenSSL' dependency.
+2019-09-12 Fred Gleason <fredg@paravelsystems.com>
+	* Updated 'INSTALL'.
