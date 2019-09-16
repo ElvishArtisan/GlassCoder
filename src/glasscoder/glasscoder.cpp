@@ -400,7 +400,7 @@ void MainObject::ProcessCommand(const QString &cmd)
   if(cmds[0]=="MD") {  // Metadata update
     MetaEvent *e=new MetaEvent();
     cmds.erase(cmds.begin());
-    e->setField(MetaEvent::StreamTitle,cmds.join(" "));
+    e->setField("StreamTitle",cmds.join(" "));
     for(unsigned i=0;i<sir_connectors.size();i++) {
       sir_connectors[i]->sendMetadata(e);
     }

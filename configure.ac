@@ -147,6 +147,11 @@ fi
 AC_CHECK_HEADER(samplerate.h,[],[AC_MSG_ERROR([*** libsamplerate not found ***])])
 
 #
+# Check for TagLib (Mandatory)
+#
+PKG_CHECK_MODULES(TAGLIB,taglib,[TAGLIB_FOUND=y],[])
+
+#
 # Check for Ogg and friends (Optional, required for Vorbis and Opus support)
 #
 AC_CHECK_HEADER(ogg/ogg.h,[OGG_FOUND=yes],[])

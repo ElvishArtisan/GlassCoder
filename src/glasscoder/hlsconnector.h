@@ -39,6 +39,9 @@
 
 #include <map>
 
+#include <id3v2tag.h>
+
+#include <QByteArray>
 #include <QDateTime>
 #include <QDir>
 #include <QProcess>
@@ -55,6 +58,9 @@ class HlsConnector : public Connector
   HlsConnector(bool is_top,FileConveyor *conv,QObject *parent=0);
   ~HlsConnector();
   Connector::ServerType serverType() const;
+
+ public slots:
+  void sendMetadata(MetaEvent *e);
 
  protected:
   void connectToHostConnector(const QString &hostname,uint16_t port);
@@ -73,6 +79,10 @@ class HlsConnector : public Connector
   void WriteTopPlaylistFile();
   QString GetMediaFilename(int seqno);
   void GetStreamTimestamp(uint8_t *bytes,uint64_t frames);
+  void AddTextIdFrame(TagLib::ID3v2::Tag *tag,const QString &id,
+		      const QString &value) const;
+  void AddTXXXFrame(TagLib::ID3v2::Tag *tag,const QString &desc,
+		    const QString &value) const;
   bool hls_is_top;
   QDir *hls_temp_dir;
   QString hls_playlist_filename;
@@ -82,7 +92,6 @@ class HlsConnector : public Connector
   std::map<int,QDateTime> hls_media_datetimes;
   std::map<int,uint64_t> hls_media_killtimes;
   QString hls_media_filename;
-  //QString hls_media_killname;
   FILE *hls_media_handle;
   uint64_t hls_media_frames;
   uint64_t hls_total_media_frames;
@@ -90,6 +99,8 @@ class HlsConnector : public Connector
   QString hls_put_basename;
   QString hls_put_basestamp;
   FileConveyor *hls_conveyor;
+  QDateTime hls_start_datetime;
+  QByteArray hls_metadata_tag;
 };
 
 

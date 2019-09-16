@@ -1475,7 +1475,13 @@ QString Connector::timezoneOffset()
 
 void Connector::sendMetadata(MetaEvent *e)
 {
-  printf("StreamTitle: %s\n",(const char *)e->field(MetaEvent::StreamTitle).toString().toUtf8());
+  QStringList keys=e->fieldKeys();
+
+  for(int i=0;i<keys.size();i++) {
+    printf("%s: %s\n",(const char *)keys.at(i).toUtf8(),
+	   (const char *)e->field(keys.at(i)).toUtf8());
+  }
+  //  printf("StreamTitle: %s\n",(const char *)e->field(MetaEvent::StreamTitle).toString().toUtf8());
 }
 
 

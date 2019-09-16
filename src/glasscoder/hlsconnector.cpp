@@ -24,6 +24,12 @@
 #include <time.h>
 #include <unistd.h>
 
+#include <tbytevector.h>
+#include <textidentificationframe.h>
+#include <tstring.h>
+
+#include <QTimeZone>
+
 #include "hlsconnector.h"
 #include "logging.h"
 
@@ -57,6 +63,14 @@ HlsConnector::HlsConnector(bool is_top,FileConveyor *conv,QObject *parent)
 				 (const char *)hls_temp_dir->path().toUtf8()));
 
   //
+  // Start DateTime
+  //
+  QTimeZone tz(QTimeZone::systemTimeZoneId());
+  hls_start_datetime=QDateTime::currentDateTime().
+    addSecs(-tz.offsetFromUtc(QDateTime::currentDateTime()));
+  hls_start_datetime.setTimeZone(QTimeZone::utc());
+
+  //
   // File Conveyor Error Logging
   //
   connect(hls_conveyor,SIGNAL(eventFinished(const ConveyorEvent &,int,int,
@@ -86,6 +100,31 @@ HlsConnector::~HlsConnector()
 Connector::ServerType HlsConnector::serverType() const
 {
   return Connector::HlsServer;
+}
+
+
+void HlsConnector::sendMetadata(MetaEvent *e)
+{
+  TagLib::ID3v2::Tag *tag=new TagLib::ID3v2::Tag();
+  QStringList keys=e->fieldKeys();
+
+  AddTXXXFrame(tag,"ach",QString().sprintf("%d",audioChannels()));
+  AddTXXXFrame(tag,"adr",QString().sprintf("%d",audioBitrate()));
+  //  AddTXXXFrame(tag,"aot","5");
+  AddTXXXFrame(tag,"asr",QString().sprintf("%d",audioSamplerate()));
+  AddTXXXFrame(tag,"crb",QString("GlassCoder ")+VERSION);
+  AddTXXXFrame(tag,"crd",
+	       hls_start_datetime.toString("yyyyMMdd hh:mm:ss")+" UTC");
+  AddTXXXFrame(tag,"dev","AudioScience HPI");
+  AddTXXXFrame(tag,"enc",QString("GlassCoder ")+VERSION);
+
+  for(int i=0;i<keys.size();i++) {
+    AddTextIdFrame(tag,keys.at(i),e->field(keys.at(i)));
+  }
+  AddTextIdFrame(tag,"TFLT","MPG/AAC");
+
+  TagLib::ByteVector bytes=tag->render(4);
+  hls_metadata_tag=QByteArray(bytes.data(),bytes.size());
 }
 
 
@@ -134,7 +173,7 @@ void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
     }
 
     //
-    // Write ID3 tag
+    // Write ID3 tag(s)
     //
 #ifndef HLS_OMIT_ID3_TIMESTAMPS
     uint8_t id3_header[HLS_ID3_HEADER_SIZE];
@@ -305,6 +344,10 @@ void HlsConnector::RotateMediaFile()
   uint8_t id3_header[HLS_ID3_HEADER_SIZE];
   GetStreamTimestamp(id3_header,hls_total_media_frames);
   fwrite(id3_header,1,HLS_ID3_HEADER_SIZE,hls_media_handle);
+  if(hls_metadata_tag.size()>0) {
+    fwrite(hls_metadata_tag.data(),1,hls_metadata_tag.size(),
+	   hls_media_handle);
+  }
 #endif  // HLS_OMIT_ID3_TIMESTAMPS
 }
 
@@ -397,4 +440,26 @@ void HlsConnector::GetStreamTimestamp(uint8_t *bytes,uint64_t frames)
   for(int i=0;i<8;i++) {  // Use network byte order!
     bytes[(HLS_ID3_HEADER_SIZE-8)+i]=0xFF&(stamp>>(56-8*i));
   }
+}
+
+
+void HlsConnector::AddTextIdFrame(TagLib::ID3v2::Tag *tag,const QString &id,
+				  const QString &value) const
+{
+  TagLib::ID3v2::TextIdentificationFrame *frame=NULL;
+
+  frame=new TagLib::ID3v2::TextIdentificationFrame(TagLib::ByteVector((const char *)id.toUtf8()),TagLib::String::UTF8);
+  TagLib::String str((const char *)value.toUtf8(),TagLib::String::UTF8);
+  frame->setText(str);
+  tag->addFrame(frame);
+}
+
+
+void HlsConnector::AddTXXXFrame(TagLib::ID3v2::Tag *tag,const QString &desc,
+				const QString &value) const
+{
+  TagLib::ID3v2::UserTextIdentificationFrame *uframe=
+    new TagLib::ID3v2::UserTextIdentificationFrame((const char *)desc.toUtf8(),
+						   TagLib::StringList((const char *)value.toUtf8()),TagLib::String::UTF8);
+  tag->addFrame(uframe);
 }

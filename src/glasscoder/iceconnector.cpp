@@ -67,14 +67,16 @@ IceConnector::ServerType IceConnector::serverType() const
 
 void IceConnector::sendMetadata(MetaEvent *e)
 {
-  QString url=QString("http://")+
-    hostHostname()+
-    QString().sprintf(":%u",hostPort())+
-    "/admin/metadata?"+
-    "mount="+serverMountpoint()+"&"+
-    "mode=updinfo&"+
-    "song="+Connector::urlEncode(e->field(MetaEvent::StreamTitle).toString());
-  ice_conveyor->push(this,url,ConveyorEvent::GetMethod);
+  if(e->fieldKeys().contains("StreamTitle")) {
+    QString url=QString("http://")+
+      hostHostname()+
+      QString().sprintf(":%u",hostPort())+
+      "/admin/metadata?"+
+      "mount="+serverMountpoint()+"&"+
+      "mode=updinfo&"+
+      "song="+Connector::urlEncode(e->field("StreamTitle"));
+    ice_conveyor->push(this,url,ConveyorEvent::GetMethod);
+  }
 }
 
 

@@ -798,3 +798,8 @@
 2019-09-12 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a regression in glassgui(1) that caused meters
 	to be rendered incorrectly.
+2019-09-16 Fred Gleason <fredg@paravelsystems.com>
+	* Refactored the 'MetaEvent' class to operate with arbitrary
+	field keys.
+	* Added a mandatory dependency for TagLib.
+	* Added a 'json-pad' web service.

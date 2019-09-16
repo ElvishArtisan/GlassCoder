@@ -76,14 +76,16 @@ IcyConnector::ServerType IcyConnector::serverType() const
 
 void IcyConnector::sendMetadata(MetaEvent *e)
 {
-  QString url=QString("http://")+
-    hostHostname()+
-    QString().sprintf(":%u",hostPort())+
-    "/admin.cgi?"+
-    "pass="+Connector::urlEncode(serverPassword())+"&"+
-    "mode=updinfo&"+
-    "song="+Connector::urlEncode(e->field(MetaEvent::StreamTitle).toString());
-  icy_conveyor->push(this,url,ConveyorEvent::GetMethod);
+  if(e->fieldKeys().contains("StreamTitle")) {
+    QString url=QString("http://")+
+      hostHostname()+
+      QString().sprintf(":%u",hostPort())+
+      "/admin.cgi?"+
+      "pass="+Connector::urlEncode(serverPassword())+"&"+
+      "mode=updinfo&"+
+      "song="+Connector::urlEncode(e->field("StreamTitle"));
+    icy_conveyor->push(this,url,ConveyorEvent::GetMethod);
+  }
 }
 
 

@@ -37,10 +37,12 @@ class MetaServer : public HttpServer
 
  protected:
   void getRequestReceived(HttpConnection *conn);
+  void postRequestReceived(HttpConnection *conn);
   bool authenticateUser(const QString &realm,const QString &name,
 			const QString &passwd);
 
  private:
+  bool ProcessJsonMetadataUpdates(const QJsonObject &obj);
   Config *meta_config;
 };
 

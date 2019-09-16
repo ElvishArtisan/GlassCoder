@@ -18,6 +18,8 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QUrl>
 #include <QUrlQuery>
 
@@ -42,7 +44,7 @@ void MetaServer::getRequestReceived(HttpConnection *conn)
     if(query.queryItemValue("pass")==meta_config->serverPassword()) {
       if(query.queryItemValue("mode")=="updinfo") {
 	MetaEvent *e=new MetaEvent();
-	e->setField(MetaEvent::StreamTitle,
+	e->setField("StreamTitle",
 		    Connector::urlDecode(query.queryItemValue("song")));
 	emit metadataReceived(e);
 	delete e;
@@ -63,7 +65,7 @@ void MetaServer::getRequestReceived(HttpConnection *conn)
   if(url.path()=="/admin/metadata") {   // Icecast Style
     if(query.queryItemValue("mode")=="updinfo") {
       MetaEvent *e=new MetaEvent();
-      e->setField(MetaEvent::StreamTitle,
+      e->setField("StreamTitle",
 		  Connector::urlDecode(query.queryItemValue("song")));
       emit metadataReceived(e);
       delete e;
@@ -80,8 +82,57 @@ void MetaServer::getRequestReceived(HttpConnection *conn)
 }
 
 
+void MetaServer::postRequestReceived(HttpConnection *conn)
+{
+  //  printf("HTTP: %s\n",(const char *)conn->dump().toUtf8());
+  int resp_code=404;
+  QString resp_str="Not Found";
+  QUrl url(conn->uri());
+
+  if(url.path()=="/json_pad") {  // JSON Articulated Metadata
+    resp_code=400;
+    resp_str="Invalid Data";
+    QJsonDocument doc=QJsonDocument::fromJson(conn->body());
+    if(!doc.isNull()) {
+      if(doc.isObject()) {
+	QJsonObject obj=doc.object();
+	if(obj.keys().at(0)=="Metadata") {
+	  if(ProcessJsonMetadataUpdates(obj.value("Metadata").toObject())) {
+	    resp_code=200;
+	    resp_str="OK";
+	  }
+	}
+      }
+    }
+  }
+
+  conn->sendError(resp_code,resp_str);
+}
+
+
 bool MetaServer::authenticateUser(const QString &realm,const QString &name,
 				  const QString &passwd)
 {
+  return true;
+}
+
+
+bool MetaServer::ProcessJsonMetadataUpdates(const QJsonObject &obj)
+{
+  QStringList keys=obj.keys();
+  MetaEvent *e=new MetaEvent();
+
+  for(int i=0;i<keys.size();i++) {
+    if(obj.value(keys.at(i)).isString()) {
+      e->setField(keys.at(i),obj.value(keys.at(i)).toString());
+    }
+    else {
+      e->setField(keys.at(i),
+		  QString().sprintf("%d",obj.value(keys.at(i)).toInt()));
+    }
+  }
+  emit metadataReceived(e);
+  delete e;
+
   return true;
 }

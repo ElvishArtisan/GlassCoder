@@ -20,7 +20,7 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing -std=c++11 -fPIC @QT5_CLI_CFLAGS@ @SNDFILE_CFLAGS@ @OPENSSL_CFLAGS@ @ALSA_CFLAGS@
+AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing -std=c++11 -fPIC @QT5_CLI_CFLAGS@ @SNDFILE_CFLAGS@ @TAGLIB_CFLAGS@ @OPENSSL_CFLAGS@ @ALSA_CFLAGS@
 MOC = @QT5_MOC@
 
 # The dependency for qt's Meta Object Compiler (moc)
@@ -98,7 +98,7 @@ nodist_glasscoder_SOURCES = asihpi.cpp asihpi.h\
                             moc_vorbiscodec.cpp\
                             ringbuffer.cpp ringbuffer.h
 
-glasscoder_LDADD = @LIBJACK@ @SNDFILE_LIBS@ @OPENSSL_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ @QT5_CLI_LIBS@ -lsamplerate -ldl -lpthread
+glasscoder_LDADD = @LIBJACK@ @SNDFILE_LIBS@ @TAGLIB_LIBS@ @OPENSSL_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ @QT5_CLI_LIBS@ -lsamplerate -ldl -lpthread
 #glasscoder_LDFLAGS = 
 
 CLEANFILES = *~\

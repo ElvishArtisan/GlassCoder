@@ -194,7 +194,7 @@ void IceStreamConnector::setStreamPrologue(const QByteArray &data)
 
 void IceStreamConnector::sendMetadata(MetaEvent *e)
 {
-  SetMetadata(e->field(MetaEvent::StreamTitle).toString());
+  SetMetadata(e->field("StreamTitle"));
 }
 
 

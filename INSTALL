@@ -15,6 +15,10 @@ OpenSSL Library, a robust, commercial-grade, and full-featured toolkit for
 the Transport Layer Security (TLS) and Secure Sockets Layer (SSL) protocols.
 Available at: https://www.openssl.org/.
 
+TagLib Audio Meta-Data Library, v1.8.0 or better (https://taglib.org/)
+A library for reading and writing the meta-data of several popular audio
+formats. 
+
 
 OPTIONAL PREREQUISITES
 ---------------------------------------------------------------------------
