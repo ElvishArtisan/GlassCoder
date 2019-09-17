@@ -676,8 +676,7 @@ void MainWidget::ListInstances()
 {
   QStringList files=GuiApplication::listInstances();
   for(int i=0;i<files.size();i++) {
-    printf("%s\n",(const char *)files[i].right(files[i].length()-
-		   sizeof(GLASSGUI_SETTINGS_FILE)-1+1).toUtf8());
+    printf("%s\n",(const char *)files[i].toUtf8());
   }
 }
 

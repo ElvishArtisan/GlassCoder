@@ -810,3 +810,6 @@
 	available CPU cores.
 2019-09-17 Fred Gleason <fredg@paravelsystems.com>
 	* Updated 'INSTALL'.
+2019-09-17 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in glassgui(1) that caused instances names to be
+	truncated when using the '--list-instances' option.

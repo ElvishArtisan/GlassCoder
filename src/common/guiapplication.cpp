@@ -94,8 +94,8 @@ QStringList GuiApplication::listInstances()
       entryList(QStringList(QString(GUI_SETTINGS_FILE)+"-*"),
 		QDir::Files,QDir::Name);
     for(int i=0;i<files.size();i++) {
-      ret.push_back(files[i].right(files[i].length()-
-				   sizeof(GUI_SETTINGS_FILE)-1+1));
+      files[i]=files[i].right(files[i].length()-11);
+      ret.push_back(files[i]);
     }
   }
   return ret;
