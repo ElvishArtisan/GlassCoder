@@ -62,6 +62,12 @@ Available at http://mega-nerd.com/libsndfile/.
 JACK Audio Connection Kit (JACK).  System for interconnecting audio devices
 and applications.  Available at http://jackaudio.org/.
 
+PLUG-INS
+--------
+GlassCoder include a PyPAD script for the Rivendell Radio Automation
+System that allows Rivendell to send articulated PAD to GlassCoder
+instance. Use of this requires Python 3.4 or later.
+
 DOCUMENTATION
 -------------
 The GlassCoder man pages are written in XML-DocBook5.  Pre-generated troff

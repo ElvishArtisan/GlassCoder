@@ -808,3 +808,5 @@
 	* Added a 'AX_COUNT_CPUS()' autoconf macro.
 	* Modified the 'make rpm' target to use one less than the total
 	available CPU cores.
+2019-09-17 Fred Gleason <fredg@paravelsystems.com>
+	* Updated 'INSTALL'.

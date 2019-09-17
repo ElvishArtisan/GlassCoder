@@ -375,6 +375,7 @@ else
 AC_MSG_NOTICE("|          Jack Audio Connection Kit (JACK) ... Yes   |")
 fi
 AC_MSG_NOTICE("|                                                     |")
+AC_MSG_NOTICE("| Plug-Ins:                                   |")
 if test -z $USING_PYTHON ; then
 AC_MSG_NOTICE("|                     Install PyPAD scripts ... No    |")
 else
