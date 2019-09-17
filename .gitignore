@@ -12,8 +12,10 @@
 .deps
 aclocal.m4
 autom4te.cache
+config.guess
 config.log
 config.status
+config.sub
 configure
 depcomp
 docs/glasscoder.xml
@@ -22,6 +24,7 @@ Makefile
 Makefile.in
 missing
 moc_*
+plugins/install_pypad.sh
 src/glasscoder/asihpi.cpp
 src/glasscoder/asihpi.h
 src/glasscoder/audiodevice.cpp
