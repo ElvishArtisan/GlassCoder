@@ -803,3 +803,8 @@
 	field keys.
 	* Added a mandatory dependency for TagLib.
 	* Added a 'json-pad' web service.
+2019-09-17 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'pypad_glasscoder.py' PyPAD script.
+	* Added a 'AX_COUNT_CPUS()' autoconf macro.
+	* Modified the 'make rpm' target to use one less than the total
+	available CPU cores.

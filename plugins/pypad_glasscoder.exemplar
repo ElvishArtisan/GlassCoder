@@ -1,0 +1,84 @@
+; This is the sample configuration for the 'pypad_glasscoder.py' PyPAD script
+; for Rivendell, which can be used to send articulated PAD updates to an
+; instance of glasscoder(1).
+;
+
+[Glasscoder]
+
+; UpdateUrl=http://<host-name>:<metadata-port>
+;
+; The update URL of the GlassCoder instance, where:
+;       <host-name> - The hostname or IP address of the system running
+;                     glasscoder(1).
+;   <metadata-port> - The number passed to the '--metadata-port=' switch
+;                     when invoking glasscoder(1).
+UpdateUrl=http://192.168.21.21:1234
+
+; Log Selection
+;
+; Set the status for each log to 'Yes', 'No' or 'Onair' to indicate whether
+; state changes on that log should be output.  If set to 'Onair', then
+; output will be generated only if RDAirPlays OnAir flag is active.
+MasterLog=Yes
+Aux1Log=No
+Aux2Log=No
+VLog101=No
+VLog102=No
+VLog103=No
+VLog104=No
+VLog105=No
+VLog106=No
+VLog107=No
+VLog108=No
+VLog109=No
+VLog110=No
+VLog111=No
+VLog112=No
+VLog113=No
+VLog114=No
+VLog115=No
+VLog116=No
+VLog117=No
+VLog118=No
+VLog119=No
+VLog120=No
+
+;
+; An example of 'ICY-style' metadata (IceCast and Shoutcast)
+;
+[Line1]
+Key=StreamTitle
+Value=%a - %t
+
+;
+; An example of HLS Timed Metadata
+;
+; The 'Key=' directive takes the name of the ID3v2.4 Text Identification
+; Frame to use for the given value. For the full list of defined frames,
+; see Section 4.2 of the ID3v2.4 spec, available at
+; http://id3.org/id3v2.4.0-frames.
+;
+[Line1]
+Key=TIT2
+Value=%t
+
+[Line2]
+Key=TPE1
+Value=%a
+
+[Line3]
+Key=TALB
+Value=%l
+
+[Line4]
+Key=TRSN
+Value=Rivendell
+
+[Line5]
+Key=TRSO
+Value=A Radio Automation System
+
+[Line6]
+Key=TFLT
+Value=MPG/AAC
+

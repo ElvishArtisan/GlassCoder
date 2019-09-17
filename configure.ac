@@ -206,6 +206,16 @@ if test $FDKAAC_FOUND ; then
 fi
 
 #
+# Check for Python 3 (Optional, required for PyPAD scripts)
+#
+AM_PATH_PYTHON([3],PYTHON_FOUND=yes],[])
+if test $PYTHON_FOUND ; then
+  AC_SUBST(PYTHON_BASE_DEP,"python"`echo $PYTHON_VERSION | sed -e s/3./3/`)
+  USING_PYTHON=yes
+fi
+AM_CONDITIONAL([PYTHON_AM], [test "$USING_PYTHON" = yes])
+
+#
 # Build DocBook Items?
 #
 if test -z $DOCBOOK_DISABLED ; then
@@ -219,6 +229,20 @@ AM_CONDITIONAL([DOCBOOK_AM], [test "$USING_DOCBOOK" = yes])
 AR_GCC_TARGET()
 AC_SUBST(VENDOR,$ar_gcc_distro)
 AC_SUBST(ARCH,$ar_gcc_arch)
+
+#
+# Determine number of available CPU cores for building packages
+#
+AX_COUNT_CPUS([],[])
+if test $CPU_COUNT -lt 2 ; then
+   AC_SUBST(CPUS_AVAIL,1)
+else
+   if test $CPU_COUNT -gt 16 ; then
+      AC_SUBST(CPUS_AVAIL,16)
+   else
+      AC_SUBST(CPUS_AVAIL,$(($CPU_COUNT-1)))
+   fi
+fi
 
 #
 # Determine Distro
@@ -266,6 +290,8 @@ AC_CONFIG_FILES([ \
     docs/Makefile \
     docs/glasscoder.xml \
     icons/Makefile \
+    plugins/Makefile \
+    plugins/install_pypad.sh \
     src/common/Makefile \
     src/glasscoder/Makefile \
     src/glasscommander/Makefile \
@@ -276,6 +302,11 @@ AC_CONFIG_FILES([ \
     glasscoder.spec \
     Makefile ])
 AC_OUTPUT()
+
+#
+# PyPAD Installer
+#
+chmod 755 plugins/install_pypad.sh
 
 #
 # Link Common Elements
@@ -342,6 +373,12 @@ if test -z $USING_JACK ; then
 AC_MSG_NOTICE("|          Jack Audio Connection Kit (JACK) ... No    |")
 else
 AC_MSG_NOTICE("|          Jack Audio Connection Kit (JACK) ... Yes   |")
+fi
+AC_MSG_NOTICE("|                                                     |")
+if test -z $USING_PYTHON ; then
+AC_MSG_NOTICE("|                     Install PyPAD scripts ... No    |")
+else
+AC_MSG_NOTICE("|                     Install PyPAD scripts ... Yes   |")
 fi
 AC_MSG_NOTICE("|-----------------------------------------------------|")
 AC_MSG_NOTICE()

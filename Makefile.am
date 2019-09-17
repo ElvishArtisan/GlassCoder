@@ -4,9 +4,7 @@
 ##
 ## Use automake to process this into a Makefile.in
 ##
-##   (C) Copyright 2014 Fred Gleason <fredg@paravelsystems.com>
-##
-##      $Id: Makefile.am,v 1.1.1.1 2014/02/17 13:26:17 cvs Exp $
+##   (C) Copyright 2014-2019 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -26,8 +24,12 @@ if DOCBOOK_AM
   DOCBOOK_AM_OPT = docs
 endif
 
+if PYTHON_AM
+  PYTHON_AM_OPT = plugins
+endif
+
 SUBDIRS = $(DOCBOOK_AM_OPT) conf\
-          icons\
+          icons $(PYTHON_AM_OPT) \
           src\
           xdg
 
