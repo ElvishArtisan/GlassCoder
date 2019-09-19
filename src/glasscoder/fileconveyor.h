@@ -2,7 +2,7 @@
 //
 // Serialized service for uploading files
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2019 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -36,13 +36,15 @@
 class ConveyorEvent
 {
  public:
-  enum HttpMethod {NoMethod=0,GetMethod=1,PutMethod=2,DeleteMethod=3};
+  enum HttpMethod {NoMethod=0,GetMethod=1,PutMethod=2,DeleteMethod=3,
+		   PostMethod=4,HeadMethod=5};
   ConveyorEvent(void *orig,const QString &filename,const QString &url,
 		HttpMethod meth=NoMethod);
   void *originator() const;
   QString filename() const;
   QString url() const;
   ConveyorEvent::HttpMethod method() const;
+  static QString httpMethodString(HttpMethod method);
 
  private:
   void *evt_originator;

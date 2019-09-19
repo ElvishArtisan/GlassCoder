@@ -116,6 +116,7 @@ class Connector : public QObject
   static QString curlStrError(int exit_code);
   static QString httpStrError(int status_code);
   static QString timezoneOffset();
+  static int id3TagSize(const QByteArray &data);
 
  public slots:
   virtual void setStreamPrologue(const QByteArray &data);

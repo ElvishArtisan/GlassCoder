@@ -2,7 +2,7 @@
 //
 // HLS/HTTP streaming connector for GlassCoder
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2019 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -33,7 +33,7 @@
 //
 // Define this to suppress generation of such timestamps.
 //
-//#define HLS_OMIT_ID3_TIMESTAMPS
+// #define HLS_OMIT_ID3_TIMESTAMPS
 
 #include <stdio.h>
 
@@ -101,6 +101,7 @@ class HlsConnector : public Connector
   FileConveyor *hls_conveyor;
   QDateTime hls_start_datetime;
   QByteArray hls_metadata_tag;
+  bool hls_metadata_updated;
 };
 
 

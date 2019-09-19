@@ -1473,6 +1473,19 @@ QString Connector::timezoneOffset()
 }
 
 
+int Connector::id3TagSize(const QByteArray &data)
+{
+  //
+  // See id3v2.4.0-structure, section 3
+  //
+  return ((0xFF&data[6])*2048383)+  // Synchsafe integer
+    ((0xFF&data[7])*16129)+
+    ((0xFF&data[8])*127)+
+    (0xFF&data[9])+
+    10;
+}
+
+
 void Connector::sendMetadata(MetaEvent *e)
 {
   QStringList keys=e->fieldKeys();

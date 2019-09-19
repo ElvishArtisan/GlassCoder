@@ -2,7 +2,7 @@
 //
 // Serialized service for uploading files
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2019 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -56,6 +56,40 @@ QString ConveyorEvent::url() const
 ConveyorEvent::HttpMethod ConveyorEvent::method() const
 {
   return evt_method;
+}
+
+
+QString ConveyorEvent::httpMethodString(HttpMethod method)
+{
+  QString ret="UNKNOWN";
+
+  switch(method) {
+  case ConveyorEvent::NoMethod:
+    ret="NONE";
+    break;
+
+  case ConveyorEvent::GetMethod:
+    ret="GET";
+    break;
+
+  case ConveyorEvent::PostMethod:
+    ret="POST";
+    break;
+
+  case ConveyorEvent::PutMethod:
+    ret="PUT";
+    break;
+
+  case ConveyorEvent::DeleteMethod:
+    ret="DELETE";
+    break;
+
+  case ConveyorEvent::HeadMethod:
+    ret="HEAD";
+    break;
+  }
+
+  return ret;
 }
 
 
@@ -273,6 +307,10 @@ void FileConveyor::Dispatch()
     conv_arguments.push_back("DELETE");
     conv_arguments.push_back(evt.url());
     RemovePuttedFile(evt.url());
+    break;
+
+  case ConveyorEvent::PostMethod:  // Should never happen!
+  case ConveyorEvent::HeadMethod:
     break;
   }
 

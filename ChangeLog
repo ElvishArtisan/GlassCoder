@@ -813,3 +813,5 @@
 2019-09-17 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in glassgui(1) that caused instances names to be
 	truncated when using the '--list-instances' option.
+2019-09-19 Fred Gleason <fredg@paravelsystems.com>
+	* Added support for HLS timed metadata.
