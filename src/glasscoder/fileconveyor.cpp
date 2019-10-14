@@ -238,6 +238,9 @@ void FileConveyor::processFinishedData(int exit_code,
       emit eventFinished(conv_events.front(),exit_code,0,conv_arguments);
     }
     else {
+      if(conv_events.front().method()==ConveyorEvent::DeleteMethod) {
+	conv_putted_files.removeAll(conv_events.front().url());
+      }
       QString response=conv_process->readAllStandardOutput();
       emit eventFinished(conv_events.front(),0,response.toInt(),conv_arguments);
     }

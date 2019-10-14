@@ -815,3 +815,6 @@
 	truncated when using the '--list-instances' option.
 2019-09-19 Fred Gleason <fredg@paravelsystems.com>
 	* Added support for HLS timed metadata.
+2019-10-14 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in glasscoder(1) that could cause extremely long shutdown
+	times when generating HLS streams.

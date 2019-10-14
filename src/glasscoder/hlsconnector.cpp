@@ -318,9 +318,16 @@ void HlsConnector::RotateMediaFile()
 	  ++dj;
 	}
       }
+      hls_conveyor->push(this,"","http://"+hostHostname()+
+			 QString().sprintf(":%d",hostPort())+
+			 hls_put_directory+"/"+
+			 GetMediaFilename(ci->first),
+			 ConveyorEvent::DeleteMethod);
+      /*
       hls_conveyor->push(this,"","http://"+hostHostname()+hls_put_directory+"/"+
 			 GetMediaFilename(ci->first),
 			 ConveyorEvent::DeleteMethod);
+      */
       hls_media_killtimes.erase(ci++);
     }
     else {
