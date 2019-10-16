@@ -90,6 +90,7 @@ class FileConveyor : public QObject
   void Dispatch();
   void DispatchFile(const ConveyorEvent &evt);
   void DispatchHttp(const ConveyorEvent &evt);
+  void DispatchSftp(const ConveyorEvent &evt);
   void AddHeaders(QStringList *arglist,const QStringList &hdrs);
   void AddCurlAuthArgs(QStringList *arglist,const ConveyorEvent &evt);
   QString Repath(const QString &filename) const;

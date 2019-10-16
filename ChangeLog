@@ -821,3 +821,6 @@
 2019-10-16 Fred Gleason <fredg@paravelsystems.com>
 	* Added support to glasscoder(1) for streaming HLS via the 'FILE'
 	scheme.
+2019-10-16 Fred Gleason <fredg@paravelsystems.com>
+	* Added support to glasscoder(1) for streaming HLS via the 'SFTP'
+	scheme using passwords.

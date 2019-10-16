@@ -348,28 +348,6 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
   // Open the server connection
   //
   sir_connectors.push_back(conn);
-  /*
-  uint16_t port=0;
-  if(sir_config->serverUrl().port()>0) {
-    port=sir_config->serverUrl().port();
-  }
-  else {
-    if(sir_config->serverUrl().scheme().toLower()=="http") {
-      port=80;
-    }
-    if(sir_config->serverUrl().scheme().toLower()=="https") {
-      port=443;
-    }
-    if(sir_config->serverUrl().scheme().toLower()=="file") {
-      port=0xFFFF;
-    }
-  }
-  if(port==0) {
-    fprintf(stderr,"glasscoder: unknown/unsupported URL scheme\n");
-    exit(1);
-  }
-  */
-  printf("config: %s\n",(const char *)sir_config->serverUrl().toString().toUtf8());
   sir_connectors.back()->connectToServer(sir_config->serverUrl());
 }
 
