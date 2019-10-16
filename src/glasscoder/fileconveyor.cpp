@@ -429,7 +429,7 @@ void FileConveyor::DispatchSftp(const ConveyorEvent &evt)
   case ConveyorEvent::DeleteMethod:
     conv_arguments.push_back("-Q");
     conv_arguments.push_back("rm "+evt.url().path());
-    conv_arguments.push_back(evt.url().toString());
+    conv_arguments.push_back(evt.url().toString(QUrl::RemovePath));
     RemovePuttedFile(evt.url().toString());
     break;
 

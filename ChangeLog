@@ -824,3 +824,6 @@
 2019-10-16 Fred Gleason <fredg@paravelsystems.com>
 	* Added support to glasscoder(1) for streaming HLS via the 'SFTP'
 	scheme using passwords.
+2019-10-16 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in glasscoder(1) that caused a 'Resource not found'
+	CURL error to be generated when streaming HLS via SFTP.
