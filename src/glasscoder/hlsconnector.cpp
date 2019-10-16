@@ -134,7 +134,7 @@ void HlsConnector::sendMetadata(MetaEvent *e)
 }
 
 
-void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
+void HlsConnector::connectToHostConnector(const QUrl &url)
 {
   //
   // Calculate publish point info
@@ -160,7 +160,7 @@ void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
   if(hls_is_top) {
     WriteTopPlaylistFile();
     hls_conveyor->push(this,hls_playlist_filename,
-		       "http://"+hostHostname()+hls_put_directory+"/",
+		       serverUrl().scheme()+"://"+serverUrl().host()+hls_put_directory+"/",
 		       ConveyorEvent::PutMethod);
     unlink(hls_playlist_filename.toUtf8());
   }
@@ -285,12 +285,13 @@ void HlsConnector::RotateMediaFile()
   // HTTP Uploads
   //
   hls_conveyor->push(this,hls_temp_dir->path()+"/"+hls_media_filename,
-		     "http://"+hostHostname()+
-		     QString().sprintf(":%u",hostPort())+
+		     serverUrl().scheme()+"://"+serverUrl().host()+
+		     QString().sprintf(":%u",serverUrl().port())+
 		     hls_put_directory+"/",ConveyorEvent::PutMethod);
   unlink((hls_temp_dir->path()+"/"+hls_media_filename).toUtf8());
   hls_conveyor->push(this,hls_playlist_filename,
-		     "http://"+hostHostname()+hls_put_directory+"/",
+		     serverUrl().scheme()+"://"+serverUrl().host()+
+		     hls_put_directory+"/",
 		     ConveyorEvent::PutMethod);
   unlink(hls_playlist_filename.toUtf8());
 
@@ -318,16 +319,11 @@ void HlsConnector::RotateMediaFile()
 	  ++dj;
 	}
       }
-      hls_conveyor->push(this,"","http://"+hostHostname()+
-			 QString().sprintf(":%d",hostPort())+
+      hls_conveyor->push(this,"",serverUrl().scheme()+"://"+serverUrl().host()+
+			 QString().sprintf(":%d",serverUrl().port())+
 			 hls_put_directory+"/"+
 			 GetMediaFilename(ci->first),
 			 ConveyorEvent::DeleteMethod);
-      /*
-      hls_conveyor->push(this,"","http://"+hostHostname()+hls_put_directory+"/"+
-			 GetMediaFilename(ci->first),
-			 ConveyorEvent::DeleteMethod);
-      */
       hls_media_killtimes.erase(ci++);
     }
     else {

@@ -47,8 +47,8 @@ Connector::Connector(QObject *parent)
   conn_stream_genre="unknown";
   conn_stream_public=true;
   conn_stream_timestamp_offset=0;
-  conn_host_hostname="";
-  conn_host_port=0;
+  //  conn_host_hostname="";
+  //  conn_host_port=0;
   conn_connected=false;
   conn_watchdog_active=false;
   conn_script_up_process=NULL;
@@ -280,7 +280,7 @@ void Connector::setStreamDescription(const QString &str)
 }
 
 
-QString Connector::streamUrl() const
+QUrl Connector::streamUrl() const
 {
   return conn_stream_url;
 }
@@ -288,7 +288,13 @@ QString Connector::streamUrl() const
 
 void Connector::setStreamUrl(const QString &str)
 {
-  conn_stream_url=str;
+  conn_stream_url=QUrl(str);
+}
+
+
+void Connector::setStreamUrl(const QUrl &url)
+{
+  conn_stream_url=url;
 }
 
 
@@ -388,11 +394,16 @@ void Connector::setFormatIdentifier(const QString &str)
 }
 
 
-void Connector::connectToServer(const QString &hostname,uint16_t port)
+QUrl Connector::serverUrl() const
 {
-  conn_host_hostname=hostname;
-  conn_host_port=port;
-  connectToHostConnector(hostname,port);
+  return conn_server_url;
+}
+
+
+void Connector::connectToServer(const QUrl &url)
+{
+  conn_server_url=url;
+  connectToHostConnector(url);
 }
 
 
@@ -612,7 +623,7 @@ void Connector::dataTimeoutData()
 
 void Connector::watchdogTimeoutData()
 {
-  connectToHostConnector(conn_host_hostname,conn_host_port);
+  connectToHostConnector(conn_server_url);
 }
 
 
@@ -729,15 +740,12 @@ void Connector::setConnected(bool state)
   if(state&&conn_watchdog_active) {
     if(conn_server_mountpoint.isEmpty()) {
       Log(LOG_WARNING,
-	  QString().sprintf("connection to \"%s:%u\" restored",
-			    (const char *)conn_host_hostname.toUtf8(),
-			    0xFFFF&conn_host_port));
+	  "connection to \""+conn_server_url.toString()+"\" restored");
     }
     else {
       Log(LOG_WARNING,
-	  QString().sprintf("connection to \"%s:%u/%s\" restored",
-	       (const char *)conn_host_hostname.toUtf8(),0xFFFF&conn_host_port,
-			    (const char *)conn_server_mountpoint.toUtf8()));
+	  "connection to \""+conn_server_url.toString()+"/"+
+	  conn_server_mountpoint+"\" restored");
     }
     conn_watchdog_active=false;
   }
@@ -751,16 +759,12 @@ void Connector::setError(QAbstractSocket::SocketError err)
   if(!conn_watchdog_active) {
     if(conn_server_mountpoint.isEmpty()) {
       Log(LOG_WARNING,
-	  QString().sprintf("connection to \"%s:%u\" lost",
-			    (const char *)conn_host_hostname.toUtf8(),
-			    0xFFFF&conn_host_port));
+	  "connection to \""+conn_server_url.toString()+"\" lost");
     }
     else {
       Log(LOG_WARNING,
-	  QString().sprintf("connection to \"%s:%u/%s\" lost",
-			    (const char *)conn_host_hostname.toUtf8(),
-			    0xFFFF&conn_host_port,
-			    (const char *)conn_server_mountpoint.toUtf8()));
+	  "connection to \""+conn_server_url.toString()+"/"+
+	  conn_server_mountpoint+"\" lost");
     }
     conn_watchdog_active=true;
   }
@@ -768,7 +772,7 @@ void Connector::setError(QAbstractSocket::SocketError err)
   conn_watchdog_timer->start(5000);
 }
 
-
+/*
 QString Connector::hostHostname() const
 {
   return conn_host_hostname;
@@ -779,7 +783,7 @@ uint16_t Connector::hostPort() const
 {
   return conn_host_port;
 }
-
+*/
 
 QString Connector::urlEncode(const QString &str)
 {

@@ -19,9 +19,12 @@
 //
 
 #include <errno.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <syslog.h>
 #include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include "fileconveyor.h"
 
@@ -30,7 +33,7 @@ ConveyorEvent::ConveyorEvent(void *orig,const QString &filename,const QString &u
 {
   evt_originator=orig;
   evt_filename=filename;
-  evt_url=url;
+  evt_url=QUrl(url);
   evt_method=meth;
 }
 
@@ -47,7 +50,7 @@ QString ConveyorEvent::filename() const
 }
 
 
-QString ConveyorEvent::url() const
+QUrl ConveyorEvent::url() const
 {
   return evt_url;
 }
@@ -111,6 +114,11 @@ FileConveyor::FileConveyor(QObject *parent)
   conv_garbage_timer->setSingleShot(true);
   connect(conv_garbage_timer,SIGNAL(timeout()),
 	  this,SLOT(processCollectGarbageData()));
+
+  conv_dummy_process_timer=new QTimer(this);
+  conv_dummy_process_timer->setSingleShot(true);
+  connect(conv_dummy_process_timer,SIGNAL(timeout()),
+	  this,SLOT(dummyProcessData()));
 
   //
   // Create temp directory
@@ -239,10 +247,16 @@ void FileConveyor::processFinishedData(int exit_code,
     }
     else {
       if(conv_events.front().method()==ConveyorEvent::DeleteMethod) {
-	conv_putted_files.removeAll(conv_events.front().url());
+	conv_putted_files.removeAll(conv_events.front().url().toString());
       }
-      QString response=conv_process->readAllStandardOutput();
-      emit eventFinished(conv_events.front(),0,response.toInt(),conv_arguments);
+      if(conv_process==NULL) {
+	emit eventFinished(conv_events.front(),0,200,QStringList());
+      }
+      else {
+	QString response=conv_process->readAllStandardOutput();
+	emit eventFinished(conv_events.front(),0,response.toInt(),
+			   conv_arguments);
+      }
     }
   }
   conv_garbage_timer->start(0);
@@ -272,10 +286,62 @@ void FileConveyor::nomethodData()
 }
 
 
+void FileConveyor::dummyProcessData()
+{
+  processFinishedData(0,QProcess::NormalExit);
+}
+
+
 void FileConveyor::Dispatch()
 {
   ConveyorEvent evt=conv_events.front();
 
+  printf("Dispatch: %s => %s\n",
+	 (const char *)evt.filename().toUtf8(),
+	 (const char *)evt.url().toString().toUtf8());
+
+  if(evt.url().toString().isEmpty()) {
+    emit stopped();
+  }
+  if((evt.url().scheme().toLower()=="http")||
+     (evt.url().scheme().toLower()=="https")) {
+    DispatchHttp(evt);
+  }
+  if(evt.url().scheme().toLower()=="file") {
+    DispatchFile(evt);
+  }
+}
+
+
+void FileConveyor::DispatchFile(const ConveyorEvent &evt)
+{
+  QString destname;
+
+  switch(evt.method()) {
+  case ConveyorEvent::PutMethod:
+    destname=evt.url().path()+evt.filename().split("/").back();
+    rename(Repath(evt.filename()).toUtf8(),destname.toUtf8());
+    AddPuttedFile(evt.url().toString()+evt.filename().split("/").back());
+    break;
+
+  case ConveyorEvent::DeleteMethod:
+    unlink(evt.url().path().toUtf8());
+    RemovePuttedFile(evt.url().toString());
+    break;
+
+  case ConveyorEvent::PostMethod:  // Should never happen!
+  case ConveyorEvent::GetMethod:
+  case ConveyorEvent::HeadMethod:
+  case ConveyorEvent::NoMethod:
+    break;
+  }
+
+  conv_dummy_process_timer->start(0);
+}
+
+
+void FileConveyor::DispatchHttp(const ConveyorEvent &evt)
+{
   conv_arguments.clear();
   AddCurlAuthArgs(&conv_arguments,evt);
   if((!conv_user_agent.isEmpty())&&(!conv_password.isEmpty())) {
@@ -290,30 +356,27 @@ void FileConveyor::Dispatch()
   conv_arguments.push_back("/dev/null");
 
   switch(evt.method()) {
-  case ConveyorEvent::NoMethod:  // Shutting down
-    emit stopped();
-    return;
-
   case ConveyorEvent::GetMethod:
-    conv_arguments.push_back(evt.url());
+    conv_arguments.push_back(evt.url().toString());
     break;
 
   case ConveyorEvent::PutMethod:
     conv_arguments.push_back("-T");
     conv_arguments.push_back(Repath(evt.filename()));
-    conv_arguments.push_back(evt.url());
-    AddPuttedFile(evt.url()+evt.filename().split("/").back());
+    conv_arguments.push_back(evt.url().toString());
+    AddPuttedFile(evt.url().toString()+evt.filename().split("/").back());
     break;
 
   case ConveyorEvent::DeleteMethod:
     conv_arguments.push_back("-X");
     conv_arguments.push_back("DELETE");
-    conv_arguments.push_back(evt.url());
-    RemovePuttedFile(evt.url());
+    conv_arguments.push_back(evt.url().toString());
+    RemovePuttedFile(evt.url().toString());
     break;
 
   case ConveyorEvent::PostMethod:  // Should never happen!
   case ConveyorEvent::HeadMethod:
+  case ConveyorEvent::NoMethod:
     break;
   }
 

@@ -818,3 +818,6 @@
 2019-10-14 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in glasscoder(1) that could cause extremely long shutdown
 	times when generating HLS streams.
+2019-10-16 Fred Gleason <fredg@paravelsystems.com>
+	* Added support to glasscoder(1) for streaming HLS via the 'FILE'
+	scheme.

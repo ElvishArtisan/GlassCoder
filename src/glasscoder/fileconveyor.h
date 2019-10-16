@@ -32,6 +32,7 @@
 #include <QString>
 #include <QStringList>
 #include <QTimer>
+#include <QUrl>
 
 class ConveyorEvent
 {
@@ -42,14 +43,15 @@ class ConveyorEvent
 		HttpMethod meth=NoMethod);
   void *originator() const;
   QString filename() const;
-  QString url() const;
+  QUrl url() const;
   ConveyorEvent::HttpMethod method() const;
   static QString httpMethodString(HttpMethod method);
 
  private:
   void *evt_originator;
   QString evt_filename;
-  QString evt_url;
+  //  QString evt_url;
+  QUrl evt_url;
   ConveyorEvent::HttpMethod evt_method;
 };
 
@@ -82,9 +84,12 @@ class FileConveyor : public QObject
   void processFinishedData(int exit_code,QProcess::ExitStatus exit_status);
   void processCollectGarbageData();
   void nomethodData();
+  void dummyProcessData();
 
  private:
   void Dispatch();
+  void DispatchFile(const ConveyorEvent &evt);
+  void DispatchHttp(const ConveyorEvent &evt);
   void AddHeaders(QStringList *arglist,const QStringList &hdrs);
   void AddCurlAuthArgs(QStringList *arglist,const ConveyorEvent &evt);
   QString Repath(const QString &filename) const;
@@ -95,6 +100,7 @@ class FileConveyor : public QObject
   QStringList conv_arguments;
   QTimer *conv_nomethod_timer;
   QTimer *conv_garbage_timer;
+  QTimer *conv_dummy_process_timer;
   QDir *conv_temp_dir;
   QStringList conv_putted_files;
   QString conv_username;

@@ -53,8 +53,7 @@ void IceOutConnector::startStopping()
 }
 
 
-void IceOutConnector::connectToHostConnector(const QString &hostname,
-					     uint16_t port)
+void IceOutConnector::connectToHostConnector(const QUrl &url)
 {
   StartStream();
   setConnected(true);
@@ -95,6 +94,6 @@ void IceOutConnector::StartStream()
   SendHeader("icy-genre: "+streamGenre());
   SendHeader("icy-name: "+streamName());
   SendHeader("icy-pub: "+QString().sprintf("%u",streamPublic()));
-  SendHeader("icy-url: "+streamUrl());
+  SendHeader("icy-url: "+streamUrl().toString());
   SendHeader();
 }

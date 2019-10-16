@@ -107,8 +107,7 @@ void FileArchiveConnector::rotateFile()
 }
 
 
-void FileArchiveConnector::connectToHostConnector(const QString &hostname,
-						  uint16_t port)
+void FileArchiveConnector::connectToHostConnector(const QUrl &url)
 {
   //
   // Validate Mountpoint

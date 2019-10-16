@@ -55,7 +55,7 @@ FileConnector::ServerType FileConnector::serverType() const
 }
 
 
-void FileConnector::connectToHostConnector(const QString &hostname,uint16_t port)
+void FileConnector::connectToHostConnector(const QUrl &url)
 {
   SF_INFO sf;
   if(contentType()=="audio/x-wav") {

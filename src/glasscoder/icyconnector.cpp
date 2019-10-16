@@ -78,8 +78,8 @@ void IcyConnector::sendMetadata(MetaEvent *e)
 {
   if(e->fieldKeys().contains("StreamTitle")) {
     QString url=QString("http://")+
-      hostHostname()+
-      QString().sprintf(":%u",hostPort())+
+      serverUrl().host()+
+      QString().sprintf(":%u",serverUrl().port())+
       "/admin.cgi?"+
       "pass="+Connector::urlEncode(serverPassword())+"&"+
       "mode=updinfo&"+
@@ -89,9 +89,9 @@ void IcyConnector::sendMetadata(MetaEvent *e)
 }
 
 
-void IcyConnector::connectToHostConnector(const QString &hostname,uint16_t port)
+void IcyConnector::connectToHostConnector(const QUrl &url)
 {
-  icy_socket->connectToHost(hostname,port+1);
+  icy_socket->connectToHost(url.host(),url.port()+1);
   emit unmuteRequested();
 }
 
@@ -127,8 +127,8 @@ void IcyConnector::socketDisconnectedData()
   if(!icy_authenticated) {
     Log(LOG_WARNING,
 	QString().sprintf("login to \"%s:%d\" rejected: bad password",
-			  (const char *)hostHostname().toUtf8(),
-			  0xFFFF&hostPort()));
+			  (const char *)serverUrl().host().toUtf8(),
+			  0xFFFF&serverUrl().port()));
   }
   icy_authenticated=false;
   setConnected(false);
@@ -160,8 +160,8 @@ void IcyConnector::socketReadyReadData()
 	if(QString(icy_recv_buffer)=="invalid password") {
 	  Log(LOG_WARNING,
 	      QString().sprintf("login to \"%s:%d\" rejected: invalid password",
-				(const char *)hostHostname().toUtf8(),
-				0xFFFF&hostPort()));
+				(const char *)serverUrl().host().toUtf8(),
+				0xFFFF&serverUrl().port()));
 	}
 	else {
 	  icy_recv_buffer+=data[i];
@@ -249,8 +249,8 @@ void IcyConnector::ProcessHeaders(const QString &hdrs)
   if((!icy_authenticated)&&(f0[0]!="OK2")) {
     Log(LOG_WARNING,
 	QString().sprintf("login to \"%s:%d\" rejected: %s",
-			  (const char *)hostHostname().toUtf8(),
-			  0xFFFF&hostPort(),
+			  (const char *)serverUrl().host().toUtf8(),
+			  0xFFFF&serverUrl().port(),
 			  (const char *)f0[0].toUtf8()));
     return;
   }
@@ -260,7 +260,7 @@ void IcyConnector::ProcessHeaders(const QString &hdrs)
   WriteHeader("icy-pub: "+QString().sprintf("%d",streamPublic()));
   WriteHeader("icy-br: "+QString().sprintf("%u",audioBitrate()));
   if(icy_protocol_version==1) {
-    WriteHeader("icy-url: "+streamUrl());
+    WriteHeader("icy-url: "+streamUrl().toString());
   }
   WriteHeader("icy-irc: "+streamIrc());
   WriteHeader("icy-icq: "+streamIcq());

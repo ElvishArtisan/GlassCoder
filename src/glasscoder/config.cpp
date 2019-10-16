@@ -187,7 +187,27 @@ Config::Config()
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--server-url") {
-      server_url.setUrl(cmd->value(i));
+      server_url=QUrl(cmd->value(i));
+      if(server_url.port()<0) {
+	if(server_url.scheme().toLower()=="file") {
+	  server_url.setPort(0);
+	}
+	if(server_url.scheme().toLower()=="http") {
+	  server_url.setPort(80);
+	}
+	if(server_url.scheme().toLower()=="https") {
+	  server_url.setPort(443);
+	}
+	if(server_url.scheme().toLower()=="sftp") {
+	  server_url.setPort(22);
+	}
+	if(server_url.port()<0) {
+	  Log(LOG_ERR,
+	      "unknown/unsupported URL scheme \""+server_url.scheme()+"\"");
+	  exit(256);
+	}
+      }
+      cmd->setProcessed(i,true);
       if(!server_url.isValid()) {
 	Log(LOG_ERR,"invalid argument for --server-url");
 	exit(256);
