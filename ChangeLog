@@ -827,3 +827,6 @@
 2019-10-16 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in glasscoder(1) that caused a 'Resource not found'
 	CURL error to be generated when streaming HLS via SFTP.
+2019-10-16 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a regression in glasscoder(1) that caused XCast metadata
+	updates to be improperly escaped.

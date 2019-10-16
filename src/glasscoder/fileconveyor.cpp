@@ -33,7 +33,7 @@ ConveyorEvent::ConveyorEvent(void *orig,const QString &filename,const QString &u
 {
   evt_originator=orig;
   evt_filename=filename;
-  evt_url=QUrl(url);
+  evt_url=QUrl(url,QUrl::StrictMode);
   evt_method=meth;
 }
 
@@ -369,20 +369,20 @@ void FileConveyor::DispatchHttp(const ConveyorEvent &evt)
 
   switch(evt.method()) {
   case ConveyorEvent::GetMethod:
-    conv_arguments.push_back(evt.url().toString());
+    conv_arguments.push_back(evt.url().toEncoded());
     break;
 
   case ConveyorEvent::PutMethod:
     conv_arguments.push_back("-T");
     conv_arguments.push_back(Repath(evt.filename()));
-    conv_arguments.push_back(evt.url().toString());
-    AddPuttedFile(evt.url().toString()+evt.filename().split("/").back());
+    conv_arguments.push_back(evt.url().toEncoded());
+    AddPuttedFile(evt.url().toEncoded()+evt.filename().split("/").back());
     break;
 
   case ConveyorEvent::DeleteMethod:
     conv_arguments.push_back("-X");
     conv_arguments.push_back("DELETE");
-    conv_arguments.push_back(evt.url().toString());
+    conv_arguments.push_back(evt.url().toEncoded());
     RemovePuttedFile(evt.url().toString());
     break;
 
@@ -391,8 +391,6 @@ void FileConveyor::DispatchHttp(const ConveyorEvent &evt)
   case ConveyorEvent::NoMethod:
     break;
   }
-
-  //printf("curl %s\n",(const char *)conv_arguments.join(" ").toUtf8());
 
   conv_process=new QProcess(this);
   connect(conv_process,SIGNAL(error(QProcess::ProcessError)),
