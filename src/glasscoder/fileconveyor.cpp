@@ -248,6 +248,10 @@ void FileConveyor::processFinishedData(int exit_code,
       emit eventFinished(conv_events.front(),exit_code,0,conv_arguments);
     }
     else {
+      if(conv_events.front().method()==ConveyorEvent::PutMethod) {
+	AddPuttedFile(conv_events.front().url().toEncoded()+
+		      conv_events.front().filename().split("/").back());
+      }
       if(conv_events.front().method()==ConveyorEvent::DeleteMethod) {
 	conv_putted_files.removeAll(conv_events.front().url().toString());
       }
@@ -376,14 +380,12 @@ void FileConveyor::DispatchHttp(const ConveyorEvent &evt)
     conv_arguments.push_back("-T");
     conv_arguments.push_back(Repath(evt.filename()));
     conv_arguments.push_back(evt.url().toEncoded());
-    AddPuttedFile(evt.url().toEncoded()+evt.filename().split("/").back());
     break;
 
   case ConveyorEvent::DeleteMethod:
     conv_arguments.push_back("-X");
     conv_arguments.push_back("DELETE");
     conv_arguments.push_back(evt.url().toEncoded());
-    RemovePuttedFile(evt.url().toString());
     break;
 
   case ConveyorEvent::PostMethod:  // Should never happen!
@@ -421,14 +423,12 @@ void FileConveyor::DispatchSftp(const ConveyorEvent &evt)
     conv_arguments.push_back("-T");
     conv_arguments.push_back(Repath(evt.filename()));
     conv_arguments.push_back(evt.url().toString());
-    AddPuttedFile(evt.url().toString()+evt.filename().split("/").back());
     break;
 
   case ConveyorEvent::DeleteMethod:
     conv_arguments.push_back("-Q");
     conv_arguments.push_back("rm "+evt.url().path());
     conv_arguments.push_back(evt.url().toString(QUrl::RemovePath));
-    RemovePuttedFile(evt.url().toString());
     break;
 
   case ConveyorEvent::PostMethod:  // Should never happen!

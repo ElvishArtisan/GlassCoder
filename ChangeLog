@@ -830,3 +830,7 @@
 2019-10-16 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a regression in glasscoder(1) that caused XCast metadata
 	updates to be improperly escaped.
+2019-10-17 Fred Gleason <fredg@paravelsystems.com>
+	* Modified segment tracking in the HLS connector so as to update
+	the list of current PUTted files only after receiving confirmation
+	of success from curl(1).
