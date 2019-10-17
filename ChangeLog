@@ -834,3 +834,6 @@
 	* Modified segment tracking in the HLS connector so as to update
 	the list of current PUTted files only after receiving confirmation
 	of success from curl(1).
+2019-10-17 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Supported URL Schemes' section to the glasscoder(1)
+	man page.

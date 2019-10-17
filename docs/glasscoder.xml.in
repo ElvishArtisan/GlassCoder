@@ -1154,6 +1154,95 @@
 </variablelist>
 </refsect1>
 
+<refsect1 id='supported_url_schemes'><title>Supported URL Schemes</title>
+<para>
+  Not all URL schemes are supported by all server types. The following
+  chart breaks down the options.
+</para>
+<table xml:id='table.supported_url_schemes_by_server_type' frame='all'>
+  <title>Supported URL Schemes by Server Type</title>
+  <tgroup cols='4' align='left' colsep='1' rowsep='1'>
+    <colspec colname='c1'/>
+    <colspec colname='c2'/>
+    <colspec colname='c3'/>
+    <colspec colname='c4'/>
+    <thead>
+      <row>
+	<entry align="center">Server Type</entry>
+	<entry align="center">FILE://</entry>
+	<entry align="center">HTTP://</entry>
+	<entry align="center">SFTP://</entry>
+      </row>
+    </thead>
+    <tbody>
+      <row>
+	<entry>FILE</entry>
+	<entry align="center">Yes</entry>
+	<entry align="center">No</entry>
+	<entry align="center">No</entry>
+      </row>
+      <row>
+	<entry>FILEARCHIVE</entry>
+	<entry align="center">Yes</entry>
+	<entry align="center">No</entry>
+	<entry align="center">No</entry>
+      </row>
+      <row>
+	<entry>HLS</entry>
+	<entry align="center">Yes</entry>
+	<entry align="center">Yes [1]</entry>
+	<entry align="center">Yes [3]</entry>
+      </row>
+      <row>
+	<entry>IceCast2</entry>
+	<entry align="center">No</entry>
+	<entry align="center">Yes [2]</entry>
+	<entry align="center">No</entry>
+      </row>
+      <row>
+	<entry>IceOut</entry>
+	<entry align="center">No</entry>
+	<entry align="center">Yes</entry>
+	<entry align="center">No</entry>
+      </row>
+      <row>
+	<entry>IceStreamer</entry>
+	<entry align="center">No</entry>
+	<entry align="center">Yes</entry>
+	<entry align="center">No</entry>
+      </row>
+      <row>
+	<entry>Shout1</entry>
+	<entry align="center">No</entry>
+	<entry align="center">Yes [2]</entry>
+	<entry align="center">No</entry>
+      </row>
+      <row>
+	<entry>Shout2</entry>
+	<entry align="center">No</entry>
+	<entry align="center">Yes [2]</entry>
+	<entry align="center">No</entry>
+      </row>
+      <row>
+	<entry namest='c1' nameend='c4'>
+	  [1] Utilizes the HTTP <emphasis>PUT</emphasis> and <emphasis>DELETE</emphasis> methods
+	</entry>
+      </row>
+      <row>
+	<entry namest='c1' nameend='c4'>
+	  [2] Utilizes the HTTP <emphasis>GET</emphasis> method
+	</entry>
+      </row>
+      <row>
+	<entry namest='c1' nameend='c4'>
+	  [3] Supports <command>ssh</command><manvolnum>1</manvolnum> password authentication only
+	</entry>
+      </row>
+    </tbody>
+  </tgroup>
+</table>
+</refsect1>
+
 <refsect1 id='notes'><title>Notes</title>
 <para>
   HTTP Live Streams [HLS] require support for the HTTP
