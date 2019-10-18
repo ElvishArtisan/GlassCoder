@@ -840,3 +840,5 @@
 2019-10-18 Fred Gleason <fredg@paravelsystems.com>
 	* Added support for the 'StreamUrl' metadata field on ShoutCast
 	servers.
+2019-10-18 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'METADATA' section to the glasscoder(1) man page.
