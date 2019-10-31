@@ -1,6 +1,24 @@
 The NEWS file for the GlassCoder package.
 
 -------------------------------------------------------------------------------
+v0.10.0 -- 10/31/2019
+
+Changes:
+   Dependency Changes. GlassCoder now requires Qt5, OpenSSL and TagLib
+   libraries. See the 'INSTALL' file for more information.
+
+   Metadata Support. Added a JSON-based IPC mechanism for updating timed
+   metadata. See the 'METADATA' section of the glasscoder(1) man page for
+   details.
+
+   HLS Streaming. Added support for timed metadata on HLS streams, as well
+   as SFTP and FILE transport options. See the 'SUPPORTED URL SCHEMES'
+   section of the glasscoder(1) man page for details.
+
+   Rivendell Support. Added a 'pypad_glasscoder.py' PyPAD script for
+   integration with Rivendell 3.x.
+
+-------------------------------------------------------------------------------
 v0.9.23 -- 8/5/2019
 
 Changes:
