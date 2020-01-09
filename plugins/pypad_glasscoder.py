@@ -48,8 +48,9 @@ def ProcessPad(update):
             req_url = update_url+'/json_pad'
             try:
                 r = requests.post(req_url, json=json.loads(req_data))
+                update.syslog(syslog.LOG_INFO,'Update code: ' + str(r.status_code))
             except requests.exceptions.RequestException as e:
-                update.syslog(syslog.LOG_WARNING,'update failed: ' + e)
+                update.syslog(syslog.LOG_WARNING,'Update failed: ' + e)
 
 #
 # 'Main' function
