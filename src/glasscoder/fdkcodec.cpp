@@ -2,7 +2,7 @@
 //
 // Codec class for MPEG-4 Advanced Audio Coding High Efficiency Profile
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2020 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -49,7 +49,8 @@ FdkCodec::~FdkCodec()
 bool FdkCodec::isAvailable() const
 {
 #ifdef HAVE_FDKAAC
-  return dlopen("libfdk-aac.so.1",RTLD_LAZY)!=NULL;
+  return (dlopen("libfdk-aac.so.2",RTLD_LAZY)!=NULL)||
+    (dlopen("libfdk-aac.so.1",RTLD_LAZY)!=NULL);
 #else
   return false;
 #endif  // HAVE_FDKAAC
@@ -104,7 +105,9 @@ bool FdkCodec::startCodec()
   //
   // Load Library
   //
-  fdk_handle=dlopen("libfdk-aac.so.1",RTLD_LAZY);
+  if((fdk_handle=dlopen("libfdk-aac.so.2",RTLD_LAZY))==NULL) {
+    fdk_handle=dlopen("libfdk-aac.so.1",RTLD_LAZY);
+  }
 
   if(fdk_handle==NULL) {
     Log(LOG_ERR,"unsupported audio format (library not found)");
