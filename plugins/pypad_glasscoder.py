@@ -39,7 +39,6 @@ def ProcessPad(update):
         section='Line'+str(n)
         while(update.config().has_section(section)):
             lines.append('"%s": "%s"' % (update.config().get(section,'Key'), update.resolvePadFields(update.config().get(section,'Value'),pypad.ESCAPE_JSON)))
-            # lines.append('"'+update.config().get(section,'Key')+'": "'+update.resolvePadFields(update.config().get(section,'Value'),pypad.ESCAPE_JSON)+'"')
             n=n+1
             section='Line'+str(n)
 
@@ -48,9 +47,9 @@ def ProcessPad(update):
             req_url = update_url+'/json_pad'
             try:
                 r = requests.post(req_url, json=json.loads(req_data))
-                update.syslog(syslog.LOG_INFO,'Update code: ' + str(r.status_code))
+                update.syslog(syslog.LOG_INFO,'[PyPAD][Glasscoder] Update exit code: ' + str(r.status_code))
             except requests.exceptions.RequestException as e:
-                update.syslog(syslog.LOG_WARNING,'Update failed: ' + e)
+                update.syslog(syslog.LOG_WARNING,'[PyPAD][Glasscoder] Update failed: ' + e)
 
 #
 # 'Main' function
