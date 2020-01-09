@@ -25,6 +25,8 @@ import syslog
 import configparser
 import pycurl
 import pypad
+import json
+import requests
 
 def eprint(*args,**kwargs):
     print(*args,file=sys.stderr,**kwargs)
@@ -36,29 +38,18 @@ def ProcessPad(update):
         lines=[]
         section='Line'+str(n)
         while(update.config().has_section(section)):
-            lines.append('"'+update.config().get(section,'Key')+'": "'+update.resolvePadFields(update.config().get(section,'Value'),pypad.ESCAPE_JSON)+'"')
+            lines.append('"%s": "%s"' % (update.config().get(section,'Key'), update.resolvePadFields(update.config().get(section,'Value'),pypad.ESCAPE_JSON)))
+            # lines.append('"'+update.config().get(section,'Key')+'": "'+update.resolvePadFields(update.config().get(section,'Value'),pypad.ESCAPE_JSON)+'"')
             n=n+1
             section='Line'+str(n)
 
         if update.shouldBeProcessed('Glasscoder'):
-            json='{\r\n'
-            json+='    "Metadata": {\r\n'
-            for line in lines:
-                json+='        '+line+',\r\n'
-            json=json[0:-3]+'\r\n'
-            json+='    }\r\n'
-            json+='}\r\n'
-
-            curl=pycurl.Curl()
-            curl.setopt(curl.URL,update_url+'/json_pad');
-            curl.setopt(curl.POST,True)
-            curl.setopt(curl.POSTFIELDS,json)
+            req_data='{ "Metadata": { %s } }' % ", ".join(lines)
+            req_url = update_url+'/json_pad'
             try:
-                curl.perform()
-            except pycurl.error:
-                update.syslog(syslog.LOG_WARNING,'update failed: '+curl.errstr())
-            curl.close()
-
+                r = requests.post(req_url, json=json.loads(req_data))
+            except requests.exceptions.RequestException as e:
+                update.syslog(syslog.LOG_WARNING,'update failed: ' + e)
 
 #
 # 'Main' function
