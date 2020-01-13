@@ -49,7 +49,7 @@ def ProcessPad(update):
                 r = requests.post(req_url, json=json.loads(req_data))
                 update.syslog(syslog.LOG_INFO,'[PyPAD][Glasscoder] Update exit code: ' + str(r.status_code))
             except requests.exceptions.RequestException as e:
-                update.syslog(syslog.LOG_WARNING,'[PyPAD][Glasscoder] Update failed: ' + e)
+                update.syslog(syslog.LOG_WARNING,'[PyPAD][Glasscoder] Update failed: ' + str(e))
 
 #
 # 'Main' function
