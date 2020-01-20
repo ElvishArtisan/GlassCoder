@@ -28,15 +28,36 @@ moc_%.cpp:	%.h
 	@MOC@ $< -o $@
 
 
-noinst_PROGRAMS = pipe_connect
+noinst_PROGRAMS = pipe_connect\
+                  urldecode\
+                  urlencode
+
 
 dist_pipe_connect_SOURCES = pipe_connect.cpp pipe_connect.h
-
 nodist_pipe_connect_SOURCES = cmdswitch.cpp cmdswitch.h\
                               moc_pipe_connect.cpp
-
 pipe_connect_LDADD = @SIRLIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ @QT5_CLI_LIBS@ -lpthread
 pipe_connect_LDFLAGS = @SIRFLAGS@
+
+dist_urldecode_SOURCES = urldecode.cpp urldecode.h
+nodist_urldecode_SOURCES = cmdswitch.cpp cmdswitch.h\
+                           connector.cpp connector.h\
+                           logging.cpp logging.h\
+                           metaevent.cpp metaevent.h\
+                           moc_connector.cpp\
+                           moc_urldecode.cpp
+urldecode_LDADD = @SIRLIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ @QT5_CLI_LIBS@ -lpthread
+urldecode_LDFLAGS = @SIRFLAGS@
+
+dist_urlencode_SOURCES = urlencode.cpp urlencode.h
+nodist_urlencode_SOURCES = cmdswitch.cpp cmdswitch.h\
+                           connector.cpp connector.h\
+                           logging.cpp logging.h\
+                           metaevent.cpp metaevent.h\
+                           moc_connector.cpp\
+                           moc_urlencode.cpp
+urlencode_LDADD = @SIRLIBS@ @LIBJACK@ @SNDFILE_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ @QT5_CLI_LIBS@ -lpthread
+urlencode_LDFLAGS = @SIRFLAGS@
 
 CLEANFILES = *~\
              moc_*\

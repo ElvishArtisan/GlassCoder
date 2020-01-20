@@ -813,3 +813,10 @@
 2019-09-17 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in glassgui(1) that caused instances names to be
 	truncated when using the '--list-instances' option.
+2020-01-20 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in the 'Connector::urlDecode()' method that caused
+	incorrect results when processing multi-byte UTF-8 characters.
+	* Added a 'urldecode' test harness.
+	* Fixed a bug in the 'Connector::urlEncode()' method that caused
+	incorrect results when processing multi-byte UTF-8 characters.
+	* Added a 'urlencode' test harness.

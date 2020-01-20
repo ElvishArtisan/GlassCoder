@@ -18,6 +18,7 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <ctype.h>
 #include <time.h>
 
 #include <QStringList>
@@ -783,18 +784,21 @@ uint16_t Connector::hostPort() const
 
 QString Connector::urlEncode(const QString &str)
 {
-  QString ret;
+  QByteArray ret;
 
-  for(int i=0;i<str.length();i++) {
-    if(str.at(i).isLetterOrNumber()) {
-      ret+=str.mid(i,1);
+  QByteArray bytes=str.toUtf8();
+  for(int i=0;i<bytes.length();i++) {
+    int ch=0xFF&bytes[i];
+    if(isalnum(ch)||  // Unreserved characters (as per RFC 3986 2.3)
+       (ch=='-')||(ch=='_')||(ch=='.')||(ch=='~')) {
+      ret+=ch;
     }
     else {
-      ret+=QString().sprintf("%%%02X",str.at(i).toLatin1());
+      ret+=QString().sprintf("%%%02X",ch).toUtf8();
     }
   }
 
-  return ret;
+  return QString(ret);
 }
 
 
@@ -803,7 +807,7 @@ QString Connector::urlDecode(const QString &str)
   int istate=0;
   unsigned n;
   QString code;
-  QString ret;
+  QByteArray ret;
   bool ok=false;
 
   for(int i=0;i<str.length();i++) {
@@ -817,7 +821,7 @@ QString Connector::urlDecode(const QString &str)
 	  istate=1;
 	}
 	else {
-	  ret+=str.at(i);
+	  ret+=str.at(i).toLatin1();
 	}
       }
       break;
@@ -837,13 +841,13 @@ QString Connector::urlDecode(const QString &str)
 	istate=0;
       }
       code+=str.mid(i,1);
-      ret+=QChar(code.toInt(&ok,16));
+      ret+=code.toInt(&ok,16);
       istate=0;
       break;
     }
   }
 
-  return ret;
+  return QString::fromUtf8(ret);
 }
 
 
