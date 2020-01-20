@@ -66,7 +66,7 @@ void MetaServer::getRequestReceived(HttpConnection *conn)
     if(query.queryItemValue("mode")=="updinfo") {
       MetaEvent *e=new MetaEvent();
       e->setField("StreamTitle",
-		  Connector::urlDecode(query.queryItemValue("song")));
+		  query.queryItemValue("song",QUrl::FullyDecoded));
       emit metadataReceived(e);
       delete e;
       conn->sendError(200,"OK");

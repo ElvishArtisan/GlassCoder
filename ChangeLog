@@ -820,3 +820,6 @@
 	* Fixed a bug in the 'Connector::urlEncode()' method that caused
 	incorrect results when processing multi-byte UTF-8 characters.
 	* Added a 'urlencode' test harness.
+2020-01-20 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a double-decode bug when processing IceCast-style metadata
+	updates in glasscoder(1).
