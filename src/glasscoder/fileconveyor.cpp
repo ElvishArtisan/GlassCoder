@@ -2,7 +2,7 @@
 //
 // Serialized service for uploading files
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2019 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -19,9 +19,12 @@
 //
 
 #include <errno.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <syslog.h>
 #include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include "fileconveyor.h"
 
@@ -30,7 +33,7 @@ ConveyorEvent::ConveyorEvent(void *orig,const QString &filename,const QString &u
 {
   evt_originator=orig;
   evt_filename=filename;
-  evt_url=url;
+  evt_url=QUrl(url,QUrl::StrictMode);
   evt_method=meth;
 }
 
@@ -47,7 +50,7 @@ QString ConveyorEvent::filename() const
 }
 
 
-QString ConveyorEvent::url() const
+QUrl ConveyorEvent::url() const
 {
   return evt_url;
 }
@@ -56,6 +59,40 @@ QString ConveyorEvent::url() const
 ConveyorEvent::HttpMethod ConveyorEvent::method() const
 {
   return evt_method;
+}
+
+
+QString ConveyorEvent::httpMethodString(HttpMethod method)
+{
+  QString ret="UNKNOWN";
+
+  switch(method) {
+  case ConveyorEvent::NoMethod:
+    ret="NONE";
+    break;
+
+  case ConveyorEvent::GetMethod:
+    ret="GET";
+    break;
+
+  case ConveyorEvent::PostMethod:
+    ret="POST";
+    break;
+
+  case ConveyorEvent::PutMethod:
+    ret="PUT";
+    break;
+
+  case ConveyorEvent::DeleteMethod:
+    ret="DELETE";
+    break;
+
+  case ConveyorEvent::HeadMethod:
+    ret="HEAD";
+    break;
+  }
+
+  return ret;
 }
 
 
@@ -77,6 +114,11 @@ FileConveyor::FileConveyor(QObject *parent)
   conv_garbage_timer->setSingleShot(true);
   connect(conv_garbage_timer,SIGNAL(timeout()),
 	  this,SLOT(processCollectGarbageData()));
+
+  conv_dummy_process_timer=new QTimer(this);
+  conv_dummy_process_timer->setSingleShot(true);
+  connect(conv_dummy_process_timer,SIGNAL(timeout()),
+	  this,SLOT(dummyProcessData()));
 
   //
   // Create temp directory
@@ -196,6 +238,8 @@ void FileConveyor::processErrorData(QProcess::ProcessError err)
 void FileConveyor::processFinishedData(int exit_code,
 				       QProcess::ExitStatus exit_status)
 {
+  bool ok=false;
+
   if(exit_status==QProcess::CrashExit) {
     emit eventFinished(conv_events.front(),256,0,conv_arguments);
   }
@@ -204,8 +248,27 @@ void FileConveyor::processFinishedData(int exit_code,
       emit eventFinished(conv_events.front(),exit_code,0,conv_arguments);
     }
     else {
-      QString response=conv_process->readAllStandardOutput();
-      emit eventFinished(conv_events.front(),0,response.toInt(),conv_arguments);
+      if(conv_events.front().method()==ConveyorEvent::PutMethod) {
+	AddPuttedFile(conv_events.front().url().toEncoded()+
+		      conv_events.front().filename().split("/").back());
+      }
+      if(conv_events.front().method()==ConveyorEvent::DeleteMethod) {
+	conv_putted_files.removeAll(conv_events.front().url().toString());
+      }
+      if(conv_process==NULL) {
+	emit eventFinished(conv_events.front(),0,200,QStringList());
+      }
+      else {
+	QString response=conv_process->readAllStandardOutput();
+	if((conv_events.front().url().scheme().toLower()=="sftp")&&
+	   (response.toInt(&ok)==0)) {
+	  if(ok) {
+	    response="200";
+	  }
+	}
+	emit eventFinished(conv_events.front(),0,response.toInt(),
+			   conv_arguments);
+      }
     }
   }
   conv_garbage_timer->start(0);
@@ -235,10 +298,66 @@ void FileConveyor::nomethodData()
 }
 
 
+void FileConveyor::dummyProcessData()
+{
+  processFinishedData(0,QProcess::NormalExit);
+}
+
+
 void FileConveyor::Dispatch()
 {
   ConveyorEvent evt=conv_events.front();
+  /*
+  printf("Dispatch (via \"%s\"): %s => %s\n",
+	 (const char *)evt.url().scheme().toUtf8(),
+	 (const char *)evt.filename().toUtf8(),
+	 (const char *)evt.url().toString().toUtf8());
+  */
+  if(evt.url().toString().isEmpty()) {
+    emit stopped();
+  }
+  if(evt.url().scheme().toLower()=="file") {
+    DispatchFile(evt);
+  }
+  if((evt.url().scheme().toLower()=="http")||
+     (evt.url().scheme().toLower()=="https")) {
+    DispatchHttp(evt);
+  }
+  if(evt.url().scheme().toLower()=="sftp") {
+    DispatchSftp(evt);
+  }
+}
 
+
+void FileConveyor::DispatchFile(const ConveyorEvent &evt)
+{
+  QString destname;
+
+  switch(evt.method()) {
+  case ConveyorEvent::PutMethod:
+    destname=evt.url().path()+evt.filename().split("/").back();
+    rename(Repath(evt.filename()).toUtf8(),destname.toUtf8());
+    AddPuttedFile(evt.url().toString()+evt.filename().split("/").back());
+    break;
+
+  case ConveyorEvent::DeleteMethod:
+    unlink(evt.url().path().toUtf8());
+    RemovePuttedFile(evt.url().toString());
+    break;
+
+  case ConveyorEvent::PostMethod:  // Should never happen!
+  case ConveyorEvent::GetMethod:
+  case ConveyorEvent::HeadMethod:
+  case ConveyorEvent::NoMethod:
+    break;
+  }
+
+  conv_dummy_process_timer->start(0);
+}
+
+
+void FileConveyor::DispatchHttp(const ConveyorEvent &evt)
+{
   conv_arguments.clear();
   AddCurlAuthArgs(&conv_arguments,evt);
   if((!conv_user_agent.isEmpty())&&(!conv_password.isEmpty())) {
@@ -247,32 +366,75 @@ void FileConveyor::Dispatch()
   }
   AddHeaders(&conv_arguments,conv_added_headers);
   conv_arguments.push_back("--write-out");
-  conv_arguments.push_back("%{http_code}");
+  conv_arguments.push_back("%{response_code}");
   conv_arguments.push_back("--silent");
   conv_arguments.push_back("--output");
   conv_arguments.push_back("/dev/null");
 
   switch(evt.method()) {
-  case ConveyorEvent::NoMethod:  // Shutting down
-    emit stopped();
-    return;
-
   case ConveyorEvent::GetMethod:
-    conv_arguments.push_back(evt.url());
+    conv_arguments.push_back(evt.url().toEncoded());
     break;
 
   case ConveyorEvent::PutMethod:
     conv_arguments.push_back("-T");
     conv_arguments.push_back(Repath(evt.filename()));
-    conv_arguments.push_back(evt.url());
-    AddPuttedFile(evt.url()+evt.filename().split("/").back());
+    conv_arguments.push_back(evt.url().toEncoded());
     break;
 
   case ConveyorEvent::DeleteMethod:
     conv_arguments.push_back("-X");
     conv_arguments.push_back("DELETE");
-    conv_arguments.push_back(evt.url());
-    RemovePuttedFile(evt.url());
+    conv_arguments.push_back(evt.url().toEncoded());
+    break;
+
+  case ConveyorEvent::PostMethod:  // Should never happen!
+  case ConveyorEvent::HeadMethod:
+  case ConveyorEvent::NoMethod:
+    break;
+  }
+
+  conv_process=new QProcess(this);
+  connect(conv_process,SIGNAL(error(QProcess::ProcessError)),
+	  this,SLOT(processErrorData(QProcess::ProcessError)));
+  connect(conv_process,SIGNAL(finished(int,QProcess::ExitStatus)),
+	  this,SLOT(processFinishedData(int,QProcess::ExitStatus)));
+  conv_process->start("curl",conv_arguments);
+}
+
+
+void FileConveyor::DispatchSftp(const ConveyorEvent &evt)
+{
+  conv_arguments.clear();
+  AddCurlAuthArgs(&conv_arguments,evt);
+  if((!conv_user_agent.isEmpty())&&(!conv_password.isEmpty())) {
+    conv_arguments.push_back("--user-agent");
+    conv_arguments.push_back(conv_user_agent);
+  }
+  conv_arguments.push_back("--write-out");
+  conv_arguments.push_back("%{response_code}");
+  conv_arguments.push_back("--silent");
+  conv_arguments.push_back("--output");
+  conv_arguments.push_back("/dev/null");
+  conv_arguments.push_back("-k");
+
+  switch(evt.method()) {
+  case ConveyorEvent::PutMethod:
+    conv_arguments.push_back("-T");
+    conv_arguments.push_back(Repath(evt.filename()));
+    conv_arguments.push_back(evt.url().toString());
+    break;
+
+  case ConveyorEvent::DeleteMethod:
+    conv_arguments.push_back("-Q");
+    conv_arguments.push_back("rm "+evt.url().path());
+    conv_arguments.push_back(evt.url().toString(QUrl::RemovePath));
+    break;
+
+  case ConveyorEvent::PostMethod:  // Should never happen!
+  case ConveyorEvent::GetMethod:
+  case ConveyorEvent::HeadMethod:
+  case ConveyorEvent::NoMethod:
     break;
   }
 

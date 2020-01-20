@@ -2,7 +2,7 @@
 //
 // HLS/HTTP streaming connector for GlassCoder
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2019 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -42,6 +42,7 @@ HlsConnector::HlsConnector(bool is_top,FileConveyor *conv,QObject *parent)
   hls_sequence_back=0;
   hls_media_frames=0;
   hls_total_media_frames=0;
+  hls_metadata_updated=false;
 
   //
   // Create working directory
@@ -125,10 +126,15 @@ void HlsConnector::sendMetadata(MetaEvent *e)
 
   TagLib::ByteVector bytes=tag->render(4);
   hls_metadata_tag=QByteArray(bytes.data(),bytes.size());
+  int tag_size=Connector::id3TagSize(hls_metadata_tag);
+  if(tag_size<hls_metadata_tag.size()) {
+    hls_metadata_tag.resize(tag_size);
+  }
+  hls_metadata_updated=true;
 }
 
 
-void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
+void HlsConnector::connectToHostConnector(const QUrl &url)
 {
   //
   // Calculate publish point info
@@ -154,7 +160,7 @@ void HlsConnector::connectToHostConnector(const QString &hostname,uint16_t port)
   if(hls_is_top) {
     WriteTopPlaylistFile();
     hls_conveyor->push(this,hls_playlist_filename,
-		       "http://"+hostHostname()+hls_put_directory+"/",
+		       serverUrl().scheme()+"://"+serverUrl().host()+hls_put_directory+"/",
 		       ConveyorEvent::PutMethod);
     unlink(hls_playlist_filename.toUtf8());
   }
@@ -196,12 +202,23 @@ void HlsConnector::disconnectFromHostConnector()
 int64_t HlsConnector::writeDataConnector(int frames,const unsigned char *data,
 					 int64_t len)
 {
+  int frame_start=-1;
+  QByteArray sdata((const char *)data,len);
+
   if((hls_media_frames+(uint64_t)frames)>(HLS_SEGMENT_SIZE*audioSamplerate())) {
     RotateMediaFile();
   }
   hls_media_frames+=(uint64_t)frames;
   hls_total_media_frames+=(uint64_t)frames;
-  return fwrite(data,len,1,hls_media_handle);
+
+  if(hls_metadata_updated) {
+    if((frame_start=sdata.indexOf(0xFF))>=0) {
+      sdata.insert(frame_start,hls_metadata_tag);
+      hls_metadata_updated=false;
+    }
+  }
+
+  return fwrite(sdata.constData(),sdata.size(),1,hls_media_handle);
 }
 
 
@@ -214,16 +231,8 @@ void HlsConnector::conveyorEventFinished(const ConveyorEvent &evt,int exit_code,
     //
     if(exit_code!=0) {
       setConnected(false);
-      if(global_log_verbose) {
-	Log(LOG_WARNING,
-	    QString().sprintf("curl(1) error: %s, cmd: \"curl %s\"",
-		   (const char *)Connector::curlStrError(exit_code).toUtf8(),
-		   (const char *)args.join(" ").toUtf8()));
-      }
-      else {
-	Log(LOG_WARNING,QString().sprintf("CURL error: %s",
-		   (const char *)Connector::curlStrError(exit_code).toUtf8()));
-      }
+      Log(LOG_WARNING,"curl(1) error: "+Connector::curlStrError(exit_code)+
+	  ", cmd: \"curl "+args.join(" ")+"\"");
     }
     else {
       //
@@ -231,15 +240,9 @@ void HlsConnector::conveyorEventFinished(const ConveyorEvent &evt,int exit_code,
       //
       if((resp_code<200)||(resp_code>299)) {
 	setConnected(false);
-	if(global_log_verbose) {
-	  Log(LOG_WARNING,"curl(1) response error: "+
+	Log(LOG_WARNING,"curl(1) response error: "+
 	      Connector::httpStrError(resp_code)+
 	      ", cmd: \"curl "+args.join(" ")+"\"");
-	}
-	else {
-	  Log(LOG_WARNING,"curl(1) response error: "+
-	      Connector::httpStrError(resp_code));
-	}
       }
       else {
 	setConnected(true);
@@ -282,12 +285,13 @@ void HlsConnector::RotateMediaFile()
   // HTTP Uploads
   //
   hls_conveyor->push(this,hls_temp_dir->path()+"/"+hls_media_filename,
-		     "http://"+hostHostname()+
-		     QString().sprintf(":%u",hostPort())+
+		     serverUrl().scheme()+"://"+serverUrl().host()+
+		     QString().sprintf(":%u",serverUrl().port())+
 		     hls_put_directory+"/",ConveyorEvent::PutMethod);
   unlink((hls_temp_dir->path()+"/"+hls_media_filename).toUtf8());
   hls_conveyor->push(this,hls_playlist_filename,
-		     "http://"+hostHostname()+hls_put_directory+"/",
+		     serverUrl().scheme()+"://"+serverUrl().host()+
+		     hls_put_directory+"/",
 		     ConveyorEvent::PutMethod);
   unlink(hls_playlist_filename.toUtf8());
 
@@ -315,7 +319,9 @@ void HlsConnector::RotateMediaFile()
 	  ++dj;
 	}
       }
-      hls_conveyor->push(this,"","http://"+hostHostname()+hls_put_directory+"/"+
+      hls_conveyor->push(this,"",serverUrl().scheme()+"://"+serverUrl().host()+
+			 QString().sprintf(":%d",serverUrl().port())+
+			 hls_put_directory+"/"+
 			 GetMediaFilename(ci->first),
 			 ConveyorEvent::DeleteMethod);
       hls_media_killtimes.erase(ci++);
@@ -347,6 +353,7 @@ void HlsConnector::RotateMediaFile()
   if(hls_metadata_tag.size()>0) {
     fwrite(hls_metadata_tag.data(),1,hls_metadata_tag.size(),
 	   hls_media_handle);
+    hls_metadata_updated=false;
   }
 #endif  // HLS_OMIT_ID3_TIMESTAMPS
 }

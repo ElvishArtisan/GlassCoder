@@ -69,8 +69,8 @@ void IceConnector::sendMetadata(MetaEvent *e)
 {
   if(e->fieldKeys().contains("StreamTitle")) {
     QString url=QString("http://")+
-      hostHostname()+
-      QString().sprintf(":%u",hostPort())+
+      serverUrl().host()+
+      QString().sprintf(":%u",serverUrl().port())+
       "/admin/metadata?"+
       "mount="+serverMountpoint()+"&"+
       "mode=updinfo&"+
@@ -80,11 +80,11 @@ void IceConnector::sendMetadata(MetaEvent *e)
 }
 
 
-void IceConnector::connectToHostConnector(const QString &hostname,uint16_t port)
+void IceConnector::connectToHostConnector(const QUrl &url)
 {
   ice_conveyor->setUsername(serverUsername());
   ice_conveyor->setPassword(serverPassword());
-  ice_socket->connectToHost(hostname,port);
+  ice_socket->connectToHost(url.host(),url.port());
   emit unmuteRequested();
 }
 
@@ -245,8 +245,8 @@ void IceConnector::ProcessHeaders(const QString &hdrs)
       else {
 	Log(LOG_ERR,
 	    QString().sprintf("server \"%s:%u/%s\" returned \"%d %s\"",
-			      (const char *)hostHostname().toUtf8(),
-			      0xFFFF&hostPort(),
+			      (const char *)serverUrl().host().toUtf8(),
+			      0xFFFF&serverUrl().port(),
 			      (const char *)serverMountpoint().toUtf8(),
 			      f1[1].toInt(),(const char *)txt.toUtf8()));
 	    setError(QAbstractSocket::UnknownSocketError);
@@ -256,7 +256,8 @@ void IceConnector::ProcessHeaders(const QString &hdrs)
   }
   Log(LOG_ERR,
       QString().sprintf("server \"%s:%u/%s\" returned unrecognized response",
-			(const char *)hostHostname().toUtf8(),0xFFFF&hostPort(),
+			(const char *)serverUrl().host().toUtf8(),
+			0xFFFF&serverUrl().port(),
 			(const char *)serverMountpoint().toUtf8()));
   setError(QAbstractSocket::UnknownSocketError);
 }

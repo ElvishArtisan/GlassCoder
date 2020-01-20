@@ -6,7 +6,7 @@
   <refmeta>
     <refentrytitle>glasscoder-ipc</refentrytitle>
     <manvolnum>7</manvolnum>
-    <refmiscinfo class='source'>September 2016</refmiscinfo>
+    <refmiscinfo class='source'>October 2019</refmiscinfo>
     <refmiscinfo class='manual'>Linux Audio Manual</refmiscinfo>
   </refmeta>
   <refnamediv>
@@ -113,21 +113,12 @@
   </para>
   </refsect1>
 
-  <refsect1 id='http-control'><title>Control via HTTP GET</title>
+  <refsect1 id='http-control'><title>Control via HTTP</title>
   <para>
     If the <option>--metadata-port=<replaceable>port</replaceable></option>
     option is given a non-zero value, metadata updates can be sent to the
-    stream by means of one of the following HTTP GET calls
-  </para>
-  <para>
-    <uri>
-      http://<replaceable>hostname</replaceable>:<replaceable>port</replaceable>/admin.cgi?pass=<replaceable>password</replaceable>&amp;mode=updinfo&amp;song=<replaceable>text</replaceable>
-    </uri>
-  </para>
-  <para>
-    <uri>
-      http://<replaceable>hostname</replaceable>:<replaceable>port</replaceable>/admin/metadata?mount=<replaceable>mountpt</replaceable>&amp;mode=updinfo&amp;song=<replaceable>text</replaceable>
-    </uri>
+    stream by means of HTTP calls. For details, see the METADATA section of
+    the <command>glasscoder</command><manvolnum>1</manvolnum> man page.
   </para>
   </refsect1>
 

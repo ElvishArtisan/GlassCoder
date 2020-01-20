@@ -46,6 +46,8 @@ void MetaServer::getRequestReceived(HttpConnection *conn)
 	MetaEvent *e=new MetaEvent();
 	e->setField("StreamTitle",
 		    Connector::urlDecode(query.queryItemValue("song")));
+	e->setField("StreamUrl",
+		    Connector::urlDecode(query.queryItemValue("url")));
 	emit metadataReceived(e);
 	delete e;
 	conn->sendError(200,"OK");

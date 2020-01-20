@@ -30,6 +30,7 @@
 #include <QTcpSocket>
 #include <QTimer>
 #include <QProcess>
+#include <QUrl>
 
 #include "metaevent.h"
 
@@ -77,8 +78,9 @@ class Connector : public QObject
   void setStreamName(const QString &str);
   QString streamDescription() const;
   void setStreamDescription(const QString &str);
-  QString streamUrl() const;
+  QUrl streamUrl() const;
   void setStreamUrl(const QString &str);
+  void setStreamUrl(const QUrl &url);
   QString streamIrc() const;
   void setStreamIrc(const QString &str);
   QString streamIcq() const;
@@ -95,7 +97,8 @@ class Connector : public QObject
   void setExtension(const QString &str);
   QString formatIdentifier() const;
   void setFormatIdentifier(const QString &str);
-  virtual void connectToServer(const QString &hostname,uint16_t port);
+  QUrl serverUrl() const;
+  virtual void connectToServer(const QUrl &url);
   virtual int64_t writeData(int frames,const unsigned char *data,int64_t len);
   void stop();
   QString scriptUp() const;
@@ -116,6 +119,7 @@ class Connector : public QObject
   static QString curlStrError(int exit_code);
   static QString httpStrError(int status_code);
   static QString timezoneOffset();
+  static int id3TagSize(const QByteArray &data);
 
  public slots:
   virtual void setStreamPrologue(const QByteArray &data);
@@ -142,15 +146,14 @@ class Connector : public QObject
   virtual void startStopping();
   void setConnected(bool state);
   void setError(QAbstractSocket::SocketError err);
-  virtual void connectToHostConnector(const QString &hostname,uint16_t port)=0;
+  virtual void connectToHostConnector(const QUrl &url)=0;
   virtual void disconnectFromHostConnector()=0;
   virtual int64_t writeDataConnector(int frames,const unsigned char *data,
 				     int64_t len)=0;
-  QString hostHostname() const;
-  uint16_t hostPort() const;
 
  private:
   bool conn_server_exit_on_last;
+  QUrl conn_server_url;
   QString conn_server_username;
   QString conn_server_password;
   int conn_server_max_connections;
@@ -161,11 +164,10 @@ class Connector : public QObject
   QString conn_content_type;
   unsigned conn_audio_channels;
   unsigned conn_audio_samplerate;
-  //unsigned conn_audio_bitrate;
   std::vector<unsigned> conn_audio_bitrates;
   QString conn_stream_name;
   QString conn_stream_description;
-  QString conn_stream_url;
+  QUrl conn_stream_url;
   QString conn_stream_irc;
   QString conn_stream_icq;
   QString conn_stream_aim;
@@ -178,8 +180,8 @@ class Connector : public QObject
   QTimer *conn_watchdog_timer;
   bool conn_watchdog_active;
   bool conn_connected;
-  QString conn_host_hostname;
-  uint16_t conn_host_port;
+  //  QString conn_host_hostname;
+  //  uint16_t conn_host_port;
   QTimer *conn_stop_timer;
   QString conn_script_up;
   QProcess *conn_script_up_process;

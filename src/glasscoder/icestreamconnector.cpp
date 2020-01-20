@@ -312,8 +312,7 @@ void IceStreamConnector::startStopping()
 }
 
 
-void IceStreamConnector::connectToHostConnector(const QString &hostname,
-						uint16_t port)
+void IceStreamConnector::connectToHostConnector(const QUrl &url)
 {
   QHostAddress addr;
 
@@ -327,13 +326,14 @@ void IceStreamConnector::connectToHostConnector(const QString &hostname,
       exit(256);
     }
   }
-  if(!hostname.isEmpty()) {
-    if(!addr.setAddress(hostname)) {
+  if(!url.host().isEmpty()) {
+    if(!addr.setAddress(url.host())) {
       fprintf(stderr,"glasscoder: invalid interface address in URL\n");
       exit(256);
     }
-    if(!iceserv_server->listen(addr,port)) {
-      fprintf(stderr,"glasscoder: unable to bind TCP port %u\n",0xFFFF&port);
+    if(!iceserv_server->listen(addr,url.port())) {
+      fprintf(stderr,"glasscoder: unable to bind TCP port %u\n",
+	      0xFFFF&url.port());
       exit(256);
     }
   }
@@ -520,7 +520,7 @@ void IceStreamConnector::StartStream(IceStream *strm)
   SendHeader(strm,"icy-genre: "+streamGenre());
   SendHeader(strm,"icy-name: "+streamName());
   SendHeader(strm,"icy-pub: "+QString().sprintf("%u",streamPublic()));
-  SendHeader(strm,"icy-url: "+streamUrl());
+  SendHeader(strm,"icy-url: "+streamUrl().toString());
   if(strm->metadataEnabled()) {
     SendHeader(strm,"icy-metaint: "+
 	       QString().sprintf("%u",ICESTREAM_METADATA_INTERVAL));

@@ -813,6 +813,39 @@
 2019-09-17 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in glassgui(1) that caused instances names to be
 	truncated when using the '--list-instances' option.
+2019-09-19 Fred Gleason <fredg@paravelsystems.com>
+	* Added support for HLS timed metadata.
+2019-10-14 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in glasscoder(1) that could cause extremely long shutdown
+	times when generating HLS streams.
+2019-10-16 Fred Gleason <fredg@paravelsystems.com>
+	* Added support to glasscoder(1) for streaming HLS via the 'FILE'
+	scheme.
+2019-10-16 Fred Gleason <fredg@paravelsystems.com>
+	* Added support to glasscoder(1) for streaming HLS via the 'SFTP'
+	scheme using passwords.
+2019-10-16 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in glasscoder(1) that caused a 'Resource not found'
+	CURL error to be generated when streaming HLS via SFTP.
+2019-10-16 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a regression in glasscoder(1) that caused XCast metadata
+	updates to be improperly escaped.
+2019-10-17 Fred Gleason <fredg@paravelsystems.com>
+	* Modified segment tracking in the HLS connector so as to update
+	the list of current PUTted files only after receiving confirmation
+	of success from curl(1).
+2019-10-17 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Supported URL Schemes' section to the glasscoder(1)
+	man page.
+2019-10-18 Fred Gleason <fredg@paravelsystems.com>
+	* Added support for the 'StreamUrl' metadata field on ShoutCast
+	servers.
+2019-10-18 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'METADATA' section to the glasscoder(1) man page.
+2019-10-31 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.10.0.
+2020-01-09 Fred Gleason <fredg@paravelsystems.com>
+	* Updated glasscoder(1) to work properly with FDK-AACv2.
 2020-01-20 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in the 'Connector::urlDecode()' method that caused
 	incorrect results when processing multi-byte UTF-8 characters.

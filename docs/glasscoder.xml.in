@@ -6,7 +6,7 @@
   <refmeta>
     <refentrytitle>glasscoder</refentrytitle>
     <manvolnum>1</manvolnum>
-    <refmiscinfo class='source'>November 2016</refmiscinfo>
+    <refmiscinfo class='source'>October 2019</refmiscinfo>
     <refmiscinfo class='manual'>Linux Audio Manual</refmiscinfo>
   </refmeta>
   <refnamediv>
@@ -408,8 +408,8 @@
 	  Accept metadata updates via HTTP at port
 	  <replaceable>port</replaceable>. Default value is
 	  <userinput>0</userinput>, which disables metadata updates.
-	  Both IceCast and ShoutCast style metadata updates are supported
-	  (but see the NOTES section below).
+	  See the METADATA section (below) for information regarding the
+	  supported update formats.
 	</para>
       </listitem>
     </varlistentry>
@@ -633,8 +633,12 @@
       </term>
       <listitem>
 	<para>
-	  The URL describing the server resource to stream to. When used
-	  with a <option>--server-type</option> of
+	  The URL describing the server resource to stream to. See the
+	  SUPPORTED URL SCHEMES section (below) for a list of what URL
+	  schemes are appropriate for which server types.
+	</para>
+	<para>
+	  When used with a <option>--server-type</option> of
 	  <userinput>IceStreamer</userinput>, the host part of the URL
 	  is used to specify the address of the network interface to
 	  use for streaming (use <userinput>0.0.0.0</userinput> to indicate
@@ -1154,19 +1158,456 @@
 </variablelist>
 </refsect1>
 
-<refsect1 id='notes'><title>Notes</title>
+<refsect1 id='supported_url_schemes'><title>Supported URL Schemes</title>
 <para>
-  HTTP Live Streams [HLS] require support for the HTTP
-  <emphasis role="bold">PUT</emphasis> and 
-  <emphasis role="bold">DELETE</emphasis> methods on the publishing web server.
-  See the GlassCoder documentation directory
-  for a sample configuration for the Apache Web Server.
+  Not all URL schemes are supported by all server types. The following
+  chart breaks down the options.
+</para>
+<table xml:id='table.supported_url_schemes_by_server_type' frame='all'>
+  <title>Supported URL Schemes by Server Type</title>
+  <tgroup cols='4' align='left' colsep='1' rowsep='1'>
+    <colspec colname='c1'/>
+    <colspec colname='c2'/>
+    <colspec colname='c3'/>
+    <colspec colname='c4'/>
+    <thead>
+      <row>
+	<entry align="center">Server Type</entry>
+	<entry align="center">FILE://</entry>
+	<entry align="center">HTTP://</entry>
+	<entry align="center">SFTP://</entry>
+      </row>
+    </thead>
+    <tbody>
+      <row>
+	<entry>FILE</entry>
+	<entry align="center">Yes</entry>
+	<entry align="center">No</entry>
+	<entry align="center">No</entry>
+      </row>
+      <row>
+	<entry>FILEARCHIVE</entry>
+	<entry align="center">Yes</entry>
+	<entry align="center">No</entry>
+	<entry align="center">No</entry>
+      </row>
+      <row>
+	<entry>HLS</entry>
+	<entry align="center">Yes</entry>
+	<entry align="center">Yes [1]</entry>
+	<entry align="center">Yes [3]</entry>
+      </row>
+      <row>
+	<entry>IceCast2</entry>
+	<entry align="center">No</entry>
+	<entry align="center">Yes [2]</entry>
+	<entry align="center">No</entry>
+      </row>
+      <row>
+	<entry>IceOut</entry>
+	<entry align="center">No</entry>
+	<entry align="center">Yes</entry>
+	<entry align="center">No</entry>
+      </row>
+      <row>
+	<entry>IceStreamer</entry>
+	<entry align="center">No</entry>
+	<entry align="center">Yes</entry>
+	<entry align="center">No</entry>
+      </row>
+      <row>
+	<entry>Shout1</entry>
+	<entry align="center">No</entry>
+	<entry align="center">Yes [2]</entry>
+	<entry align="center">No</entry>
+      </row>
+      <row>
+	<entry>Shout2</entry>
+	<entry align="center">No</entry>
+	<entry align="center">Yes [2]</entry>
+	<entry align="center">No</entry>
+      </row>
+      <row>
+	<entry namest='c1' nameend='c4'>
+	  [1] Utilizes the HTTP <emphasis>PUT</emphasis> and <emphasis>DELETE</emphasis> methods
+	</entry>
+      </row>
+      <row>
+	<entry namest='c1' nameend='c4'>
+	  [2] Utilizes the HTTP <emphasis>GET</emphasis> method
+	</entry>
+      </row>
+      <row>
+	<entry namest='c1' nameend='c4'>
+	  [3] Supports <command>ssh</command><manvolnum>1</manvolnum> password authentication only
+	</entry>
+      </row>
+    </tbody>
+  </tgroup>
+</table>
+</refsect1>
+
+<refsect1 id='metadata'><title>Metadata</title>
+<para>
+  GlassCoder supports the notion of two types of metadata:
+  &quot;channel-based&quot; metadata, which applies to the stream as
+  a whole and does not change for the duration of an encoding session; and
+  &quot;timed&quot; metadata, which can be
+  changed in synchronization with the content of the audio stream.
+  Channel-based metadata can be specified by means of options given to
+  <command>glasscoder</command><manvolnum>1</manvolnum> and will be covered
+  in detail in the sections devoted to specific server types (below).
 </para>
 <para>
-  Not all server backends support all types of metadata.
-  <command>glasscoder</command><manvolnum>1</manvolnum> supports both
-  IceCast- and ShoutCast-style metadata updates and will attempt to
-  impedance-match updates to the server type as best as possible.
+  The primary mechanism for supplying timed metadata in GlassCoder is by
+  means of a JSON document containing the desired metadata, sent to the
+  target <command>glasscoder</command><manvolnum>1</manvolnum> instance
+  at the port specified by the <option>--metadata-port</option> option
+  by means of an HTTP <emphasis>POST</emphasis> operation. The basic format
+  of the JSON document is as follows:
+</para>
+<literallayout>
+  {
+      "Metadata": {
+          "Field1": "Some value",
+          "Field2": "Some other value"
+      }
+  }
+</literallayout>
+<para>
+  Not all server types support metadata, and those that do utilize wildly
+  different schemas. Following is a breakdown of the available metadata
+  options by server type:
+</para>
+<refsect2 id='metadata.icecast2'><title>IceCast2</title>
+<refsect3 id='metadata.icecast2.channel_metadata'><title>Channel Metadata</title>
+<para>
+  IceCast2 supports the following channel metadata fields:
+</para>
+<variablelist>
+  <varlistentry>
+    <term>Name</term>
+    <listitem>
+      <para>
+	Specified by the <option>--stream-name</option> option.
+      </para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term>Description</term>
+    <listitem>
+      <para>
+	Specified by the 
+	<option>--stream-description</option> option.
+      </para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term>URL</term>
+    <listitem>
+      <para>
+	Should be a link to content related to the stream. Specified by the 
+	<option>--stream-url</option> option.
+      </para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term>Genre</term>
+    <listitem>
+      <para>
+	Should be a single word describing the nature of the stream content.
+	Specified by the <option>--stream-genre</option> option.
+      </para>
+    </listitem>
+  </varlistentry>
+</variablelist>
+</refsect3>
+<refsect3 id='metadata.icecast2.timed_metadata'><title>Timed Metadata</title>
+<para>
+  IceCast2 provides one field of text, called
+  <computeroutput>StreamTitle</computeroutput>, which can be dynamically
+  updated to reflect the content currently playing on the stream.
+  By convention, this is usually formatted as
+  '<userinput>Artist</userinput> - <userinput>Title</userinput>' on streams
+  containing musical content.
+</para>
+<para>
+  For example, to set the <computeroutput>StreamTitle</computeroutput> field to
+  <userinput>The Beatles - Hey Jude</userinput>, the following JSON
+  could be used:
+  <literallayout>
+    {
+        "Metadata": {
+            "StreamTitle": "The Beatles - Hey Jude"
+        }
+    }
+  </literallayout>
+</para>
+</refsect3>
+<refsect3 id='metadata.icecast2.legacy_interface'>
+  <title>Legacy Interface</title>
+  <para>
+    In addition to the primary JSON interface, the
+    <computeroutput>StreamTitle</computeroutput> can be set by sending an HTTP
+    <emphasis>GET</emphasis> request to a running
+    <command>glasscoder</command><manvolnum>1</manvolnum> instance,
+    using the TCP port specified in the
+    <option>--metadata-port=</option><replaceable>port</replaceable> option.
+    The request must be in the following format:
+  </para>
+  <literallayout>
+  http://<replaceable>hostname</replaceable>:<replaceable>tcp-port</replaceable>/admin/metadata?mount=<replaceable>mount-point</replaceable>&amp;mode=updinfo&amp;song=<replaceable>string</replaceable>
+  </literallayout>
+  <para>
+    Where:
+  </para>
+  <para>
+    <replaceable>hostname</replaceable> - The hostname or IP address of the
+    system running <command>glasscoder</command><manvolnum>1</manvolnum>
+  </para>
+  <para>
+    <replaceable>tcp-port</replaceable> - The TCP port number specified in the
+    <option>--metadata-port</option> option to
+    <command>glasscoder</command><manvolnum>1</manvolnum>
+  </para>
+  <para>
+    <replaceable>mount-point</replaceable> - The mountpoint of the stream
+  </para>
+  <para>
+    <replaceable>string</replaceable> - The string to set, encoded as specified
+    in Section 2 of RFC3986
+  </para>
+  <para>
+    For example, to set a string of &quot;The Beatles - Hey Jude&quot; via a
+    <command>glasscoder</command><manvolnum>1</manvolnum> instance running at
+    <userinput>encoder.example.com</userinput> with a
+    <option>--metadata-port</option> value of <userinput>1234</userinput>
+    for a mountpoint of <userinput>MyStream</userinput>, the URL would be:
+  </para>
+  <para>
+    <userinput>
+      http://encoder.example.com:1234/admin/metadata?mount=MyStream&amp;mode=updinfo&amp;song=The%20Beatles%20-%20Hey%20Jude
+    </userinput>
+  </para>
+</refsect3>
+</refsect2>
+
+<refsect2 id='metadata.shoutcast'><title>ShoutCast</title>
+<refsect3 id='metadata.shoutcast.channel_metadata'><title>Channel Metadata</title>
+<para>
+  ShoutCast supports the following channel metadata fields:
+</para>
+<variablelist>
+  <varlistentry>
+    <term>Name</term>
+    <listitem>
+      <para>
+	Specified by the <option>--stream-name</option> option.
+      </para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term>URL</term>
+    <listitem>
+      <para>
+	Should be a link to content related to the stream. Specified by the 
+	<option>--stream-url</option> option.
+      </para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term>Genre</term>
+    <listitem>
+      <para>
+	Should be a single word describing the nature of the stream content.
+	Specified by the <option>--stream-genre</option> option.
+      </para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term>ICQ ID</term>
+    <listitem>
+      <para>
+	Should be User Identification Number for an ICQ user associated with
+	the stream content. Specified by the <option>--stream-icq</option>
+	option.
+      </para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term>AOL Instant Messenger ID</term>
+    <listitem>
+      <para>
+	Should be an ID for an AOL Instant Messenger user associated with the
+	stream content. Specified by the <option>--stream-aim</option> option.
+      </para>
+    </listitem>
+  </varlistentry>
+  <varlistentry>
+    <term>IRC ID</term>
+    <listitem>
+      <para>
+	Should be an ID for an Internet Relay Chat channel associated with
+	the stream content. Specified by the <option>--stream-irc</option>
+	option.
+      </para>
+    </listitem>
+  </varlistentry>
+</variablelist>
+</refsect3>
+<refsect3 id='metadata.shoutcast.timed_metadata'><title>Timed Metadata</title>
+<para>
+  ShoutCast provides two fields of text which can be dynamically updated to
+  reflect the content currently playing on the stream, called
+  <computeroutput>StreamTitle</computeroutput> and
+  <computeroutput>StreamUrl</computeroutput>. By convention, the
+  <computeroutput>StreamTitle</computeroutput> is usually formatted as
+  '<userinput>Artist</userinput> - <userinput>Title</userinput>' on streams
+  containing musical content, while <computeroutput>StreamUrl</computeroutput>
+  is used to provide a URL whence stream specific content --e.g. album cover
+  art -- can be retrieved.
+</para>
+<para>
+  For example, to set the <computeroutput>StreamTitle</computeroutput> field to
+  <userinput>The Beatles - Hey Jude</userinput> and the
+  <computeroutput>StreamUrl</computeroutput> field to
+  <userinput>http://images.example.com/1234.png</userinput>, the following
+  JSON could be used:
+  <literallayout>
+    {
+        "Metadata": {
+            "StreamTitle": "The Beatles - Hey Jude",
+            "StreamUrl": "http://images.example.com/1234.png"
+        }
+    }
+  </literallayout>
+</para>
+<note>
+  The use of either of these fields is optional in any given metadata
+  update. If only one field is given, the other will remain unchanged.
+</note>
+</refsect3>
+<refsect3 id='metadata.shoutcast.legacy_interface'>
+  <title>Legacy Interface</title>
+  <para>
+    In addition to the primary JSON interface, the
+    <computeroutput>StreamTitle</computeroutput> and
+    <computeroutput>StreamUrl</computeroutput> fields can be set by sending
+    an HTTP <emphasis>GET</emphasis> request to a running
+    <command>glasscoder</command><manvolnum>1</manvolnum> instance,
+    using the TCP port specified in the
+    <option>--metadata-port=</option><replaceable>port</replaceable> option.
+    The request must be in the following format:
+  </para>
+  <literallayout>
+    http://<replaceable>hostname</replaceable>:<replaceable>tcp-port</replaceable>/admin.cgi?pass=<replaceable>password</replaceable>&amp;mode=updinfo&amp;song=<replaceable>stream-title</replaceable>&amp;url=<replaceable>stream-url</replaceable>
+  </literallayout>
+  <para>
+    Where:
+  </para>
+  <para>
+    <replaceable>hostname</replaceable> - The hostname or IP address of the
+    system running <command>glasscoder</command><manvolnum>1</manvolnum>
+  </para>
+  <para>
+    <replaceable>tcp-port</replaceable> - The TCP port number specified in the
+    <option>--metadata-port</option> option to
+    <command>glasscoder</command><manvolnum>1</manvolnum>
+  </para>
+  <para>
+    <replaceable>password</replaceable> - The ShoutCast password, encoded as
+    specified in Section 2 of RFC3986
+  </para>
+  <para>
+    <replaceable>stream-title</replaceable> - The string to set for <computeroutput>StreamTitle</computeroutput>, encoded as specified in Section 2 of RFC3986
+  </para>
+  <para>
+    <replaceable>stream-url</replaceable> - The string to set for <computeroutput>StreamUrl</computeroutput>, encoded as specified in Section 2 of RFC3986
+  </para>
+  <para>
+    For example, to set a <computeroutput>StreamTitle</computeroutput> of
+    &quot;The Beatles - Hey Jude&quot; and a
+    <computeroutput>StreamUrl</computeroutput> of
+    &quot;http://image.example.com/1234.png&quot; with a password of
+    &quot;MyPassword&quot; via a
+    <command>glasscoder</command><manvolnum>1</manvolnum> instance running at
+    <userinput>encoder.example.com</userinput> with a
+    <option>--metadata-port</option> value of <userinput>1234</userinput>,
+    the URL would be:
+  </para>
+  <para>
+    <userinput>
+      http://encoder.example.com:1234/admin.cgi?pass=MyPassword&amp;mode=updinfo&amp;song=The%20Beatles%20-%20Hey%20Jude&amp;url=http://image.example.com/1234.png
+    </userinput>
+  </para>
+</refsect3>
+</refsect2>
+
+<refsect2 id='metadata.http_live_streams'><title>HTTP Live Streams (HLS)</title>
+<refsect3 id='metadata.http_live_streams.timed_metadata'><title>Timed Metadata</title>
+<para>
+  HLS supports timed metadata in the form of embedded ID3v2.4 tags. Available
+  fields thus include the entire set of text tags defined in the ID3v2.4
+  frame specification (available at http://id3.org/id3v2.4.0-frames).
+</para>
+<para>
+  For example, a typical metadata update could use the following JSON:
+  <literallayout>
+    {
+        "Metadata": {
+            "TIT2": "Hey Jude",
+            "TPE1": "The Beatles",
+            "TALB": "The White Album",
+            "TRSO": "WXYZ Radio"
+        }
+    }
+  </literallayout>
+</para>
+<para>
+  A user defined text information frame (<userinput>TXXX</userinput>) can
+  be sent by using the following special notation for the field identifier:
+</para>
+<para>
+  TXXX<replaceable>desc</replaceable>
+</para>
+<para>
+  Where:
+</para>
+  <para>
+    <replaceable>desc</replaceable> - The TXXX Description string (see
+    Section 4.2.6 of the ID3v2.4 Frame Specification)
+  </para>
+  <para>
+    For example:
+  </para>
+  <literallayout>
+    {
+        "Metadata": {
+            "TIT2": "Hey Jude",
+            "TPE1": "The Beatles",
+            "TALB": "The White Album",
+            "TRSO": "WXYZ Radio",
+            "TXXXxyz": "TXXX frame with a description string of \"xyz\""
+        }
+    }
+  </literallayout>
+</refsect3>
+</refsect2>
+</refsect1>
+
+<refsect1 id='bugs'><title>Bugs</title>
+<para>
+  SFTP:// transfers are done in &quot;insecure&quot; mode (due to crippled
+  support for <command>ssh</command><manvolnum>1</manvolnum> host keys in
+  <command>curl</command><manvolnum>1</manvolnum>).
+</para>
+<para>
+  <command>ssh</command><manvolnum>1</manvolnum> public key authentication
+  is unsupported (due to crippled
+  support for ed25519 keys in <command>curl</command><manvolnum>1</manvolnum>).
+</para>
+<para>
+  Ogg metadata support is still missing.
 </para>
 </refsect1>
 
@@ -1179,6 +1620,9 @@
 <refsect1 id='see_also'><title>See Also</title>
 <para>
   <citerefentry>
+    <refentrytitle>glasscoder-ipc</refentrytitle><manvolnum>7</manvolnum>
+  </citerefentry>,
+  <citerefentry>
     <refentrytitle>glasscommander</refentrytitle><manvolnum>1</manvolnum>
   </citerefentry>,
   <citerefentry>
@@ -1188,6 +1632,11 @@
     <refentrytitle>jackd</refentrytitle><manvolnum>1</manvolnum>
   </citerefentry>
 </para>
+<para>
+    RFC3986 - Uniform Resource Identifier (URI): Generic Syntax
+</para>
+<para>
+  ID3v2.4 Native Frame Specification (http://id3.org/id3v2.4.0-frames)
+</para>
 </refsect1>
 </refentry>
-

@@ -34,7 +34,7 @@ class FileConnector : public Connector
   FileConnector::ServerType serverType() const;
 
  protected:
-  void connectToHostConnector(const QString &hostname,uint16_t port);
+  void connectToHostConnector(const QUrl &url);
   void disconnectFromHostConnector();
   int64_t writeDataConnector(int frames,const unsigned char *data,int64_t len);
 

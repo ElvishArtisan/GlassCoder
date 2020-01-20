@@ -12,7 +12,7 @@
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
- //
+//
 //   You should have received a copy of the GNU General Public
 //   License along with this program; if not, write to the Free Software
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -348,11 +348,7 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
   // Open the server connection
   //
   sir_connectors.push_back(conn);
-  uint16_t port=DEFAULT_SERVER_PORT;
-  if(sir_config->serverUrl().port()>0) {
-    port=sir_config->serverUrl().port();
-  }
-  sir_connectors.back()->connectToServer(sir_config->serverUrl().host(),port);
+  sir_connectors.back()->connectToServer(sir_config->serverUrl());
 }
 
 
