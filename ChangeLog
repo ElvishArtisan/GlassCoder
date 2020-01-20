@@ -856,3 +856,6 @@
 2020-01-20 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a double-decode bug when processing IceCast-style metadata
 	updates in glasscoder(1).
+2020-01-20 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a double-decode bug when processing ShoutCast-style metadata
+	updates in glasscoder(1).
