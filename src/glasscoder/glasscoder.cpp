@@ -320,6 +320,7 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
   conn->setServerPipe(sir_config->serverPipe());
   conn->setServerStartConnections(sir_config->serverStartConnections());
   conn->setServerUserAgent(sir_config->serverUserAgent());
+  conn->setDumpHeaders(sir_config->dumpHeaders());
   if(is_top) {
     conn->setAudioBitrates(sir_config->audioBitrates());
     conn->setFormatIdentifier(sir_codecs[0]->formatIdentifier());

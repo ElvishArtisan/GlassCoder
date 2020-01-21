@@ -859,3 +859,7 @@
 2020-01-20 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a double-decode bug when processing ShoutCast-style metadata
 	updates in glasscoder(1).
+2020-01-21 Fred Gleason <fredg@paravelsystems.com>
+	* Added a '--dump-headers' swich to glasscoder(1).
+	* Added a '--dump-headers' swich to glasscommander(1).
+	* Implemented the '--dump-headers' swich for the IceCast2 server type.

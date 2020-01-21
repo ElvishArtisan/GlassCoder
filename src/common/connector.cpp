@@ -2,7 +2,7 @@
 //
 // Abstract base class for streaming server source connections.
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2020 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -48,12 +48,11 @@ Connector::Connector(QObject *parent)
   conn_stream_genre="unknown";
   conn_stream_public=true;
   conn_stream_timestamp_offset=0;
-  //  conn_host_hostname="";
-  //  conn_host_port=0;
   conn_connected=false;
   conn_watchdog_active=false;
   conn_script_up_process=NULL;
   conn_script_down_process=NULL;
+  conn_dump_headers=false;
   conn_is_stopping=false;
 
   conn_data_timer=new QTimer(this);
@@ -456,6 +455,18 @@ QString Connector::scriptDown() const
 void Connector::setScriptDown(const QString &cmd)
 {
   conn_script_down=cmd;
+}
+
+
+bool Connector::dumpHeaders() const
+{
+  return conn_dump_headers;
+}
+
+
+void Connector::setDumpHeaders(bool state)
+{
+  conn_dump_headers=state;
 }
 
 

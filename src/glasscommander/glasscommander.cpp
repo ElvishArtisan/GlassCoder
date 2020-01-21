@@ -2,7 +2,7 @@
 //
 // glasscommander(1) Audio Encoder front end
 //
-//   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2020 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -47,6 +47,15 @@ MainWidget::MainWidget(QWidget *parent)
 
   CmdSwitch *cmd=new CmdSwitch("glasscommander",GLASSCOMMANDER_USAGE);
   for(unsigned i=0;i<cmd->keys();i++) {
+    if(cmd->key(i)=="--instance-directory") {
+      if(!setSettingsDirectory(cmd->value(i))) {
+	QMessageBox::critical(this,"GlassCommander - "+tr("Error"),
+			   tr("Unable to access specified instance directory")+
+			      ":\n\""+cmd->value(i)+"\".");
+	exit(1);
+      }
+      cmd->setProcessed(i,true);
+    }
     if(!cmd->processed(i)) {
       QMessageBox::critical(this,"GlassCommander - "+tr("Error"),
 			    tr("Unknown argument")+" \""+cmd->key(i)+"\".");

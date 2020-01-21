@@ -2,7 +2,7 @@
 //
 // Abstract base class for GUI applications in GlassCoder
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2020 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -29,6 +29,7 @@
 GuiApplication::GuiApplication(QWidget *parent)
   : QMainWindow(parent)
 {
+  gui_settings_path="";
   gui_settings_dir=NULL;
   checkSettingsDirectory();
 }
@@ -40,14 +41,27 @@ QDir *GuiApplication::settingsDirectory() const
 }
 
 
+bool GuiApplication::setSettingsDirectory(const QString &dirname)
+{
+  gui_settings_path=dirname;
+  return checkSettingsDirectory();
+}
+
+
 bool GuiApplication::checkSettingsDirectory()
 {
-  QString path=QString("/")+GUI_SETTINGS_DIR;
+  QString path;
 
-  if(getenv("HOME")!=NULL) {
-    path=QString(getenv("HOME"))+"/"+GUI_SETTINGS_DIR;
+  if(gui_settings_path.isEmpty()) {
+    path=QString("/")+GUI_SETTINGS_DIR;
+    if(getenv("HOME")!=NULL) {
+      path=QString(getenv("HOME"))+"/"+GUI_SETTINGS_DIR;
+    }
   }
-  if(gui_settings_dir==NULL) {
+  else {
+    path=gui_settings_path;
+  }
+  if((gui_settings_dir==NULL)||(gui_settings_dir->path()!=path)) {
     gui_settings_dir=new QDir(path);
   }
   if(!gui_settings_dir->exists()) {

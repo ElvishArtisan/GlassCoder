@@ -2,7 +2,7 @@
 //
 // Configuration Class for glasscoder(1)
 //
-// (C) Copyright 2016-2019 Fred Gleason <fredg@paravelsystems.com>
+// (C) Copyright 2016-2020 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -57,6 +57,7 @@ Config::Config()
   metadata_port=0;
   global_log_string="";
   meter_data=false;
+  dump_headers=false;
   server_user_agent=QString("GlassCoder/")+VERSION;
 
   CmdSwitch *cmd=new CmdSwitch("glasscoder",GLASSCODER_USAGE);
@@ -122,6 +123,10 @@ Config::Config()
 	Log(LOG_ERR,"invalid --audio-samplerate value");
 	exit(256);
       }
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--dump-headers") {
+      dump_headers=true;
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--errors-string") {
@@ -548,6 +553,12 @@ bool Config::listDevices() const
 unsigned Config::metadataPort() const
 {
   return metadata_port;
+}
+
+
+bool Config::dumpHeaders() const
+{
+  return dump_headers;
 }
 
 
