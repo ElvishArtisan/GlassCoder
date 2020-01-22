@@ -93,6 +93,12 @@ bool Connector::serverExitOnLast() const
 }
 
 
+bool Connector::isConnected() const
+{
+  return conn_connected;
+}
+
+
 void Connector::setServerExitOnLast(bool state)
 {
   conn_server_exit_on_last=state;

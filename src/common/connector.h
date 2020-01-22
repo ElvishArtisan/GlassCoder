@@ -47,6 +47,7 @@ class Connector : public QObject
   Connector(QObject *parent=0);
   ~Connector();
   virtual Connector::ServerType serverType() const=0;
+  bool isConnected() const;
   bool serverExitOnLast() const;
   void setServerExitOnLast(bool state);
   int serverMaxConnections() const;

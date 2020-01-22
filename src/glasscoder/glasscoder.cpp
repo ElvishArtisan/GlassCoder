@@ -190,11 +190,19 @@ void MainObject::connectedData(bool state)
 void MainObject::exitTimerData()
 {
   if(glasscoder_exiting) {
+    bool connected=sir_connectors.at(0)->isConnected();
     for(unsigned i=0;i<sir_connectors.size();i++) {
       sir_connectors[i]->stop();
     }
     sir_conveyor->stop();
     sir_exit_timer->stop();
+    if((!sir_config->serverScriptDown().isEmpty())&&connected) {
+      QString cmd=sir_config->serverScriptDown();
+      if(fork()==0) {
+	system(cmd.toUtf8());
+	_exit(0);  // _exit(2) NOT exit(3), to avoid racing with the parent
+      }
+    }
   }
 }
 
