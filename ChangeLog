@@ -873,3 +873,8 @@
 	* Rewrote the json loop in pypad_glasscoder.py
 	* Increased debug in pypad_glasscoder.py
 	* Added [PyPAD][Glasscoder] Tags to better recognize in syslog/messages
+2020-01-23 Fred Gleason <fredg@paravelsystems.com>
+	* Removed 'python36' depedency from the 'glasscoder' RPM package.
+	* Added 'python36' and 'python36-requests' dependencies to the
+	'glasscoder-pypad' RPM package.
+	* Updated 'INSTALL'.

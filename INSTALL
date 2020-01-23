@@ -66,7 +66,8 @@ PLUG-INS
 --------
 GlassCoder include a PyPAD script for the Rivendell Radio Automation
 System that allows Rivendell to send articulated PAD to GlassCoder
-instance. Use of this requires Python 3.4 or later.
+instance. Use of this requires Python 3.4 or later, as well as the
+Python 'Requests' module.
 
 DOCUMENTATION
 -------------

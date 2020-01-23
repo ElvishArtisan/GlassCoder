@@ -30,7 +30,7 @@ License: GPLv2
 Packager: Fred Gleason <fredg@paravelsystems.com>
 Group: Productivity/Multimedia/Other
 Source: %{name}-@VERSION@.tar.gz
-BuildRequires: qt-devel libsamplerate-devel libsndfile-devel alsa-lib-devel hpklinux-devel python36
+BuildRequires: qt-devel libsamplerate-devel libsndfile-devel alsa-lib-devel hpklinux-devel
 BuildRoot: /var/tmp/%{name}-@VERSION@
 Requires: curl
 
@@ -52,7 +52,7 @@ GlassGui is a control applet for driving a single instance of the GlassCoder
 audio streaming encoder.  It provides a complete point-and-click interface
 for setting all of the GlassCoder parameters and can be used directly to
 instantiate an actual instance of GlassCoder or to generate a command-line
-invocation that can copy/pasted into another environment.
+invocation that can be copy/pasted into another environment.
 
 GlassCommander is a control applet for driving multiple simultaneous
 instances (potentially dozens) of the GlassCoder audio streaming encoder.
@@ -62,10 +62,10 @@ GlassCoder instance while conserving screen real estate.
 
 %package pypad
 Summary: PyPAD script for Rivendell
-Requires: rivendell-pypad
+Requires: rivendell-pypad python36 python36-requests
 
 %description pypad
-This package provides PyPAD script for use with the Rivendell Radio
+This package provides a PyPAD script for use with the Rivendell Radio
 Automation System. It can be used to send articulated PAD updates to
 GlassCoder instances.
 
@@ -129,6 +129,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Jan 23 2020 Fred Gleason <fredg@paravelsystems.com>
+-- Removed 'python36' dependency from the 'glasscoder' package.
+-- Added 'python36' and 'python36-requests' depedencies to the
+'glasscoder-pypad' package.
 * Tue Sep 17 2019 Fred Gleason <fredg@paravelsystems.com>
 -- Add the 'pypad' subpackage.
 * Fri Nov 18 2016 Fred Gleason <fredg@paravelsystems.com>
