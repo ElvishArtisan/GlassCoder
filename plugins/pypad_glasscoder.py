@@ -23,7 +23,6 @@
 import sys
 import syslog
 import configparser
-import pycurl
 import pypad
 import json
 import requests
