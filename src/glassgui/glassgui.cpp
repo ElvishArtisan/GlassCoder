@@ -2,7 +2,7 @@
 //
 // glassgui(1) Audio Encoder front end
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2020 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -56,6 +56,15 @@ MainWidget::MainWidget(QWidget *parent)
     }
     if(cmd->key(i)=="--delete-instance") {
       delete_instance=cmd->value(i);
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--instance-directory") {
+      if(!setSettingsDirectory(cmd->value(i))) {
+	QMessageBox::critical(this,"GlassGui - "+tr("Error"),
+			   tr("Unable to access specified instance directory")+
+			      ":\n\""+cmd->value(i)+"\".");
+	exit(1);
+      }
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--instance-name") {

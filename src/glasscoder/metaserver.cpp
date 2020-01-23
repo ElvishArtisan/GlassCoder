@@ -41,13 +41,14 @@ void MetaServer::getRequestReceived(HttpConnection *conn)
   QUrlQuery query(url);
 
   if(url.path()=="/admin.cgi") {   // Shoutcast Style
-    if(query.queryItemValue("pass")==meta_config->serverPassword()) {
+    if(query.queryItemValue("pass",QUrl::FullyDecoded)==
+       meta_config->serverPassword()) {
       if(query.queryItemValue("mode")=="updinfo") {
 	MetaEvent *e=new MetaEvent();
 	e->setField("StreamTitle",
-		    Connector::urlDecode(query.queryItemValue("song")));
+		    query.queryItemValue("song",QUrl::FullyDecoded));
 	e->setField("StreamUrl",
-		    Connector::urlDecode(query.queryItemValue("url")));
+		    query.queryItemValue("url",QUrl::FullyDecoded));
 	emit metadataReceived(e);
 	delete e;
 	conn->sendError(200,"OK");
@@ -68,7 +69,7 @@ void MetaServer::getRequestReceived(HttpConnection *conn)
     if(query.queryItemValue("mode")=="updinfo") {
       MetaEvent *e=new MetaEvent();
       e->setField("StreamTitle",
-		  Connector::urlDecode(query.queryItemValue("song")));
+		  query.queryItemValue("song",QUrl::FullyDecoded));
       emit metadataReceived(e);
       delete e;
       conn->sendError(200,"OK");

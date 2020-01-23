@@ -233,6 +233,9 @@ void IceConnector::ProcessHeaders(const QString &hdrs)
 
   f0=hdrs.split("\r\n");
   for(int i=0;i<f0.size();i++) {
+    if(dumpHeaders()) {
+      fprintf(stderr,"==> %s\n",(const char *)f0.at(i).toUtf8());
+    }
     f1=f0[i].split(" ");
     if(f1[0].left(7)=="HTTP/1.") {
       for(int i=2;i<f1.size();i++) {
@@ -265,5 +268,8 @@ void IceConnector::ProcessHeaders(const QString &hdrs)
 
 void IceConnector::WriteHeader(const QString &str)
 {
+  if(dumpHeaders()) {
+    fprintf(stderr,"<== %s\n",(const char *)str.toUtf8());
+  }
   ice_socket->write((str+"\r\n").toUtf8());
 }

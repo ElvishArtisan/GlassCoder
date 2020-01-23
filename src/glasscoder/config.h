@@ -2,7 +2,7 @@
 //
 // Configuration Class for glasscoder(1)
 //
-// (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+// (C) Copyright 2016-2020 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -68,6 +68,7 @@ class Config
   bool listDevices() const;
   unsigned metadataPort() const;
   bool meterData() const;
+  bool dumpHeaders() const;
 
  private:
   void ListCodecs() const;
@@ -124,6 +125,7 @@ class Config
   bool list_devices;
   unsigned metadata_port;
   bool meter_data;
+  bool dump_headers;
 };
 
 

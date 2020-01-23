@@ -6,7 +6,7 @@
   <refmeta>
     <refentrytitle>glassgui</refentrytitle>
     <manvolnum>1</manvolnum>
-    <refmiscinfo class='source'>November 2016</refmiscinfo>
+    <refmiscinfo class='source'>January 2020</refmiscinfo>
     <refmiscinfo class='manual'>Linux Audio Manual</refmiscinfo>
   </refmeta>
   <refnamediv>
@@ -75,6 +75,17 @@
 	<para>
 	  Delete the <replaceable>name</replaceable> instance from storage
 	  and then exit.
+	</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term><option>--instance-directory=</option><replaceable>dir</replaceable></term>
+      <listitem>
+	<para>
+	  Use <replaceable>dir</replaceable> as the location for storing
+	  instance data. Default value is
+	  <userinput>$HOME/.glassgui</userinput>.
 	</para>
       </listitem>
     </varlistentry>

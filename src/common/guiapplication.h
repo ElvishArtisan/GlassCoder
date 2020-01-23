@@ -2,7 +2,7 @@
 //
 // Abstract base class for GUI applications in GlassCoder
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2020 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -36,12 +36,14 @@ class GuiApplication : public QMainWindow
 
  protected:
   QDir *settingsDirectory() const;
+  bool setSettingsDirectory(const QString &dirname);
   bool checkSettingsDirectory();
   QString settingsFilename(const QString &instance_name);
   void deleteInstance(const QString &name);
   QStringList listInstances();
 
  private:
+  QString gui_settings_path;
   QDir *gui_settings_dir;
 };
 

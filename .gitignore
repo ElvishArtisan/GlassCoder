@@ -217,3 +217,5 @@ src/tests/stereometer.cpp
 src/tests/stereometer.h
 src/tests/streamdialog.cpp
 src/tests/streamdialog.h
+src/tests/urldecode
+src/tests/urlencode

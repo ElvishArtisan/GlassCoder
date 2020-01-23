@@ -2,7 +2,7 @@
 //
 // Abstract base class for streaming server source connections.
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2020 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -18,6 +18,7 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <ctype.h>
 #include <time.h>
 
 #include <QStringList>
@@ -47,12 +48,11 @@ Connector::Connector(QObject *parent)
   conn_stream_genre="unknown";
   conn_stream_public=true;
   conn_stream_timestamp_offset=0;
-  //  conn_host_hostname="";
-  //  conn_host_port=0;
   conn_connected=false;
   conn_watchdog_active=false;
   conn_script_up_process=NULL;
   conn_script_down_process=NULL;
+  conn_dump_headers=false;
   conn_is_stopping=false;
 
   conn_data_timer=new QTimer(this);
@@ -90,6 +90,12 @@ Connector::~Connector()
 bool Connector::serverExitOnLast() const
 {
   return conn_server_exit_on_last;
+}
+
+
+bool Connector::isConnected() const
+{
+  return conn_connected;
 }
 
 
@@ -458,6 +464,18 @@ void Connector::setScriptDown(const QString &cmd)
 }
 
 
+bool Connector::dumpHeaders() const
+{
+  return conn_dump_headers;
+}
+
+
+void Connector::setDumpHeaders(bool state)
+{
+  conn_dump_headers=state;
+}
+
+
 QString Connector::serverTypeText(Connector::ServerType type)
 {
   QString ret=tr("Unknown");
@@ -787,18 +805,21 @@ uint16_t Connector::hostPort() const
 
 QString Connector::urlEncode(const QString &str)
 {
-  QString ret;
+  QByteArray ret;
 
-  for(int i=0;i<str.length();i++) {
-    if(str.at(i).isLetterOrNumber()) {
-      ret+=str.mid(i,1);
+  QByteArray bytes=str.toUtf8();
+  for(int i=0;i<bytes.length();i++) {
+    int ch=0xFF&bytes[i];
+    if(isalnum(ch)||  // Unreserved characters (as per RFC 3986 2.3)
+       (ch=='-')||(ch=='_')||(ch=='.')||(ch=='~')) {
+      ret+=ch;
     }
     else {
-      ret+=QString().sprintf("%%%02X",str.at(i).toLatin1());
+      ret+=QString().sprintf("%%%02X",ch).toUtf8();
     }
   }
 
-  return ret;
+  return QString(ret);
 }
 
 
@@ -807,7 +828,7 @@ QString Connector::urlDecode(const QString &str)
   int istate=0;
   unsigned n;
   QString code;
-  QString ret;
+  QByteArray ret;
   bool ok=false;
 
   for(int i=0;i<str.length();i++) {
@@ -821,7 +842,7 @@ QString Connector::urlDecode(const QString &str)
 	  istate=1;
 	}
 	else {
-	  ret+=str.at(i);
+	  ret+=str.at(i).toLatin1();
 	}
       }
       break;
@@ -841,13 +862,13 @@ QString Connector::urlDecode(const QString &str)
 	istate=0;
       }
       code+=str.mid(i,1);
-      ret+=QChar(code.toInt(&ok,16));
+      ret+=code.toInt(&ok,16);
       istate=0;
       break;
     }
   }
 
-  return ret;
+  return QString::fromUtf8(ret);
 }
 
 

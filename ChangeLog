@@ -846,3 +846,24 @@
 	* Incremented the package version to 0.10.0.
 2020-01-09 Fred Gleason <fredg@paravelsystems.com>
 	* Updated glasscoder(1) to work properly with FDK-AACv2.
+2020-01-20 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in the 'Connector::urlDecode()' method that caused
+	incorrect results when processing multi-byte UTF-8 characters.
+	* Added a 'urldecode' test harness.
+	* Fixed a bug in the 'Connector::urlEncode()' method that caused
+	incorrect results when processing multi-byte UTF-8 characters.
+	* Added a 'urlencode' test harness.
+2020-01-20 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a double-decode bug when processing IceCast-style metadata
+	updates in glasscoder(1).
+2020-01-20 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a double-decode bug when processing ShoutCast-style metadata
+	updates in glasscoder(1).
+2020-01-21 Fred Gleason <fredg@paravelsystems.com>
+	* Added a '--dump-headers' swich to glasscoder(1).
+	* Added a '--dump-headers' swich to glasscommander(1).
+	* Implemented the '--dump-headers' swich for the IceCast2 server type.
+2020-01-22 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in glasscoder(1) where the script specified in the
+	'--server-script-down' switch would fail to be executed during
+	shutdown.

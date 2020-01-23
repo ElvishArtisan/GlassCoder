@@ -2,7 +2,7 @@
 //
 // glassgui(1) Audio Encoder front end
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2020 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -44,8 +44,6 @@
 #include "streamdialog.h"
 
 #define GLASSGUI_USAGE "[options]\n"
-#define GLASSGUI_SETTINGS_DIR ".glassgui"
-#define GLASSGUI_SETTINGS_FILE "glassguirc"
 #define GLASSGUI_TERMINATE_TIMEOUT 5000
 
 class MainWidget : public GuiApplication

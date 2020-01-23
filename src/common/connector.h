@@ -2,7 +2,7 @@
 //
 // Abstract base class for streaming server source connections.
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2020 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -47,6 +47,7 @@ class Connector : public QObject
   Connector(QObject *parent=0);
   ~Connector();
   virtual Connector::ServerType serverType() const=0;
+  bool isConnected() const;
   bool serverExitOnLast() const;
   void setServerExitOnLast(bool state);
   int serverMaxConnections() const;
@@ -105,6 +106,8 @@ class Connector : public QObject
   void setScriptUp(const QString &cmd);
   QString scriptDown() const;
   void setScriptDown(const QString &cmd);
+  bool dumpHeaders() const;
+  void setDumpHeaders(bool state);
   static QString serverTypeText(Connector::ServerType);
   static QString optionKeyword(Connector::ServerType type);
   static bool requiresServerUrl(Connector::ServerType type);
@@ -190,6 +193,7 @@ class Connector : public QObject
   QString conn_script_down;
   QProcess *conn_script_down_process;
   QStringList conn_script_down_args;
+  bool conn_dump_headers;
   QTimer *conn_script_down_garbage_timer;
   bool conn_is_stopping;
 };
