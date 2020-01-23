@@ -867,3 +867,9 @@
 	* Fixed a bug in glasscoder(1) where the script specified in the
 	'--server-script-down' switch would fail to be executed during
 	shutdown.
+2020-01-23 Gabriele Fergola <workino@gmail.com>
+	* Corrected the exception on utf8 characters movin pypad_glasscoder.py
+	  from pycurl to requests.
+	* Rewrote the json loop in pypad_glasscoder.py
+	* Increased debug in pypad_glasscoder.py
+	* Added [PyPAD][Glasscoder] Tags to better recognize in syslog/messages
