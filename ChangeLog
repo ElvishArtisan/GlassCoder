@@ -880,3 +880,5 @@
 	* Updated 'INSTALL'.
 2020-01-24 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'CODINGSTYLE' file.
+2020-01-24 Fred Gleason <fredg@paravelsystems.com>
+	* Switched from MM/DD/YYYY to DD MMM YYYY date formats in 'NEWS'.
