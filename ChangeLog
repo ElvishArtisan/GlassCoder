@@ -878,3 +878,5 @@
 	* Added 'python36' and 'python36-requests' dependencies to the
 	'glasscoder-pypad' RPM package.
 	* Updated 'INSTALL'.
+2020-01-24 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'CODINGSTYLE' file.

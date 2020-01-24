@@ -1,0 +1,257 @@
+This is the CODINGSTYLE file for the GlassCoder package.
+
+OVERVIEW:
+This file, CODINGSTYLE, describes the coding style guidelines for writing
+new code, how to submit patches to be incorporated into the official
+GlassCoder Git repository, and other code related information. General info
+on the GlassCoder project can be found at
+https://github.com/ElvishArtisan/GlassCoder as well as in the 'README' and
+'INSTALL' files.  
+
+The code style used for GlassCoder is a somewhat idiosyncratic mixture of
+the style generally used for Qt C++ programs combined with the classic UNIX
+C style. Some of the specifics include:
+
+
+LINE LENGTH:
+Should not be longer than 78 characters unless doing so would severely
+compromise the readability of the code. Where it is necessary to break a
+line, it should be done at a point that preserves maximum clarity and ease
+of reading.
+
+Good:
+  *report+=QString(" ")+
+    logLine(i)->startTime(RDLogLine::Logged).toString("hh:mm:ss")+
+    QString().sprintf(" - cart %06d [",logLine(i)->cartNumber())+
+    q->value(1).toString()+"] "+QObject::tr("is not playable")+"\n";
+
+Bad:
+  *report+=QString(" ")+logLine(i)->startTime(RDLogLine::Logged).toString("hh:mm:ss")+QString().sprintf(" - cart %06d [",logLine(i)->cartNumber())+q->value(1).toString()+"] "+QObject::tr("is not playable")+"\n";
+
+
+INDENTATION:
+Should be two spaces per level. This helps to keep the line length down.
+
+Good:
+  if(to_line<0) {
+    to_line=size();
+    for(int i=from_line;i<size();i++) {
+      if(logLine(i)->timeType()==RDLogLine::Hard) {
+	to_line=i;
+	i=size();
+	if(sched_time!=NULL) {
+	  *sched_time=logLine(i)->startTime(RDLogLine::Logged);
+	}
+      }
+    }
+  }
+
+Bad:
+  if(to_line<0) {
+          to_line=size();
+	  for(int i=from_line;i<size();i++) {
+                  if(logLine(i)->timeType()==RDLogLine::Hard) {
+	                  to_line=i;
+	                  i=size();
+	                  if(sched_time!=NULL) {
+	                          *sched_time=logLine(i)->startTime(RDLogLine::Logged);
+	                  }
+                   }
+           }
+  }
+
+
+CURLY BRACES:
+Conditional statements (such as 'if' and 'for') should *always* use curly
+braces, even where the affected block is but one line long. The opening
+brace should be on the same line as the conditional and the closing one on
+a line by itself. This style greatly facilitates debugging, allowing a
+single line to be provisionally commented out or additional lines to be
+provisionally added without making the enclosing conditional syntactically
+invalid.
+
+Good:
+  if(i==12) {
+    printf("i is equal to twelve!\n");
+  }
+
+Bad:
+  if(i==12)
+    printf("i is equal to twelve!\n");
+
+
+PADDING WHITESPACE:
+Wherever possible, there should be no whitespace between constants/variables
+and operators. This helps to keep the line length down.
+
+Good:
+  for(int i=from_line;i<size();i++) {
+    if(logLine(i)->timeType()==RDLogLine::Hard) {
+      to_line=i;
+    }
+  }
+
+Bad:
+  for(int i = from_line; i < size(); i++) {
+    if(logLine(i)->timeType() == RDLogLine::Hard) {
+      to_line = i;
+    }
+  }
+
+
+CLASS NAMES:
+Should have the initial letter of each word capitalized, e.g. 'ThisIsMyClass'.
+
+
+METHOD NAMES:
+Public method names as well as signal and slot method names should follow
+the general style used by Qt. A special convention for GlassCoder is to
+reserve names beginning with an uppercase letter for private methods only.
+
+Good:
+class LogPlayer
+{
+ Q_OBJECT
+ public:
+  LogPlayer(int id,RDEventPlayer *player,QObject *parent=0);
+  QString serviceName() const;
+  void setServiceName(const QString &svcname);
+
+ private slots:
+  void transTimerData();
+  void graceTimerData();
+
+ signals:
+  void renamed();
+  void reloaded();
+  void transportChanged();
+
+ private:
+  bool StartEvent(int line,RDLogLine::TransType trans_type,int trans_length,
+		  RDLogLine::StartSource src,int mport=-1,int duck_length=0);
+  bool StartAudioEvent(int line);
+};
+
+Bad:
+class LogPlayer
+{
+ Q_OBJECT
+ public:
+  LogPlayer(int id,RDEventPlayer *player,QObject *parent=0);
+  QString servicename() const;
+  void set_service_name(const QString &svcname);
+
+ private slots:
+  void TransTimerData();
+  void grace_timer_data();
+
+ signals:
+  void RENAMED();
+  void Reloaded();
+  void transport_changed();
+
+ private:
+  bool startEvent(int line,RDLogLine::TransType trans_type,int trans_length,
+		  RDLogLine::StartSource src,int mport=-1,int duck_length=0);
+  bool startAudioEvent(int line);
+};
+
+
+VARIABLE NAMES:
+*All* variables should be lowercase only, with uppercase being reserved for
+class and method names. Words should be separated by underscores.
+
+Good:
+  int log_position_number=1;
+
+Bad:
+  int logPositionNumnber=1;
+
+Class variables should be prefaced with a short base name that is common to
+all, followed by an underscore. For example, the class 'MyClass' might use
+'myclass_', as in 'myclass_foo1', 'myclass_foo2', etc. Local variables
+(including function parameter names) should be kept short, preferably a
+single word.
+
+
+WRITING TO THE SYSLOG:
+GlassCoder makes extensive use of the syslog(3) system found on all
+POSIX-compliant systems. Sending messages to the syslog should
+always be done by means of the following function:
+
+#include "logging.h"
+
+void Log(int prio,const QString &msg);
+
+For a discussion of the parameters of these methods, see the syslog(3) man
+page. The 'prio' parameter should be one of the following values:
+
+    LOG_ERR - Indicates that a fatal error has occurred; 'fatal' meaning
+              that the program is unable to continue and will now exit.
+
+LOG_WARNING - Indicates that a non-fatal error has occured; meaning
+              that the program will continue to operate, but with
+              possibly significant operational degradation. This would be
+              appropriate for things like failure to connect to an
+              external switcher or other device.
+
+   LOG_INFO - Information useful for tracking operational state --e.g.
+              the player has switched to a different sub-stream utilizing
+	      a different bitrate, etc.
+
+  LOG_DEBUG - Information useful for tracking or verifying GlassCoder
+              software internal state. These messages will not normally
+              be seen by users, but can be made visible to allow for
+	      program debugging.  
+
+CONTRIBUTING CHANGES:
+The master code repository for GlassCoder resides at GitHub, and can be
+found at:
+
+      https://github.com/ElvishArtisan/GlassCoder
+
+Changes should be submitted in the form of a pull request [PR] against
+the 'master' branch. Information about drafting and submitting PRs can
+be found at:
+
+    https://help.github.com/en/articles/about-pull-requests
+
+
+PULL REQUEST CHECKLIST:
+Before submitting a pull request, the following guidelines should be
+completed:
+
+1) The code should compile without errors or warnings [the '-Werrors' switch
+   for gcc(1) is your friend here!].
+
+2) Add an entry to the 'ChangeLog' file at the base of the GlassCoder source
+   code tree, describing your changes. The format of the ChangeLog file has
+   the most recent changes at the bottom of the file. Entries start with a
+   date stamp and have a format like:
+
+    YYYY-MM-DD NAME <EMAIL>
+    * Description of change
+
+For example:
+    2007-02-23 John Coder <coder@example.com>
+	* Modified the code in 'lib/rdimport_audio.cpp' to use the
+	'RDCart::setMetadata()' and 'RDCut::setMetadata()' methods.
+
+3) If your change alters any user-visible aspect (UI or behavior), update
+   the user documentation appropriately. The documentation is written
+   in DocBook 5 markup, and can be found at the following locations in
+   the source tree:
+
+   Manual pages - 'docs/'
+
+4) If you wish your work to be mentioned in the 'AUTHORS' file, add or modify
+   the appropriate entry there. Entries should be sorted by surname, then
+   christian name of the author.
+
+
+QUESTIONS:
+Questions about coding style, or indeed any aspect of GlassCoder development,
+are welcomed on the Rivendell-prog mailing list. Subscription information
+and list archives are available at:
+
+    http://caspian.paravelsystems.com/mailman/listinfo/rivendell-prog
