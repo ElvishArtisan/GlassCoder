@@ -1,6 +1,19 @@
 The NEWS file for the GlassCoder package.
 
 -------------------------------------------------------------------------------
+v1.0.0 -- 24 January 2020
+
+Changes:
+   Updated codec support. Glasscoder(1) has been updated to work properly
+   with FDK-AACv2.
+
+   UTF-8 Enhancements. Updates and bug-fixes to support multi-byte UTF-8
+   characters fully in ICY and HLS metadata.
+
+   PyPAD Plug-in Fixes. Bug-fixes for 'pypad-glasscoder' plug-in for
+   Rivendell [thanks to Gabriele Fergola <workino@gmail.com>].
+
+-------------------------------------------------------------------------------
 v0.10.0 -- 31 October 2019
 
 Changes:
