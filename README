@@ -31,3 +31,10 @@ Also included is GlassGui, a graphical point-and-click interface that can
 be used to drive GlassCoder or generate command-line invocations that
 can be copy/pasted to other systems.  A complete man page detailing the
 options for glasscoder(1) is also provided.
+
+This product includes software developed by the OpenSSL Project
+for use in the OpenSSL Toolkit. (http://www.openssl.org/).
+
+This program is released under the GNU General Public License version 2 with
+the additional exemption that compiling, linking, and/or using OpenSSL is
+allowed.
