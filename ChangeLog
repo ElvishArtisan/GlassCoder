@@ -887,3 +887,6 @@
 2020-01-27 Fred Gleason <fredg@paravelsystems.com>
 	* Added OpenSSL use notice to 'README.
 	* Added GPLv2 exception for linking to OpenSSL to 'README'.
+2020-01-27 Fred Gleason <fredg@paravelsystems.com>
+	* Updated the description of glassgui(1) in 'README'.
+	* Added a description of glasscommander(1) in 'README'.

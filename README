@@ -27,10 +27,21 @@ The following audio codecs are supported:
    Ogg Opus
    Ogg Vorbis
 
-Also included is GlassGui, a graphical point-and-click interface that can
-be used to drive GlassCoder or generate command-line invocations that
-can be copy/pasted to other systems.  A complete man page detailing the
-options for glasscoder(1) is also provided.
+The following additional utilities are included:
+
+GlassGui, a GUI front end for a single instance of the glasscoder(1) audio
+encoder. It provides a convenient and discoverable means for creating and
+saving glasscoder(1) invocations as well as an instance management system
+for saving multiple sets of configurations on the local system.
+
+GlassCommander, a high-density GUI front end for the glasscoder(1) audio
+encoder. It provides a convenient and discoverable means for creating and
+saving glasscoder(1) invocations and an instance management system (fully
+compatible with that of glassgui(1)) for saving multiple sets of
+configurations on the local system in a manner that conserves screen
+real-estate. Glasscommander(1) is capable of hosting dozens of simultaneous
+glasscoder(1) instances while still allowing easy access to the control and
+status of each one.
 
 This product includes software developed by the OpenSSL Project
 for use in the OpenSSL Toolkit. (http://www.openssl.org/).
