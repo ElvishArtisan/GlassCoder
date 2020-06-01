@@ -2,7 +2,7 @@
 //
 // Source connector class for IceCast2 servers
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2020 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -28,13 +28,7 @@ IceConnector::IceConnector(QObject *parent)
 {
   ice_recv_buffer="";
 
-  ice_socket=new QTcpSocket(this);
-  connect(ice_socket,SIGNAL(connected()),this,SLOT(socketConnectedData()));
-  connect(ice_socket,SIGNAL(disconnected()),
-	  this,SLOT(socketDisconnectedData()));
-  connect(ice_socket,SIGNAL(readyRead()),this,SLOT(socketReadyReadData()));
-  connect(ice_socket,SIGNAL(error(QAbstractSocket::SocketError)),
-	  this,SLOT(socketErrorData(QAbstractSocket::SocketError)));
+  ice_socket=NULL;
 
   //
   // Metadata File Conveyor
@@ -82,6 +76,32 @@ void IceConnector::sendMetadata(MetaEvent *e)
 
 void IceConnector::connectToHostConnector(const QUrl &url)
 {
+  //
+  // Create Socket
+  //
+  if(ice_socket!=NULL) {
+    ice_socket->
+      disconnect(SIGNAL(connected()),this,SLOT(socketConnectedData()));
+    ice_socket->
+      disconnect(SIGNAL(disconnected()),this,SLOT(socketDisconnectedData()));
+    ice_socket->
+      disconnect(SIGNAL(readyRead()),this,SLOT(socketReadyReadData()));
+    ice_socket->
+      disconnect(SIGNAL(error(QAbstractSocket::SocketError)),
+		 this,SLOT(socketErrorData(QAbstractSocket::SocketError)));
+    ice_socket->deleteLater();
+  }
+  ice_socket=new QTcpSocket(this);
+  connect(ice_socket,SIGNAL(connected()),this,SLOT(socketConnectedData()));
+  connect(ice_socket,SIGNAL(disconnected()),
+	  this,SLOT(socketDisconnectedData()));
+  connect(ice_socket,SIGNAL(readyRead()),this,SLOT(socketReadyReadData()));
+  connect(ice_socket,SIGNAL(error(QAbstractSocket::SocketError)),
+	  this,SLOT(socketErrorData(QAbstractSocket::SocketError)));
+
+  //
+  // Initiate the Connection
+  //
   ice_conveyor->setUsername(serverUsername());
   ice_conveyor->setPassword(serverPassword());
   ice_socket->connectToHost(url.host(),url.port());
@@ -98,7 +118,10 @@ void IceConnector::disconnectFromHostConnector()
 int64_t IceConnector::writeDataConnector(int frames,const unsigned char *data,
 					 int64_t len)
 {
-  return ice_socket->write((const char *)data,len);
+  if(ice_socket->state()==QAbstractSocket::ConnectedState) {
+    return ice_socket->write((const char *)data,len);
+  }
+  return len;
 }
 
 
@@ -111,7 +134,6 @@ void IceConnector::socketConnectedData()
   WriteHeader("SOURCE "+serverMountpoint()+" HTTP/1.0");
   WriteHeader(QString("Authorization: Basic ")+
 	      Connector::base64Encode(username+":"+serverPassword()));
-  //  WriteHeader(QString("User-Agent: GlassCoder/")+VERSION);
   WriteHeader("User-Agent: "+serverUserAgent());
   WriteHeader("Content-Type: "+contentType());
   WriteHeader("ice-name: "+streamName());

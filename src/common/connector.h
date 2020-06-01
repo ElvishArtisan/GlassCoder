@@ -25,6 +25,7 @@
 
 #include <vector>
 
+#include <QAbstractSocket>
 #include <QObject>
 #include <QString>
 #include <QTcpSocket>
@@ -123,6 +124,7 @@ class Connector : public QObject
   static QString httpStrError(int status_code);
   static QString timezoneOffset();
   static int id3TagSize(const QByteArray &data);
+  static QString socketErrorText(QAbstractSocket::SocketError err);
 
  public slots:
   virtual void setStreamPrologue(const QByteArray &data);

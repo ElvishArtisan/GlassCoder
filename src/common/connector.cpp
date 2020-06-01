@@ -774,6 +774,8 @@ void Connector::setConnected(bool state)
 
 void Connector::setError(QAbstractSocket::SocketError err)
 {
+  syslog(LOG_DEBUG,"received socket error \"%s\"",
+	 Connector::socketErrorText(err).toUtf8().constData());
   if(!conn_watchdog_active) {
     if(conn_server_mountpoint.isEmpty()) {
       Log(LOG_WARNING,
@@ -790,18 +792,6 @@ void Connector::setError(QAbstractSocket::SocketError err)
   conn_watchdog_timer->start(5000);
 }
 
-/*
-QString Connector::hostHostname() const
-{
-  return conn_host_hostname;
-}
-
-
-uint16_t Connector::hostPort() const
-{
-  return conn_host_port;
-}
-*/
 
 QString Connector::urlEncode(const QString &str)
 {
@@ -1510,6 +1500,113 @@ int Connector::id3TagSize(const QByteArray &data)
     10;
 }
 
+
+QString Connector::socketErrorText(QAbstractSocket::SocketError err)
+{
+  //
+  // This *really* ought to be part of Qt!
+  //
+  QString ret=QString().sprintf("unknown socket error [%d]",err);
+
+  switch(err) {
+  case QAbstractSocket::ConnectionRefusedError:
+    ret="connection refused";
+    break;
+
+  case QAbstractSocket::RemoteHostClosedError:
+    ret="remote host closed connection";
+    break;
+
+  case QAbstractSocket::HostNotFoundError:
+    ret="remote host address not found";
+    break;
+
+  case QAbstractSocket::SocketAccessError:
+    ret="socket access error";
+    break;
+
+  case QAbstractSocket::SocketResourceError:
+    ret="socket resource error";
+    break;
+
+  case QAbstractSocket::SocketTimeoutError:
+    ret="remote host connection timed out";
+    break;
+
+  case QAbstractSocket::DatagramTooLargeError:
+    ret="datagram too large error";
+    break;
+
+  case QAbstractSocket::NetworkError:
+    ret="network error";
+    break;
+
+  case QAbstractSocket::AddressInUseError:
+    ret="unable to bind to specified port (port in use)";
+    break;
+
+  case QAbstractSocket::SocketAddressNotAvailableError:
+    ret="unable to bind to specfied port (insuffcient privileges)";
+    break;
+
+  case QAbstractSocket::UnsupportedSocketOperationError:
+    ret="unsupported socket operation";
+    break;
+
+  case QAbstractSocket::ProxyAuthenticationRequiredError:
+    ret="proxy authentication failed";
+    break;
+
+  case QAbstractSocket::SslHandshakeFailedError:
+    ret="SSL handshake failed";
+    break;
+
+  case QAbstractSocket::UnfinishedSocketOperationError:
+    ret="unfinished socket operations error";
+    break;
+
+  case QAbstractSocket::ProxyConnectionRefusedError:
+    ret="proxy connection refused";
+    break;
+
+  case QAbstractSocket::ProxyConnectionClosedError:
+    ret="proxy connection closed unexpectedly";
+    break;
+
+  case QAbstractSocket::ProxyConnectionTimeoutError:
+    ret="proxy connection timed out";
+    break;
+
+  case QAbstractSocket::ProxyNotFoundError:
+    ret="proxy not found";
+    break;
+
+  case QAbstractSocket::ProxyProtocolError:
+    ret="proxy protocol error";
+    break;
+
+  case QAbstractSocket::OperationError:
+    ret="socket operation error";
+    break;
+
+  case QAbstractSocket::SslInternalError:
+    ret="SSL internal error";
+    break;
+
+  case QAbstractSocket::SslInvalidUserDataError:
+    ret="SLL authentication error";
+    break;
+
+  case QAbstractSocket::TemporaryError:
+    ret="temporary socket error";
+    break;
+
+  case QAbstractSocket::UnknownSocketError:
+    break;
+  }
+
+  return ret;
+}
 
 void Connector::sendMetadata(MetaEvent *e)
 {

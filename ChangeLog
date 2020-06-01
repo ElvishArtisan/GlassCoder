@@ -890,3 +890,7 @@
 2020-01-27 Fred Gleason <fredg@paravelsystems.com>
 	* Updated the description of glassgui(1) in 'README'.
 	* Added a description of glasscommander(1) in 'README'.
+2020-06-01 Fred Gleason <fredg@paravelsystems.com>
+	* Added a static 'Connector::socketErrorText()' method.
+	* Fixed a regression in glasscoder(1) that caused automatic
+	reconnection to IceCast servers to fail.
