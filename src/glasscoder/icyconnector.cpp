@@ -2,7 +2,7 @@
 //
 // Source connector class for Shoutcast servers
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2020 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -111,7 +111,10 @@ void IcyConnector::disconnectFromHostConnector()
 int64_t IcyConnector::writeDataConnector(int frames,const unsigned char *data,
 					 int64_t len)
 {
-  return icy_socket->write((const char *)data,len);
+  if(icy_socket->state()==QAbstractSocket::ConnectedState) {
+    return icy_socket->write((const char *)data,len);
+  }
+  return len;
 }
 
 

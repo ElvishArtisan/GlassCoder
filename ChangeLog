@@ -894,3 +894,6 @@
 	* Added a static 'Connector::socketErrorText()' method.
 	* Fixed a regression in glasscoder(1) that caused automatic
 	reconnection to IceCast servers to fail.
+2020-06-01 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a regression in glasscoder(1) that caused automatic
+	reconnection to ShoutCast servers to fail.
