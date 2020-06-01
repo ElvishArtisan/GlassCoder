@@ -238,6 +238,8 @@ void GlassWidget::startEncodingData()
 {
   QStringList args;
 
+  gw_status_widget->setStatus(CONNECTION_PENDING);
+
   gw_process=new QProcess(this);
   gw_process->setReadChannel(QProcess::StandardOutput);
   connect(gw_process,SIGNAL(readyRead()),
@@ -263,6 +265,7 @@ void GlassWidget::startEncodingData()
 
 void GlassWidget::stopEncodingData()
 {
+  gw_status_widget->setStatus(CONNECTION_STOPPING);
   gw_process->terminate();
   gw_kill_timer->start(PROCESS_TERMINATION_TIMEOUT);
 }

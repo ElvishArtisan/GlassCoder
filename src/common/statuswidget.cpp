@@ -31,6 +31,8 @@ StatusWidget::StatusWidget(QWidget *parent)
   //
   stat_idle_style="";
   stat_connected_style="background-color: green;color: lightGray";
+  stat_connecting_style="background-color: #BBBB00;color: black";
+  stat_disconnecting_style="background-color: #BBBB00;color: black";
   stat_failed_style="background-color: red;color: lightGray";
 
   setStatus(CONNECTION_IDLE);
@@ -56,7 +58,13 @@ bool StatusWidget::setStatus(int status)
 
   case CONNECTION_PENDING:
     setText(tr("CONNECTING..."));
-    setStyleSheet(stat_idle_style);
+    setStyleSheet(stat_connecting_style);
+    ret=true;
+    break;
+
+  case CONNECTION_STOPPING:
+    setText(tr("STOPPING..."));
+    setStyleSheet(stat_connecting_style);
     ret=true;
     break;
 

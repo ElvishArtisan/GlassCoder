@@ -313,6 +313,9 @@ void MainWidget::startEncodingData()
 			 tr("Process is not in ready state!"));
     return;
   }
+
+  gui_status_widget->setStatus(CONNECTION_PENDING);
+
   gui_process=new QProcess(this);
   gui_process->setReadChannel(QProcess::StandardOutput);
   connect(gui_process,SIGNAL(readyRead()),
@@ -340,6 +343,7 @@ void MainWidget::startEncodingData()
 
 void MainWidget::stopEncodingData()
 {
+  gui_status_widget->setStatus(CONNECTION_STOPPING);
   gui_process->terminate();
 }
 

@@ -2,7 +2,7 @@
 //
 // Connection status widget
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2020 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -35,7 +35,9 @@ class StatusWidget : public QLabel
  private:
   int stat_status;
   QString stat_idle_style;
+  QString stat_connecting_style;
   QString stat_connected_style;
+  QString stat_disconnecting_style;
   QString stat_failed_style;
 };
 

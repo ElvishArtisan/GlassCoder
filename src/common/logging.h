@@ -2,7 +2,7 @@
 //
 // Logging routines for glasscoder(1).
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2020 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -30,6 +30,7 @@
 #define CONNECTION_PENDING 1
 #define CONNECTION_OK 2
 #define CONNECTION_FAILED 3
+#define CONNECTION_STOPPING 4
 
 extern int global_log_to;
 extern QString global_log_string;

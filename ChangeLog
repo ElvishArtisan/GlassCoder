@@ -897,3 +897,6 @@
 2020-06-01 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a regression in glasscoder(1) that caused automatic
 	reconnection to ShoutCast servers to fail.
+2020-06-01 Fred Gleason <fredg@paravelsystems.com>
+	* Added 'Connection Starting...' and 'Connection Stopping...'
+	status messages to glassgui(1) and glasscommander(1).
