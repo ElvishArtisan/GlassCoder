@@ -906,3 +906,6 @@
 	* Cleaned up strncpy(3) warnings in glasscoder(1).
 2020-06-02 Fred Gleason <fredg@paravelsystems.com>
 	* Cleaned up strncpy(3) warnings in 'tests/pipeconnect.cpp'.
+2020-06-02 Fred Gleason <fredg@paravelsystems.com>
+	* Cleaned up QFontMetrics warnings in glassgui(1).
+	* Cleaned up QFontMetrics warnings in glasscommander(1).

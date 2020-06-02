@@ -241,25 +241,25 @@ void PlayMeter::makeFont()
 	label_font=QFont("helvetica",height()-2,QFont::Bold);
 	label_font.setPixelSize(height()-2);
 	meter_label_x=(height()-QFontMetrics(label_font).
-		       width(meter_label))/2;
+		       horizontalAdvance(meter_label))/2;
 	break;
       case SegMeter::Right:
 	label_font=QFont("helvetica",height()-2,QFont::Bold);
 	label_font.setPixelSize(height()-2);
 	meter_label_x=(height()-QFontMetrics(label_font).
-		       width(meter_label))/2;
+		       horizontalAdvance(meter_label))/2;
 	break;
       case SegMeter::Up:
 	label_font=QFont("helvetica",width()-2,QFont::Bold);
 	label_font.setPixelSize(width()-2);
 	meter_label_x=(width()-QFontMetrics(label_font).
-		       width(meter_label))/2;
+		       horizontalAdvance(meter_label))/2;
 	break;
       case SegMeter::Down:
 	label_font=QFont("helvetica",width()-2,QFont::Bold);
 	label_font.setPixelSize(width()-2);
 	meter_label_x=(width()-QFontMetrics(label_font).
-		       width(meter_label))/2;
+		       horizontalAdvance(meter_label))/2;
 	break;
   }
 }
