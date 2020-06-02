@@ -161,7 +161,7 @@ void StereoMeter::setLabel(QString label)
     QFont meter_font=QFont("System",18,QFont::Normal);
     meter_font.setPixelSize(18);
     QFontMetrics meter_metrics=QFontMetrics(meter_font);
-    label_x=(335-meter_metrics.horizontalAdvance(meter_label))/2;
+    label_x=(335-meter_metrics.width(meter_label))/2;
     setFixedSize(335,80);
   }
   else {
