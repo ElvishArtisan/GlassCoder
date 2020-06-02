@@ -904,3 +904,5 @@
 	* Added a check for LibCURL to 'configure.ac'.
 2020-06-02 Fred Gleason <fredg@paravelsystems.com>
 	* Cleaned up strncpy(3) warnings in glasscoder(1).
+2020-06-02 Fred Gleason <fredg@paravelsystems.com>
+	* Cleaned up strncpy(3) warnings in 'tests/pipeconnect.cpp'.

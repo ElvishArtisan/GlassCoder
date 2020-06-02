@@ -70,7 +70,7 @@ MainObject::MainObject(QObject *parent)
   //
   memset(&pipe_sa,0,sizeof(pipe_sa));
   pipe_sa.sun_family=AF_UNIX;
-  strncpy(pipe_sa.sun_path,pipe_server_pipe.toUtf8(),108);
+  strncpy(pipe_sa.sun_path,pipe_server_pipe.toUtf8(),107);
 
   //
   // TCP Server
