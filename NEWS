@@ -1,6 +1,14 @@
 The NEWS file for the GlassCoder package.
 
 -------------------------------------------------------------------------------
+v1.0.1 -- 2 June 2020
+
+Changes:
+   Fixed bugs in glasscoder(1) that affected automatic reconnection to
+   Icecast and Shoutcast servers.
+
+   Various minor bugfixes and cleanups. See the 'ChangeLog' for details.
+-------------------------------------------------------------------------------
 v1.0.0 -- 24 January 2020
 
 Changes:

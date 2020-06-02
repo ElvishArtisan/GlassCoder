@@ -912,3 +912,5 @@
 2020-06-02 Fred Gleason <fredg@paravelsystems.com>
 	* Reverted the QFontMetrics warning cleanup in glassgui(1).
 	* Reverted up QFontMetrics warning cleanups in glasscommander(1).
+2020-06-02 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 1.0.1.
