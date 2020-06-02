@@ -51,7 +51,7 @@ HlsConnector::HlsConnector(bool is_top,FileConveyor *conv,QObject *parent)
 
   strncpy(tempdir,"/tmp",PATH_MAX);
   if(getenv("TEMP")!=NULL) {
-    strncpy(tempdir,getenv("TEMP"),PATH_MAX);
+    strncpy(tempdir,getenv("TEMP"),PATH_MAX-1);
   }
   strncat(tempdir,"/glasscoder-XXXXXX",PATH_MAX-strlen(tempdir));
   if(mkdtemp(tempdir)==NULL) {

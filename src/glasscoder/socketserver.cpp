@@ -90,7 +90,7 @@ bool SocketServer::listen(const QString &path)
   connect(server_notifier,SIGNAL(activated(int)),this,SLOT(notifiedData(int)));
   memset(&sa,0,sizeof(sa));
   sa.sun_family=AF_UNIX;
-  strncpy(sa.sun_path,path.toUtf8(),108);
+  strncpy(sa.sun_path,path.toUtf8(),107);
   if(bind(server_socket,(const struct sockaddr *)(&sa),sizeof(sa))<0) {
     close(server_socket);
     server_socket=-1;
