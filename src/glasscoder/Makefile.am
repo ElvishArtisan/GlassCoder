@@ -2,7 +2,7 @@
 ##
 ## Makefile for the glasscoder(1) Audio Encoder.
 ##
-## (C) Copyright 2014-2019 Fred Gleason <fredg@paravelsystems.com>
+## (C) Copyright 2014-2020 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -20,7 +20,7 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing -std=c++11 -fPIC @QT5_CLI_CFLAGS@ @SNDFILE_CFLAGS@ @TAGLIB_CFLAGS@ @OPENSSL_CFLAGS@ @ALSA_CFLAGS@
+AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing -std=c++11 -fPIC @QT5_CLI_CFLAGS@ @LIBCURL_CFLAGS@ @SNDFILE_CFLAGS@ @TAGLIB_CFLAGS@ @OPENSSL_CFLAGS@ @ALSA_CFLAGS@
 MOC = @QT5_MOC@
 
 # The dependency for qt's Meta Object Compiler (moc)
@@ -98,7 +98,7 @@ nodist_glasscoder_SOURCES = asihpi.cpp asihpi.h\
                             moc_vorbiscodec.cpp\
                             ringbuffer.cpp ringbuffer.h
 
-glasscoder_LDADD = @LIBJACK@ @SNDFILE_LIBS@ @TAGLIB_LIBS@ @OPENSSL_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ @QT5_CLI_LIBS@ -lsamplerate -ldl -lpthread
+glasscoder_LDADD = @LIBJACK@ @LIBCURL_LIBS@ @SNDFILE_LIBS@ @TAGLIB_LIBS@ @OPENSSL_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ @QT5_CLI_LIBS@ -lsamplerate -ldl -lpthread
 #glasscoder_LDFLAGS = 
 
 CLEANFILES = *~\

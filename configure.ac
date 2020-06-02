@@ -90,6 +90,11 @@ AC_SUBST(MOC,$MOC_NAME)
 PKG_CHECK_MODULES(OPENSSL,libcrypto,[],[AC_MSG_ERROR([*** OpenSSL not found ***])])
 
 #
+# Check for OpenSSL
+#
+PKG_CHECK_MODULES(LIBCURL,libcurl,[],[AC_MSG_ERROR([*** LibCURL not found ***])])
+
+#
 # Check for Jack Audio Connection Kit
 #
 AC_CHECK_HEADER(jack/jack.h,[JACK_FOUND=y],[])

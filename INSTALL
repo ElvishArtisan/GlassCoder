@@ -7,6 +7,10 @@ system before building GlassCoder:
 
 Qt5 Toolkit, v5.9 or better (http://www.qt.io/).
 
+LibCURL
+A client-side URL transfer library. Available at
+https://curl.haxx.se/libcurl/.
+
 Secret Rabbit Code
 A sample-rate converter library, written by Erik de Castro Lopo.  Included
 with most distros, or you can find it at http://www.mega-nerd.com/SRC/.

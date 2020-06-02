@@ -900,3 +900,5 @@
 2020-06-01 Fred Gleason <fredg@paravelsystems.com>
 	* Added 'Connection Starting...' and 'Connection Stopping...'
 	status messages to glassgui(1) and glasscommander(1).
+2020-06-02 Fred Gleason <fredg@paravelsystems.com>
+	* Added a check for LibCURL to 'configure.ac'.
