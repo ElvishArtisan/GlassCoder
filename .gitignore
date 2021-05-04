@@ -1,6 +1,11 @@
 *~
 *.1
 *.7
+*.buildinfo
+*.changes
+*.ddeb
+*.deb
+*.dsc
 *.fo
 *.html
 *.la
@@ -9,9 +14,11 @@
 *.rpm
 *.spec
 *.tar.gz
+*.tar.xz
 .deps
 aclocal.m4
 autom4te.cache
+build_debs.sh
 compile
 config.guess
 config.log
