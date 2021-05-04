@@ -916,3 +916,5 @@
 	* Incremented the package version to 1.0.1.
 2021-05-04 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed build warnings in glasscoder(1).
+2021-05-04 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'make deb' target.

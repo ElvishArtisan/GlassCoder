@@ -1,0 +1,39 @@
+Source: glasscoder
+Section: sound
+Priority: optional
+Maintainer: Fred Gleason <fredg@paravelsystems.com>
+Build-Depends: debhelper-compat (= 12), autotools-dev
+Standards-Version: 4.4.1
+Homepage: https://github.com/ElvishArtisan/GlassCoder
+
+Package: glasscoder
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Minimalist Audio Streaming Encoder
+ Glasscoder is a live audio encoder intended for use with Shoutcast and Icecast
+ streaming servers as well as HTTP Live Streams [HLS]. It can source audio
+ from ALSA, JACK and AudioScience HPI devices and is capable of generating live
+ audio streams in a variety of formats. It is controlled completely from the
+ command-line, with no configuration files or GUI required.
+
+Package: glasscoder-gui
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, glasscoder
+Description: GlassGui and GlassCommander control applets for GlassCoder
+ GlassGui is a control applet for driving a single instance of the GlassCoder
+ audio streaming encoder.  It provides a complete point-and-click interface
+ for setting all of the GlassCoder parameters and can be used directly to
+ instantiate an actual instance of GlassCoder or to generate a command-line
+ invocation that can be copy/pasted into another environment.
+ GlassCommander is a control applet for driving multiple simultaneous
+ instances (potentially dozens) of the GlassCoder audio streaming encoder.
+ It provides full visibility and control of the operating state of each
+ GlassCoder instance while conserving screen real estate.
+
+Package: glasscoder-pypad
+Architecture: all
+Depends: ${misc:Depends}, glasscoder, python3
+Description: PyPAD script for Rivendell
+ This package provides a PyPAD script for use with the Rivendell Radio
+ Automation System. It can be used to send articulated PAD updates to
+ GlassCoder instances.

@@ -290,6 +290,8 @@ else
 fi 
 
 AC_CONFIG_FILES([ \
+    debian/Makefile \
+    debian/source/Makefile \
     conf/Makefile \
     conf/httpd/Makefile \
     docs/Makefile \
@@ -305,8 +307,10 @@ AC_CONFIG_FILES([ \
     src/Makefile \
     xdg/Makefile \
     glasscoder.spec \
-    Makefile ])
+    build_debs.sh \
+Makefile ])
 AC_OUTPUT()
+chmod 755 build_debs.sh
 
 #
 # PyPAD Installer

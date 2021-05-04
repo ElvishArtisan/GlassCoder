@@ -28,10 +28,13 @@ if PYTHON_AM
   PYTHON_AM_OPT = plugins
 endif
 
-SUBDIRS = $(DOCBOOK_AM_OPT) conf\
+SUBDIRS = debian $(DOCBOOK_AM_OPT) conf\
           icons $(PYTHON_AM_OPT) \
           src\
           xdg
+
+deb:	dist
+	./build_debs.sh
 
 rpm:	dist
 	cp glasscoder-$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES/
@@ -57,7 +60,8 @@ CLEANFILES = *~\
              *.tgz\
              *.zip
 
-DISTCLEANFILES = glasscoder.spec\
+DISTCLEANFILES = build_debs.sh\
+                 glasscoder.spec\
                  config.guess\
                  config.sub\
                  ltmain.sh

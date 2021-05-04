@@ -1,0 +1,49 @@
+#!/usr/bin/make -f
+
+build:
+	dh_update_autotools_config
+	dh_autoreconf
+	./configure --prefix=/usr
+	make -j11
+
+binary:
+	dh_testroot
+	dh_prep
+	dh_auto_install
+	dh_installchangelogs ChangeLog
+	mkdir -p debian/glasscoder/usr/bin
+	mv debian/tmp/usr/bin/glasscoder debian/glasscoder/usr/bin/
+	mkdir -p debian/glasscoder/usr/share/man/man1
+	mv debian/tmp/usr/share/man/man1/glasscoder.1 debian/glasscoder/usr/share/man/man1/
+	mkdir -p debian/glasscoder/usr/share/man/man7
+	mv debian/tmp/usr/share/man/man7/glasscoder-ipc.7 debian/glasscoder/usr/share/man/man7/
+	mkdir -p debian/glasscoder/usr/share/doc/glasscoder
+	cp NEWS debian/glasscoder/usr/share/doc/glasscoder/
+	mkdir -p debian/glasscoder-gui/usr/bin
+	mv debian/tmp/usr/bin/glasscommander debian/glasscoder-gui/usr/bin/
+	mv debian/tmp/usr/bin/glassgui debian/glasscoder-gui/usr/bin/
+	mkdir -p debian/glasscoder-gui/usr/share/man/man1
+	mv debian/tmp/usr/share/man/man1/glasscommander.1 debian/glasscoder-gui/usr/share/man/man1
+	mv debian/tmp/usr/share/man/man1/glassgui.1 debian/glasscoder-gui/usr/share/man/man1
+	mkdir -p debian/glasscoder-gui/usr/share/icons/hicolor
+	mv debian/tmp/usr/share/icons/hicolor/16x16 debian/glasscoder-gui/usr/share/icons/hicolor/
+	mv debian/tmp/usr/share/icons/hicolor/22x22 debian/glasscoder-gui/usr/share/icons/hicolor/
+	mv debian/tmp/usr/share/icons/hicolor/48x48 debian/glasscoder-gui/usr/share/icons/hicolor/
+	mv debian/tmp/usr/share/applications debian/glasscoder-gui/usr/share/
+	mkdir -p debian/glasscoder-pypad/usr/lib
+	mv debian/tmp/usr/lib/rivendell debian/glasscoder-pypad/usr/lib/
+	dh_strip_nondeterminism
+	dh_compress
+	dh_fixperms
+	dh_missing
+	dh_dwz
+	dh_strip
+	dh_makeshlibs
+	dh_shlibdeps
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+%:
+	dh $@
