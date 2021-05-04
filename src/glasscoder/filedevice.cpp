@@ -72,7 +72,10 @@ bool FileDevice::processOptions(QString *err,const QStringList &keys,
   if(file_name.isEmpty()) {
     char filename[256];
 
-    scanf("%255s",filename);
+    if(scanf("%255s",filename)!=1) {
+      *err=tr("error reading keyboard");
+      return false;
+    }
     file_name=filename;
   }
   return true;

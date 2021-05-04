@@ -36,12 +36,12 @@ void Log(int prio,const QString &msg)
 
   switch(global_log_to) {
   case LOG_TO_SYSLOG:
-    syslog(prio,sysmsg.toUtf8());
+    syslog(prio,"%s",sysmsg.toUtf8().constData());
     break;
 
   case LOG_TO_STDOUT:
     printf("ER %d %s\n",prio,(const char *)msg.toUtf8());
-    syslog(prio,sysmsg.toUtf8());
+    syslog(prio,"%s",sysmsg.toUtf8().constData());
     break;
 
   default:

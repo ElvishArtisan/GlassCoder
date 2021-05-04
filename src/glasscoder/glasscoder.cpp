@@ -199,7 +199,7 @@ void MainObject::exitTimerData()
     if((!sir_config->serverScriptDown().isEmpty())&&connected) {
       QString cmd=sir_config->serverScriptDown();
       if(fork()==0) {
-	system(cmd.toUtf8());
+	if(system(cmd.toUtf8())==0);  // FIXME: Replace this with QProcess
 	_exit(0);  // _exit(2) NOT exit(3), to avoid racing with the parent
       }
     }
