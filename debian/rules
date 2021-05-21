@@ -4,7 +4,7 @@ build:
 	dh_update_autotools_config
 	dh_autoreconf
 	./configure --prefix=/usr
-	make -j11
+	make $(DEBUILD_MAKE_ARGS)
 
 binary:
 	dh_testroot

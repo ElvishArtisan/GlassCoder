@@ -53,10 +53,15 @@ EXTRA_DIST = autogen.sh\
              PACKAGE_VERSION
 
 CLEANFILES = *~\
+             *.buildinfo\
+             *.changes\
+             *.ddeb\
              *.deb\
+             *.dsc\
              *.mo\
              *.rpm\
              *.tar.gz\
+             *.tar.xz\
              *.tgz\
              *.zip
 

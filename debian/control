@@ -2,13 +2,14 @@ Source: glasscoder
 Section: sound
 Priority: optional
 Maintainer: Fred Gleason <fredg@paravelsystems.com>
-Build-Depends: debhelper-compat (= 12), autotools-dev
+Build-Depends: debhelper-compat (= 12), autotools-dev, libfdk-aac-dev, libtwolame-dev, libmp3lame-dev, libopus-dev, libvorbis-dev
 Standards-Version: 4.4.1
 Homepage: https://github.com/ElvishArtisan/GlassCoder
 
 Package: glasscoder
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommended: libfdk-aac1, libtwolame0, libmp3lame0
 Description: Minimalist Audio Streaming Encoder
  Glasscoder is a live audio encoder intended for use with Shoutcast and Icecast
  streaming servers as well as HTTP Live Streams [HLS]. It can source audio

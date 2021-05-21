@@ -918,3 +918,5 @@
 	* Fixed build warnings in glasscoder(1).
 2021-05-04 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'make deb' target.
+2021-05-21 Fred Gleason <fredg@paravelsystems.com>
+	* Updated dependency information for the DEB packages.
