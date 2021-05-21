@@ -920,3 +920,5 @@
 	* Added a 'make deb' target.
 2021-05-21 Fred Gleason <fredg@paravelsystems.com>
 	* Updated dependency information for the DEB packages.
+2021-05-21 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a typo in 'debian/control'.

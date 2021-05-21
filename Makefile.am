@@ -74,6 +74,7 @@ DISTCLEANFILES = build_debs.sh\
 MAINTAINERCLEANFILES = *~\
                        *.tar.gz\
                        aclocal.m4\
+                       compile\
                        config.guess\
                        config.status\
                        config.sub\
