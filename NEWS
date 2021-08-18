@@ -1,6 +1,11 @@
 The NEWS file for the GlassCoder package.
 
 -------------------------------------------------------------------------------
+v1.0.2 -- 16 August 2021
+
+Changes:
+   Added integrated Debian package generation.
+-------------------------------------------------------------------------------
 v1.0.1 -- 2 June 2020
 
 Changes:
