@@ -1,6 +1,11 @@
 The NEWS file for the GlassCoder package.
 
 -------------------------------------------------------------------------------
+v1.0.3 -- 9 January 2022
+
+Changes:
+   Updated the PyPAD plug-in to be compatible with Rivendell v4.x.
+-------------------------------------------------------------------------------
 v1.0.2 -- 16 August 2021
 
 Changes:

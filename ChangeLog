@@ -932,3 +932,5 @@
 2022-01-09 Fred Gleason <fredg@paravelsystems.com>
 	* Commented out the HLS Timed Metadata example in the PyPAD plug-in
 	exemplar.
+2022-01-09 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 1.0.3.
