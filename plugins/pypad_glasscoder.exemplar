@@ -71,27 +71,27 @@ Value=%a - %t
 ; see Section 4.2 of the ID3v2.4 spec, available at
 ; http://id3.org/id3v2.4.0-frames.
 ;
-[Line1]
-Key=TIT2
-Value=%t
-
-[Line2]
-Key=TPE1
-Value=%a
-
-[Line3]
-Key=TALB
-Value=%l
-
-[Line4]
-Key=TRSN
-Value=Rivendell
-
-[Line5]
-Key=TRSO
-Value=A Radio Automation System
-
-[Line6]
-Key=TFLT
-Value=MPG/AAC
+;[Line1]
+;Key=TIT2
+;Value=%t
+;
+;[Line2]
+;Key=TPE1
+;Value=%a
+;
+;[Line3]
+;Key=TALB
+;Value=%l
+;
+;[Line4]
+;Key=TRSN
+;Value=Rivendell
+;
+;[Line5]
+;Key=TRSO
+;Value=A Radio Automation System
+;
+;[Line6]
+;Key=TFLT
+;Value=MPG/AAC
 

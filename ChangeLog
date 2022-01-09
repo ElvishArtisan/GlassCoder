@@ -929,3 +929,6 @@
 2022-01-09 Fred Gleason <fredg@paravelsystems.com>
 	* Updated the 'make deb' target to generate Debian installation
 	metadata automatically.
+2022-01-09 Fred Gleason <fredg@paravelsystems.com>
+	* Commented out the HLS Timed Metadata example in the PyPAD plug-in
+	exemplar.
