@@ -25,6 +25,8 @@ config.log
 config.status
 config.sub
 configure
+debian/changelog
+debian/control
 depcomp
 docs/glasscoder.xml
 install-sh
