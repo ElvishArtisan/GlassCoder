@@ -12,6 +12,9 @@
 ;                     glasscoder(1).
 ;   <metadata-port> - The number passed to the '--metadata-port=' switch
 ;                     when invoking glasscoder(1).
+;
+; N.B. - The above values refer to the GlassCoder instance, *not* the
+;        streaming server!
 UpdateUrl=http://192.168.21.21:1234
 
 ; Log Selection
@@ -42,6 +45,16 @@ VLog117=No
 VLog118=No
 VLog119=No
 VLog120=No
+
+;
+; This plug-in uses a concept of 'lines', where each [Line<n>] section refers
+; to a specific dynamic presentation field in the target stream's metadata
+; scheme. Some streaming schemes have but one available dynamic field
+; --e.g. IceCast-- and hence use just a single line section ('[Line1]'),
+; while others have multiple fields and thus can use multiple line sections.
+;
+; See below for specific examples.
+;
 
 ;
 ; An example of 'ICY-style' metadata (IceCast and Shoutcast)

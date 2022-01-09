@@ -4,7 +4,7 @@
 #
 # Send articulated PAD updates to an instance of glasscoder(1).
 #
-#   (C) Copyright 2019 Fred Gleason <fredg@paravelsystems.com>
+#   (C) Copyright 2019-2022 Fred Gleason <fredg@paravelsystems.com>
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License version 2 as
@@ -23,7 +23,10 @@
 import sys
 import syslog
 import configparser
-import pypad
+try:
+    from rivendellaudio import pypad
+except ModuleNotFoundError:
+    import pypad  # Rivendell v3.x style
 import json
 import requests
 

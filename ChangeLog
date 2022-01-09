@@ -924,3 +924,5 @@
 	* Fixed a typo in 'debian/control'.
 2021-08-16 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 1.0.2.
+2022-01-09 Fred Gleason <fredg@paravelsystems.com>
+	* Updated the PyPAD plug-in to support Rivendell v4.x.
