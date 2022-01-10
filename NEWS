@@ -1,6 +1,11 @@
 The NEWS file for the GlassCoder package.
 
 -------------------------------------------------------------------------------
+v1.0.4 -- 10 January 2022
+
+Changes:
+   Fixed a packaging error on RHEL-8.
+-------------------------------------------------------------------------------
 v1.0.3 -- 9 January 2022
 
 Changes:
