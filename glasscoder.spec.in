@@ -30,7 +30,7 @@ License: GPLv2
 Packager: Fred Gleason <fredg@paravelsystems.com>
 Group: Productivity/Multimedia/Other
 Source: %{name}-@VERSION@.tar.gz
-BuildRequires: qt-devel libsamplerate-devel libsndfile-devel alsa-lib-devel hpklinux-devel
+BuildRequires: qt5-qtbase-devel libsamplerate-devel libsndfile-devel alsa-lib-devel hpklinux-devel
 BuildRoot: /var/tmp/%{name}-@VERSION@
 Requires: curl
 
@@ -129,6 +129,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Jan 10 2022 Fred Gleason <fredg@paravelsystems.com>
+-- Replaced the 'qt-devel' build dependency with 'qt5-qtbase-devel'.
 * Thu Jan 23 2020 Fred Gleason <fredg@paravelsystems.com>
 -- Removed 'python36' dependency from the 'glasscoder' package.
 -- Added 'python36' and 'python36-requests' depedencies to the

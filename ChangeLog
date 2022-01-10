@@ -934,3 +934,6 @@
 	exemplar.
 2022-01-09 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 1.0.3.
+2022-01-10 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'glasscoder.spec.in' that broke the 'make rpm'
+	target on RHEL 8.
