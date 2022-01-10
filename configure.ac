@@ -254,6 +254,19 @@ fi
 #
 AR_GET_DISTRO()
 AC_SUBST(DISTRO,$ar_gcc_distro)
+case "$ar_distro_id" in
+     centos|fedora|rhel|rocky)
+	if test $ar_distro_major -eq 8 ; then
+	   AC_SUBST(PYPAD_BINARY,"")
+	else
+	   AC_SUBST(PYPAD_BINARY,"%{_libdir}/rivendell/pypad/__pycache__/*.pyc")
+	fi
+     ;;
+
+     *)
+     	AC_SUBST(PYPAD_BINARY,"")
+     ;;
+esac
 
 #
 # Linux vs. OS X Setup

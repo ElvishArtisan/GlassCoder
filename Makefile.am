@@ -4,7 +4,7 @@
 ##
 ## Use automake to process this into a Makefile.in
 ##
-##   (C) Copyright 2014-2020 Fred Gleason <fredg@paravelsystems.com>
+##   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -46,7 +46,7 @@ rpm:	dist
 
 EXTRA_DIST = autogen.sh\
              CODINGSTYLE\
-             get_distro.sh\
+             get_distro.pl\
              get_target.sh\
              glasscoder.spec.in\
              link_common.sh\

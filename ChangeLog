@@ -937,3 +937,6 @@
 2022-01-10 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'glasscoder.spec.in' that broke the 'make rpm'
 	target on RHEL 8.
+2022-01-10 Fred Gleason <fredg@paravelsystems.com>
+	* Removed the byte compiled binary from the PyPAD plug-in from
+	the 'glasscoder-pypad package under RHEL 8.

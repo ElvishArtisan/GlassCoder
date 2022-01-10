@@ -125,7 +125,7 @@ rm -rf $RPM_BUILD_ROOT
 %files pypad
 %{_libdir}/rivendell/pypad/pypad_glasscoder.py
 %{_libdir}/rivendell/pypad/pypad_glasscoder.exemplar
-%{_libdir}/rivendell/pypad/__pycache__/*.pyc
+@PYPAD_BINARY@
 
 
 %changelog
