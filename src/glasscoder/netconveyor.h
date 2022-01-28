@@ -1,4 +1,4 @@
-// fileconveyor.h
+// netconveyor.h
 //
 // Serialized service for uploading files
 //
@@ -18,8 +18,8 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef FILECONVEYOR_H
-#define FILECONVEYOR_H
+#ifndef NETCONVEYOR_H
+#define NETCONVEYOR_H
 
 #include <queue>
 #include <vector>
@@ -34,17 +34,17 @@
 #include <QTimer>
 #include <QUrl>
 
-class FileConveyorEvent
+class NetConveyorEvent
 {
  public:
   enum HttpMethod {NoMethod=0,GetMethod=1,PutMethod=2,DeleteMethod=3,
 		   PostMethod=4,HeadMethod=5};
-  FileConveyorEvent(void *orig,const QString &filename,const QString &url,
+  NetConveyorEvent(void *orig,const QString &filename,const QString &url,
 		HttpMethod meth=NoMethod);
   void *originator() const;
   QString filename() const;
   QUrl url() const;
-  FileConveyorEvent::HttpMethod method() const;
+  NetConveyorEvent::HttpMethod method() const;
   static QString httpMethodString(HttpMethod method);
 
  private:
@@ -52,30 +52,30 @@ class FileConveyorEvent
   QString evt_filename;
   //  QString evt_url;
   QUrl evt_url;
-  FileConveyorEvent::HttpMethod evt_method;
+  NetConveyorEvent::HttpMethod evt_method;
 };
 
 
-class FileConveyor : public QObject
+class NetConveyor : public QObject
 {
   Q_OBJECT;
  public:
-  FileConveyor(QObject *parent=0);
-  ~FileConveyor();
+  NetConveyor(QObject *parent=0);
+  ~NetConveyor();
   void setUsername(const QString &str);
   void setPassword(const QString &str);
   void setUserAgent(const QString &str);
   void setAddedHeaders(const QStringList &hdrs);
-  void push(const FileConveyorEvent &evt);
-  void push(void *orig,const QString &url,FileConveyorEvent::HttpMethod meth);
+  void push(const NetConveyorEvent &evt);
+  void push(void *orig,const QString &url,NetConveyorEvent::HttpMethod meth);
   void push(void *orig,const QString &filename,const QString &url,
-	    FileConveyorEvent::HttpMethod meth);
+	    NetConveyorEvent::HttpMethod meth);
   void stop();
 
  signals:
-  void eventFinished(const FileConveyorEvent &evt,int exit_code,int resp_code,
+  void eventFinished(const NetConveyorEvent &evt,int exit_code,int resp_code,
 		     const QStringList &args);
-  void error(const FileConveyorEvent &evt,QProcess::ProcessError err,
+  void error(const NetConveyorEvent &evt,QProcess::ProcessError err,
 	     const QStringList &args);
   void stopped();
 
@@ -88,15 +88,15 @@ class FileConveyor : public QObject
 
  private:
   void Dispatch();
-  void DispatchFile(const FileConveyorEvent &evt);
-  void DispatchHttp(const FileConveyorEvent &evt);
-  void DispatchSftp(const FileConveyorEvent &evt);
+  void DispatchFile(const NetConveyorEvent &evt);
+  void DispatchHttp(const NetConveyorEvent &evt);
+  void DispatchSftp(const NetConveyorEvent &evt);
   void AddHeaders(QStringList *arglist,const QStringList &hdrs);
-  void AddCurlAuthArgs(QStringList *arglist,const FileConveyorEvent &evt);
+  void AddCurlAuthArgs(QStringList *arglist,const NetConveyorEvent &evt);
   QString Repath(const QString &filename) const;
   void AddPuttedFile(const QString &url);
   void RemovePuttedFile(const QString &url);
-  std::queue<FileConveyorEvent> conv_events;
+  std::queue<NetConveyorEvent> conv_events;
   QProcess *conv_process;
   QStringList conv_arguments;
   QTimer *conv_nomethod_timer;
@@ -111,4 +111,4 @@ class FileConveyor : public QObject
 };
 
 
-#endif  // FILECONVEYOR_H
+#endif  // NETCONVEYOR_H

@@ -944,3 +944,5 @@
 	* Incremented the package version to 1.0.4.
 2022-01-28 Fred Gleason <fredg@paravelsystems.com>
 	* Added a glassconv(1) program in 'src/glasscoder/'.
+2022-01-28 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'NetConveyor' class in 'src/glasscoder/'.

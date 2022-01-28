@@ -1,4 +1,4 @@
-// fileconveyor.cpp
+// netconveyor.cpp
 //
 // Serialized service for uploading files
 //
@@ -26,9 +26,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "fileconveyor.h"
+#include "netconveyor.h"
 
-FileConveyorEvent::FileConveyorEvent(void *orig,const QString &filename,const QString &url,
+NetConveyorEvent::NetConveyorEvent(void *orig,const QString &filename,const QString &url,
 			     HttpMethod meth)
 {
   evt_originator=orig;
@@ -38,56 +38,56 @@ FileConveyorEvent::FileConveyorEvent(void *orig,const QString &filename,const QS
 }
 
 
-void *FileConveyorEvent::originator() const
+void *NetConveyorEvent::originator() const
 {
   return evt_originator;
 }
 
 
-QString FileConveyorEvent::filename() const
+QString NetConveyorEvent::filename() const
 {
   return evt_filename;
 }
 
 
-QUrl FileConveyorEvent::url() const
+QUrl NetConveyorEvent::url() const
 {
   return evt_url;
 }
 
 
-FileConveyorEvent::HttpMethod FileConveyorEvent::method() const
+NetConveyorEvent::HttpMethod NetConveyorEvent::method() const
 {
   return evt_method;
 }
 
 
-QString FileConveyorEvent::httpMethodString(HttpMethod method)
+QString NetConveyorEvent::httpMethodString(HttpMethod method)
 {
   QString ret="UNKNOWN";
 
   switch(method) {
-  case FileConveyorEvent::NoMethod:
+  case NetConveyorEvent::NoMethod:
     ret="NONE";
     break;
 
-  case FileConveyorEvent::GetMethod:
+  case NetConveyorEvent::GetMethod:
     ret="GET";
     break;
 
-  case FileConveyorEvent::PostMethod:
+  case NetConveyorEvent::PostMethod:
     ret="POST";
     break;
 
-  case FileConveyorEvent::PutMethod:
+  case NetConveyorEvent::PutMethod:
     ret="PUT";
     break;
 
-  case FileConveyorEvent::DeleteMethod:
+  case NetConveyorEvent::DeleteMethod:
     ret="DELETE";
     break;
 
-  case FileConveyorEvent::HeadMethod:
+  case NetConveyorEvent::HeadMethod:
     ret="HEAD";
     break;
   }
@@ -98,7 +98,7 @@ QString FileConveyorEvent::httpMethodString(HttpMethod method)
 
 
 
-FileConveyor::FileConveyor(QObject *parent)
+NetConveyor::NetConveyor(QObject *parent)
   : QObject(parent)
 {
   conv_process=NULL;
@@ -139,7 +139,7 @@ FileConveyor::FileConveyor(QObject *parent)
 }
 
 
-FileConveyor::~FileConveyor()
+NetConveyor::~NetConveyor()
 {
   //
   // Clean up temp directory
@@ -159,54 +159,54 @@ FileConveyor::~FileConveyor()
 }
 
 
-void FileConveyor::setUsername(const QString &str)
+void NetConveyor::setUsername(const QString &str)
 {
   conv_username=str;
 }
 
 
-void FileConveyor::setPassword(const QString &str)
+void NetConveyor::setPassword(const QString &str)
 {
   conv_password=str;
 }
 
 
-void FileConveyor::setUserAgent(const QString &str)
+void NetConveyor::setUserAgent(const QString &str)
 {
   conv_user_agent=str;
 }
 
 
-void FileConveyor::setAddedHeaders(const QStringList &hdrs)
+void NetConveyor::setAddedHeaders(const QStringList &hdrs)
 {
   conv_added_headers=hdrs;
 }
 
 
-void FileConveyor::push(void *orig,const QString &filename,const QString &url,
-			FileConveyorEvent::HttpMethod meth)
+void NetConveyor::push(void *orig,const QString &filename,const QString &url,
+			NetConveyorEvent::HttpMethod meth)
 {
-  FileConveyorEvent evt(orig,filename,url,meth);
+  NetConveyorEvent evt(orig,filename,url,meth);
   push(evt);
 }
 
 
-void FileConveyor::push(void *orig,const QString &url,
-			FileConveyorEvent::HttpMethod meth)
+void NetConveyor::push(void *orig,const QString &url,
+			NetConveyorEvent::HttpMethod meth)
 {
   push(orig,"",url,meth);
 }
 
 
-void FileConveyor::push(const FileConveyorEvent &evt)
+void NetConveyor::push(const NetConveyorEvent &evt)
 {
   if(!evt.filename().isEmpty()) {
     if(unlink(Repath(evt.filename()).toUtf8())==0) {
-      syslog(LOG_DEBUG,"FileConveyor::push: had to move \"%s\" out of the way",
+      syslog(LOG_DEBUG,"NetConveyor::push: had to move \"%s\" out of the way",
 	     (const char *)Repath(evt.filename()).toUtf8());
     }
     if(link(evt.filename().toUtf8(),Repath(evt.filename()).toUtf8())!=0) {
-      syslog(LOG_WARNING,"FileConveyor::push: unable to make hard link %s [%s]",
+      syslog(LOG_WARNING,"NetConveyor::push: unable to make hard link %s [%s]",
 	     (const char *)Repath(evt.filename()).toUtf8(),strerror(errno));
       return;
     }
@@ -218,24 +218,24 @@ void FileConveyor::push(const FileConveyorEvent &evt)
 }
 
 
-void FileConveyor::stop()
+void NetConveyor::stop()
 {
   QStringList urls=conv_putted_files;
   for(int i=0;i<urls.size();i++) {
-    push(this,"",urls[i],FileConveyorEvent::DeleteMethod);
+    push(this,"",urls[i],NetConveyorEvent::DeleteMethod);
   }
-  push(this,"","",FileConveyorEvent::NoMethod);
+  push(this,"","",NetConveyorEvent::NoMethod);
 }
 
 
-void FileConveyor::processErrorData(QProcess::ProcessError err)
+void NetConveyor::processErrorData(QProcess::ProcessError err)
 {
   emit error(conv_events.front(),err,conv_arguments);
   conv_garbage_timer->start(0);
 }
 
 
-void FileConveyor::processFinishedData(int exit_code,
+void NetConveyor::processFinishedData(int exit_code,
 				       QProcess::ExitStatus exit_status)
 {
   bool ok=false;
@@ -248,11 +248,11 @@ void FileConveyor::processFinishedData(int exit_code,
       emit eventFinished(conv_events.front(),exit_code,0,conv_arguments);
     }
     else {
-      if(conv_events.front().method()==FileConveyorEvent::PutMethod) {
+      if(conv_events.front().method()==NetConveyorEvent::PutMethod) {
 	AddPuttedFile(conv_events.front().url().toEncoded()+
 		      conv_events.front().filename().split("/").back());
       }
-      if(conv_events.front().method()==FileConveyorEvent::DeleteMethod) {
+      if(conv_events.front().method()==NetConveyorEvent::DeleteMethod) {
 	conv_putted_files.removeAll(conv_events.front().url().toString());
       }
       if(conv_process==NULL) {
@@ -275,7 +275,7 @@ void FileConveyor::processFinishedData(int exit_code,
 }
 
 
-void FileConveyor::processCollectGarbageData()
+void NetConveyor::processCollectGarbageData()
 {
   if(conv_process!=NULL) {
     delete conv_process;
@@ -291,22 +291,22 @@ void FileConveyor::processCollectGarbageData()
 }
 
 
-void FileConveyor::nomethodData()
+void NetConveyor::nomethodData()
 {
   emit eventFinished(conv_events.front(),0,200,QStringList());
   processCollectGarbageData();
 }
 
 
-void FileConveyor::dummyProcessData()
+void NetConveyor::dummyProcessData()
 {
   processFinishedData(0,QProcess::NormalExit);
 }
 
 
-void FileConveyor::Dispatch()
+void NetConveyor::Dispatch()
 {
-  FileConveyorEvent evt=conv_events.front();
+  NetConveyorEvent evt=conv_events.front();
   /*
   printf("Dispatch (via \"%s\"): %s => %s\n",
 	 (const char *)evt.url().scheme().toUtf8(),
@@ -329,26 +329,26 @@ void FileConveyor::Dispatch()
 }
 
 
-void FileConveyor::DispatchFile(const FileConveyorEvent &evt)
+void NetConveyor::DispatchFile(const NetConveyorEvent &evt)
 {
   QString destname;
 
   switch(evt.method()) {
-  case FileConveyorEvent::PutMethod:
+  case NetConveyorEvent::PutMethod:
     destname=evt.url().path()+evt.filename().split("/").back();
     rename(Repath(evt.filename()).toUtf8(),destname.toUtf8());
     AddPuttedFile(evt.url().toString()+evt.filename().split("/").back());
     break;
 
-  case FileConveyorEvent::DeleteMethod:
+  case NetConveyorEvent::DeleteMethod:
     unlink(evt.url().path().toUtf8());
     RemovePuttedFile(evt.url().toString());
     break;
 
-  case FileConveyorEvent::PostMethod:  // Should never happen!
-  case FileConveyorEvent::GetMethod:
-  case FileConveyorEvent::HeadMethod:
-  case FileConveyorEvent::NoMethod:
+  case NetConveyorEvent::PostMethod:  // Should never happen!
+  case NetConveyorEvent::GetMethod:
+  case NetConveyorEvent::HeadMethod:
+  case NetConveyorEvent::NoMethod:
     break;
   }
 
@@ -356,7 +356,7 @@ void FileConveyor::DispatchFile(const FileConveyorEvent &evt)
 }
 
 
-void FileConveyor::DispatchHttp(const FileConveyorEvent &evt)
+void NetConveyor::DispatchHttp(const NetConveyorEvent &evt)
 {
   conv_arguments.clear();
   AddCurlAuthArgs(&conv_arguments,evt);
@@ -372,25 +372,25 @@ void FileConveyor::DispatchHttp(const FileConveyorEvent &evt)
   conv_arguments.push_back("/dev/null");
 
   switch(evt.method()) {
-  case FileConveyorEvent::GetMethod:
+  case NetConveyorEvent::GetMethod:
     conv_arguments.push_back(evt.url().toEncoded());
     break;
 
-  case FileConveyorEvent::PutMethod:
+  case NetConveyorEvent::PutMethod:
     conv_arguments.push_back("-T");
     conv_arguments.push_back(Repath(evt.filename()));
     conv_arguments.push_back(evt.url().toEncoded());
     break;
 
-  case FileConveyorEvent::DeleteMethod:
+  case NetConveyorEvent::DeleteMethod:
     conv_arguments.push_back("-X");
     conv_arguments.push_back("DELETE");
     conv_arguments.push_back(evt.url().toEncoded());
     break;
 
-  case FileConveyorEvent::PostMethod:  // Should never happen!
-  case FileConveyorEvent::HeadMethod:
-  case FileConveyorEvent::NoMethod:
+  case NetConveyorEvent::PostMethod:  // Should never happen!
+  case NetConveyorEvent::HeadMethod:
+  case NetConveyorEvent::NoMethod:
     break;
   }
 
@@ -403,7 +403,7 @@ void FileConveyor::DispatchHttp(const FileConveyorEvent &evt)
 }
 
 
-void FileConveyor::DispatchSftp(const FileConveyorEvent &evt)
+void NetConveyor::DispatchSftp(const NetConveyorEvent &evt)
 {
   conv_arguments.clear();
   AddCurlAuthArgs(&conv_arguments,evt);
@@ -419,22 +419,22 @@ void FileConveyor::DispatchSftp(const FileConveyorEvent &evt)
   conv_arguments.push_back("-k");
 
   switch(evt.method()) {
-  case FileConveyorEvent::PutMethod:
+  case NetConveyorEvent::PutMethod:
     conv_arguments.push_back("-T");
     conv_arguments.push_back(Repath(evt.filename()));
     conv_arguments.push_back(evt.url().toString());
     break;
 
-  case FileConveyorEvent::DeleteMethod:
+  case NetConveyorEvent::DeleteMethod:
     conv_arguments.push_back("-Q");
     conv_arguments.push_back("rm "+evt.url().path());
     conv_arguments.push_back(evt.url().toString(QUrl::RemovePath));
     break;
 
-  case FileConveyorEvent::PostMethod:  // Should never happen!
-  case FileConveyorEvent::GetMethod:
-  case FileConveyorEvent::HeadMethod:
-  case FileConveyorEvent::NoMethod:
+  case NetConveyorEvent::PostMethod:  // Should never happen!
+  case NetConveyorEvent::GetMethod:
+  case NetConveyorEvent::HeadMethod:
+  case NetConveyorEvent::NoMethod:
     break;
   }
 
@@ -449,7 +449,7 @@ void FileConveyor::DispatchSftp(const FileConveyorEvent &evt)
 }
 
 
-void FileConveyor::AddHeaders(QStringList *arglist,const QStringList &hdrs)
+void NetConveyor::AddHeaders(QStringList *arglist,const QStringList &hdrs)
 {
   for(int i=0;i<hdrs.size();i++) {
     arglist->push_back("-H");
@@ -458,8 +458,8 @@ void FileConveyor::AddHeaders(QStringList *arglist,const QStringList &hdrs)
 }
 
 
-void FileConveyor::AddCurlAuthArgs(QStringList *arglist,
-				   const FileConveyorEvent &evt)
+void NetConveyor::AddCurlAuthArgs(QStringList *arglist,
+				   const NetConveyorEvent &evt)
 {
   if(!conv_username.isEmpty()) {
     arglist->push_back("-u");
@@ -473,13 +473,13 @@ void FileConveyor::AddCurlAuthArgs(QStringList *arglist,
 }
 
 
-QString FileConveyor::Repath(const QString &filename) const
+QString NetConveyor::Repath(const QString &filename) const
 {
   return conv_temp_dir->path()+"/"+filename.split("/").back();
 }
 
 
-void FileConveyor::AddPuttedFile(const QString &url)
+void NetConveyor::AddPuttedFile(const QString &url)
 {
   for(int i=0;i<conv_putted_files.size();i++) {
     if(url==conv_putted_files[i]) {
@@ -490,7 +490,7 @@ void FileConveyor::AddPuttedFile(const QString &url)
 }
 
 
-void FileConveyor::RemovePuttedFile(const QString &url)
+void NetConveyor::RemovePuttedFile(const QString &url)
 {
   for(int i=0;i<conv_putted_files.size();i++) {
     if(url==conv_putted_files[i]) {

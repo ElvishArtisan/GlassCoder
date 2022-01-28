@@ -2,7 +2,7 @@
 //
 // glasscoder(1) Audio Encoder
 //
-//   (C) Copyright 2014-2019 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -35,7 +35,6 @@
 #include "codec.h"
 #include "config.h"
 #include "connector.h"
-#include "fileconveyor.h"
 #include "glasslimits.h"
 #include "metaserver.h"
 #include "ringbuffer.h"
@@ -68,7 +67,6 @@ class MainObject : public QObject
   //
   void StartServerConnection(const QString &mntpt="",bool is_top=false);
   std::vector<Connector *> sir_connectors;
-  FileConveyor *sir_conveyor;
 
   //
   // Codec

@@ -2,7 +2,7 @@
 //
 // Instantiate Connector classes.
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -28,13 +28,13 @@
 #include "connectorfactory.h"
 
 Connector *ConnectorFactory(Connector::ServerType type,bool is_top,
-			    FileConveyor *conv,QObject *parent)
+			    Config *conf,QObject *parent)
 {
   Connector *conn=NULL;
 
   switch(type) {
   case Connector::HlsServer:
-    conn=new HlsConnector(is_top,conv,parent);
+    conn=new HlsConnector(is_top,conf,parent);
     break;
 
   case Connector::Shoutcast1Server:

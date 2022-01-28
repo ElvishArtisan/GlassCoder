@@ -2,7 +2,7 @@
 //
 // Source connector class for Shoutcast servers
 //
-//   (C) Copyright 2014-2020 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -49,15 +49,15 @@ IcyConnector::IcyConnector(int version,QObject *parent)
   //
   hdrs.push_back("User-agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.2) Gecko/20070219 Firefox/2.0.0.2");
   icy_conveyor->setAddedHeaders(hdrs);
-  connect(icy_conveyor,SIGNAL(eventFinished(const ConveyorEvent &,int,int,
+  connect(icy_conveyor,SIGNAL(eventFinished(const FileConveyorEvent &,int,int,
 					    const QStringList &)),
-	  this,SLOT(conveyorEventFinished(const ConveyorEvent &,int,int,
+	  this,SLOT(conveyorEventFinished(const FileConveyorEvent &,int,int,
 					  const QStringList &)));
   connect(icy_conveyor,
-	  SIGNAL(error(const ConveyorEvent &,QProcess::ProcessError,
+	  SIGNAL(error(const FileConveyorEvent &,QProcess::ProcessError,
 		       const QStringList &)),
 	  this,
-	  SLOT(conveyorError(const ConveyorEvent &,QProcess::ProcessError,
+	  SLOT(conveyorError(const FileConveyorEvent &,QProcess::ProcessError,
 			     const QStringList &)));
 }
 
@@ -90,7 +90,7 @@ void IcyConnector::sendMetadata(MetaEvent *e)
     if(e->fieldKeys().contains("StreamUrl")) {
       url+="&url="+Connector::urlEncode(e->field("StreamUrl"));
     }
-    icy_conveyor->push(this,url,ConveyorEvent::GetMethod);
+    icy_conveyor->push(this,url,FileConveyorEvent::GetMethod);
   }
 }
 
@@ -192,7 +192,7 @@ void IcyConnector::socketErrorData(QAbstractSocket::SocketError err)
 }
 
 
-void IcyConnector::conveyorEventFinished(const ConveyorEvent &evt,int exit_code,
+void IcyConnector::conveyorEventFinished(const FileConveyorEvent &evt,int exit_code,
 					 int resp_code,const QStringList &args)
 {
   if(evt.originator()==this) {
@@ -236,7 +236,7 @@ void IcyConnector::conveyorEventFinished(const ConveyorEvent &evt,int exit_code,
 }
 
 
-void IcyConnector::conveyorError(const ConveyorEvent &evt,
+void IcyConnector::conveyorError(const FileConveyorEvent &evt,
 				 QProcess::ProcessError err,
 				 const QStringList &args)
 {

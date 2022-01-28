@@ -2,7 +2,7 @@
 //
 // Instantiate Connector classes
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -21,11 +21,12 @@
 #ifndef CONNECTORFACTORY_H
 #define CONNECTORFACTORY_H
 
+#include "config.h"
 #include "connector.h"
 #include "fileconveyor.h"
 
 Connector *ConnectorFactory(Connector::ServerType type,bool is_top,
-			    FileConveyor *conv,QObject *parent=0);
+			    Config *conf,QObject *parent=0);
 
 
 #endif  // CONNECTORFACTORY_H

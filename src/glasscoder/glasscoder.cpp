@@ -91,11 +91,6 @@ MainObject::MainObject(QObject *parent)
   //
   // Start Server Connections
   //
-  sir_conveyor=new FileConveyor(this);
-  sir_conveyor->setUsername(sir_config->serverUsername());
-  sir_conveyor->setPassword(sir_config->serverPassword());
-  sir_conveyor->setUserAgent(sir_config->serverUserAgent());
-  connect(sir_conveyor,SIGNAL(stopped()),this,SLOT(connectorStoppedData()));
   if(sir_config->audioBitrateQuantity()>1) {
     if(!StartMultiStream()) {
       exit(256);
@@ -155,7 +150,6 @@ void MainObject::connectorStoppedData()
     for(unsigned i=0;i<sir_connectors.size();i++) {
       delete sir_connectors[i];
     }
-    delete sir_conveyor;
     exit(0);
   }
 }
@@ -199,7 +193,6 @@ void MainObject::exitTimerData()
     for(unsigned i=0;i<sir_connectors.size();i++) {
       sir_connectors[i]->stop();
     }
-    sir_conveyor->stop();
     sir_exit_timer->stop();
     if((!sir_config->serverScriptDown().isEmpty())&&connected) {
       QString cmd=sir_config->serverScriptDown();
@@ -300,13 +293,14 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
   //
   // Create Connector Instance
   //
-  conn=ConnectorFactory(sir_config->serverType(),is_top,sir_conveyor,this);
+  conn=ConnectorFactory(sir_config->serverType(),is_top,sir_config,this);
   connect(conn,SIGNAL(stopped()),this,SLOT(connectorStoppedData()));
   connect(conn,SIGNAL(unmuteRequested()),sir_audio_device,SLOT(unmute()));
   if(!is_top) {
     connect(conn,SIGNAL(dataRequested(Connector *)),
 	    sir_codecs[sir_connectors.size()],SLOT(encode(Connector *)));
     connect(conn,SIGNAL(connected(bool)),this,SLOT(connectedData(bool)));
+    connect(conn,SIGNAL(stopped()),this,SLOT(connectorStoppedData()));
     conn->setStreamPrologue(sir_codecs[sir_connectors.size()]->
 			    streamPrologue());
     sir_codecs[sir_connectors.size()]->

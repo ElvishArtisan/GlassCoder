@@ -2,7 +2,7 @@
 //
 // HLS/HTTP streaming connector for GlassCoder
 //
-//   (C) Copyright 2014-2019 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -33,16 +33,21 @@
 #include "hlsconnector.h"
 #include "logging.h"
 
-HlsConnector::HlsConnector(bool is_top,FileConveyor *conv,QObject *parent)
+HlsConnector::HlsConnector(bool is_top,Config *conf,QObject *parent)
   : Connector(parent)
 {
   hls_is_top=is_top;
-  hls_conveyor=conv;
   hls_sequence_head=0;
   hls_sequence_back=0;
   hls_media_frames=0;
   hls_total_media_frames=0;
   hls_metadata_updated=false;
+
+  hls_conveyor=new NetConveyor(this);
+  hls_conveyor->setUsername(conf->serverUsername());
+  hls_conveyor->setPassword(conf->serverPassword());
+  hls_conveyor->setUserAgent(conf->serverUserAgent());
+  connect(hls_conveyor,SIGNAL(stopped()),this,SLOT(conveyorStoppedData()));
 
   //
   // Create working directory
@@ -74,15 +79,15 @@ HlsConnector::HlsConnector(bool is_top,FileConveyor *conv,QObject *parent)
   //
   // File Conveyor Error Logging
   //
-  connect(hls_conveyor,SIGNAL(eventFinished(const ConveyorEvent &,int,int,
+  connect(hls_conveyor,SIGNAL(eventFinished(const NetConveyorEvent &,int,int,
 					    const QStringList &)),
-	  this,SLOT(conveyorEventFinished(const ConveyorEvent &,int,int,
+	  this,SLOT(conveyorEventFinished(const NetConveyorEvent &,int,int,
 					  const QStringList &)));
   connect(hls_conveyor,
-	  SIGNAL(error(const ConveyorEvent &,QProcess::ProcessError,
+	  SIGNAL(error(const NetConveyorEvent &,QProcess::ProcessError,
 		       const QStringList &)),
 	  this,
-	  SLOT(conveyorError(const ConveyorEvent &,QProcess::ProcessError,
+	  SLOT(conveyorError(const NetConveyorEvent &,QProcess::ProcessError,
 			     const QStringList &)));
 }
 
@@ -134,6 +139,12 @@ void HlsConnector::sendMetadata(MetaEvent *e)
 }
 
 
+void HlsConnector::startStopping()
+{
+  hls_conveyor->stop();
+}
+
+
 void HlsConnector::connectToHostConnector(const QUrl &url)
 {
   //
@@ -161,7 +172,7 @@ void HlsConnector::connectToHostConnector(const QUrl &url)
     WriteTopPlaylistFile();
     hls_conveyor->push(this,hls_playlist_filename,
 		       serverUrl().scheme()+"://"+serverUrl().host()+hls_put_directory+"/",
-		       ConveyorEvent::PutMethod);
+		       NetConveyorEvent::PutMethod);
     unlink(hls_playlist_filename.toUtf8());
   }
   else {
@@ -222,7 +233,7 @@ int64_t HlsConnector::writeDataConnector(int frames,const unsigned char *data,
 }
 
 
-void HlsConnector::conveyorEventFinished(const ConveyorEvent &evt,int exit_code,
+void HlsConnector::conveyorEventFinished(const NetConveyorEvent &evt,int exit_code,
 					 int resp_code,const QStringList &args)
 {
   if(evt.originator()==this) {
@@ -252,7 +263,7 @@ void HlsConnector::conveyorEventFinished(const ConveyorEvent &evt,int exit_code,
 }
 
 
-void HlsConnector::conveyorError(const ConveyorEvent &evt,
+void HlsConnector::conveyorError(const NetConveyorEvent &evt,
 				 QProcess::ProcessError err,
 				 const QStringList &args)
 {
@@ -261,6 +272,12 @@ void HlsConnector::conveyorError(const ConveyorEvent &evt,
 			(const char *)args.join(" ").toUtf8()));
   setConnected(false);
   exit(256);
+}
+
+
+void HlsConnector::conveyorStoppedData()
+{
+  emit stopped();
 }
 
 
@@ -287,12 +304,12 @@ void HlsConnector::RotateMediaFile()
   hls_conveyor->push(this,hls_temp_dir->path()+"/"+hls_media_filename,
 		     serverUrl().scheme()+"://"+serverUrl().host()+
 		     QString().sprintf(":%u",serverUrl().port())+
-		     hls_put_directory+"/",ConveyorEvent::PutMethod);
+		     hls_put_directory+"/",NetConveyorEvent::PutMethod);
   unlink((hls_temp_dir->path()+"/"+hls_media_filename).toUtf8());
   hls_conveyor->push(this,hls_playlist_filename,
 		     serverUrl().scheme()+"://"+serverUrl().host()+
 		     hls_put_directory+"/",
-		     ConveyorEvent::PutMethod);
+		     NetConveyorEvent::PutMethod);
   unlink(hls_playlist_filename.toUtf8());
 
   //
@@ -323,7 +340,7 @@ void HlsConnector::RotateMediaFile()
 			 QString().sprintf(":%d",serverUrl().port())+
 			 hls_put_directory+"/"+
 			 GetMediaFilename(ci->first),
-			 ConveyorEvent::DeleteMethod);
+			 NetConveyorEvent::DeleteMethod);
       hls_media_killtimes.erase(ci++);
     }
     else {

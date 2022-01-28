@@ -2,7 +2,7 @@
 //
 // Source connector class for IceCast2 servers.
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -45,9 +45,9 @@ class IceConnector : public Connector
   void socketDisconnectedData();
   void socketReadyReadData();
   void socketErrorData(QAbstractSocket::SocketError err);
-  void conveyorEventFinished(const ConveyorEvent &evt,int exit_code,
+  void conveyorEventFinished(const FileConveyorEvent &evt,int exit_code,
 			     int resp_code,const QStringList &args);
-  void conveyorError(const ConveyorEvent &evt,QProcess::ProcessError err,
+  void conveyorError(const FileConveyorEvent &evt,QProcess::ProcessError err,
 		     const QStringList &args);
 
  private:

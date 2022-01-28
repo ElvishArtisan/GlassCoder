@@ -2,7 +2,7 @@
 //
 // HLS/HTTP streaming connector for GlassCoder
 //
-//   (C) Copyright 2014-2019 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -48,14 +48,15 @@
 #include <QStringList>
 #include <QTimer>
 
+#include "config.h"
 #include "connector.h"
-#include "fileconveyor.h"
+#include "netconveyor.h"
 
 class HlsConnector : public Connector
 {
   Q_OBJECT;
  public:
-  HlsConnector(bool is_top,FileConveyor *conv,QObject *parent=0);
+  HlsConnector(bool is_top,Config *conf,QObject *parent=0);
   ~HlsConnector();
   Connector::ServerType serverType() const;
 
@@ -63,15 +64,17 @@ class HlsConnector : public Connector
   void sendMetadata(MetaEvent *e);
 
  protected:
+  void startStopping();
   void connectToHostConnector(const QUrl &url);
   void disconnectFromHostConnector();
   int64_t writeDataConnector(int frames,const unsigned char *data,int64_t len);
 
  private slots:
-  void conveyorEventFinished(const ConveyorEvent &evt,int exit_code,
+  void conveyorEventFinished(const NetConveyorEvent &evt,int exit_code,
 			     int resp_code,const QStringList &args);
-  void conveyorError(const ConveyorEvent &evt,QProcess::ProcessError err,
+  void conveyorError(const NetConveyorEvent &evt,QProcess::ProcessError err,
 		     const QStringList &args);
+  void conveyorStoppedData();
 
  private:
   void RotateMediaFile();
@@ -98,7 +101,7 @@ class HlsConnector : public Connector
   QString hls_put_directory;
   QString hls_put_basename;
   QString hls_put_basestamp;
-  FileConveyor *hls_conveyor;
+  NetConveyor *hls_conveyor;
   QDateTime hls_start_datetime;
   QByteArray hls_metadata_tag;
   bool hls_metadata_updated;

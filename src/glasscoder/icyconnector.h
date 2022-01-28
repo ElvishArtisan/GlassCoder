@@ -45,9 +45,9 @@ class IcyConnector : public Connector
   void socketDisconnectedData();
   void socketReadyReadData();
   void socketErrorData(QAbstractSocket::SocketError err);
-  void conveyorEventFinished(const ConveyorEvent &evt,int exit_code,
+  void conveyorEventFinished(const FileConveyorEvent &evt,int exit_code,
 			     int resp_code,const QStringList &args);
-  void conveyorError(const ConveyorEvent &evt,QProcess::ProcessError err,
+  void conveyorError(const FileConveyorEvent &evt,QProcess::ProcessError err,
 		     const QStringList &args);
 
  private:

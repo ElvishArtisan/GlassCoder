@@ -2,7 +2,7 @@
 //
 // Source connector class for IceCast2 servers
 //
-//   (C) Copyright 2014-2020 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -34,15 +34,15 @@ IceConnector::IceConnector(QObject *parent)
   // Metadata File Conveyor
   //
   ice_conveyor=new FileConveyor(this);
-  connect(ice_conveyor,SIGNAL(eventFinished(const ConveyorEvent &,int,int,
+  connect(ice_conveyor,SIGNAL(eventFinished(const FileConveyorEvent &,int,int,
 					    const QStringList &)),
-	  this,SLOT(conveyorEventFinished(const ConveyorEvent &,int,int,
+	  this,SLOT(conveyorEventFinished(const FileConveyorEvent &,int,int,
 					  const QStringList &)));
   connect(ice_conveyor,
-	  SIGNAL(error(const ConveyorEvent &,QProcess::ProcessError,
+	  SIGNAL(error(const FileConveyorEvent &,QProcess::ProcessError,
 		       const QStringList &)),
 	  this,
-	  SLOT(conveyorError(const ConveyorEvent &,QProcess::ProcessError,
+	  SLOT(conveyorError(const FileConveyorEvent &,QProcess::ProcessError,
 			     const QStringList &)));
 }
 
@@ -69,7 +69,7 @@ void IceConnector::sendMetadata(MetaEvent *e)
       "mount="+serverMountpoint()+"&"+
       "mode=updinfo&"+
       "song="+Connector::urlEncode(e->field("StreamTitle"));
-    ice_conveyor->push(this,url,ConveyorEvent::GetMethod);
+    ice_conveyor->push(this,url,FileConveyorEvent::GetMethod);
   }
 }
 
@@ -191,7 +191,7 @@ void IceConnector::socketErrorData(QAbstractSocket::SocketError err)
 }
 
 
-void IceConnector::conveyorEventFinished(const ConveyorEvent &evt,int exit_code,
+void IceConnector::conveyorEventFinished(const FileConveyorEvent &evt,int exit_code,
 					 int resp_code,const QStringList &args)
 {
   if(evt.originator()==this) {
@@ -235,7 +235,7 @@ void IceConnector::conveyorEventFinished(const ConveyorEvent &evt,int exit_code,
 }
 
 
-void IceConnector::conveyorError(const ConveyorEvent &evt,
+void IceConnector::conveyorError(const FileConveyorEvent &evt,
 				 QProcess::ProcessError err,
 				 const QStringList &args)
 {
