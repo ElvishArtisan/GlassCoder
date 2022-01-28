@@ -2,7 +2,7 @@
 //
 // glasscoder(1) Audio Encoder
 //
-//   (C) Copyright 2014-2019 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -60,6 +60,11 @@ MainObject::MainObject(QObject *parent)
   if(!StartAudioDevice()) {
     exit(256);
   }
+
+  //
+  // Initialize CURL
+  //
+  curl_global_init(CURL_GLOBAL_ALL);
 
   //
   // Stdin Interface

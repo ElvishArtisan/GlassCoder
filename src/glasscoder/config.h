@@ -28,6 +28,7 @@
 #include "codec.h"
 #include "connector.h"
 
+#define GLASSCODER_CREDENTIALS "creds"
 #define GLASSCODER_USAGE "[options]\n"
 
 class Config

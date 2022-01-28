@@ -2,7 +2,7 @@
 ##
 ## Makefile for the glasscoder(1) Audio Encoder.
 ##
-## (C) Copyright 2014-2020 Fred Gleason <fredg@paravelsystems.com>
+## (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -28,7 +28,8 @@ moc_%.cpp:	%.h
 	@MOC@ $< -o $@
 
 
-bin_PROGRAMS = glasscoder
+bin_PROGRAMS = glasscoder\
+               glassconv
 
 dist_glasscoder_SOURCES = alsadevice.cpp alsadevice.h\
                           asihpidevice.cpp asihpidevice.h\
@@ -100,6 +101,16 @@ nodist_glasscoder_SOURCES = asihpi.cpp asihpi.h\
 
 glasscoder_LDADD = @LIBJACK@ @LIBCURL_LIBS@ @SNDFILE_LIBS@ @TAGLIB_LIBS@ @OPENSSL_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ @QT5_CLI_LIBS@ -lsamplerate -ldl -lpthread
 #glasscoder_LDFLAGS = 
+
+dist_glassconv_SOURCES = glassconv.cpp glassconv.h
+
+nodist_glassconv_SOURCES = cmdswitch.cpp cmdswitch.h\
+                           logging.cpp logging.h\
+                           moc_glassconv.cpp\
+                           profile.cpp profile.h
+
+glassconv_LDADD = @LIBCURL_LIBS@ @QT5_CLI_LIBS@ -ldl -lpthread
+
 
 CLEANFILES = *~\
              moc_*\

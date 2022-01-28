@@ -46,6 +46,7 @@ src/glasscoder/codec.h
 src/glasscoder/connector.cpp
 src/glasscoder/connector.h
 src/glasscoder/glasscoder
+src/glasscoder/glassconv
 src/glasscoder/glasslimits.h
 src/glasscoder/logging.cpp
 src/glasscoder/logging.h
