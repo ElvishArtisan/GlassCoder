@@ -1608,6 +1608,20 @@ QString Connector::socketErrorText(QAbstractSocket::SocketError err)
   return ret;
 }
 
+
+QString Connector::timeStampString()
+{
+  struct timespec ts;
+
+  memset(&ts,0,sizeof(ts));
+  if(clock_gettime(CLOCK_REALTIME,&ts)!=0) {
+    Log(LOG_WARNING,
+	QString::asprintf("unable to get system time: %s",strerror(errno)));
+  }
+  return QString::asprintf("%020lu%09lu",ts.tv_sec,ts.tv_nsec);
+}
+
+
 void Connector::sendMetadata(MetaEvent *e)
 {
   QStringList keys=e->fieldKeys();

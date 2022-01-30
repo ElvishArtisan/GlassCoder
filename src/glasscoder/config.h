@@ -34,6 +34,7 @@
 class Config
 {
  public:
+  enum ExitCode {ExitOk=0,ExitRetry=1,ExitFatal=2};
   Config();
   bool audioAtomicFrames() const;
   unsigned audioBitrateQuantity() const;
@@ -52,6 +53,7 @@ class Config
   int serverStartConnections() const;
   Connector::ServerType serverType() const;
   QUrl serverUrl() const;
+  QString serverBaseUrl() const;
   QString serverUserAgent() const;
   QString serverUsername() const;
   QString serverPipe() const;
@@ -97,6 +99,7 @@ class Config
   int server_start_connections;
   Connector::ServerType server_type;
   QUrl server_url;
+  QString server_base_url;
   QString server_user_agent;
   QString server_username;
   QString server_pipe;

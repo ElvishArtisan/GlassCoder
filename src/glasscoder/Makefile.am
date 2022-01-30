@@ -99,6 +99,7 @@ nodist_glasscoder_SOURCES = asihpi.cpp asihpi.h\
                             moc_pcm16codec.cpp\
                             moc_socketserver.cpp\
                             moc_vorbiscodec.cpp\
+                            paths.h\
                             ringbuffer.cpp ringbuffer.h
 
 glasscoder_LDADD = @LIBJACK@ @LIBCURL_LIBS@ @SNDFILE_LIBS@ @TAGLIB_LIBS@ @OPENSSL_LIBS@ @ALSA_LIBS@ @ASIHPI_LIBS@ @QT5_CLI_LIBS@ -lsamplerate -ldl -lpthread
@@ -136,6 +137,7 @@ DISTCLEANFILES = asihpi.cpp asihpi.h\
                  logging.cpp logging.h\
                  messagewidget.cpp messagewidget.h\
                  metaevent.cpp metaevent.h\
+                 paths.h\
                  profile.cpp profile.h\
                  ringbuffer.cpp ringbuffer.h\
                  segmeter.cpp segmeter.h\

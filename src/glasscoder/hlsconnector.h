@@ -70,10 +70,12 @@ class HlsConnector : public Connector
   int64_t writeDataConnector(int frames,const unsigned char *data,int64_t len);
 
  private slots:
+   /*
   void conveyorEventFinished(const NetConveyorEvent &evt,int exit_code,
 			     int resp_code,const QStringList &args);
   void conveyorError(const NetConveyorEvent &evt,QProcess::ProcessError err,
 		     const QStringList &args);
+   */
   void conveyorStoppedData();
 
  private:

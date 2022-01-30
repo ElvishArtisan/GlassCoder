@@ -212,6 +212,14 @@ Config::Config()
 	  exit(256);
 	}
       }
+      if(cmd->value(i).right(1)=="/") {
+	server_base_url=cmd->value(i).left(cmd->value(i).length()-1);
+      }
+      else {
+	QStringList f0=cmd->value(i).split("/",QString::KeepEmptyParts);
+	f0.removeLast();
+	server_base_url=f0.join("/");
+      }
       cmd->setProcessed(i,true);
       if(!server_url.isValid()) {
 	Log(LOG_ERR,"invalid argument for --server-url");
@@ -457,6 +465,12 @@ Connector::ServerType Config::serverType() const
 QUrl Config::serverUrl() const
 {
   return server_url;
+}
+
+
+QString Config::serverBaseUrl() const
+{
+  return server_base_url;
 }
 
 

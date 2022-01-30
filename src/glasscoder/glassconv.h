@@ -30,7 +30,7 @@
 #include <QTimer>
 #include <QUrl>
 
-#define GLASSCONV_USAGE "--source-dir=<dir> --dest-url=<url>"
+#define GLASSCONV_USAGE "--source-dir=<dir> --dest-url=<url> [--debug]"
 
 class MainObject : public QObject
 {

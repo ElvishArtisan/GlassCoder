@@ -81,6 +81,7 @@ DISTCLEANFILES = asihpi.cpp asihpi.h\
                  logging.cpp logging.h\
                  messagewidget.cpp messagewidget.h\
                  metaevent.cpp metaevent.h\
+                 paths.h\
                  profile.cpp profile.h\
                  ringbuffer.cpp ringbuffer.h\
                  segmeter.cpp segmeter.h\

@@ -139,3 +139,6 @@ ln -s ../../src/common/streamdialog.h src/$DESTDIR/streamdialog.h
 
 rm -f src/$DESTDIR/glasslimits.h
 ln -s ../../src/common/glasslimits.h src/$DESTDIR/glasslimits.h
+
+rm -f src/$DESTDIR/paths.h
+ln -s ../../src/common/paths.h src/$DESTDIR/paths.h

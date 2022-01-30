@@ -946,3 +946,5 @@
 	* Added a glassconv(1) program in 'src/glasscoder/'.
 2022-01-28 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'NetConveyor' class in 'src/glasscoder/'.
+2022-01-28 Fred Gleason <fredg@paravelsystems.com>
+	* Refactored HLS support to use glassconv(1).

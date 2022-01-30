@@ -125,6 +125,7 @@ class Connector : public QObject
   static QString timezoneOffset();
   static int id3TagSize(const QByteArray &data);
   static QString socketErrorText(QAbstractSocket::SocketError err);
+  static QString timeStampString();
 
  public slots:
   virtual void setStreamPrologue(const QByteArray &data);

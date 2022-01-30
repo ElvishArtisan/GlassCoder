@@ -18,6 +18,7 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <syslog.h>
@@ -30,7 +31,6 @@
 #include "cmdswitch.h"
 #include "config.h"
 #include "glassconv.h"
-#include "logging.h"
 #include "profile.h"
 
 MainObject::MainObject(QObject *parent)
@@ -39,7 +39,7 @@ MainObject::MainObject(QObject *parent)
   d_source_dir=NULL;
   d_dest_url=NULL;
 
-  openlog("glassconv",LOG_PERROR,LOG_DAEMON);
+  int syslog_option=0;
 
   //
   // Process Command Arguments
@@ -54,43 +54,50 @@ MainObject::MainObject(QObject *parent)
       d_dest_url=new QUrl(cmd->value(i));
       cmd->setProcessed(i,true);
     }
+    if(cmd->key(i)=="--debug") {
+      syslog_option+=LOG_PERROR;
+      cmd->setProcessed(i,true);
+    }
     if(!cmd->processed(i)) {
-      Log(LOG_ERR,"unrecognized option \""+cmd->key(i)+"\"");
-      exit(1);
+      fprintf(stderr,"unrecognized option \"%s\"",
+	      cmd->key(i).toUtf8().constData());
+      exit(Config::ExitFatal);
     }
   }
+  openlog("glassconv",syslog_option,LOG_DAEMON);
+  syslog(LOG_DEBUG,"starting up");
   if(d_source_dir==NULL) {
-    Log(LOG_ERR,"\"--source-dir\" argument required");
-    exit(1);
+    syslog(LOG_ERR,"\"--source-dir\" argument required");
+    exit(Config::ExitFatal);
   }
   if(d_dest_url==NULL) {
-    Log(LOG_ERR,"\"--dest-url\" argument required");
-    exit(1);
+    syslog(LOG_ERR,"\"--dest-url\" argument required");
+    exit(Config::ExitFatal);
   }
   if(!d_source_dir->exists()) {
-    Log(LOG_ERR,"source directory does not exist");
-    exit(1);
+    syslog(LOG_ERR,"source directory does not exist");
+    exit(Config::ExitFatal);
   }
   if((!d_dest_url->isValid())||d_dest_url->isRelative()) {
-    Log(LOG_ERR,"destination url is invalid");
-    exit(1);
+    syslog(LOG_ERR,"destination url is invalid");
+    exit(Config::ExitFatal);
   }
   if((d_dest_url->scheme().toLower()!="http")&&
      (d_dest_url->scheme().toLower()!="https")) {
-    Log(LOG_ERR,"destination url has unsupported scheme");
-    exit(1);
+    syslog(LOG_ERR,"destination url has unsupported scheme");
+    exit(Config::ExitFatal);
   }
 
   //
   // Initialize CURL
   //
   if(curl_global_init(CURL_GLOBAL_ALL)!=0) {
-    Log(LOG_ERR,"curl global initialization failed");
-    exit(1);
+    syslog(LOG_ERR,"curl global initialization failed");
+    exit(Config::ExitRetry);
   }
   if((d_curl_handle=curl_easy_init())==NULL) {
-    Log(LOG_ERR,"curl initialization failed");
-    exit(1);
+    syslog(LOG_ERR,"curl initialization failed");
+    exit(Config::ExitRetry);
   }
 
   //
@@ -98,7 +105,8 @@ MainObject::MainObject(QObject *parent)
   //
   Profile *p=new Profile();
   if(p->setSource(d_source_dir->path()+"/"+GLASSCODER_CREDENTIALS)) {
-    Log(LOG_DEBUG,"reading transfer credentials from \""+p->source()+"\"");
+    syslog(LOG_DEBUG,"reading transfer credentials from \"%s\"",
+	   p->source().toUtf8().constData());
     d_username=p->stringValue("Credentials","Username");
     d_password=p->stringValue("Credentials","Password");
     d_user_agent=p->stringValue("Credentials","UserAgent",
@@ -120,6 +128,12 @@ MainObject::MainObject(QObject *parent)
   d_scan_timer->setSingleShot(true);
   connect(d_scan_timer,SIGNAL(timeout()),this,SLOT(scanData()));
 
+  //
+  // Signal Disposition
+  //
+  ::signal(SIGTERM,SIG_IGN);
+  ::signal(SIGINT,SIG_IGN);
+
   d_scan_timer->start(0);
 }
 
@@ -138,13 +152,13 @@ void MainObject::scanData()
 
 void MainObject::ProcessFile(const QString &filename)
 {
-  bool ok=false;
   QStringList f0=filename.split("/",QString::SkipEmptyParts);
   QStringList f1=f0.last().split("-",QString::KeepEmptyParts);
 
   if(f1.size()<3) {
-    Log(LOG_WARNING,
-	"unrecognized file naming scheme \""+filename+"\", skipping");
+    syslog(LOG_WARNING,
+	   "unrecognized file naming scheme \"%s\", skipping",
+	   filename.toUtf8().constData());
     UnlinkLocalFile(filename);
     return;
   }
@@ -154,43 +168,52 @@ void MainObject::ProcessFile(const QString &filename)
   while(f1.size()>3) {
     f1.removeLast();
   }
-  f1.first().toUInt(&ok);
-  if(ok) {
-    QString method=f1.at(1).trimmed();
-    if((method!="DELETE")&&(method!="PUT")) {
-      Log(LOG_WARNING,
-	  "unsupported transfer method in \""+filename+"\", skipping");
-      UnlinkLocalFile(filename);
-      return;
-    }
-    QString destname=f1.at(2);
-    if(method=="DELETE") {
-      DeleteFile(destname,filename);
-      UnlinkLocalFile(filename);
-    }
-    if(method=="PUT") {
-      PutFile(destname,filename);
-      UnlinkLocalFile(filename);
-    }
+  QString method=f1.at(1).trimmed();
+  QString destname=f1.at(2);
+  printf("method: %s  destname: %s\n",method.toUtf8().constData(),
+	 destname.toUtf8().constData());
+  if(method=="DELETE") {
+    DeleteFile(destname,filename);
+    UnlinkLocalFile(filename);
+    return;
   }
-  else {
-    Log(LOG_WARNING,
-	"unrecognized file naming scheme \""+filename+"\", skipping");
+  if(method=="PUT") {
+    PutFile(destname,filename);
+    UnlinkLocalFile(filename);
+    return;
   }
+  if(method=="STOP") {
+    //
+    // Clean up temp directory
+    //
+    QStringList files=d_source_dir->entryList(QDir::Files);
+    for(int i=0;i<files.size();i++) {
+      unlink((d_source_dir->path()+"/"+files.at(i)).toUtf8());
+    }
+    rmdir(d_source_dir->path().toUtf8());
+
+    syslog(LOG_DEBUG,"exiting normally");
+    exit(Config::ExitOk);
+  }
+  syslog(LOG_WARNING,
+	 "unsupported transfer method in \"%s\", skipping",
+	 filename.toUtf8().constData());
+  UnlinkLocalFile(filename);
 }
 
 
 void MainObject::PutFile(const QString &destname,const QString &srcname)
 {
-  Log(LOG_DEBUG,
-      "uploading \""+srcname+"\" to \""+
-      d_dest_url->toDisplayString()+"/"+destname+"\"");
+  syslog(LOG_DEBUG,"uploading \"%s\" to \"%s/%s\"",
+	 srcname.toUtf8().constData(),
+	 d_dest_url->toDisplayString().toUtf8().constData(),
+	 destname.toUtf8().constData());
 
   long resp_code=0;
   FILE *f=fopen(srcname.toUtf8(),"r");
   if(f==NULL) {
-    Log(LOG_WARNING,
-	"upload of \""+srcname+"\" failed: "+strerror(errno));
+    syslog(LOG_WARNING,"upload of \"%s\" failed: %s",
+	   srcname.toUtf8().constData(),strerror(errno));
     return;
   }
   struct stat st;
@@ -218,23 +241,23 @@ void MainObject::PutFile(const QString &destname,const QString &srcname)
   if(code==CURLE_OK) {
     curl_easy_getinfo(d_curl_handle,CURLINFO_RESPONSE_CODE,&resp_code);
     if((resp_code<200)||(resp_code>=300)) {
-      Log(LOG_WARNING,
-	  QString::asprintf("upload of \"%s\" returned code %lu",
-			    srcname.toUtf8().constData(),resp_code));
+      syslog(LOG_WARNING,"upload of \"%s\" returned code %lu",
+	     srcname.toUtf8().constData(),resp_code);
     }
   }
   else {
-    Log(LOG_WARNING,
-	"upload of \""+srcname+"\" failed: "+d_curl_errorbuffer);
+    syslog(LOG_WARNING,"upload of \"%s\" failed: %s",
+	   srcname.toUtf8().constData(),d_curl_errorbuffer);
   }
 }
 
 
 void MainObject::DeleteFile(const QString &destname,const QString &srcname)
 {
-  Log(LOG_DEBUG,
-      "removing \""+srcname+"\" from \""+
-      d_dest_url->toDisplayString()+"/"+destname+"\"");
+  syslog(LOG_DEBUG,"removing \"%s\" from \"%s/%s\"",
+	 srcname.toUtf8().constData(),
+	 d_dest_url->toDisplayString().toUtf8().constData(),
+	 destname.toUtf8().constData());
 
   long resp_code=0;
   QUrl url(d_dest_url->toDisplayString()+"/"+destname);
@@ -254,21 +277,20 @@ void MainObject::DeleteFile(const QString &destname,const QString &srcname)
   if(code==CURLE_OK) {
     curl_easy_getinfo(d_curl_handle,CURLINFO_RESPONSE_CODE,&resp_code);
     if((resp_code<200)||(resp_code>=300)) {
-      Log(LOG_WARNING,
-	  QString::asprintf("removal of \"%s\" returned code %lu",
-			    srcname.toUtf8().constData(),resp_code));
+      syslog(LOG_WARNING,"removal of \"%s\" returned code %lu",
+	     srcname.toUtf8().constData(),resp_code);
     }
   }
   else {
-    Log(LOG_WARNING,
-	"removal of \""+url.toDisplayString()+"\" failed: "+d_curl_errorbuffer);
+    syslog(LOG_WARNING,"removal of \"%s\" failed: %s",
+	   url.toDisplayString().toUtf8().constData(),d_curl_errorbuffer);
   }
 }
 
 
 void MainObject::UnlinkLocalFile(const QString &pathname) const
 {
-  Log(LOG_DEBUG,"unlinking \""+pathname+"\"");
+  syslog(LOG_DEBUG,"unlinking \"%s\"",pathname.toUtf8().constData());
   unlink(pathname.toUtf8());
 }
 

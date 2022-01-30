@@ -35,6 +35,7 @@ EXTRA_DIST = asihpi.cpp asihpi.h\
              logging.cpp logging.h\
              messagewidget.cpp messagewidget.h\
              metaevent.cpp metaevent.h\
+             paths.h.in\
              profile.cpp profile.h\
              ringbuffer.cpp ringbuffer.h\
              segmeter.cpp segmeter.h\
@@ -51,7 +52,8 @@ CLEANFILES = *~\
              *.obj\
              *.pdb\
              *.qm\
-             moc_*
+             moc_*\
+             paths.h
 
 MAINTAINERCLEANFILES = *~\
                        *.tar.gz\

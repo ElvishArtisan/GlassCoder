@@ -2,7 +2,7 @@
 ##
 ## Makefile for the glasscommander(1) Audio Encoder front-end.
 ##
-## (C) Copyright 2016-2019 Fred Gleason <fredg@paravelsystems.com>
+## (C) Copyright 2016-2022 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -112,6 +112,7 @@ DISTCLEANFILES = asihpi.cpp asihpi.h\
                  logging.cpp logging.h\
                  messagewidget.cpp messagewidget.h\
                  metaevent.cpp metaevent.h\
+                 paths.h\
                  profile.cpp profile.h\
                  ringbuffer.cpp ringbuffer.h\
                  segmeter.cpp segmeter.h\

@@ -43,10 +43,7 @@ HlsConnector::HlsConnector(bool is_top,Config *conf,QObject *parent)
   hls_total_media_frames=0;
   hls_metadata_updated=false;
 
-  hls_conveyor=new NetConveyor(this);
-  hls_conveyor->setUsername(conf->serverUsername());
-  hls_conveyor->setPassword(conf->serverPassword());
-  hls_conveyor->setUserAgent(conf->serverUserAgent());
+  hls_conveyor=new NetConveyor(conf,this);
   connect(hls_conveyor,SIGNAL(stopped()),this,SLOT(conveyorStoppedData()));
 
   //
@@ -75,20 +72,6 @@ HlsConnector::HlsConnector(bool is_top,Config *conf,QObject *parent)
   hls_start_datetime=QDateTime::currentDateTime().
     addSecs(-tz.offsetFromUtc(QDateTime::currentDateTime()));
   hls_start_datetime.setTimeZone(QTimeZone::utc());
-
-  //
-  // File Conveyor Error Logging
-  //
-  connect(hls_conveyor,SIGNAL(eventFinished(const NetConveyorEvent &,int,int,
-					    const QStringList &)),
-	  this,SLOT(conveyorEventFinished(const NetConveyorEvent &,int,int,
-					  const QStringList &)));
-  connect(hls_conveyor,
-	  SIGNAL(error(const NetConveyorEvent &,QProcess::ProcessError,
-		       const QStringList &)),
-	  this,
-	  SLOT(conveyorError(const NetConveyorEvent &,QProcess::ProcessError,
-			     const QStringList &)));
 }
 
 
@@ -170,9 +153,7 @@ void HlsConnector::connectToHostConnector(const QUrl &url)
 
   if(hls_is_top) {
     WriteTopPlaylistFile();
-    hls_conveyor->push(this,hls_playlist_filename,
-		       serverUrl().scheme()+"://"+serverUrl().host()+hls_put_directory+"/",
-		       NetConveyorEvent::PutMethod);
+    hls_conveyor->push(this,hls_playlist_filename,NetConveyorEvent::PutMethod);
     unlink(hls_playlist_filename.toUtf8());
   }
   else {
@@ -233,48 +214,6 @@ int64_t HlsConnector::writeDataConnector(int frames,const unsigned char *data,
 }
 
 
-void HlsConnector::conveyorEventFinished(const NetConveyorEvent &evt,int exit_code,
-					 int resp_code,const QStringList &args)
-{
-  if(evt.originator()==this) {
-    //
-    // Exit code handler
-    //
-    if(exit_code!=0) {
-      setConnected(false);
-      Log(LOG_WARNING,"curl(1) error: "+Connector::curlStrError(exit_code)+
-	  ", cmd: \"curl "+args.join(" ")+"\"");
-    }
-    else {
-      //
-      // Reponse code handler
-      //
-      if((resp_code<200)||(resp_code>299)) {
-	setConnected(false);
-	Log(LOG_WARNING,"curl(1) response error: "+
-	      Connector::httpStrError(resp_code)+
-	      ", cmd: \"curl "+args.join(" ")+"\"");
-      }
-      else {
-	setConnected(true);
-      }
-    }
-  }
-}
-
-
-void HlsConnector::conveyorError(const NetConveyorEvent &evt,
-				 QProcess::ProcessError err,
-				 const QStringList &args)
-{
-  Log(LOG_ERR,
-      QString().sprintf("curl(1) process error: %d, cmd: \"curl %s\"",err,
-			(const char *)args.join(" ").toUtf8()));
-  setConnected(false);
-  exit(256);
-}
-
-
 void HlsConnector::conveyorStoppedData()
 {
   emit stopped();
@@ -302,14 +241,9 @@ void HlsConnector::RotateMediaFile()
   // HTTP Uploads
   //
   hls_conveyor->push(this,hls_temp_dir->path()+"/"+hls_media_filename,
-		     serverUrl().scheme()+"://"+serverUrl().host()+
-		     QString().sprintf(":%u",serverUrl().port())+
-		     hls_put_directory+"/",NetConveyorEvent::PutMethod);
-  unlink((hls_temp_dir->path()+"/"+hls_media_filename).toUtf8());
-  hls_conveyor->push(this,hls_playlist_filename,
-		     serverUrl().scheme()+"://"+serverUrl().host()+
-		     hls_put_directory+"/",
 		     NetConveyorEvent::PutMethod);
+  unlink((hls_temp_dir->path()+"/"+hls_media_filename).toUtf8());
+  hls_conveyor->push(this,hls_playlist_filename,NetConveyorEvent::PutMethod);
   unlink(hls_playlist_filename.toUtf8());
 
   //
@@ -336,11 +270,8 @@ void HlsConnector::RotateMediaFile()
 	  ++dj;
 	}
       }
-      hls_conveyor->push(this,"",serverUrl().scheme()+"://"+serverUrl().host()+
-			 QString().sprintf(":%d",serverUrl().port())+
-			 hls_put_directory+"/"+
-			 GetMediaFilename(ci->first),
-			 NetConveyorEvent::DeleteMethod);
+      hls_conveyor->
+	push(this,GetMediaFilename(ci->first),NetConveyorEvent::DeleteMethod);
       hls_media_killtimes.erase(ci++);
     }
     else {
@@ -353,7 +284,6 @@ void HlsConnector::RotateMediaFile()
   //
   hls_sequence_back++;
   hls_media_frames=0;
-  //hls_media_killname=hls_media_filename;
   hls_media_filename=GetMediaFilename(hls_sequence_back);
   if((hls_media_handle=
       fopen((hls_temp_dir->path()+"/"+hls_media_filename).toUtf8(),"w"))==
