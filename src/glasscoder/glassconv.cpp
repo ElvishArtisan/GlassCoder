@@ -84,6 +84,7 @@ MainObject::MainObject(QObject *parent)
   }
   if((d_dest_url->scheme().toLower()!="http")&&
      (d_dest_url->scheme().toLower()!="https")&&
+     (d_dest_url->scheme().toLower()!="sftp")&&
      (d_dest_url->scheme().toLower()!="file")) {
     syslog(LOG_ERR,"destination url has unsupported scheme");
     exit(Config::ExitFatal);
@@ -255,6 +256,11 @@ void MainObject::Put(const QString &destname,const QString &srcname)
 
 void MainObject::Delete(const QString &destname,const QString &srcname)
 {
+  syslog(LOG_DEBUG,"removing \"%s\" from \"%s/%s\"",
+	 srcname.toUtf8().constData(),
+	 d_dest_url->toDisplayString().toUtf8().constData(),
+	 destname.toUtf8().constData());
+
   QString scheme=d_dest_url->scheme().toLower();
 
   if((scheme=="http")||(scheme=="https")) {
@@ -271,11 +277,6 @@ void MainObject::Delete(const QString &destname,const QString &srcname)
 
 void MainObject::DeleteHttp(const QString &destname,const QString &srcname)
 {
-  syslog(LOG_DEBUG,"removing \"%s\" from \"%s/%s\"",
-	 srcname.toUtf8().constData(),
-	 d_dest_url->toDisplayString().toUtf8().constData(),
-	 destname.toUtf8().constData());
-
   long resp_code=0;
   QUrl url(d_dest_url->toDisplayString()+"/"+destname);
 
@@ -307,11 +308,6 @@ void MainObject::DeleteHttp(const QString &destname,const QString &srcname)
 
 void MainObject::DeleteFile(const QString &destname,const QString &srcname)
 {
-  syslog(LOG_DEBUG,"removing \"%s\" from \"%s/%s\"",
-	 srcname.toUtf8().constData(),
-	 d_dest_url->toDisplayString().toUtf8().constData(),
-	 destname.toUtf8().constData());
-
   QUrl url(d_dest_url->toDisplayString()+"/"+destname);
   if((unlink(url.path().toUtf8())!=0)&&(errno!=ENOENT)) {
     syslog(LOG_WARNING,"removal of \"%s\" failed: %s",
@@ -322,6 +318,44 @@ void MainObject::DeleteFile(const QString &destname,const QString &srcname)
 
 void MainObject::DeleteSftp(const QString &destname,const QString &srcname)
 {
+  struct curl_slist *cmds=NULL;
+  QUrl url(d_dest_url->toDisplayString()+"/"+destname);
+  curl_easy_reset(d_curl_handle);
+
+  //
+  // Authentication
+  //
+  /*
+  if(!id_filename.isEmpty())&&use_id_filename) {
+    curl_easy_setopt(curl,CURLOPT_USERNAME,username.toUtf8().constData());
+    curl_easy_setopt(curl,CURLOPT_SSH_PRIVATE_KEYFILE,
+		     id_filename.toUtf8().constData());
+    curl_easy_setopt(curl,CURLOPT_KEYPASSWD,password.toUtf8().constData());
+  }
+  else {
+  */
+  curl_easy_setopt(d_curl_handle,CURLOPT_USERPWD,
+		   (d_username+":"+d_password).toUtf8().constData());
+    //  }
+
+  //
+  // Transaction
+  //
+  curl_easy_setopt(d_curl_handle,CURLOPT_URL,url.toEncoded().constData());
+  curl_easy_setopt(d_curl_handle,CURLOPT_HTTPAUTH,CURLAUTH_ANY);
+  curl_easy_setopt(d_curl_handle,CURLOPT_USERAGENT,
+		   d_user_agent.toUtf8().constData());
+  cmds=curl_slist_append(cmds,(QString("rm ")+url.path()).toUtf8());
+  curl_easy_setopt(d_curl_handle,CURLOPT_QUOTE,cmds);
+
+  //
+  // Execute It
+  //
+  CURLcode code=curl_easy_perform(d_curl_handle);
+  if((code!=CURLE_OK)&&(code!=CURLE_REMOTE_FILE_NOT_FOUND)) {
+    syslog(LOG_WARNING,"removal of \"%s\" failed: [%d] %s",
+	   url.toDisplayString().toUtf8().constData(),code,d_curl_errorbuffer);
+  }
 }
 
 
