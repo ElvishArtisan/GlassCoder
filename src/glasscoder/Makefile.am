@@ -43,8 +43,8 @@ dist_glasscoder_SOURCES = alsadevice.cpp alsadevice.h\
                           fdkcodec.cpp fdkcodec.h\
                           fileconnector.cpp fileconnector.h\
                           filearchiveconnector.cpp filearchiveconnector.h\
-                          fileconveyor.cpp fileconveyor.h\
                           filedevice.cpp filedevice.h\
+                          getconveyor.cpp getconveyor.h\
                           glasscoder.cpp glasscoder.h\
                           hlsconnector.cpp hlsconnector.h\
                           httpconnection.cpp httpconnection.h\
@@ -80,8 +80,8 @@ nodist_glasscoder_SOURCES = asihpi.cpp asihpi.h\
                             moc_fdkcodec.cpp\
                             moc_fileconnector.cpp\
                             moc_filearchiveconnector.cpp\
-                            moc_fileconveyor.cpp\
                             moc_filedevice.cpp\
+                            moc_getconveyor.cpp\
                             moc_glasscoder.cpp\
                             moc_hlsconnector.cpp\
                             moc_httpconnection.cpp\

@@ -23,7 +23,6 @@
 
 #include "config.h"
 #include "connector.h"
-#include "fileconveyor.h"
 
 Connector *ConnectorFactory(Connector::ServerType type,bool is_top,
 			    Config *conf,QObject *parent=0);

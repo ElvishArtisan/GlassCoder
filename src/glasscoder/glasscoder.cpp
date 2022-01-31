@@ -24,6 +24,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include <curl/curl.h>
+
 #include <QCoreApplication>
 
 #include "audiodevicefactory.h"

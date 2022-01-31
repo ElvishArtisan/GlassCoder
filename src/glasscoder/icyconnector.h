@@ -22,7 +22,7 @@
 #define ICYCONNECTOR_H
 
 #include "connector.h"
-#include "fileconveyor.h"
+#include "getconveyor.h"
 
 class IcyConnector : public Connector
 {
@@ -45,9 +45,9 @@ class IcyConnector : public Connector
   void socketDisconnectedData();
   void socketReadyReadData();
   void socketErrorData(QAbstractSocket::SocketError err);
-  void conveyorEventFinished(const FileConveyorEvent &evt,int exit_code,
+  void conveyorEventFinished(const QUrl &url,int exit_code,
 			     int resp_code,const QStringList &args);
-  void conveyorError(const FileConveyorEvent &evt,QProcess::ProcessError err,
+  void conveyorError(const QUrl &url,QProcess::ProcessError err,
 		     const QStringList &args);
 
  private:
@@ -57,7 +57,7 @@ class IcyConnector : public Connector
   QString icy_recv_buffer;
   int icy_protocol_version;
   bool icy_authenticated;
-  FileConveyor *icy_conveyor;
+  GetConveyor *icy_conveyor;
 };
 
 

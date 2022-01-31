@@ -22,7 +22,7 @@
 #define ICECONNECTOR_H
 
 #include "connector.h"
-#include "fileconveyor.h"
+#include "getconveyor.h"
 
 class IceConnector : public Connector
 {
@@ -45,9 +45,9 @@ class IceConnector : public Connector
   void socketDisconnectedData();
   void socketReadyReadData();
   void socketErrorData(QAbstractSocket::SocketError err);
-  void conveyorEventFinished(const FileConveyorEvent &evt,int exit_code,
+  void conveyorEventFinished(const QUrl &url,int exit_code,
 			     int resp_code,const QStringList &args);
-  void conveyorError(const FileConveyorEvent &evt,QProcess::ProcessError err,
+  void conveyorError(const QUrl &url,QProcess::ProcessError err,
 		     const QStringList &args);
 
  private:
@@ -55,7 +55,7 @@ class IceConnector : public Connector
   void WriteHeader(const QString &str);
   QTcpSocket *ice_socket;
   QString ice_recv_buffer;
-  FileConveyor *ice_conveyor;
+  GetConveyor *ice_conveyor;
 };
 
 

@@ -41,7 +41,7 @@ IcyConnector::IcyConnector(int version,QObject *parent)
   //
   // Metadata File Conveyor
   //
-  icy_conveyor=new FileConveyor(this);
+  icy_conveyor=new GetConveyor(this);
   QStringList hdrs;
   //
   // D.N.A.S v1.9.8 refuses to process updates with the default CURL
@@ -49,15 +49,15 @@ IcyConnector::IcyConnector(int version,QObject *parent)
   //
   hdrs.push_back("User-agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.2) Gecko/20070219 Firefox/2.0.0.2");
   icy_conveyor->setAddedHeaders(hdrs);
-  connect(icy_conveyor,SIGNAL(eventFinished(const FileConveyorEvent &,int,int,
+  connect(icy_conveyor,SIGNAL(eventFinished(const QUrl &,int,int,
 					    const QStringList &)),
-	  this,SLOT(conveyorEventFinished(const FileConveyorEvent &,int,int,
+	  this,SLOT(conveyorEventFinished(const QUrl &,int,int,
 					  const QStringList &)));
   connect(icy_conveyor,
-	  SIGNAL(error(const FileConveyorEvent &,QProcess::ProcessError,
+	  SIGNAL(error(const QUrl &,QProcess::ProcessError,
 		       const QStringList &)),
 	  this,
-	  SLOT(conveyorError(const FileConveyorEvent &,QProcess::ProcessError,
+	  SLOT(conveyorError(const QUrl &,QProcess::ProcessError,
 			     const QStringList &)));
 }
 
@@ -90,7 +90,7 @@ void IcyConnector::sendMetadata(MetaEvent *e)
     if(e->fieldKeys().contains("StreamUrl")) {
       url+="&url="+Connector::urlEncode(e->field("StreamUrl"));
     }
-    icy_conveyor->push(this,url,FileConveyorEvent::GetMethod);
+    icy_conveyor->push(url);
   }
 }
 
@@ -125,9 +125,6 @@ void IcyConnector::socketConnectedData()
     auth=serverUsername()+":"+serverPassword()+"\r\n";
   }
   icy_socket->write(auth.toUtf8());
-
-  //  icy_socket->write(serverPassword().toUtf8()+"\r\n",
-  //		    serverPassword().length()+2);
 }
 
 
@@ -192,51 +189,49 @@ void IcyConnector::socketErrorData(QAbstractSocket::SocketError err)
 }
 
 
-void IcyConnector::conveyorEventFinished(const FileConveyorEvent &evt,int exit_code,
+void IcyConnector::conveyorEventFinished(const QUrl &url,int exit_code,
 					 int resp_code,const QStringList &args)
 {
-  if(evt.originator()==this) {
+  //
+  // Exit code handler
+  //
+  if((exit_code!=0)&&(exit_code!=CURLE_GOT_NOTHING)) {
+    setConnected(false);
+    if(global_log_verbose) {
+      Log(LOG_WARNING,
+	  QString().sprintf("curl(1) error: %s, cmd: \"curl %s\"",
+			    (const char *)Connector::curlStrError(exit_code).toUtf8(),
+			    (const char *)args.join(" ").toUtf8()));
+    }
+    else {
+      Log(LOG_WARNING,QString().sprintf("CURL error: %s",
+					(const char *)Connector::curlStrError(exit_code).toUtf8()));
+    }
+  }
+  else {
     //
-    // Exit code handler
+    // Response code handler
     //
-    if((exit_code!=0)&&(exit_code!=CURLE_GOT_NOTHING)) {
+    if(((resp_code<200)||(resp_code>299))&&(resp_code!=0)) {
       setConnected(false);
       if(global_log_verbose) {
-	Log(LOG_WARNING,
-	    QString().sprintf("curl(1) error: %s, cmd: \"curl %s\"",
-		   (const char *)Connector::curlStrError(exit_code).toUtf8(),
-		   (const char *)args.join(" ").toUtf8()));
+	Log(LOG_WARNING,"curl(1) response error: "+
+	    Connector::httpStrError(resp_code)+
+	    ", cmd: \"curl "+args.join(" ")+"\"");
       }
       else {
-	Log(LOG_WARNING,QString().sprintf("CURL error: %s",
-		   (const char *)Connector::curlStrError(exit_code).toUtf8()));
+	Log(LOG_WARNING,"curl(1) response error: "+
+	    Connector::httpStrError(resp_code));
       }
     }
     else {
-      //
-      // Response code handler
-      //
-      if(((resp_code<200)||(resp_code>299))&&(resp_code!=0)) {
-	setConnected(false);
-	if(global_log_verbose) {
-	  Log(LOG_WARNING,"curl(1) response error: "+
-	      Connector::httpStrError(resp_code)+
-	      ", cmd: \"curl "+args.join(" ")+"\"");
-	}
-	else {
-	  Log(LOG_WARNING,"curl(1) response error: "+
-	      Connector::httpStrError(resp_code));
-	}
-      }
-      else {
-	setConnected(true);
-      }
+      setConnected(true);
     }
   }
 }
 
 
-void IcyConnector::conveyorError(const FileConveyorEvent &evt,
+void IcyConnector::conveyorError(const QUrl &url,
 				 QProcess::ProcessError err,
 				 const QStringList &args)
 {

@@ -33,16 +33,16 @@ IceConnector::IceConnector(QObject *parent)
   //
   // Metadata File Conveyor
   //
-  ice_conveyor=new FileConveyor(this);
-  connect(ice_conveyor,SIGNAL(eventFinished(const FileConveyorEvent &,int,int,
+  ice_conveyor=new GetConveyor(this);
+  connect(ice_conveyor,SIGNAL(eventFinished(const QUrl &,int,int,
 					    const QStringList &)),
-	  this,SLOT(conveyorEventFinished(const FileConveyorEvent &,int,int,
+	  this,SLOT(conveyorEventFinished(const QUrl &,int,int,
 					  const QStringList &)));
   connect(ice_conveyor,
-	  SIGNAL(error(const FileConveyorEvent &,QProcess::ProcessError,
+	  SIGNAL(error(const QUrl &,QProcess::ProcessError,
 		       const QStringList &)),
 	  this,
-	  SLOT(conveyorError(const FileConveyorEvent &,QProcess::ProcessError,
+	  SLOT(conveyorError(const QUrl &,QProcess::ProcessError,
 			     const QStringList &)));
 }
 
@@ -69,7 +69,7 @@ void IceConnector::sendMetadata(MetaEvent *e)
       "mount="+serverMountpoint()+"&"+
       "mode=updinfo&"+
       "song="+Connector::urlEncode(e->field("StreamTitle"));
-    ice_conveyor->push(this,url,FileConveyorEvent::GetMethod);
+    ice_conveyor->push(url);
   }
 }
 
@@ -191,51 +191,49 @@ void IceConnector::socketErrorData(QAbstractSocket::SocketError err)
 }
 
 
-void IceConnector::conveyorEventFinished(const FileConveyorEvent &evt,int exit_code,
+void IceConnector::conveyorEventFinished(const QUrl &url,int exit_code,
 					 int resp_code,const QStringList &args)
 {
-  if(evt.originator()==this) {
+  //
+  // Exit code handler
+  //
+  if(exit_code!=0) {
+    setConnected(false);
+    if(global_log_verbose) {
+      Log(LOG_WARNING,
+	  QString().sprintf("curl(1) error: %s, cmd: \"curl %s\"",
+			    (const char *)Connector::curlStrError(exit_code).toUtf8(),
+			    (const char *)args.join(" ").toUtf8()));
+    }
+    else {
+      Log(LOG_WARNING,QString().sprintf("CURL error: %s",
+					(const char *)Connector::curlStrError(exit_code).toUtf8()));
+    }
+  }
+  else {
     //
-    // Exit code handler
+    // Reponse code handler
     //
-    if(exit_code!=0) {
+    if((resp_code<200)||(resp_code>299)) {
       setConnected(false);
       if(global_log_verbose) {
-	Log(LOG_WARNING,
-	    QString().sprintf("curl(1) error: %s, cmd: \"curl %s\"",
-		   (const char *)Connector::curlStrError(exit_code).toUtf8(),
-		   (const char *)args.join(" ").toUtf8()));
+	Log(LOG_WARNING,"curl(1) response error: "+
+	    Connector::httpStrError(resp_code)+
+	    ", cmd: \"curl "+args.join(" ")+"\"");
       }
       else {
-	Log(LOG_WARNING,QString().sprintf("CURL error: %s",
-		   (const char *)Connector::curlStrError(exit_code).toUtf8()));
+	Log(LOG_WARNING,"curl(1) response error: "+
+	    Connector::httpStrError(resp_code));
       }
     }
     else {
-      //
-      // Reponse code handler
-      //
-      if((resp_code<200)||(resp_code>299)) {
-	setConnected(false);
-	if(global_log_verbose) {
-	  Log(LOG_WARNING,"curl(1) response error: "+
-	      Connector::httpStrError(resp_code)+
-	      ", cmd: \"curl "+args.join(" ")+"\"");
-	}
-	else {
-	  Log(LOG_WARNING,"curl(1) response error: "+
-	      Connector::httpStrError(resp_code));
-	}
-      }
-      else {
-	setConnected(true);
-      }
+      setConnected(true);
     }
   }
 }
 
 
-void IceConnector::conveyorError(const FileConveyorEvent &evt,
+void IceConnector::conveyorError(const QUrl &url,
 				 QProcess::ProcessError err,
 				 const QStringList &args)
 {
