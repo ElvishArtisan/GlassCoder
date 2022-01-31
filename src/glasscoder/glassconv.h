@@ -41,8 +41,11 @@ class MainObject : public QObject
  private slots:
   void scanData();
   void ProcessFile(const QString &filename);
-  void PutFile(const QString &destname,const QString &srcname);
+  void Put(const QString &destname,const QString &srcname);
+  void Delete(const QString &destname,const QString &srcname);
+  void DeleteHttp(const QString &destname,const QString &srcname);
   void DeleteFile(const QString &destname,const QString &srcname);
+  void DeleteSftp(const QString &destname,const QString &srcname);
   void UnlinkLocalFile(const QString &pathname) const;
 
  private:

@@ -83,7 +83,8 @@ MainObject::MainObject(QObject *parent)
     exit(Config::ExitFatal);
   }
   if((d_dest_url->scheme().toLower()!="http")&&
-     (d_dest_url->scheme().toLower()!="https")) {
+     (d_dest_url->scheme().toLower()!="https")&&
+     (d_dest_url->scheme().toLower()!="file")) {
     syslog(LOG_ERR,"destination url has unsupported scheme");
     exit(Config::ExitFatal);
   }
@@ -173,12 +174,12 @@ void MainObject::ProcessFile(const QString &filename)
   printf("method: %s  destname: %s\n",method.toUtf8().constData(),
 	 destname.toUtf8().constData());
   if(method=="DELETE") {
-    DeleteFile(destname,filename);
+    Delete(destname,filename);
     UnlinkLocalFile(filename);
     return;
   }
   if(method=="PUT") {
-    PutFile(destname,filename);
+    Put(destname,filename);
     UnlinkLocalFile(filename);
     return;
   }
@@ -202,7 +203,7 @@ void MainObject::ProcessFile(const QString &filename)
 }
 
 
-void MainObject::PutFile(const QString &destname,const QString &srcname)
+void MainObject::Put(const QString &destname,const QString &srcname)
 {
   syslog(LOG_DEBUG,"uploading \"%s\" to \"%s/%s\"",
 	 srcname.toUtf8().constData(),
@@ -252,7 +253,23 @@ void MainObject::PutFile(const QString &destname,const QString &srcname)
 }
 
 
-void MainObject::DeleteFile(const QString &destname,const QString &srcname)
+void MainObject::Delete(const QString &destname,const QString &srcname)
+{
+  QString scheme=d_dest_url->scheme().toLower();
+
+  if((scheme=="http")||(scheme=="https")) {
+    DeleteHttp(destname,srcname);
+  }
+  if(scheme=="file") {
+    DeleteFile(destname,srcname);
+  }
+  if(scheme=="sftp") {
+    DeleteSftp(destname,srcname);
+  }
+}
+
+
+void MainObject::DeleteHttp(const QString &destname,const QString &srcname)
 {
   syslog(LOG_DEBUG,"removing \"%s\" from \"%s/%s\"",
 	 srcname.toUtf8().constData(),
@@ -285,6 +302,26 @@ void MainObject::DeleteFile(const QString &destname,const QString &srcname)
     syslog(LOG_WARNING,"removal of \"%s\" failed: %s",
 	   url.toDisplayString().toUtf8().constData(),d_curl_errorbuffer);
   }
+}
+
+
+void MainObject::DeleteFile(const QString &destname,const QString &srcname)
+{
+  syslog(LOG_DEBUG,"removing \"%s\" from \"%s/%s\"",
+	 srcname.toUtf8().constData(),
+	 d_dest_url->toDisplayString().toUtf8().constData(),
+	 destname.toUtf8().constData());
+
+  QUrl url(d_dest_url->toDisplayString()+"/"+destname);
+  if((unlink(url.path().toUtf8())!=0)&&(errno!=ENOENT)) {
+    syslog(LOG_WARNING,"removal of \"%s\" failed: %s",
+	   url.toDisplayString().toUtf8().constData(),strerror(errno));
+  }
+}
+
+
+void MainObject::DeleteSftp(const QString &destname,const QString &srcname)
+{
 }
 
 
