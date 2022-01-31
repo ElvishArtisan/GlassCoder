@@ -297,6 +297,36 @@
 
     <varlistentry>
       <term>
+	<option>--credentials-file=</option><replaceable>filename</replaceable>
+      </term>
+      <listitem>
+	<para>
+	  Get the credentials for connecting to the server in the
+	  <replaceable>filename</replaceable> file. The contents of the file
+	  should be formatted as follows:
+	  <literallayout>
+[Credentials]
+Username=&lt;username&gt;
+Password=&lt;password&gt;
+          </literallayout>
+	</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>
+	<option>--delete-credentials</option>
+      </term>
+      <listitem>
+	<para>
+	  Delete the file specified by <option>--credentials-file</option>
+	  after being read.
+	</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>
 	<option>--errors-string=</option><replaceable>string</replaceable>
       </term>
       <listitem>
@@ -428,11 +458,17 @@
 
     <varlistentry>
       <term>
-	<option>--server-auth=</option>[<replaceable>username</replaceable>][<option>:</option><replaceable>password</replaceable>]
+	<option>--server-auth=</option>[<replaceable>username</replaceable>][<option>:</option><replaceable>password</replaceable>] (DEPRECATED)
       </term>
       <listitem>
 	<para>
 	  The authentication parameters to use. This parameter has no default.
+	</para>
+	<para>
+	  NEVER USE THIS OPTION! It allows credentials to
+	  be seen by other users on the system. Use the
+	  <option>--credentials-file</option> option to specify server
+	  credentials instead.
 	</para>
       </listitem>
     </varlistentry>
@@ -1597,9 +1633,9 @@
 
 <refsect1 id='bugs'><title>Bugs</title>
 <para>
-  SFTP:// transfers are done in &quot;insecure&quot; mode (due to crippled
-  support for <command>ssh</command><manvolnum>1</manvolnum> host keys in
-  <command>curl</command><manvolnum>1</manvolnum>).
+  Never use the <option>--server-auth</option> option; it allows credentials to
+  be seen by other users on the system. Use <option>--credentials-file</option>
+  to specify server credentials instead.
 </para>
 <para>
   <command>ssh</command><manvolnum>1</manvolnum> public key authentication

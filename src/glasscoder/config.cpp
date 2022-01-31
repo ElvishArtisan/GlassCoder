@@ -18,12 +18,15 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <unistd.h>
+
 #include <QCoreApplication>
 
 #include "audiodevicefactory.h"
 #include "codecfactory.h"
 #include "config.h"
 #include "logging.h"
+#include "profile.h"
 
 Config::Config()
 {
@@ -39,6 +42,8 @@ Config::Config()
   server_exit_on_last=false;
   server_max_connections=-1;
   server_password="";
+  credentials_file="";
+  delete_credentials=false;
   server_type=Connector::Icecast2Server;
   server_script_down="";
   server_script_up="";
@@ -123,6 +128,14 @@ Config::Config()
 	Log(LOG_ERR,"invalid --audio-samplerate value");
 	exit(256);
       }
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--credentials-file") {
+      credentials_file=cmd->value(i);
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--delete-credentials") {
+      delete_credentials=true;
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--dump-headers") {
@@ -314,6 +327,23 @@ Config::Config()
   }
 
   //
+  // Read Credentials
+  //
+  if(!credentials_file.isEmpty()) {
+    Profile *p=new Profile();
+    if(!p->setSource(credentials_file)) {
+      Log(LOG_ERR,"credentials file not found");
+      exit(256);
+    }
+    server_username=p->stringValue("Credentials","Username");
+    server_password=p->stringValue("Credentials","Password");
+    delete p;
+    if(delete_credentials) {
+      unlink(credentials_file.toUtf8());
+    }
+  }
+
+  //
   // Sanity Checks
   //
   for(int i=0;i<device_keys.size();i++) {
@@ -435,6 +465,12 @@ int Config::serverMaxConnections() const
 QString Config::serverPassword() const
 {
   return server_password;
+}
+
+
+QString Config::credentialsFile() const
+{
+  return credentials_file;
 }
 
 

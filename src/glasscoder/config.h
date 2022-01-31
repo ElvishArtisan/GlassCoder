@@ -48,6 +48,8 @@ class Config
   bool serverExitOnLast() const;
   int serverMaxConnections() const;
   QString serverPassword() const;
+  QString credentialsFile() const;
+  bool deleteCredentials() const;
   QString serverScriptDown() const;
   QString serverScriptUp() const;
   int serverStartConnections() const;
@@ -94,6 +96,8 @@ class Config
   bool server_exit_on_last;
   int server_max_connections;
   QString server_password;
+  QString credentials_file;
+  bool delete_credentials;
   QString server_script_down;
   QString server_script_up;
   int server_start_connections;
