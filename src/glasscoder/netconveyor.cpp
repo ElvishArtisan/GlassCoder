@@ -225,6 +225,10 @@ void NetConveyor::startConveyorProcess()
     fprintf(f,"Password=%s\n",
 	    conv_config->serverPassword().toUtf8().constData());
   }
+  if(!conv_config->sshIdentity().isEmpty()) {
+    fprintf(f,"SshIdentity=%s\n",
+	    conv_config->sshIdentity().toUtf8().constData());
+  }
   fprintf(f,"UserAgent=%s\n",
 	  conv_config->serverUserAgent().toUtf8().constData());
   fclose(f);

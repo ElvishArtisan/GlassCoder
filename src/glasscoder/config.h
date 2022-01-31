@@ -2,7 +2,7 @@
 //
 // Configuration Class for glasscoder(1)
 //
-// (C) Copyright 2016-2020 Fred Gleason <fredg@paravelsystems.com>
+// (C) Copyright 2016-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -50,6 +50,7 @@ class Config
   QString serverPassword() const;
   QString credentialsFile() const;
   bool deleteCredentials() const;
+  QString sshIdentity() const;
   QString serverScriptDown() const;
   QString serverScriptUp() const;
   int serverStartConnections() const;
@@ -98,6 +99,7 @@ class Config
   QString server_password;
   QString credentials_file;
   bool delete_credentials;
+  QString ssh_identity;
   QString server_script_down;
   QString server_script_up;
   int server_start_connections;

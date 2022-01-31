@@ -40,19 +40,21 @@ class MainObject : public QObject
 
  private slots:
   void scanData();
+
+ private:
   void ProcessFile(const QString &filename);
   void Put(const QString &destname,const QString &srcname);
   void Delete(const QString &destname,const QString &srcname);
   void DeleteHttp(const QString &destname,const QString &srcname);
   void DeleteFile(const QString &destname,const QString &srcname);
   void DeleteSftp(const QString &destname,const QString &srcname);
+  void SetCurlAuthentication(CURL *handle) const;
   void UnlinkLocalFile(const QString &pathname) const;
-
- private:
   QDir *d_source_dir;
   QUrl *d_dest_url;
   QString d_username;
   QString d_password;
+  QString d_ssh_identity;
   QTimer *d_scan_timer;
   CURL *d_curl_handle;
   char d_curl_errorbuffer[CURL_ERROR_SIZE];

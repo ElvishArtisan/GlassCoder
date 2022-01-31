@@ -310,6 +310,11 @@ Username=&lt;username&gt;
 Password=&lt;password&gt;
           </literallayout>
 	</para>
+	<para>
+	  When using the <option>--ssh-identity</option> option, the
+	  passphrase for the specified identity file should be used as the
+	  password value.
+	</para>
       </listitem>
     </varlistentry>
 
@@ -694,6 +699,20 @@ Password=&lt;password&gt;
 	  <userinput>GlassCoder/@VERSION@</userinput>. This setting
 	  is used only by <userinput>IceCast2</userinput> and
 	  <userinput>HLS</userinput> servers.
+	</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>
+	<option>--ssh-identity=</option><replaceable>filename</replaceable>
+      </term>
+      <listitem>
+	<para>
+	  The path to the file containing an ssh(1) identity to use when
+	  connecting via SFTP. When using this option, the passphrase for
+	  the identity file should be provided as the server password. See
+	  the <option>--credentials-file</option> option for details.
 	</para>
       </listitem>
     </varlistentry>
@@ -1634,13 +1653,9 @@ Password=&lt;password&gt;
 <refsect1 id='bugs'><title>Bugs</title>
 <para>
   Never use the <option>--server-auth</option> option; it allows credentials to
-  be seen by other users on the system. Use <option>--credentials-file</option>
-  to specify server credentials instead.
-</para>
-<para>
-  <command>ssh</command><manvolnum>1</manvolnum> public key authentication
-  is unsupported (due to crippled
-  support for ed25519 keys in <command>curl</command><manvolnum>1</manvolnum>).
+  be seen by other users on the system. Use the 
+  <option>--credentials-file</option> option to specify server credentials
+  instead.
 </para>
 <para>
   Ogg metadata support is still missing.

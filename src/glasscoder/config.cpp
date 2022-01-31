@@ -44,6 +44,7 @@ Config::Config()
   server_password="";
   credentials_file="";
   delete_credentials=false;
+  ssh_identity="";
   server_type=Connector::Icecast2Server;
   server_script_down="";
   server_script_up="";
@@ -136,6 +137,10 @@ Config::Config()
     }
     if(cmd->key(i)=="--delete-credentials") {
       delete_credentials=true;
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--ssh-identity") {
+      ssh_identity=cmd->value(i);
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--dump-headers") {
@@ -471,6 +476,18 @@ QString Config::serverPassword() const
 QString Config::credentialsFile() const
 {
   return credentials_file;
+}
+
+
+bool Config::deleteCredentials() const
+{
+  return delete_credentials;
+}
+
+
+QString Config::sshIdentity() const
+{
+  return ssh_identity;
 }
 
 

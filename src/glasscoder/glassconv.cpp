@@ -111,6 +111,7 @@ MainObject::MainObject(QObject *parent)
 	   p->source().toUtf8().constData());
     d_username=p->stringValue("Credentials","Username");
     d_password=p->stringValue("Credentials","Password");
+    d_ssh_identity=p->stringValue("Credentials","SshIdentity");
     d_user_agent=p->stringValue("Credentials","UserAgent",
 				QString("GlassCoder/")+VERSION);
     UnlinkLocalFile(p->source());
@@ -225,14 +226,35 @@ void MainObject::Put(const QString &destname,const QString &srcname)
   QUrl url(d_dest_url->toDisplayString()+"/"+destname);
 
   curl_easy_reset(d_curl_handle);
+
+  //
+  // Authentication
+  //
+  SetCurlAuthentication(d_curl_handle);
+  /*
+  if(!d_username.isEmpty()) {
+    if((url.scheme()=="sftp")&&(!d_public_keyfile.isEmpty())) {
+      curl_easy_setopt(d_curl_handle,
+		       CURLOPT_USERNAME,d_username.toUtf8().constData());
+      curl_easy_setopt(d_curl_handle,CURLOPT_SSH_PRIVATE_KEYFILE,
+		       d_public_keyfile.toUtf8().constData());
+      curl_easy_setopt(d_curl_handle,CURLOPT_KEYPASSWD,
+		       d_password.toUtf8().constData());
+    }
+    else {
+      curl_easy_setopt(d_curl_handle,CURLOPT_USERPWD,
+		       (d_username+":"+d_password).toUtf8().constData());
+    }
+  }
+  */
+
+  //
+  // Transaction
+  //
   curl_easy_setopt(d_curl_handle,CURLOPT_ERRORBUFFER,d_curl_errorbuffer);
   curl_easy_setopt(d_curl_handle,CURLOPT_READDATA,(void *)f);
   if(st.st_size>0) {
     curl_easy_setopt(d_curl_handle,CURLOPT_INFILESIZE,st.st_size);
-  }
-  if(!d_username.isEmpty()) {
-    curl_easy_setopt(d_curl_handle,CURLOPT_USERPWD,
-		     (d_username+":"+d_password).toUtf8().constData());
   }
   curl_easy_setopt(d_curl_handle,CURLOPT_URL,url.toEncoded().constData());
   curl_easy_setopt(d_curl_handle,CURLOPT_UPLOAD,1);
@@ -242,7 +264,7 @@ void MainObject::Put(const QString &destname,const QString &srcname)
   CURLcode code=curl_easy_perform(d_curl_handle);
   if(code==CURLE_OK) {
     curl_easy_getinfo(d_curl_handle,CURLINFO_RESPONSE_CODE,&resp_code);
-    if((resp_code<200)||(resp_code>=300)) {
+    if(((resp_code<200)||(resp_code>=300))&&(resp_code!=0)) {
       syslog(LOG_WARNING,"upload of \"%s\" returned code %lu",
 	     srcname.toUtf8().constData(),resp_code);
     }
@@ -320,27 +342,12 @@ void MainObject::DeleteSftp(const QString &destname,const QString &srcname)
 {
   struct curl_slist *cmds=NULL;
   QUrl url(d_dest_url->toDisplayString()+"/"+destname);
+
+  //
+  // Set Up The Transaction
+  //
   curl_easy_reset(d_curl_handle);
-
-  //
-  // Authentication
-  //
-  /*
-  if(!id_filename.isEmpty())&&use_id_filename) {
-    curl_easy_setopt(curl,CURLOPT_USERNAME,username.toUtf8().constData());
-    curl_easy_setopt(curl,CURLOPT_SSH_PRIVATE_KEYFILE,
-		     id_filename.toUtf8().constData());
-    curl_easy_setopt(curl,CURLOPT_KEYPASSWD,password.toUtf8().constData());
-  }
-  else {
-  */
-  curl_easy_setopt(d_curl_handle,CURLOPT_USERPWD,
-		   (d_username+":"+d_password).toUtf8().constData());
-    //  }
-
-  //
-  // Transaction
-  //
+  SetCurlAuthentication(d_curl_handle);
   curl_easy_setopt(d_curl_handle,CURLOPT_URL,url.toEncoded().constData());
   curl_easy_setopt(d_curl_handle,CURLOPT_HTTPAUTH,CURLAUTH_ANY);
   curl_easy_setopt(d_curl_handle,CURLOPT_USERAGENT,
@@ -355,6 +362,23 @@ void MainObject::DeleteSftp(const QString &destname,const QString &srcname)
   if((code!=CURLE_OK)&&(code!=CURLE_REMOTE_FILE_NOT_FOUND)) {
     syslog(LOG_WARNING,"removal of \"%s\" failed: [%d] %s",
 	   url.toDisplayString().toUtf8().constData(),code,d_curl_errorbuffer);
+  }
+}
+
+
+void MainObject::SetCurlAuthentication(CURL *handle) const
+{
+  if(d_ssh_identity.isEmpty()) {
+    curl_easy_setopt(d_curl_handle,CURLOPT_USERPWD,
+		     (d_username+":"+d_password).toUtf8().constData());
+  }
+  else {
+    curl_easy_setopt(d_curl_handle,
+		     CURLOPT_USERNAME,d_username.toUtf8().constData());
+    curl_easy_setopt(d_curl_handle,CURLOPT_SSH_PRIVATE_KEYFILE,
+		     d_ssh_identity.toUtf8().constData());
+    curl_easy_setopt(d_curl_handle,CURLOPT_KEYPASSWD,
+		     d_password.toUtf8().constData());
   }
 }
 
