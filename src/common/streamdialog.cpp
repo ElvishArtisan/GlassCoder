@@ -2,7 +2,7 @@
 //
 // Configuration dialog for stream metadata settings
 //
-//   (C) Copyright 2015-2016 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -20,16 +20,18 @@
 
 #include "streamdialog.h"
 
-StreamDialog::StreamDialog(QWidget *parent)
+StreamDialog::StreamDialog(const QString &caption,QWidget *parent)
   : QDialog(parent)
 {
+  gui_caption=caption;
+
   //
   // Fonts
   //
   QFont label_font("helvetica",14,QFont::Bold);
   label_font.setPixelSize(14);
 
-  setWindowTitle("GlassGui - "+tr("Stream Metadata Settings"));
+  setWindowTitle(gui_caption+" - "+tr("Stream Metadata Settings"));
 
   //
   // Stream Name

@@ -2,7 +2,7 @@
 //
 // Text viewer dialog
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -31,7 +31,7 @@ class CodeViewer : public QDialog
 {
  Q_OBJECT;
  public:
-  CodeViewer(QWidget *parent=0);
+ CodeViewer(const QString &caption,QWidget *parent);
   QSize sizeHint() const;
 
  public slots:
@@ -47,6 +47,7 @@ class CodeViewer : public QDialog
  private:
   QTextEdit *view_text;
   QPushButton *view_close_button;
+  QString view_caption;
 };
 
 

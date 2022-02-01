@@ -143,12 +143,12 @@ MainWidget::MainWidget(QWidget *parent)
   //
   // Dialogs
   //
-  gui_server_dialog=new ServerDialog(gui_temp_dir,this);
-  gui_codec_dialog=new CodecDialog(this);
-  gui_codeviewer_dialog=new CodeViewer(this);
-  gui_source_dialog=new SourceDialog(this);
+  gui_server_dialog=new ServerDialog(gui_temp_dir,"GlassGui",this);
+  gui_codec_dialog=new CodecDialog("GlassGui",this);
+  gui_codeviewer_dialog=new CodeViewer("GlassGui",this);
+  gui_source_dialog=new SourceDialog("GlassGui",this);
   connect(gui_source_dialog,SIGNAL(updated()),this,SLOT(checkArgs()));
-  gui_stream_dialog=new StreamDialog(this);
+  gui_stream_dialog=new StreamDialog("GlassGui",this);
   connect(gui_server_dialog,SIGNAL(typeChanged(Connector::ServerType,bool)),
 	  this,SLOT(serverTypeChangedData(Connector::ServerType,bool)));
   connect(gui_server_dialog,SIGNAL(settingsChanged()),this,SLOT(checkArgs()));

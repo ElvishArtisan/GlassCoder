@@ -2,7 +2,7 @@
 //
 // Configuration dialog for source settings
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -23,16 +23,18 @@
 #include "asihpi.h"
 #include "sourcedialog.h"
 
-SourceDialog::SourceDialog(QWidget *parent)
+SourceDialog::SourceDialog(const QString &caption,QWidget *parent)
   : QDialog(parent)
 {
+  gui_caption=caption;
+
   //
   // Fonts
   //
   QFont label_font("helvetica",14,QFont::Bold);
   label_font.setPixelSize(14);
 
-  setWindowTitle("GlassGui - "+tr("Audio Sources"));
+  setWindowTitle(gui_caption+" - "+tr("Audio Sources"));
 
   //
   // Source Type

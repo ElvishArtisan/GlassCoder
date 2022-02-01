@@ -41,7 +41,7 @@ class ServerDialog : public QDialog
 {
  Q_OBJECT;
  public:
-  ServerDialog(QDir *temp_dir,QWidget *parent=0);
+  ServerDialog(QDir *temp_dir,const QString &caption,QWidget *parent);
   QSize sizeHint() const;
   bool makeArgs(QStringList *args,bool escape_args);
   bool writeCredentials() const;
@@ -91,6 +91,7 @@ class ServerDialog : public QDialog
   QPushButton *srv_close_button;
   QDir *srv_temp_dir;
   QString srv_identity_path;
+  QString srv_caption;
 };
 
 

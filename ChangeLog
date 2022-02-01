@@ -971,3 +971,6 @@
 	starting glasscoder(1).
 	* Modified glasscommander(1) to use the '--ssh-identity' option when
 	starting glasscoder(1).
+2022-02-01 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in glasscommander(1) that caused dialog titlebars to
+	display their parent as 'GlassGui'.

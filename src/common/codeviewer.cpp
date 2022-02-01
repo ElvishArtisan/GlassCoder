@@ -2,7 +2,7 @@
 //
 // Text viewer dialog
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -20,10 +20,12 @@
 
 #include "codeviewer.h"
 
-CodeViewer::CodeViewer(QWidget *parent)
+CodeViewer::CodeViewer(const QString &caption,QWidget *parent)
   : QDialog(parent)
 {
-  setWindowTitle("GlassGui - "+tr("View Code"));
+  view_caption=caption;
+
+  setWindowTitle(view_caption+" - "+tr("View Code"));
 
   QFont button_font(font().family(),font().pointSize(),QFont::Bold);
 

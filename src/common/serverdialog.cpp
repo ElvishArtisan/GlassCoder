@@ -23,10 +23,11 @@
 
 #include "serverdialog.h"
 
-ServerDialog::ServerDialog(QDir *temp_dir,QWidget *parent)
+ServerDialog::ServerDialog(QDir *temp_dir,const QString &caption,QWidget *parent)
   : QDialog(parent)
 {
   srv_temp_dir=temp_dir;
+  srv_caption=caption;
 
   //
   // Fonts
@@ -34,7 +35,7 @@ ServerDialog::ServerDialog(QDir *temp_dir,QWidget *parent)
   QFont label_font("helvetica",14,QFont::Bold);
   label_font.setPixelSize(14);
 
-  setWindowTitle("GlassGui - "+tr("Server Settings"));
+  setWindowTitle(srv_caption+" - "+tr("Server Settings"));
 
   srv_identity_path="/";
   if(getenv("HOME")!=NULL) {

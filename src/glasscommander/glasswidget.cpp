@@ -43,11 +43,11 @@ GlassWidget::GlassWidget(const QString &instance_name,QDir *temp_dir,
   //
   // Dialogs
   //
-  gw_server_dialog=new ServerDialog(gw_temp_dir,this);
-  gw_codec_dialog=new CodecDialog(this);
-  gw_source_dialog=new SourceDialog(this);
+  gw_server_dialog=new ServerDialog(gw_temp_dir,"GlassCommander",this);
+  gw_codec_dialog=new CodecDialog("GlassCommander",this);
+  gw_source_dialog=new SourceDialog("GlassCommander",this);
   connect(gw_source_dialog,SIGNAL(updated()),this,SLOT(checkArgs()));
-  gw_stream_dialog=new StreamDialog(this);
+  gw_stream_dialog=new StreamDialog("GlassCommander",this);
   gw_config_dialog=new ConfigDialog(instance_name,gw_server_dialog,
 				    gw_codec_dialog,gw_stream_dialog,
 				    gw_source_dialog,this);

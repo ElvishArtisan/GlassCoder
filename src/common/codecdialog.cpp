@@ -2,7 +2,7 @@
 //
 // Configuration dialog for codec settings
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -20,16 +20,18 @@
 
 #include "codecdialog.h"
 
-CodecDialog::CodecDialog(QWidget *parent)
+CodecDialog::CodecDialog(const QString &caption,QWidget *parent)
   : QDialog(parent,Qt::Dialog)
 {
+  gui_caption=caption;
+
   //
   // Fonts
   //
   QFont label_font("helvetica",14,QFont::Bold);
   label_font.setPixelSize(14);
 
-  setWindowTitle("GlassGui - "+tr("Codec Settings"));
+  setWindowTitle(caption+" - "+tr("Codec Settings"));
 
   //
   // Codec Type

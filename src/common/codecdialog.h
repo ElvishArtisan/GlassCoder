@@ -2,7 +2,7 @@
 //
 // Configuration dialog for codec settings
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -40,7 +40,7 @@ class CodecDialog : public QDialog
 {
  Q_OBJECT;
  public:
-  CodecDialog(QWidget *parent=0);
+  CodecDialog(const QString &caption,QWidget *parent);
   QSize sizeHint() const;
   void setControlsLocked(bool state);
   void setMultirate(bool state);
@@ -66,6 +66,7 @@ class CodecDialog : public QDialog
   QLabel *gui_codec_bitrate_label;
   ComboBox *gui_codec_bitrate_box[CODECDIALOG_MAX_SUBSTREAMS];
   QPushButton *gui_close_button;
+  QString gui_caption;
 };
 
 

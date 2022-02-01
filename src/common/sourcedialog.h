@@ -2,7 +2,7 @@
 //
 // Configuration dialog for source settings
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -40,7 +40,7 @@ class SourceDialog : public QDialog
 {
  Q_OBJECT;
  public:
-  SourceDialog(QWidget *parent=0);
+ SourceDialog(const QString &caption,QWidget *parent);
   QSize sizeHint() const;
   bool makeArgs(QStringList *args,bool escape_args);
   void setControlsLocked(bool state);
@@ -85,6 +85,8 @@ class SourceDialog : public QDialog
   QSpinBox *gui_jack_gain_spin;
 
   QPushButton *gui_close_button;
+
+  QString gui_caption;
 };
 
 

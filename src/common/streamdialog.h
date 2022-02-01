@@ -2,7 +2,7 @@
 //
 // Configuration dialog for stream metadata settings
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -38,7 +38,7 @@ class StreamDialog : public QDialog
 {
  Q_OBJECT;
  public:
-  StreamDialog(QWidget *parent=0);
+  StreamDialog(const QString &caption,QWidget *parent);
   QSize sizeHint() const;
   void makeArgs(QStringList *args,bool escape_args);
   void setServerType(Connector::ServerType type);
@@ -69,6 +69,7 @@ class StreamDialog : public QDialog
   QLabel *gui_stream_timestamp_offset_label;
   SpinBox *gui_stream_timestamp_offset_spin;
   QLabel *gui_stream_timestamp_offset_unit;
+  QString gui_caption;
 };
 
 
