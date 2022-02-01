@@ -974,3 +974,6 @@
 2022-02-01 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in glasscommander(1) that caused dialog titlebars to
 	display their parent as 'GlassGui'.
+2022-02-01 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed bugs in glasscommander(1) that caused the strip insertion
+	icons on the toolbar to be enabled incorrectly.

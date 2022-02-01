@@ -111,20 +111,27 @@ MainWidget::MainWidget(QWidget *parent)
   //
   gui_toolbar=addToolBar("foo");
   gui_toolbar->setAllowedAreas(Qt::TopToolBarArea);
-  QAction *action=new QAction(QIcon(QPixmap(plussign_xpm)),tr("Add Instance"),this);
+  QAction *action=
+    new QAction(QIcon(QPixmap(plussign_xpm)),tr("Add Instance"),this);
   action->setStatusTip(tr("Add an encoder instance"));
   connect(action,SIGNAL(triggered()),this,SLOT(addInstanceData()));
   gui_toolbar->addAction(action);
 
-  action=new QAction(QIcon(QPixmap(minussign_xpm)),tr("Remove Instance"),this);
-  action->setStatusTip(tr("Remove an encoder instance"));
-  connect(action,SIGNAL(triggered()),this,SLOT(removeInstanceData()));
-  gui_toolbar->addAction(action);
+  gui_remove_action=
+    new QAction(QIcon(QPixmap(minussign_xpm)),tr("Remove Instance"),this);
+  gui_remove_action->setStatusTip(tr("Remove an encoder instance"));
+  connect(gui_remove_action,SIGNAL(triggered()),
+	  this,SLOT(removeInstanceData()));
+  gui_toolbar->addAction(gui_remove_action);
 
-  action=new QAction(QIcon(QPixmap(back_xpm)),tr("Abandon change"),this);
-  action->setStatusTip(tr("Abandon Add or Removal of encoder instance"));
-  connect(action,SIGNAL(triggered()),this,SLOT(abandonInstanceData()));
-  gui_toolbar->addAction(action);
+  gui_abandon_action=
+    new QAction(QIcon(QPixmap(back_xpm)),tr("Abandon change"),this);
+  gui_abandon_action->
+    setStatusTip(tr("Abandon Add or Removal of encoder instance"));
+  gui_abandon_action->setDisabled(true);
+  connect(gui_abandon_action,SIGNAL(triggered()),
+	  this,SLOT(abandonInstanceData()));
+  gui_toolbar->addAction(gui_abandon_action);
 
   gui_toolbar->addSeparator();
 
@@ -189,6 +196,7 @@ void MainWidget::addInstanceData()
     for(int i=0;i<gui_encoders.size();i++) {
       gui_encoders.at(i)->setMode(GlassWidget::InsertMode);
     }
+    gui_abandon_action->setEnabled(true);
     gui_insert_button->show();
   }
 }
@@ -202,6 +210,7 @@ void MainWidget::removeInstanceData()
     gui_encoders.at(i)->setMode(GlassWidget::RemoveMode);
   }
   gui_insert_button->hide();
+  gui_abandon_action->setEnabled(true);
 }
 
 
@@ -213,6 +222,7 @@ void MainWidget::abandonInstanceData()
     gui_encoders.at(i)->setMode(GlassWidget::NormalMode);
   }
   gui_insert_button->hide();
+  gui_abandon_action->setDisabled(true);
 }
 
 
@@ -238,6 +248,8 @@ void MainWidget::insertClickedData(const QString &instance_name)
   setMaximumHeight(h);
   setMinimumSize(w,h);
   abandonInstanceData();
+  gui_remove_action->setEnabled(gui_encoders.size()>0);
+  gui_abandon_action->setDisabled(true);
   SaveEncoders();
 }
 
@@ -261,6 +273,8 @@ void MainWidget::removeClickedData(const QString &instance_name)
       deleteInstance(instance_name);
     }
   }
+  gui_remove_action->setEnabled(gui_encoders.size()>0);
+  gui_abandon_action->setDisabled(true);
 }
 
 
@@ -477,8 +491,9 @@ void MainWidget::LoadEncoders()
     section=QString().sprintf("Encoder%d",count+1);
     name=p->stringValue(section,"InstanceName","",&ok);
   }
-
   delete p;
+
+  gui_remove_action->setEnabled(gui_encoders.size()>0);
 }
 
 

@@ -76,6 +76,8 @@ class MainWidget : public GuiApplication
   DeleteDialog *gui_delete_dialog;
   QString gui_new_instance_name;
   QToolBar *gui_toolbar;
+  QAction *gui_remove_action;
+  QAction *gui_abandon_action;
   QList<GlassWidget *> gui_encoders;
   QString gui_codec_types;
   QString gui_source_types;
