@@ -2,7 +2,7 @@
 //
 // Configuration dialog for server settings
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -60,6 +60,8 @@ class ServerDialog : public QDialog
  private slots:
   void serverTypeChanged(int index);
   void locationChanged(const QString &str);
+  void useIdentityChanged(bool state);
+  void selectIdentityFile();
 
  private:
   QLabel *srv_server_label;
@@ -73,6 +75,11 @@ class ServerDialog : public QDialog
   QLineEdit *srv_server_username_edit;
   QLabel *srv_server_password_label;
   QLineEdit *srv_server_password_edit;
+  QCheckBox *srv_use_identity_check;
+  QLabel *srv_use_identity_label;
+  QLabel *srv_identity_label;
+  QLineEdit *srv_identity_edit;
+  QPushButton *srv_identity_button;
   QLabel *srv_server_script_up_label;
   QLineEdit *srv_server_script_up_edit;
   QLabel *srv_server_script_down_label;
@@ -83,6 +90,7 @@ class ServerDialog : public QDialog
   QSpinBox *srv_server_maxconns_spin;
   QPushButton *srv_close_button;
   QDir *srv_temp_dir;
+  QString srv_identity_path;
 };
 
 

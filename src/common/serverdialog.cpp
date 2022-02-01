@@ -2,7 +2,7 @@
 //
 // Configuration dialog for server settings
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -18,6 +18,7 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <QFileDialog>
 #include <QUrl>
 
 #include "serverdialog.h"
@@ -34,6 +35,11 @@ ServerDialog::ServerDialog(QDir *temp_dir,QWidget *parent)
   label_font.setPixelSize(14);
 
   setWindowTitle("GlassGui - "+tr("Server Settings"));
+
+  srv_identity_path="/";
+  if(getenv("HOME")!=NULL) {
+    srv_identity_path=QString(getenv("HOME"))+"/.ssh";
+  }
 
   //
   // Server Type
@@ -83,6 +89,24 @@ ServerDialog::ServerDialog(QDir *temp_dir,QWidget *parent)
   srv_server_password_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
   srv_server_password_edit=new QLineEdit(this);
   srv_server_password_edit->setEchoMode(QLineEdit::Password);
+
+  //
+  // SSH Identity
+  //
+  srv_use_identity_check=new QCheckBox(this);
+  srv_use_identity_label=
+    new QLabel(tr("Use SSH Identity To Authenticate"),this);
+  srv_use_identity_label->setFont(label_font);
+  srv_use_identity_label->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+  connect(srv_use_identity_check,SIGNAL(toggled(bool)),
+	  this,SLOT(useIdentityChanged(bool)));
+  srv_identity_label=new QLabel(tr("SSH Identity File")+":",this);
+  srv_identity_label->setFont(label_font);
+  srv_identity_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  srv_identity_edit=new QLineEdit(this);
+  srv_identity_button=new QPushButton(tr("Select"),this);
+  connect(srv_identity_button,SIGNAL(clicked()),
+	  this,SLOT(selectIdentityFile()));
 
   //
   // Server Script Up
@@ -137,7 +161,7 @@ ServerDialog::ServerDialog(QDir *temp_dir,QWidget *parent)
 
 QSize ServerDialog::sizeHint() const
 {
-  return QSize(600,256);
+  return QSize(600,306);
 }
 
 
@@ -157,6 +181,9 @@ bool ServerDialog::makeArgs(QStringList *args,bool escape_args)
   args->push_back("--server-type="+Connector::optionKeyword(type));
   args->push_back("--server-url="+url.toString());
   args->push_back("--credentials-file="+credentialsFilename());
+  if(srv_use_identity_check->isChecked()&&(url.scheme().toLower()=="sftp")) {
+    args->push_back("--ssh-identity="+srv_identity_edit->text());
+  }
 
   if(!srv_server_script_down_edit->text().isEmpty()) {
     args->push_back("--server-script-down="+
@@ -184,6 +211,7 @@ bool ServerDialog::makeArgs(QStringList *args,bool escape_args)
 
 bool ServerDialog::writeCredentials() const
 {
+  QUrl url(srv_server_location_edit->text());
   FILE *f=NULL;
 
   if((f=fopen(credentialsFilename().toUtf8(),"w"))==NULL) {
@@ -194,6 +222,9 @@ bool ServerDialog::writeCredentials() const
 	  srv_server_username_edit->text().toUtf8().constData());
   fprintf(f,"Password=%s\n",
 	  srv_server_password_edit->text().toUtf8().constData());
+  if(srv_use_identity_check->isChecked()&&(url.scheme().toLower()=="sftp")) {
+    //args->push_back("--ssh-identity="+srv_identity_edit->text());
+  }
   fclose(f);
 
   return true;
@@ -206,6 +237,7 @@ void ServerDialog::setControlsLocked(bool state)
   srv_server_location_edit->setReadOnly(state);
   srv_server_username_edit->setReadOnly(state);
   srv_server_password_edit->setReadOnly(state);
+  srv_identity_edit->setReadOnly(state);
 }
 
 
@@ -230,6 +262,10 @@ void ServerDialog::load(Profile *p)
     setText(p->stringValue("GlassGui","ServerUsername"));
   srv_server_password_edit->
     setText(p->stringValue("GlassGui","ServerPassword"));
+  srv_use_identity_check->
+    setChecked(p->intValue("GlassGui","ServerUseIdentity")!=0);
+  srv_identity_edit->
+    setText(p->stringValue("GlassGui","ServerSshIdentity"));
   srv_server_script_down_edit->
     setText(p->stringValue("GlassGui","ServerScriptDown"));
   srv_server_script_up_edit->
@@ -239,24 +275,29 @@ void ServerDialog::load(Profile *p)
   srv_verbose_check->setChecked(p->boolValue("GlassGui","VerboseLogging"));
   srv_server_metadata_port_spin->
     setValue(p->intValue("GlassGui","MetadataPort",-1));
+
+  useIdentityChanged(srv_use_identity_check->isChecked());
 }
 
 
 void ServerDialog::save(FILE *f)
 {
   fprintf(f,"ServerType=%s\n",
-	  (const char *)Connector::optionKeyword((Connector::ServerType)
-	     srv_server_type_box->currentItemData().toInt()).toUtf8()); 
+	 Connector::optionKeyword((Connector::ServerType)
+	 srv_server_type_box->currentItemData().toInt()).toUtf8().constData()); 
   fprintf(f,"ServerLocation=%s\n",
-	  (const char *)srv_server_location_edit->text().toUtf8());
+	  srv_server_location_edit->text().toUtf8().constData());
   fprintf(f,"ServerUsername=%s\n",
-	  (const char *)srv_server_username_edit->text().toUtf8());
+	  srv_server_username_edit->text().toUtf8().constData());
   fprintf(f,"ServerPassword=%s\n",
-	  (const char *)srv_server_password_edit->text().toUtf8());
+	  srv_server_password_edit->text().toUtf8().constData());
+  fprintf(f,"ServerUseIdentity=%u\n",srv_use_identity_check->isChecked());
+  fprintf(f,"ServerSshIdentity=%s\n",
+	  srv_identity_edit->text().toUtf8().constData());
   fprintf(f,"ServerScriptDown=%s\n",
-	  (const char *)srv_server_script_down_edit->text().toUtf8());
+	  srv_server_script_down_edit->text().toUtf8().constData());
   fprintf(f,"ServerScriptUp=%s\n",
-	  (const char *)srv_server_script_up_edit->text().toUtf8());
+	  srv_server_script_up_edit->text().toUtf8().constData());
   fprintf(f,"ServerMaxConnections=%d\n",srv_server_maxconns_spin->value());
   fprintf(f,"MetadataPort=%d\n",srv_server_metadata_port_spin->value());
   fprintf(f,"VerboseLogging=%d\n",srv_verbose_check->isChecked());
@@ -284,6 +325,15 @@ void ServerDialog::resizeEvent(QResizeEvent *e)
 
   srv_server_password_label->setGeometry(10,ypos,180,24);
   srv_server_password_edit->setGeometry(195,ypos,size().width()-205,24);
+  ypos+=24;
+
+  srv_use_identity_check->setGeometry(195,ypos+5,15,15);
+  srv_use_identity_label->setGeometry(215,ypos,size().width()-225,24);
+  ypos+=26;
+
+  srv_identity_label->setGeometry(10,ypos,180,24);
+  srv_identity_edit->setGeometry(195,ypos,size().width()-275,24);
+  srv_identity_button->setGeometry(size().width()-70,ypos-2,60,28);
   ypos+=26;
 
   srv_server_script_up_label->setGeometry(10,ypos,180,24);
@@ -349,5 +399,41 @@ void ServerDialog::serverTypeChanged(int index)
 
 void ServerDialog::locationChanged(const QString &str)
 {
+  useIdentityChanged(srv_use_identity_check->isChecked());
   emit settingsChanged();
+}
+
+
+void ServerDialog::useIdentityChanged(bool state)
+{
+  bool is_sftp=
+    QUrl(srv_server_location_edit->text()).scheme().toLower()=="sftp";
+
+  if(state&&is_sftp) {
+    srv_server_password_label->setText(tr("Identity Passphrase")+":");
+  }
+  else {
+    srv_server_password_label->setText(tr("Password")+":");
+  }
+  srv_use_identity_check->setEnabled(is_sftp);
+  srv_use_identity_label->setEnabled(is_sftp);
+
+  srv_identity_label->setEnabled(state&&is_sftp);
+  srv_identity_edit->setEnabled(state&&is_sftp);
+  srv_identity_button->setEnabled(state&&is_sftp);
+}
+
+
+void ServerDialog::selectIdentityFile()
+{
+  QString filename=srv_identity_edit->text();
+  if(filename.isEmpty()) {
+    filename=srv_identity_path;
+  }
+  filename=QFileDialog::getOpenFileName(this,"GlassGui - "+
+					tr("Choose SSH Identity"),
+					filename);
+  if(!filename.isNull()) {
+    srv_identity_edit->setText(filename);
+  }
 }
