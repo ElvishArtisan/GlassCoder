@@ -42,6 +42,7 @@
 MainWidget::MainWidget(QWidget *parent)
   : GuiApplication(parent)
 {
+  gui_temp_dir=NULL;
   gui_process=NULL;
   gui_starting_all=false;
 
@@ -52,18 +53,35 @@ MainWidget::MainWidget(QWidget *parent)
 	QMessageBox::critical(this,"GlassCommander - "+tr("Error"),
 			   tr("Unable to access specified instance directory")+
 			      ":\n\""+cmd->value(i)+"\".");
-	exit(1);
+	ExitProgram(1);
       }
       cmd->setProcessed(i,true);
     }
     if(!cmd->processed(i)) {
       QMessageBox::critical(this,"GlassCommander - "+tr("Error"),
 			    tr("Unknown argument")+" \""+cmd->key(i)+"\".");
-      exit(256);
+      ExitProgram(256);
     }
   }
   setWindowIcon(QPixmap(glasscoder_16x16_xpm));
   setWindowTitle(QString("GlassCommander v")+VERSION);
+
+  //
+  // Create Temp Directory
+  //
+  char tempdir[PATH_MAX];
+  strncpy(tempdir,"/tmp",PATH_MAX);
+  if(getenv("TEMP")!=NULL) {
+    strncpy(tempdir,getenv("TEMP"),PATH_MAX-1);
+  }
+  strncat(tempdir,"/glasscommander-XXXXXX",PATH_MAX-strlen(tempdir));
+  if(mkdtemp(tempdir)==NULL) {
+    QMessageBox::critical(this,"GlassCommander - "+tr("Error"),
+			  tr("Unable to create temporary directory in")+
+			  "\""+tempdir+"\". ["+strerror(errno)+"]");
+    ExitProgram(256);
+  }
+  gui_temp_dir=new QDir(tempdir);
 
   //
   // Timers
@@ -207,7 +225,8 @@ void MainWidget::topInsertClickedData()
 void MainWidget::insertClickedData(const QString &instance_name)
 {
   int pos=1+GetEncoderPosition(instance_name);
-  gui_encoders.insert(pos,new GlassWidget(gui_new_instance_name,this));
+  gui_encoders.
+    insert(pos,new GlassWidget(gui_new_instance_name,gui_temp_dir,this));
   ConnectEncoder(gui_encoders.at(pos));
   gui_encoders.at(pos)->addCodecTypes(gui_codec_types);
   gui_encoders.at(pos)->addSourceTypes(gui_source_types);
@@ -308,7 +327,7 @@ void MainWidget::processErrorData(QProcess::ProcessError err)
   QMessageBox::warning(this,"GlassCommander - "+tr("Process Error"),
 		       tr("Received QProcess error")+
 		       QString().sprintf(": %d",err));
-  exit(256);
+  ExitProgram(256);
 }
 
 
@@ -366,7 +385,7 @@ void MainWidget::stopAllData()
 void MainWidget::encoderStoppedData()
 {
   if(--gui_stop_count==0) {
-    exit(0);
+    ExitProgram(0);
   }
 }
 
@@ -378,7 +397,7 @@ void MainWidget::stopTimeoutData()
       gui_encoders.at(i)->kill();
     }
   }
-  exit(1);
+  ExitProgram(1);
 }
 
 
@@ -412,7 +431,7 @@ void MainWidget::closeEvent(QCloseEvent *e)
     e->ignore();
     return;
   }
-  e->accept();
+  ExitProgram(0);
 }
 
 
@@ -451,7 +470,7 @@ void MainWidget::LoadEncoders()
   p->setSource(settingsDirectory()->path()+"/"+GLASSCOMMANDER_SETTINGS_FILE);
   name=p->stringValue(section,"InstanceName","",&ok);
   while(ok) {
-    gui_encoders.push_back(new GlassWidget(name,this));
+    gui_encoders.push_back(new GlassWidget(name,gui_temp_dir,this));
     gui_encoders.back()->setAutoStart(p->boolValue(section,"AutoStart"));
     ConnectEncoder(gui_encoders.back());
     count++;
@@ -518,7 +537,24 @@ void MainWidget::ProcessError(int exit_code,QProcess::ExitStatus exit_status)
 			 tr("GlassCoder returned a non-zero exit code")+
 			 "\n\""+msg+"\".");
   }
-  exit(256);
+  ExitProgram(256);
+}
+
+
+void MainWidget::ExitProgram(int exit_code) const
+{
+  //
+  // Clean up temp directory
+  //
+  if(gui_temp_dir!=NULL) {
+    QStringList files=
+      gui_temp_dir->entryList(QDir::Files|QDir::NoDotAndDotDot);
+    for(int i=0;i<files.size();i++) {
+      unlink((gui_temp_dir->path()+"/"+files.at(i)).toUtf8());
+    }
+    rmdir(gui_temp_dir->path().toUtf8());
+  }
+  exit(exit_code);
 }
 
 

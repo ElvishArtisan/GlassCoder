@@ -22,9 +22,11 @@
 
 #include "serverdialog.h"
 
-ServerDialog::ServerDialog(QWidget *parent)
+ServerDialog::ServerDialog(QDir *temp_dir,QWidget *parent)
   : QDialog(parent)
 {
+  srv_temp_dir=temp_dir;
+
   //
   // Fonts
   //
@@ -154,20 +156,8 @@ bool ServerDialog::makeArgs(QStringList *args,bool escape_args)
 
   args->push_back("--server-type="+Connector::optionKeyword(type));
   args->push_back("--server-url="+url.toString());
-  if(srv_server_username_edit->text().isEmpty()) {
-    if(!srv_server_password_edit->text().isEmpty()) {
-      args->push_back("--server-auth=:"+srv_server_password_edit->text());
-    }
-  }
-  else {
-    if(srv_server_password_edit->text().isEmpty()) {
-      args->push_back("--server-auth="+srv_server_username_edit->text());
-    }
-    else {
-      args->push_back("--server-auth="+srv_server_username_edit->text()+":"+
-		      srv_server_password_edit->text());
-    }
-  }
+  args->push_back("--credentials-file="+credentialsFilename());
+
   if(!srv_server_script_down_edit->text().isEmpty()) {
     args->push_back("--server-script-down="+
 		    esc+srv_server_script_down_edit->text()+esc);
@@ -192,12 +182,39 @@ bool ServerDialog::makeArgs(QStringList *args,bool escape_args)
 }
 
 
+bool ServerDialog::writeCredentials() const
+{
+  FILE *f=NULL;
+
+  if((f=fopen(credentialsFilename().toUtf8(),"w"))==NULL) {
+    return false;
+  }
+  fprintf(f,"[Credentials]\n");
+  fprintf(f,"Username=%s\n",
+	  srv_server_username_edit->text().toUtf8().constData());
+  fprintf(f,"Password=%s\n",
+	  srv_server_password_edit->text().toUtf8().constData());
+  fclose(f);
+
+  return true;
+}
+
+
 void ServerDialog::setControlsLocked(bool state)
 {
   srv_server_type_box->setReadOnly(state);
   srv_server_location_edit->setReadOnly(state);
   srv_server_username_edit->setReadOnly(state);
   srv_server_password_edit->setReadOnly(state);
+}
+
+
+QString ServerDialog::credentialsFilename() const
+{
+  QUrl url(srv_server_location_edit->text());
+
+  return srv_temp_dir->path()+"/creds-"+url.toString(QUrl::RemoveScheme).
+    replace("//","").replace("/","_").replace("?","_");
 }
 
 

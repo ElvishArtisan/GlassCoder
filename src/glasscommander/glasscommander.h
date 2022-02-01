@@ -21,6 +21,7 @@
 #ifndef GLASSCOMMANDER_H
 #define GLASSCOMMANDER_H
 
+#include <QDir>
 #include <QList>
 #include <QProcess>
 #include <QTimer>
@@ -70,6 +71,7 @@ class MainWidget : public GuiApplication
   void LoadEncoderConfig(GlassWidget *encoder);
   int GetEncoderPosition(const QString &instance_name) const;
   void ProcessError(int exit_code,QProcess::ExitStatus exit_status);
+  void ExitProgram(int exit_code) const;
   InstanceDialog *gui_instance_dialog;
   DeleteDialog *gui_delete_dialog;
   QString gui_new_instance_name;
@@ -86,6 +88,7 @@ class MainWidget : public GuiApplication
   QTimer *gui_autostart_timer;
   int gui_autostart_index;
   bool gui_starting_all;
+  QDir *gui_temp_dir;
 };
 
 

@@ -2,7 +2,7 @@
 //
 // Encoder widget for GlassCommander(1)
 //
-//   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -18,13 +18,17 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <QMessageBox>
+
 #include "glasslimits.h"
 #include "glasswidget.h"
 #include "logging.h"
 
-GlassWidget::GlassWidget(const QString &instance_name,QWidget *parent)
+GlassWidget::GlassWidget(const QString &instance_name,QDir *temp_dir,
+			 QWidget *parent)
   : QFrame(parent)
 {
+  gw_temp_dir=temp_dir;
   gw_process=NULL;
   gw_auto_start=false;
 
@@ -39,7 +43,7 @@ GlassWidget::GlassWidget(const QString &instance_name,QWidget *parent)
   //
   // Dialogs
   //
-  gw_server_dialog=new ServerDialog(this);
+  gw_server_dialog=new ServerDialog(gw_temp_dir,this);
   gw_codec_dialog=new CodecDialog(this);
   gw_source_dialog=new SourceDialog(this);
   connect(gw_source_dialog,SIGNAL(updated()),this,SLOT(checkArgs()));
@@ -240,6 +244,15 @@ void GlassWidget::startEncodingData()
 
   gw_status_widget->setStatus(CONNECTION_PENDING);
 
+  //
+  // Generate Credentials File
+  //
+  if(!gw_server_dialog->writeCredentials()) {
+    QMessageBox::warning(this,"GlassCommander - "+tr("Process Error"),
+			 tr("Unable to create credentials file!"));
+    return;
+  }
+
   gw_process=new QProcess(this);
   gw_process->setReadChannel(QProcess::StandardOutput);
   connect(gw_process,SIGNAL(readyRead()),
@@ -255,6 +268,7 @@ void GlassWidget::startEncodingData()
   args.push_back("--meter-data");
   args.push_back("--errors-to=STDOUT");
   args.push_back("--errors-string="+gw_name_label->text());
+
   gw_process->start("glasscoder",args);
   gw_start_button->disconnect();
   connect(gw_start_button,SIGNAL(clicked()),this,SLOT(stopEncodingData()));

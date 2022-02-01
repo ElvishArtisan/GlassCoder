@@ -2,7 +2,7 @@
 //
 // glassgui(1) Audio Encoder front end
 //
-//   (C) Copyright 2015-2020 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -21,6 +21,7 @@
 #ifndef GLASSGUI_H
 #define GLASSGUI_H
 
+#include <QDir>
 #include <QLabel>
 #include <QLineEdit>
 #include <QListView>
@@ -85,6 +86,7 @@ class MainWidget : public GuiApplication
   void LoadSettings();
   bool SaveSettings();
   void ListInstances();
+  void ExitProgram(int exit_code) const;
   StereoMeter *gui_meter;
   QPushButton *gui_start_button;
   QLabel *gui_metadata_label;
@@ -109,6 +111,7 @@ class MainWidget : public GuiApplication
   QLabel *gui_status_frame_widget;
   bool gui_autostart;
   QTimer *gui_autostart_timer;
+  QDir *gui_temp_dir;
 };
 
 

@@ -23,6 +23,7 @@
 
 #include <stdio.h>
 
+#include <QDir>
 #include <QFrame>
 #include <QLabel>
 #include <QProcess>
@@ -44,7 +45,7 @@ class GlassWidget : public QFrame
  Q_OBJECT;
  public:
   enum Mode {NormalMode=0,InsertMode=1,RemoveMode=2};
-  GlassWidget(const QString &instance_name,QWidget *parent=0);
+  GlassWidget(const QString &instance_name,QDir *temp_dir,QWidget *parent=0);
   QSize sizeHint() const;
   bool autoStart() const;
   void setAutoStart(bool state);
@@ -109,6 +110,7 @@ class GlassWidget : public QFrame
   QPushButton *gw_remove_button;
   bool gw_auto_start;
   QTimer *gw_kill_timer;
+  QDir *gw_temp_dir;
 };
 
 

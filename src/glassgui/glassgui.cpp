@@ -43,6 +43,7 @@
 MainWidget::MainWidget(QWidget *parent)
   : GuiApplication(parent)
 {
+  gui_temp_dir=NULL;
   instance_name="";
   QString delete_instance="";
   bool list_instances=false;
@@ -63,7 +64,7 @@ MainWidget::MainWidget(QWidget *parent)
 	QMessageBox::critical(this,"GlassGui - "+tr("Error"),
 			   tr("Unable to access specified instance directory")+
 			      ":\n\""+cmd->value(i)+"\".");
-	exit(1);
+	ExitProgram(1);
       }
       cmd->setProcessed(i,true);
     }
@@ -78,20 +79,20 @@ MainWidget::MainWidget(QWidget *parent)
     if(!cmd->processed(i)) {
       QMessageBox::critical(this,"GlassGui - "+tr("Error"),
 			    tr("Unknown argument")+" \""+cmd->key(i)+"\".");
-      exit(256);
+      ExitProgram(256);
     }
   }
   if(list_instances&&(!delete_instance.isEmpty())) {
     fprintf(stderr,"glassgui: --list-instances and --delete-instance are mutually exclusive\n");
-    exit(256);
+    ExitProgram(256);
   }
   if(list_instances) {
     ListInstances();
-    exit(0);
+    ExitProgram(0);
   }
   if(!delete_instance.isEmpty()) {
     deleteInstance(delete_instance);
-    exit(0);
+    ExitProgram(0);
   }
 
   setWindowIcon(QPixmap(glasscoder_16x16_xpm));
@@ -101,6 +102,23 @@ MainWidget::MainWidget(QWidget *parent)
   else {
     setWindowTitle(QString("GlassGui v")+VERSION+" - "+instance_name);
   }
+
+  //
+  // Create Temp Directory
+  //
+  char tempdir[PATH_MAX];
+  strncpy(tempdir,"/tmp",PATH_MAX);
+  if(getenv("TEMP")!=NULL) {
+    strncpy(tempdir,getenv("TEMP"),PATH_MAX-1);
+  }
+  strncat(tempdir,"/glassgui-XXXXXX",PATH_MAX-strlen(tempdir));
+  if(mkdtemp(tempdir)==NULL) {
+    QMessageBox::critical(this,"GlassGui - "+tr("Error"),
+			  tr("Unable to create temporary directory in")+
+			  "\""+tempdir+"\". ["+strerror(errno)+"]");
+    ExitProgram(256);
+  }
+  gui_temp_dir=new QDir(tempdir);
 
   //
   // Fonts
@@ -125,7 +143,7 @@ MainWidget::MainWidget(QWidget *parent)
   //
   // Dialogs
   //
-  gui_server_dialog=new ServerDialog(this);
+  gui_server_dialog=new ServerDialog(gui_temp_dir,this);
   gui_codec_dialog=new CodecDialog(this);
   gui_codeviewer_dialog=new CodeViewer(this);
   gui_source_dialog=new SourceDialog(this);
@@ -264,7 +282,7 @@ void MainWidget::closeEvent(QCloseEvent *e)
     QMessageBox::warning(this,"GlassGui - "+tr("Save Error"),
 			 tr("Unable to save configuration!"));
   }
-  e->accept();
+  ExitProgram(0);
 }
 
 
@@ -315,6 +333,15 @@ void MainWidget::startEncodingData()
   }
 
   gui_status_widget->setStatus(CONNECTION_PENDING);
+
+  //
+  // Generate Credentials File
+  //
+  if(!gui_server_dialog->writeCredentials()) {
+    QMessageBox::warning(this,"GlassGui - "+tr("Process Error"),
+			 tr("Unable to create credentials file!"));
+    return;
+  }
 
   gui_process=new QProcess(this);
   gui_process->setReadChannel(QProcess::StandardOutput);
@@ -520,7 +547,7 @@ void MainWidget::processFinishedData(int exit_code,
 {
   if(exit_code==0) {
     if(gui_process_kill_timer->isActive()) {
-      exit(0);
+      ExitProgram(0);
     }
     gui_meter->setLeftPeakBar(-10000);
     gui_meter->setRightPeakBar(-10000);
@@ -542,7 +569,7 @@ void MainWidget::processErrorData(QProcess::ProcessError err)
   QMessageBox::warning(this,"GlassGui - "+tr("Process Error"),
 		       tr("Received QProcess error")+
 		       QString().sprintf(": %d",err));
-  exit(256);
+  ExitProgram(256);
 }
 
 
@@ -557,7 +584,7 @@ void MainWidget::processKillData()
 {
   gui_process->kill();
   qApp->processEvents();
-  exit(0);
+  ExitProgram(0);
 }
 
 
@@ -644,7 +671,7 @@ void MainWidget::ProcessError(int exit_code,QProcess::ExitStatus exit_status)
 			 tr("GlassCoder returned a non-zero exit code")+
 			 "\n\""+msg+"\".");
   }
-  exit(256);
+  ExitProgram(256);
 }
 
 
@@ -691,6 +718,23 @@ void MainWidget::ListInstances()
   for(int i=0;i<files.size();i++) {
     printf("%s\n",(const char *)files[i].toUtf8());
   }
+}
+
+
+void MainWidget::ExitProgram(int exit_code) const
+{
+  //
+  // Clean up temp directory
+  //
+  if(gui_temp_dir!=NULL) {
+    QStringList files=
+      gui_temp_dir->entryList(QDir::Files|QDir::NoDotAndDotDot);
+    for(int i=0;i<files.size();i++) {
+      unlink((gui_temp_dir->path()+"/"+files.at(i)).toUtf8());
+    }
+    rmdir(gui_temp_dir->path().toUtf8());
+  }
+  exit(exit_code);
 }
 
 

@@ -25,6 +25,7 @@
 
 #include <QCheckBox>
 #include <QDialog>
+#include <QDir>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
@@ -40,10 +41,12 @@ class ServerDialog : public QDialog
 {
  Q_OBJECT;
  public:
-  ServerDialog(QWidget *parent=0);
+  ServerDialog(QDir *temp_dir,QWidget *parent=0);
   QSize sizeHint() const;
   bool makeArgs(QStringList *args,bool escape_args);
+  bool writeCredentials() const;
   void setControlsLocked(bool state);
+  QString credentialsFilename() const;
   void load(Profile *p);
   void save(FILE *f);
 
@@ -78,8 +81,8 @@ class ServerDialog : public QDialog
   QSpinBox *srv_server_metadata_port_spin;
   QLabel *srv_server_maxconns_label;
   QSpinBox *srv_server_maxconns_spin;
-
   QPushButton *srv_close_button;
+  QDir *srv_temp_dir;
 };
 
 
