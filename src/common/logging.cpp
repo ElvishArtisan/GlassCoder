@@ -40,12 +40,16 @@ void Log(int prio,const QString &msg)
     break;
 
   case LOG_TO_STDOUT:
-    printf("ER %d %s\n",prio,(const char *)msg.toUtf8());
+    if(global_log_verbose||(prio<LOG_DEBUG)) {
+      printf("ER %d %s\n",prio,(const char *)msg.toUtf8());
+    }
     syslog(prio,"%s",sysmsg.toUtf8().constData());
     break;
 
   default:
-    fprintf(stderr,"glasscoder: %s\n",(const char *)msg.toUtf8());
+    if(global_log_verbose||(prio<LOG_DEBUG)) {
+      fprintf(stderr,"glasscoder: %s\n",(const char *)msg.toUtf8());
+    }
     break;
   }
 }

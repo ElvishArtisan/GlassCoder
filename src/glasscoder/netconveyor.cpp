@@ -242,6 +242,8 @@ void NetConveyor::startConveyorProcess()
   args.push_back("--source-dir="+conv_temp_dir->path());
 
   conv_process=new QProcess(this);
+  connect(conv_process,SIGNAL(readyReadStandardOutput()),
+	  this,SLOT(processReadyReadData()));
   connect(conv_process,SIGNAL(finished(int,QProcess::ExitStatus)),
 	  this,SLOT(processFinishedData(int,QProcess::ExitStatus)));
   conv_process->start(GLASSCODER_PREFIX+"/bin/glassconv",args);
@@ -274,6 +276,23 @@ void NetConveyor::processFinishedData(int exit_code,
       Log(LOG_ERR,"fatal conveyor error, exiting");
       exit(1);
       break;
+    }
+  }
+}
+
+
+void NetConveyor::processReadyReadData()
+{
+  QString msg=QString::fromUtf8(conv_process->readAllStandardOutput());
+  QStringList f0=msg.split(" ",QString::KeepEmptyParts);
+  bool ok=false;
+
+  if((f0.size()>=3)&&(f0.at(0)=="ER")) {
+    int prio=f0.at(1).toInt(&ok);
+    if(ok) {
+      f0.removeFirst();
+      f0.removeFirst();
+      Log(prio,f0.join(" "));
     }
   }
 }

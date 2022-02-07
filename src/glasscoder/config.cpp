@@ -64,6 +64,7 @@ Config::Config()
   global_log_string="";
   meter_data=false;
   dump_headers=false;
+  show_verbose=false;
   server_user_agent=QString("GlassCoder/")+VERSION;
 
   CmdSwitch *cmd=new CmdSwitch("glasscoder",GLASSCODER_USAGE);
@@ -323,6 +324,10 @@ Config::Config()
     }
     if(cmd->key(i)=="--verbose") {
       global_log_verbose=true;
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--verbose") {
+      show_verbose=true;
       cmd->setProcessed(i,true);
     }
     if(!cmd->processed(i)) {
@@ -626,6 +631,12 @@ unsigned Config::metadataPort() const
 bool Config::dumpHeaders() const
 {
   return dump_headers;
+}
+
+
+bool Config::verbose() const
+{
+  return show_verbose;
 }
 
 

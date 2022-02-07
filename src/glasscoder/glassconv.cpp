@@ -65,28 +65,28 @@ MainObject::MainObject(QObject *parent)
     }
   }
   openlog("glassconv",syslog_option,LOG_DAEMON);
-  syslog(LOG_DEBUG,"starting up");
+  Log(LOG_DEBUG,"starting up");
   if(d_source_dir==NULL) {
-    syslog(LOG_ERR,"\"--source-dir\" argument required");
+    Log(LOG_ERR,"\"--source-dir\" argument required");
     exit(Config::ExitFatal);
   }
   if(d_dest_url==NULL) {
-    syslog(LOG_ERR,"\"--dest-url\" argument required");
+    Log(LOG_ERR,"\"--dest-url\" argument required");
     exit(Config::ExitFatal);
   }
   if(!d_source_dir->exists()) {
-    syslog(LOG_ERR,"source directory does not exist");
+    Log(LOG_ERR,"source directory does not exist");
     exit(Config::ExitFatal);
   }
   if((!d_dest_url->isValid())||d_dest_url->isRelative()) {
-    syslog(LOG_ERR,"destination url is invalid");
+    Log(LOG_ERR,"destination url is invalid");
     exit(Config::ExitFatal);
   }
   if((d_dest_url->scheme().toLower()!="http")&&
      (d_dest_url->scheme().toLower()!="https")&&
      (d_dest_url->scheme().toLower()!="sftp")&&
      (d_dest_url->scheme().toLower()!="file")) {
-    syslog(LOG_ERR,"destination url has unsupported scheme");
+    Log(LOG_ERR,"destination url has unsupported scheme");
     exit(Config::ExitFatal);
   }
 
@@ -94,11 +94,11 @@ MainObject::MainObject(QObject *parent)
   // Initialize CURL
   //
   if(curl_global_init(CURL_GLOBAL_ALL)!=0) {
-    syslog(LOG_ERR,"curl global initialization failed");
+    Log(LOG_ERR,"curl global initialization failed");
     exit(Config::ExitRetry);
   }
   if((d_curl_handle=curl_easy_init())==NULL) {
-    syslog(LOG_ERR,"curl initialization failed");
+    Log(LOG_ERR,"curl initialization failed");
     exit(Config::ExitRetry);
   }
 
@@ -107,7 +107,7 @@ MainObject::MainObject(QObject *parent)
   //
   Profile *p=new Profile();
   if(p->setSource(d_source_dir->path()+"/"+GLASSCODER_CREDENTIALS)) {
-    syslog(LOG_DEBUG,"reading transfer credentials from \"%s\"",
+    Log(LOG_DEBUG,"reading transfer credentials from \"%s\"",
 	   p->source().toUtf8().constData());
     d_username=p->stringValue("Credentials","Username");
     d_password=p->stringValue("Credentials","Password");
@@ -159,7 +159,7 @@ void MainObject::ProcessFile(const QString &filename)
   QStringList f1=f0.last().split("-",QString::KeepEmptyParts);
 
   if(f1.size()<3) {
-    syslog(LOG_WARNING,
+    Log(LOG_WARNING,
 	   "unrecognized file naming scheme \"%s\", skipping",
 	   filename.toUtf8().constData());
     UnlinkLocalFile(filename);
@@ -195,10 +195,10 @@ void MainObject::ProcessFile(const QString &filename)
     }
     rmdir(d_source_dir->path().toUtf8());
 
-    syslog(LOG_DEBUG,"exiting normally");
+    Log(LOG_DEBUG,"exiting normally");
     exit(Config::ExitOk);
   }
-  syslog(LOG_WARNING,
+  Log(LOG_WARNING,
 	 "unsupported transfer method in \"%s\", skipping",
 	 filename.toUtf8().constData());
   UnlinkLocalFile(filename);
@@ -207,7 +207,7 @@ void MainObject::ProcessFile(const QString &filename)
 
 void MainObject::Put(const QString &destname,const QString &srcname)
 {
-  syslog(LOG_DEBUG,"uploading \"%s\" to \"%s/%s\"",
+  Log(LOG_DEBUG,"uploading \"%s\" to \"%s/%s\"",
 	 srcname.toUtf8().constData(),
 	 d_dest_url->toDisplayString().toUtf8().constData(),
 	 destname.toUtf8().constData());
@@ -215,7 +215,7 @@ void MainObject::Put(const QString &destname,const QString &srcname)
   long resp_code=0;
   FILE *f=fopen(srcname.toUtf8(),"r");
   if(f==NULL) {
-    syslog(LOG_WARNING,"upload of \"%s\" failed: %s",
+    Log(LOG_WARNING,"upload of \"%s\" failed: %s",
 	   srcname.toUtf8().constData(),strerror(errno));
     return;
   }
@@ -265,12 +265,12 @@ void MainObject::Put(const QString &destname,const QString &srcname)
   if(code==CURLE_OK) {
     curl_easy_getinfo(d_curl_handle,CURLINFO_RESPONSE_CODE,&resp_code);
     if(((resp_code<200)||(resp_code>=300))&&(resp_code!=0)) {
-      syslog(LOG_WARNING,"upload of \"%s\" returned code %lu",
+      Log(LOG_WARNING,"upload of \"%s\" returned code %lu",
 	     srcname.toUtf8().constData(),resp_code);
     }
   }
   else {
-    syslog(LOG_WARNING,"upload of \"%s\" failed: %s",
+    Log(LOG_WARNING,"upload of \"%s\" failed: %s",
 	   srcname.toUtf8().constData(),d_curl_errorbuffer);
   }
 }
@@ -278,7 +278,7 @@ void MainObject::Put(const QString &destname,const QString &srcname)
 
 void MainObject::Delete(const QString &destname,const QString &srcname)
 {
-  syslog(LOG_DEBUG,"removing \"%s\" from \"%s/%s\"",
+  Log(LOG_DEBUG,"removing \"%s\" from \"%s/%s\"",
 	 srcname.toUtf8().constData(),
 	 d_dest_url->toDisplayString().toUtf8().constData(),
 	 destname.toUtf8().constData());
@@ -317,12 +317,12 @@ void MainObject::DeleteHttp(const QString &destname,const QString &srcname)
   if(code==CURLE_OK) {
     curl_easy_getinfo(d_curl_handle,CURLINFO_RESPONSE_CODE,&resp_code);
     if((resp_code<200)||(resp_code>=300)) {
-      syslog(LOG_WARNING,"removal of \"%s\" returned code %lu",
+      Log(LOG_WARNING,"removal of \"%s\" returned code %lu",
 	     srcname.toUtf8().constData(),resp_code);
     }
   }
   else {
-    syslog(LOG_WARNING,"removal of \"%s\" failed: %s",
+    Log(LOG_WARNING,"removal of \"%s\" failed: %s",
 	   url.toDisplayString().toUtf8().constData(),d_curl_errorbuffer);
   }
 }
@@ -332,7 +332,7 @@ void MainObject::DeleteFile(const QString &destname,const QString &srcname)
 {
   QUrl url(d_dest_url->toDisplayString()+"/"+destname);
   if((unlink(url.path().toUtf8())!=0)&&(errno!=ENOENT)) {
-    syslog(LOG_WARNING,"removal of \"%s\" failed: %s",
+    Log(LOG_WARNING,"removal of \"%s\" failed: %s",
 	   url.toDisplayString().toUtf8().constData(),strerror(errno));
   }
 }
@@ -360,7 +360,7 @@ void MainObject::DeleteSftp(const QString &destname,const QString &srcname)
   //
   CURLcode code=curl_easy_perform(d_curl_handle);
   if((code!=CURLE_OK)&&(code!=CURLE_REMOTE_FILE_NOT_FOUND)) {
-    syslog(LOG_WARNING,"removal of \"%s\" failed: [%d] %s",
+    Log(LOG_WARNING,"removal of \"%s\" failed: [%d] %s",
 	   url.toDisplayString().toUtf8().constData(),code,d_curl_errorbuffer);
   }
 }
@@ -385,9 +385,31 @@ void MainObject::SetCurlAuthentication(CURL *handle) const
 
 void MainObject::UnlinkLocalFile(const QString &pathname) const
 {
-  syslog(LOG_DEBUG,"unlinking \"%s\"",pathname.toUtf8().constData());
+  Log(LOG_DEBUG,"unlinking \"%s\"",pathname.toUtf8().constData());
   unlink(pathname.toUtf8());
 }
+
+
+void MainObject::Log(int prio,const char *fmt,...) const
+{
+  char line[1024];
+  va_list args;
+  va_start(args,fmt);
+  if(vsnprintf(line,1023,fmt,args)>0) {
+    printf("ER %d %s",prio,line);
+    fflush(stdout);
+  }
+  va_end(args);
+  /*
+  va_list args;
+
+  va_start(args,fmt);
+  vsyslog(prio,fmt,args);
+  //  printf("ER %d %s",prio,QString::asprintf(fmt,args).toUtf8().constData());
+  va_end(args);
+  */
+}
+
 
 
 int main(int argv,char *argc[])

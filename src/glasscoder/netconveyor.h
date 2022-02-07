@@ -62,17 +62,12 @@ class NetConveyor : public QObject
   void stop();
 
  signals:
-  /*
-  void eventFinished(const NetConveyorEvent &evt,int exit_code,int resp_code,
-		     const QStringList &args);
-  void error(const NetConveyorEvent &evt,QProcess::ProcessError err,
-	     const QStringList &args);
-  */
   void stopped();
 
  private slots:
   void startConveyorProcess();
   void processFinishedData(int exit_code,QProcess::ExitStatus exit_status);
+  void processReadyReadData();
 
  private:
   QProcess *conv_process;

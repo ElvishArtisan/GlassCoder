@@ -75,6 +75,7 @@ class Config
   unsigned metadataPort() const;
   bool meterData() const;
   bool dumpHeaders() const;
+  bool verbose() const;
 
  private:
   void ListCodecs() const;
@@ -136,6 +137,7 @@ class Config
   unsigned metadata_port;
   bool meter_data;
   bool dump_headers;
+  bool show_verbose;
 };
 
 

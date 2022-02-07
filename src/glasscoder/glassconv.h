@@ -50,6 +50,7 @@ class MainObject : public QObject
   void DeleteSftp(const QString &destname,const QString &srcname);
   void SetCurlAuthentication(CURL *handle) const;
   void UnlinkLocalFile(const QString &pathname) const;
+  void Log(int prio,const char *fmt,...) const;
   QDir *d_source_dir;
   QUrl *d_dest_url;
   QString d_username;
