@@ -997,3 +997,6 @@
 2022-02-08 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'Purge stale files on publishing point' checkbox to
 	the 'Server Settings' dialog in glassgui(1) and glasscommander(1).
+2022-02-08 Fred Gleason <fredg@paravelsystems.com>
+	* Modified glassgui(1) and glasscommander(1) to obfuscate server
+	credentials within instance data files.

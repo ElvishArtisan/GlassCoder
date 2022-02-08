@@ -265,6 +265,8 @@ QString ServerDialog::credentialsFilename() const
 
 void ServerDialog::load(Profile *p)
 {
+  bool ok=false;
+
   srv_server_type_box->
     setCurrentItemData(Connector::serverType(p->stringValue("GlassGui",
 							    "ServerType")));
@@ -272,9 +274,19 @@ void ServerDialog::load(Profile *p)
   srv_server_location_edit->
     setText(p->stringValue("GlassGui","ServerLocation"));
   srv_server_username_edit->
-    setText(p->stringValue("GlassGui","ServerUsername"));
+    setText(QByteArray::fromBase64(p->stringValue("GlassGui",
+            "ServerUsernameSecret","",&ok).toUtf8()));
+  if(!ok) {
+    srv_server_username_edit->
+      setText(p->stringValue("GlassGui","ServerUsername"));
+  }
   srv_server_password_edit->
-    setText(p->stringValue("GlassGui","ServerPassword"));
+    setText(QByteArray::fromBase64(p->stringValue("GlassGui",
+            "ServerPasswordSecret","",&ok).toUtf8()));
+  if(!ok) {
+    srv_server_password_edit->
+      setText(p->stringValue("GlassGui","ServerPassword"));
+  }
   srv_use_identity_check->
     setChecked(p->intValue("GlassGui","ServerUseIdentity")!=0);
   srv_identity_edit->
@@ -302,10 +314,10 @@ void ServerDialog::save(FILE *f)
 	 srv_server_type_box->currentItemData().toInt()).toUtf8().constData()); 
   fprintf(f,"ServerLocation=%s\n",
 	  srv_server_location_edit->text().toUtf8().constData());
-  fprintf(f,"ServerUsername=%s\n",
-	  srv_server_username_edit->text().toUtf8().constData());
-  fprintf(f,"ServerPassword=%s\n",
-	  srv_server_password_edit->text().toUtf8().constData());
+  fprintf(f,"ServerUsernameSecret=%s\n",
+	  srv_server_username_edit->text().toUtf8().toBase64().constData());
+  fprintf(f,"ServerPasswordSecret=%s\n",
+	  srv_server_password_edit->text().toUtf8().toBase64().constData());
   fprintf(f,"ServerUseIdentity=%u\n",srv_use_identity_check->isChecked());
   fprintf(f,"ServerSshIdentity=%s\n",
 	  srv_identity_edit->text().toUtf8().constData());
