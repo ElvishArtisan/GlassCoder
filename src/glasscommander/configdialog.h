@@ -2,7 +2,7 @@
 //
 // Show configration buttons for GlassCommander
 //
-//   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -27,6 +27,7 @@
 #include <QPushButton>
 
 #include "codecdialog.h"
+#include "codeviewer.h"
 #include "serverdialog.h"
 #include "sourcedialog.h"
 #include "streamdialog.h"
@@ -37,11 +38,15 @@ class ConfigDialog : public QDialog
  public:
   ConfigDialog(const QString &instance_name,ServerDialog *server_dialog,
 	       CodecDialog *codec_dialog,StreamDialog *stream_dialog,
-	       SourceDialog *source_dialog,QWidget *parent=0);
+	       SourceDialog *source_dialog,CodeViewer *code_dialog,
+	       QWidget *parent=0);
   QSize sizeHint() const;
 
  public slots:
   int exec(bool *autostart);
+
+ private slots:
+  void showCodeDialog();
 
  protected:
   void closeEvent(QCloseEvent *e);
@@ -56,6 +61,8 @@ class ConfigDialog : public QDialog
   QPushButton *conf_stream_button;
   SourceDialog *conf_source_dialog;
   QPushButton *conf_source_button;
+  CodeViewer *conf_code_dialog;
+  QPushButton *conf_code_button;
   QLabel *conf_autostart_label;
   QCheckBox *conf_autostart_checkbox;
   bool *conf_autostart;

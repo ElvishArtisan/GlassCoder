@@ -48,9 +48,10 @@ GlassWidget::GlassWidget(const QString &instance_name,QDir *temp_dir,
   gw_source_dialog=new SourceDialog("GlassCommander",this);
   connect(gw_source_dialog,SIGNAL(updated()),this,SLOT(checkArgs()));
   gw_stream_dialog=new StreamDialog("GlassCommander",this);
+  gw_code_dialog=new CodeViewer("GlassCommander",this);
   gw_config_dialog=new ConfigDialog(instance_name,gw_server_dialog,
 				    gw_codec_dialog,gw_stream_dialog,
-				    gw_source_dialog,this);
+				    gw_source_dialog,gw_code_dialog,this);
   connect(gw_server_dialog,SIGNAL(typeChanged(Connector::ServerType,bool)),
 	  this,SLOT(serverTypeChangedData(Connector::ServerType,bool)));
   connect(gw_server_dialog,SIGNAL(settingsChanged()),this,SLOT(checkArgs()));

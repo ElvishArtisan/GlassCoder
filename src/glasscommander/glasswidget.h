@@ -31,6 +31,7 @@
 #include <QTimer>
 
 #include "codecdialog.h"
+#include "codeviewer.h"
 #include "configdialog.h"
 #include "messagewidget.h"
 #include "playmeter.h"
@@ -103,6 +104,7 @@ class GlassWidget : public QFrame
   CodecDialog *gw_codec_dialog;
   StreamDialog *gw_stream_dialog;
   SourceDialog *gw_source_dialog;
+  CodeViewer *gw_code_dialog;
   QProcess *gw_process;
   QString gw_process_accum;
   Mode gw_mode;

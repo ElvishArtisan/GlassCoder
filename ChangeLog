@@ -986,3 +986,6 @@
 	man page.
 2022-02-08 Fred Gleason <fredg@paravelsystems.com>
 	* Added a '--server-no-deletes' option to glasscoder(1).
+2022-02-08 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Show Code' button to the configuration dialog in
+	glasscommander(1).

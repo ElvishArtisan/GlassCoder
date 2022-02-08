@@ -24,13 +24,15 @@ ConfigDialog::ConfigDialog(const QString &instance_name,
 			   ServerDialog *server_dialog,
 			   CodecDialog *codec_dialog,
 			   StreamDialog *stream_dialog,
-			   SourceDialog *source_dialog,QWidget *parent)
+			   SourceDialog *source_dialog,
+			   CodeViewer *code_dialog,QWidget *parent)
   : QDialog(parent)
 {
   conf_server_dialog=server_dialog;
   conf_codec_dialog=codec_dialog;
   conf_stream_dialog=stream_dialog;
   conf_source_dialog=source_dialog;
+  conf_code_dialog=code_dialog;
 
   setWindowTitle(tr("Instance")+": "+instance_name);
 
@@ -65,6 +67,13 @@ ConfigDialog::ConfigDialog(const QString &instance_name,
   connect(conf_source_button,SIGNAL(clicked()),conf_source_dialog,SLOT(exec()));
 
   //
+  // Code Viewer
+  //
+  conf_code_button=new QPushButton(tr("Show")+"\n"+tr("Code"),this);
+  conf_code_button->setFont(bold_font);
+  connect(conf_code_button,SIGNAL(clicked()),this,SLOT(showCodeDialog()));
+
+  //
   // Autostart
   //
   conf_autostart_checkbox=new QCheckBox(this);
@@ -77,7 +86,7 @@ ConfigDialog::ConfigDialog(const QString &instance_name,
 
 QSize ConfigDialog::sizeHint() const
 {
-  return QSize(370,100);
+  return QSize(460,100);
 }
 
 
@@ -87,6 +96,20 @@ int ConfigDialog::exec(bool *autostart)
   conf_autostart_checkbox->setChecked(*autostart);
 
   return QDialog::exec();
+}
+
+
+void ConfigDialog::showCodeDialog()
+{
+  QStringList args;
+
+  args.push_back("glasscoder");
+  conf_server_dialog->makeArgs(&args,true);
+  conf_codec_dialog->makeArgs(&args);
+  conf_stream_dialog->makeArgs(&args,true);
+  conf_source_dialog->makeArgs(&args,true);
+
+  conf_code_dialog->exec(args);
 }
 
 
@@ -106,6 +129,8 @@ void ConfigDialog::resizeEvent(QResizeEvent *e)
   conf_stream_button->setGeometry(190,10,80,50);
 
   conf_source_button->setGeometry(280,10,80,50);
+
+  conf_code_button->setGeometry(370,10,80,50);
 
   conf_autostart_checkbox->setGeometry(20,65,20,20);
   conf_autostart_label->setGeometry(45,65,size().width()-45,20);
