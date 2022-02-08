@@ -2,7 +2,7 @@
 //
 // Abstract base class for GUI applications in GlassCoder
 //
-//   (C) Copyright 2015-2020 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -65,8 +65,7 @@ bool GuiApplication::checkSettingsDirectory()
     gui_settings_dir=new QDir(path);
   }
   if(!gui_settings_dir->exists()) {
-    mkdir(path.toUtf8(),
-	  S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH);
+    mkdir(path.toUtf8(),S_IRUSR|S_IWUSR|S_IXUSR);
     if(!gui_settings_dir->exists()) {
       return false;
     }

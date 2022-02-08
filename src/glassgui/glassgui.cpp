@@ -693,8 +693,9 @@ void MainWidget::LoadSettings()
 bool MainWidget::SaveSettings()
 {
   FILE *f;
-
+  mode_t mask;
   if(checkSettingsDirectory()) {
+    mask=umask(077);
     QString basepath=settingsFilename(instance_name);
     if((f=fopen((basepath+".tmp").toUtf8(),"w"))==NULL) {
       return false;
@@ -706,6 +707,7 @@ bool MainWidget::SaveSettings()
     gui_stream_dialog->save(f);
     fclose(f);
     rename((basepath+".tmp").toUtf8(),basepath.toUtf8());
+    umask(mask);
   }
 
   return true;

@@ -348,8 +348,10 @@ void MainWidget::processErrorData(QProcess::ProcessError err)
 void MainWidget::configurationChangedData(GlassWidget *encoder)
 {
   FILE *f;
+  mode_t mask;
 
   if(checkSettingsDirectory()) {
+    mask=umask(077);
     QString basepath=settingsFilename(encoder->instanceName());
     if((f=fopen((basepath+".tmp").toUtf8(),"w"))==NULL) {
       return;
@@ -358,6 +360,7 @@ void MainWidget::configurationChangedData(GlassWidget *encoder)
     encoder->save(f);
     fclose(f);
     rename((basepath+".tmp").toUtf8(),basepath.toUtf8());
+    umask(mask);
   }
   SaveEncoders();
 }
@@ -500,11 +503,14 @@ void MainWidget::LoadEncoders()
 void MainWidget::SaveEncoders()
 {
   FILE *f;
+  mode_t mask;
 
   if(checkSettingsDirectory()) {
+    mask=umask(077);
     QString basepath=
       settingsDirectory()->path()+"/"+GLASSCOMMANDER_SETTINGS_FILE;
     if((f=fopen((basepath+".tmp").toUtf8(),"w"))==NULL) {
+      umask(mask);
       return;
     }
     for(int i=0;i<gui_encoders.size();i++) {
@@ -516,6 +522,7 @@ void MainWidget::SaveEncoders()
     }
     fclose(f);
     rename((basepath+".tmp").toUtf8(),basepath.toUtf8());
+    umask(mask);
   }
 }
 
