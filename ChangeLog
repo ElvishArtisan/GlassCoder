@@ -994,3 +994,6 @@
 	files to be retained on an HLS publishing point.
 	* Fixed a bug in glasscoder(1) that caused superfluous DELETE
 	requested to be generated when shutting down an HLS stream.
+2022-02-08 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Purge stale files on publishing point' checkbox to
+	the 'Server Settings' dialog in glassgui(1) and glasscommander(1).

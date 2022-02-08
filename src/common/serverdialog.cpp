@@ -148,6 +148,15 @@ ServerDialog::ServerDialog(QDir *temp_dir,const QString &caption,QWidget *parent
   srv_server_maxconns_spin->setSpecialValueText(tr("Unlimited"));
 
   //
+  // Publish Point Cleanup
+  //
+  srv_cleanup_check=new QCheckBox(this);
+  srv_cleanup_label=
+    new QLabel(tr("Purge stale files on publishing point"),this);
+  srv_cleanup_label->setFont(label_font);
+  srv_cleanup_label->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+
+  //
   // Close Button
   //
   srv_close_button=new QPushButton(tr("Close"),this);
@@ -162,7 +171,7 @@ ServerDialog::ServerDialog(QDir *temp_dir,const QString &caption,QWidget *parent
 
 QSize ServerDialog::sizeHint() const
 {
-  return QSize(600,306);
+  return QSize(600,330);
 }
 
 
@@ -201,6 +210,9 @@ bool ServerDialog::makeArgs(QStringList *args,bool escape_args)
   if(srv_server_maxconns_spin->value()>=0) {
     args->push_back("--server-max-connections="+
 	     QString().sprintf("%d",srv_server_maxconns_spin->value()));
+  }
+  if(!srv_cleanup_check->isChecked()) {
+    args->push_back("--server-no-deletes");
   }
   if(srv_verbose_check->isChecked()) {
     args->push_back("--verbose");
@@ -273,6 +285,8 @@ void ServerDialog::load(Profile *p)
     setText(p->stringValue("GlassGui","ServerScriptUp"));
   srv_server_maxconns_spin->
     setValue(p->intValue("GlassGui","ServerMaxConnections",-1));
+  srv_cleanup_check->
+    setChecked(p->intValue("GlassGui","ServerNoDeletes",1)!=0);
   srv_verbose_check->setChecked(p->boolValue("GlassGui","VerboseLogging"));
   srv_server_metadata_port_spin->
     setValue(p->intValue("GlassGui","MetadataPort",-1));
@@ -300,6 +314,7 @@ void ServerDialog::save(FILE *f)
   fprintf(f,"ServerScriptUp=%s\n",
 	  srv_server_script_up_edit->text().toUtf8().constData());
   fprintf(f,"ServerMaxConnections=%d\n",srv_server_maxconns_spin->value());
+  fprintf(f,"ServerNoDeletes=%d\n",srv_cleanup_check->isChecked());
   fprintf(f,"MetadataPort=%d\n",srv_server_metadata_port_spin->value());
   fprintf(f,"VerboseLogging=%d\n",srv_verbose_check->isChecked());
 }
@@ -313,7 +328,7 @@ void ServerDialog::resizeEvent(QResizeEvent *e)
   srv_server_type_box->setGeometry(125,ypos,250,24);
 
   srv_verbose_check->setGeometry(395,ypos,25,25);
-  srv_verbose_label->setGeometry(420,ypos,size().width()-430,24);
+  srv_verbose_label->setGeometry(420,ypos+1,size().width()-430,24);
   ypos+=26;
 
   srv_server_location_label->setGeometry(10,ypos,180,24);
@@ -326,10 +341,10 @@ void ServerDialog::resizeEvent(QResizeEvent *e)
 
   srv_server_password_label->setGeometry(10,ypos,180,24);
   srv_server_password_edit->setGeometry(195,ypos,size().width()-205,24);
-  ypos+=24;
+  ypos+=22;
 
   srv_use_identity_check->setGeometry(195,ypos+5,15,15);
-  srv_use_identity_label->setGeometry(215,ypos,size().width()-225,24);
+  srv_use_identity_label->setGeometry(215,ypos+1,size().width()-225,24);
   ypos+=26;
 
   srv_identity_label->setGeometry(10,ypos,180,24);
@@ -351,6 +366,10 @@ void ServerDialog::resizeEvent(QResizeEvent *e)
 
   srv_server_maxconns_label->setGeometry(10,ypos,180,24);
   srv_server_maxconns_spin->setGeometry(195,ypos,100,24);
+  ypos+=26;
+
+  srv_cleanup_check->setGeometry(105,ypos+5,15,15);
+  srv_cleanup_label->setGeometry(125,ypos+1,size().width()-225,24);
   ypos+=35;
 
   srv_close_button->setGeometry(size().width()-80,size().height()-50,70,40);
@@ -363,16 +382,19 @@ void ServerDialog::serverTypeChanged(int index)
     (Connector::ServerType)srv_server_type_box->itemData(index).toInt();
   bool multirate=false;
   bool authfields=false;
+  bool cleanup=false;
 
   switch(type) {
   case Connector::HlsServer:
     multirate=true;
     authfields=true;
+    cleanup=true;
     break;
 
   case Connector::IcecastStreamerServer:
     multirate=false;
     authfields=false;
+    cleanup=false;
     break;
 
   case Connector::Shoutcast1Server:
@@ -383,6 +405,7 @@ void ServerDialog::serverTypeChanged(int index)
   case Connector::FileArchiveServer:
     multirate=false;
     authfields=true;
+    cleanup=false;
     break;
 
   case Connector::LastServer:
@@ -394,6 +417,8 @@ void ServerDialog::serverTypeChanged(int index)
   srv_server_script_down_edit->setEnabled(authfields);
   srv_server_maxconns_label->setDisabled(authfields);
   srv_server_maxconns_spin->setDisabled(authfields);
+  srv_cleanup_check->setEnabled(cleanup);
+  srv_cleanup_label->setEnabled(cleanup);
   emit typeChanged(type,multirate);
 }
 

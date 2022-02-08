@@ -88,6 +88,8 @@ class ServerDialog : public QDialog
   QSpinBox *srv_server_metadata_port_spin;
   QLabel *srv_server_maxconns_label;
   QSpinBox *srv_server_maxconns_spin;
+  QCheckBox *srv_cleanup_check;
+  QLabel *srv_cleanup_label;
   QPushButton *srv_close_button;
   QDir *srv_temp_dir;
   QString srv_identity_path;
