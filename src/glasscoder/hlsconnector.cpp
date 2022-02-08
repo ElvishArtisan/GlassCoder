@@ -234,8 +234,7 @@ void HlsConnector::RotateMediaFile()
       (double)hls_media_frames/(double)audioSamplerate();
     if((hls_sequence_back-hls_sequence_head)>=HLS_MINIMUM_SEGMENT_QUAN) {
       // Schedule garbage collection
-      hls_media_killtimes[hls_sequence_head++]=hls_total_media_frames+
-	(HLS_MINIMUM_SEGMENT_QUAN+1)*HLS_SEGMENT_SIZE*audioSamplerate();
+      hls_media_killtimes[hls_sequence_head++]=hls_total_media_frames;
     }
   }
   WritePlaylistFile();
@@ -275,7 +274,8 @@ void HlsConnector::RotateMediaFile()
 	  }
 	}
 	hls_conveyor->
-	  push(this,GetMediaFilename(ci->first),NetConveyorEvent::DeleteMethod);
+	  push(this,hls_temp_dir->path()+"/"+GetMediaFilename(ci->first),
+	       NetConveyorEvent::DeleteMethod);
 	hls_media_killtimes.erase(ci++);
       }
       else {

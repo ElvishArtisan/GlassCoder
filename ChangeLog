@@ -989,3 +989,8 @@
 2022-02-08 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'Show Code' button to the configuration dialog in
 	glasscommander(1).
+2022-02-08 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in glasscoder(1) that caused excess media segment
+	files to be retained on an HLS publishing point.
+	* Fixed a bug in glasscoder(1) that caused superfluous DELETE
+	requested to be generated when shutting down an HLS stream.
