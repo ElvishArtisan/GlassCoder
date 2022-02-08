@@ -36,6 +36,7 @@
 HlsConnector::HlsConnector(bool is_top,Config *conf,QObject *parent)
   : Connector(parent)
 {
+  hls_config=conf;
   hls_is_top=is_top;
   hls_sequence_head=0;
   hls_sequence_back=0;
@@ -226,14 +227,16 @@ void HlsConnector::RotateMediaFile()
   // Update working files
   //
   fclose(hls_media_handle);
-  hls_media_datetimes[hls_sequence_back]=
-    QDateTime(QDate::currentDate(),QTime::currentTime());
-  hls_media_durations[hls_sequence_back]=
-    (double)hls_media_frames/(double)audioSamplerate();
-  if((hls_sequence_back-hls_sequence_head)>=HLS_MINIMUM_SEGMENT_QUAN) {
-    // Schedule garbage collection
-    hls_media_killtimes[hls_sequence_head++]=hls_total_media_frames+
-      (HLS_MINIMUM_SEGMENT_QUAN+1)*HLS_SEGMENT_SIZE*audioSamplerate();
+  if(!hls_config->serverNoDeletes()) {
+    hls_media_datetimes[hls_sequence_back]=
+      QDateTime(QDate::currentDate(),QTime::currentTime());
+    hls_media_durations[hls_sequence_back]=
+      (double)hls_media_frames/(double)audioSamplerate();
+    if((hls_sequence_back-hls_sequence_head)>=HLS_MINIMUM_SEGMENT_QUAN) {
+      // Schedule garbage collection
+      hls_media_killtimes[hls_sequence_head++]=hls_total_media_frames+
+	(HLS_MINIMUM_SEGMENT_QUAN+1)*HLS_SEGMENT_SIZE*audioSamplerate();
+    }
   }
   WritePlaylistFile();
 
@@ -249,33 +252,35 @@ void HlsConnector::RotateMediaFile()
   //
   // Take out the trash
   //
-  std::map<int,uint64_t>::iterator ci=hls_media_killtimes.begin();
-  while(ci!=hls_media_killtimes.end()) {
-    if(ci->second<hls_total_media_frames) {
-      std::map<int,double>::iterator cj=hls_media_durations.begin();
-      while(cj!=hls_media_durations.end()) {
-	if(cj->first==ci->first) {
-	  hls_media_durations.erase(cj++);
+  if(!hls_config->serverNoDeletes()) {
+    std::map<int,uint64_t>::iterator ci=hls_media_killtimes.begin();
+    while(ci!=hls_media_killtimes.end()) {
+      if(ci->second<hls_total_media_frames) {
+	std::map<int,double>::iterator cj=hls_media_durations.begin();
+	while(cj!=hls_media_durations.end()) {
+	  if(cj->first==ci->first) {
+	    hls_media_durations.erase(cj++);
+	  }
+	  else {
+	    ++cj;
+	  }
 	}
-	else {
-	  ++cj;
+	std::map<int,QDateTime>::iterator dj=hls_media_datetimes.begin();
+	while(dj!=hls_media_datetimes.end()) {
+	  if(dj->first==ci->first) {
+	    hls_media_datetimes.erase(dj++);
+	  }
+	  else {
+	    ++dj;
+	  }
 	}
+	hls_conveyor->
+	  push(this,GetMediaFilename(ci->first),NetConveyorEvent::DeleteMethod);
+	hls_media_killtimes.erase(ci++);
       }
-      std::map<int,QDateTime>::iterator dj=hls_media_datetimes.begin();
-      while(dj!=hls_media_datetimes.end()) {
-	if(dj->first==ci->first) {
-	  hls_media_datetimes.erase(dj++);
-	}
-	else {
-	  ++dj;
-	}
+      else {
+	++ci;
       }
-      hls_conveyor->
-	push(this,GetMediaFilename(ci->first),NetConveyorEvent::DeleteMethod);
-      hls_media_killtimes.erase(ci++);
-    }
-    else {
-      ++ci;
     }
   }
 

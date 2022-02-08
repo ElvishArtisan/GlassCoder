@@ -168,7 +168,8 @@ void NetConveyor::push(const NetConveyorEvent &evt)
 
   case NetConveyorEvent::PutMethod:
     if(link(evt.pathname().toUtf8(),temp_pathname.toUtf8())==0) {
-      if(!conv_putted_files.contains(evt.pathname())) {
+      if((!conv_putted_files.contains(evt.pathname()))&&
+	 (!conv_config->serverNoDeletes())) {
 	conv_putted_files.push_back(evt.pathname());
       }
     }

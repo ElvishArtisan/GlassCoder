@@ -506,6 +506,19 @@ Password=&lt;password&gt;
 
     <varlistentry>
       <term>
+	<option>--server-no-deletes</option>
+      </term>
+      <listitem>
+	<para>
+	  Do not clean up or delete content previously posted to the
+	  publishing point. This setting is used only by the HTTP Live Stream
+	  server type.
+	</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>
 	<option>--server-pipe=</option><replaceable>pathname</replaceable>
       </term>
       <listitem>

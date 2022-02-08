@@ -984,3 +984,5 @@
 2022-02-08 Fred Gleason <fredg@paravelsystems.com>
 	* Updated the 'Supported URL Schemes' section of the glasscoder(1)
 	man page.
+2022-02-08 Fred Gleason <fredg@paravelsystems.com>
+	* Added a '--server-no-deletes' option to glasscoder(1).

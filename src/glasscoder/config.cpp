@@ -51,6 +51,7 @@ Config::Config()
   server_start_connections=0;
   server_pipe="";
   server_start_connections=0;
+  server_no_deletes=false;
   stream_aim="";
   stream_genre="";
   stream_icq="";
@@ -284,6 +285,10 @@ Config::Config()
     }
     if(cmd->key(i)=="--server-pipe") {
       server_pipe=cmd->value(i);
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--server-no-deletes") {
+      server_no_deletes=true;
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--stream-description") {
@@ -547,6 +552,11 @@ QString Config::serverUsername() const
 QString Config::serverPipe() const
 {
   return server_pipe;
+}
+
+bool Config::serverNoDeletes() const
+{
+  return server_no_deletes;
 }
 
 

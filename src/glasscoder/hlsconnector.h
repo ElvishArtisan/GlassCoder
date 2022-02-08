@@ -107,6 +107,7 @@ class HlsConnector : public Connector
   QDateTime hls_start_datetime;
   QByteArray hls_metadata_tag;
   bool hls_metadata_updated;
+  Config *hls_config;
 };
 
 

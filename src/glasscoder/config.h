@@ -60,6 +60,7 @@ class Config
   QString serverUserAgent() const;
   QString serverUsername() const;
   QString serverPipe() const;
+  bool serverNoDeletes() const;
   QString streamAim() const;
   QString streamDescription() const;
   QString streamGenre() const;
@@ -110,6 +111,7 @@ class Config
   QString server_user_agent;
   QString server_username;
   QString server_pipe;
+  bool server_no_deletes;
 
   //
   // Stream Arguments
