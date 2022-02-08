@@ -6,7 +6,7 @@
   <refmeta>
     <refentrytitle>glasscoder</refentrytitle>
     <manvolnum>1</manvolnum>
-    <refmiscinfo class='source'>October 2019</refmiscinfo>
+    <refmiscinfo class='source'>February 2022</refmiscinfo>
     <refmiscinfo class='manual'>Linux Audio Manual</refmiscinfo>
   </refmeta>
   <refnamediv>
@@ -1250,7 +1250,7 @@ Password=&lt;password&gt;
 	<entry>HLS</entry>
 	<entry align="center">Yes</entry>
 	<entry align="center">Yes [1]</entry>
-	<entry align="center">Yes [3]</entry>
+	<entry align="center">Yes</entry>
       </row>
       <row>
 	<entry>IceCast2</entry>
@@ -1290,11 +1290,6 @@ Password=&lt;password&gt;
       <row>
 	<entry namest='c1' nameend='c4'>
 	  [2] Utilizes the HTTP <emphasis>GET</emphasis> method
-	</entry>
-      </row>
-      <row>
-	<entry namest='c1' nameend='c4'>
-	  [3] Supports <command>ssh</command><manvolnum>1</manvolnum> password authentication only
 	</entry>
       </row>
     </tbody>

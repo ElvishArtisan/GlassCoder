@@ -981,3 +981,6 @@
 	* Fixed a regression in glasscoder(1) when generating HLS streams
 	that caused posting errors to fail to be reported to the logging
 	system.
+2022-02-08 Fred Gleason <fredg@paravelsystems.com>
+	* Updated the 'Supported URL Schemes' section of the glasscoder(1)
+	man page.
