@@ -64,12 +64,10 @@ CodecDialog::CodecDialog(const QString &caption,QWidget *parent)
   //
   // Codec Bitrate
   //
-  gui_codec_bitrate_label=new QLabel(tr("Bit Rate(s)")+":",this);
+  gui_codec_bitrate_label=new QLabel(tr("Bit Rate")+":",this);
   gui_codec_bitrate_label->setFont(label_font);
   gui_codec_bitrate_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  for(int  i=0;i<CODECDIALOG_MAX_SUBSTREAMS;i++) {
-    gui_codec_bitrate_box[i]=new ComboBox(this);
-  }
+  gui_codec_bitrate_box=new ComboBox(this);
 
   //
   // Close Button
@@ -85,7 +83,7 @@ CodecDialog::CodecDialog(const QString &caption,QWidget *parent)
 
 QSize CodecDialog::sizeHint() const
 {
-  return QSize(400,230);
+  return QSize(400,230-52);
 }
 
 
@@ -94,9 +92,7 @@ void CodecDialog::setControlsLocked(bool state)
   gui_codec_type_box->setReadOnly(state);
   gui_codec_samplerate_box->setReadOnly(state);
   gui_codec_channels_box->setReadOnly(state);
-  for(int  i=0;i<CODECDIALOG_MAX_SUBSTREAMS;i++) {
-    gui_codec_bitrate_box[i]->setReadOnly(state);
-  }
+  gui_codec_bitrate_box->setReadOnly(state);
 }
 
 
@@ -117,10 +113,9 @@ void CodecDialog::resizeEvent(QResizeEvent *e)
   ypos+=26;
 
   gui_codec_bitrate_label->setGeometry(10,ypos,145,24);
-  for(int i=0;i<CODECDIALOG_MAX_SUBSTREAMS;i++) {
-    gui_codec_bitrate_box[i]->setGeometry(160,ypos,150,24);
-    ypos+=26;
-  }
+  gui_codec_bitrate_box->setGeometry(160,ypos,150,24);
+  ypos+=26;
+
   ypos+=9;
 
   gui_close_button->setGeometry(size().width()-80,size().height()-50,70,40);
@@ -133,9 +128,7 @@ void CodecDialog::codecTypeChanged(int n)
 
   gui_codec_samplerate_box->clear();
   gui_codec_channels_box->clear();
-  for(int i=0;i<CODECDIALOG_MAX_SUBSTREAMS;i++) {
-    gui_codec_bitrate_box[i]->clear();
-  }
+  gui_codec_bitrate_box->clear();
 
   switch(type) {
   case Codec::TypeFdk:
@@ -203,94 +196,81 @@ void CodecDialog::codecSamplerateChanged(int n)
   Codec::Type type=(Codec::Type)gui_codec_type_box->
     itemData(gui_codec_type_box->currentIndex()).toInt();
 
-  for(int i=0;i<CODECDIALOG_MAX_SUBSTREAMS;i++) {
-    gui_codec_bitrate_box[i]->clear();
-    if(i!=0) {
-      gui_codec_bitrate_box[i]->insertItem(-1,"None",0);
-    }
-    switch(type) {
-    case Codec::TypeFdk:
-      gui_codec_bitrate_box[i]->insertItem(-1,"16 kbits/sec",16);
-      gui_codec_bitrate_box[i]->insertItem(-1,"24 kbits/sec",24);
-      gui_codec_bitrate_box[i]->insertItem(-1,"32 kbits/sec",32);
-      gui_codec_bitrate_box[i]->insertItem(-1,"40 kbits/sec",40);
-      gui_codec_bitrate_box[i]->insertItem(-1,"48 kbits/sec",48);
-      break;
+  gui_codec_bitrate_box->clear();
+  switch(type) {
+  case Codec::TypeFdk:
+    gui_codec_bitrate_box->insertItem(-1,"16 kbits/sec",16);
+    gui_codec_bitrate_box->insertItem(-1,"24 kbits/sec",24);
+    gui_codec_bitrate_box->insertItem(-1,"32 kbits/sec",32);
+    gui_codec_bitrate_box->insertItem(-1,"40 kbits/sec",40);
+    gui_codec_bitrate_box->insertItem(-1,"48 kbits/sec",48);
+    break;
 
-    case Codec::TypeMpegL2:
-      gui_codec_bitrate_box[i]->insertItem(-1,"8 kbits/sec",8);
-      gui_codec_bitrate_box[i]->insertItem(-1,"16 kbits/sec",16);
-      gui_codec_bitrate_box[i]->insertItem(-1,"24 kbits/sec",24);
-      gui_codec_bitrate_box[i]->insertItem(-1,"32 kbits/sec",32);
-      gui_codec_bitrate_box[i]->insertItem(-1,"40 kbits/sec",40);
-      gui_codec_bitrate_box[i]->insertItem(-1,"48 kbits/sec",48);
-      gui_codec_bitrate_box[i]->insertItem(-1,"56 kbits/sec",56);
-      gui_codec_bitrate_box[i]->insertItem(-1,"64 kbits/sec",64);
-      gui_codec_bitrate_box[i]->insertItem(-1,"80 kbits/sec",80);
-      gui_codec_bitrate_box[i]->insertItem(-1,"96 kbits/sec",96);
-      gui_codec_bitrate_box[i]->insertItem(-1,"112 kbits/sec",112);
-      gui_codec_bitrate_box[i]->insertItem(-1,"128 kbits/sec",128);
-      gui_codec_bitrate_box[i]->insertItem(-1,"144 kbits/sec",144);
-      gui_codec_bitrate_box[i]->insertItem(-1,"160 kbits/sec",160);
-      gui_codec_bitrate_box[i]->insertItem(-1,"192 kbits/sec",192);
-      gui_codec_bitrate_box[i]->insertItem(-1,"224 kbits/sec",224);
-      gui_codec_bitrate_box[i]->insertItem(-1,"256 kbits/sec",256);
-      gui_codec_bitrate_box[i]->insertItem(-1,"320 kbits/sec",320);
-      gui_codec_bitrate_box[i]->insertItem(-1,"384 kbits/sec",384);
-      break;
+  case Codec::TypeMpegL2:
+    gui_codec_bitrate_box->insertItem(-1,"8 kbits/sec",8);
+    gui_codec_bitrate_box->insertItem(-1,"16 kbits/sec",16);
+    gui_codec_bitrate_box->insertItem(-1,"24 kbits/sec",24);
+    gui_codec_bitrate_box->insertItem(-1,"32 kbits/sec",32);
+    gui_codec_bitrate_box->insertItem(-1,"40 kbits/sec",40);
+    gui_codec_bitrate_box->insertItem(-1,"48 kbits/sec",48);
+    gui_codec_bitrate_box->insertItem(-1,"56 kbits/sec",56);
+    gui_codec_bitrate_box->insertItem(-1,"64 kbits/sec",64);
+    gui_codec_bitrate_box->insertItem(-1,"80 kbits/sec",80);
+    gui_codec_bitrate_box->insertItem(-1,"96 kbits/sec",96);
+    gui_codec_bitrate_box->insertItem(-1,"112 kbits/sec",112);
+    gui_codec_bitrate_box->insertItem(-1,"128 kbits/sec",128);
+    gui_codec_bitrate_box->insertItem(-1,"144 kbits/sec",144);
+    gui_codec_bitrate_box->insertItem(-1,"160 kbits/sec",160);
+    gui_codec_bitrate_box->insertItem(-1,"192 kbits/sec",192);
+    gui_codec_bitrate_box->insertItem(-1,"224 kbits/sec",224);
+    gui_codec_bitrate_box->insertItem(-1,"256 kbits/sec",256);
+    gui_codec_bitrate_box->insertItem(-1,"320 kbits/sec",320);
+    gui_codec_bitrate_box->insertItem(-1,"384 kbits/sec",384);
+    break;
 
-    case Codec::TypeMpegL3:
-      gui_codec_bitrate_box[i]->insertItem(-1,"8 kbits/sec",8);
-      gui_codec_bitrate_box[i]->insertItem(-1,"16 kbits/sec",16);
-      gui_codec_bitrate_box[i]->insertItem(-1,"24 kbits/sec",24);
-      gui_codec_bitrate_box[i]->insertItem(-1,"32 kbits/sec",32);
-      gui_codec_bitrate_box[i]->insertItem(-1,"40 kbits/sec",40);
-      gui_codec_bitrate_box[i]->insertItem(-1,"48 kbits/sec",48);
-      gui_codec_bitrate_box[i]->insertItem(-1,"56 kbits/sec",56);
-      gui_codec_bitrate_box[i]->insertItem(-1,"64 kbits/sec",64);
-      gui_codec_bitrate_box[i]->insertItem(-1,"80 kbits/sec",80);
-      gui_codec_bitrate_box[i]->insertItem(-1,"96 kbits/sec",96);
-      gui_codec_bitrate_box[i]->insertItem(-1,"112 kbits/sec",112);
-      gui_codec_bitrate_box[i]->insertItem(-1,"128 kbits/sec",128);
-      gui_codec_bitrate_box[i]->insertItem(-1,"144 kbits/sec",144);
-      gui_codec_bitrate_box[i]->insertItem(-1,"160 kbits/sec",160);
-      gui_codec_bitrate_box[i]->insertItem(-1,"192 kbits/sec",192);
-      gui_codec_bitrate_box[i]->insertItem(-1,"224 kbits/sec",224);
-      gui_codec_bitrate_box[i]->insertItem(-1,"256 kbits/sec",256);
-      gui_codec_bitrate_box[i]->insertItem(-1,"320 kbits/sec",320);
-      break;
+  case Codec::TypeMpegL3:
+    gui_codec_bitrate_box->insertItem(-1,"8 kbits/sec",8);
+    gui_codec_bitrate_box->insertItem(-1,"16 kbits/sec",16);
+    gui_codec_bitrate_box->insertItem(-1,"24 kbits/sec",24);
+    gui_codec_bitrate_box->insertItem(-1,"32 kbits/sec",32);
+    gui_codec_bitrate_box->insertItem(-1,"40 kbits/sec",40);
+    gui_codec_bitrate_box->insertItem(-1,"48 kbits/sec",48);
+    gui_codec_bitrate_box->insertItem(-1,"56 kbits/sec",56);
+    gui_codec_bitrate_box->insertItem(-1,"64 kbits/sec",64);
+    gui_codec_bitrate_box->insertItem(-1,"80 kbits/sec",80);
+    gui_codec_bitrate_box->insertItem(-1,"96 kbits/sec",96);
+    gui_codec_bitrate_box->insertItem(-1,"112 kbits/sec",112);
+    gui_codec_bitrate_box->insertItem(-1,"128 kbits/sec",128);
+    gui_codec_bitrate_box->insertItem(-1,"144 kbits/sec",144);
+    gui_codec_bitrate_box->insertItem(-1,"160 kbits/sec",160);
+    gui_codec_bitrate_box->insertItem(-1,"192 kbits/sec",192);
+    gui_codec_bitrate_box->insertItem(-1,"224 kbits/sec",224);
+    gui_codec_bitrate_box->insertItem(-1,"256 kbits/sec",256);
+    gui_codec_bitrate_box->insertItem(-1,"320 kbits/sec",320);
+    break;
 
-    case Codec::TypeOpus:
-    case Codec::TypeVorbis:
-      gui_codec_bitrate_box[i]->insertItem(-1,"0",0);
-      gui_codec_bitrate_box[i]->insertItem(-1,"1",1);
-      gui_codec_bitrate_box[i]->insertItem(-1,"2",2);
-      gui_codec_bitrate_box[i]->insertItem(-1,"3",3);
-      gui_codec_bitrate_box[i]->insertItem(-1,"4",4);
-      gui_codec_bitrate_box[i]->insertItem(-1,"5",5);
-      gui_codec_bitrate_box[i]->insertItem(-1,"6",6);
-      gui_codec_bitrate_box[i]->insertItem(-1,"7",7);
-      gui_codec_bitrate_box[i]->insertItem(-1,"8",8);
-      gui_codec_bitrate_box[i]->insertItem(-1,"9",9);
-      gui_codec_bitrate_box[i]->insertItem(-1,"10",10);
-      break;
+  case Codec::TypeOpus:
+  case Codec::TypeVorbis:
+    gui_codec_bitrate_box->insertItem(-1,"0",0);
+    gui_codec_bitrate_box->insertItem(-1,"1",1);
+    gui_codec_bitrate_box->insertItem(-1,"2",2);
+    gui_codec_bitrate_box->insertItem(-1,"3",3);
+    gui_codec_bitrate_box->insertItem(-1,"4",4);
+    gui_codec_bitrate_box->insertItem(-1,"5",5);
+    gui_codec_bitrate_box->insertItem(-1,"6",6);
+    gui_codec_bitrate_box->insertItem(-1,"7",7);
+    gui_codec_bitrate_box->insertItem(-1,"8",8);
+    gui_codec_bitrate_box->insertItem(-1,"9",9);
+    gui_codec_bitrate_box->insertItem(-1,"10",10);
+    break;
 
-    case Codec::TypePcm16:
-      gui_codec_bitrate_box[i]->insertItem(-1,tr("None",0));
-      break;
+  case Codec::TypePcm16:
+    gui_codec_bitrate_box->insertItem(-1,tr("None",0));
+    break;
 
-    case Codec::TypeLast:
-      break;
-    }
+  case Codec::TypeLast:
+    break;
   }  
-}
-
-
-void CodecDialog::setMultirate(bool state)
-{
-  for(int i=1;i<CODECDIALOG_MAX_SUBSTREAMS;i++) {
-    gui_codec_bitrate_box[i]->setEnabled(state);
-  }
 }
 
 
@@ -306,30 +286,26 @@ void CodecDialog::makeArgs(QStringList *args)
   args->push_back("--audio-channels="+QString().sprintf("%u",
 	     gui_codec_channels_box->
 		 itemData(gui_codec_channels_box->currentIndex()).toUInt()));
-  for(int i=0;i<CODECDIALOG_MAX_SUBSTREAMS;i++) {
-    switch(type) {
-    case Codec::TypeMpegL2:
-    case Codec::TypeMpegL3:
-    case Codec::TypeFdk:
-    case Codec::TypeOpus:
-    case Codec::TypeLast:
-      if(gui_codec_bitrate_box[i]->isEnabled()&&
-	 (gui_codec_bitrate_box[i]->currentItemData().toUInt()!=0)) {
-	args->push_back("--audio-bitrate="+QString().sprintf("%u",
-	      gui_codec_bitrate_box[i]->currentItemData().toUInt()));
-      }
-      break;
-
-    case Codec::TypePcm16:
-      break;
-
-    case Codec::TypeVorbis:
-      if(i==0) {
-	args->push_back("--audio-quality="+QString().sprintf("%u",
-	      gui_codec_bitrate_box[i]->currentItemData().toUInt()));
-      }
-      break;
+  switch(type) {
+  case Codec::TypeMpegL2:
+  case Codec::TypeMpegL3:
+  case Codec::TypeFdk:
+  case Codec::TypeOpus:
+  case Codec::TypeLast:
+    if(gui_codec_bitrate_box->isEnabled()&&
+       (gui_codec_bitrate_box->currentItemData().toUInt()!=0)) {
+      args->push_back("--audio-bitrate="+QString().sprintf("%u",
+			   gui_codec_bitrate_box->currentItemData().toUInt()));
     }
+    break;
+
+  case Codec::TypePcm16:
+    break;
+
+  case Codec::TypeVorbis:
+    args->push_back("--audio-quality="+QString().sprintf("%u",
+			   gui_codec_bitrate_box->currentItemData().toUInt()));
+    break;
   }
 }
 
@@ -361,11 +337,8 @@ void CodecDialog::load(Profile *p)
   codecSamplerateChanged(gui_codec_samplerate_box->currentIndex());
   gui_codec_channels_box->
     setCurrentItemData(p->intValue("GlassGui","AudioChannels"));
-  for(int i=0;i<CODECDIALOG_MAX_SUBSTREAMS;i++) {
-    gui_codec_bitrate_box[i]->
-      setCurrentItemData(p->intValue("GlassGui",
-				     QString().sprintf("AudioBitrate%d",i+1)));
-  }
+  gui_codec_bitrate_box->
+    setCurrentItemData(p->intValue("GlassGui","AudioBitrate1"));
 }
 
 
@@ -378,9 +351,7 @@ void CodecDialog::save(FILE *f)
 	  gui_codec_samplerate_box->currentItemData().toUInt());
   fprintf(f,"AudioChannels=%u\n",
 	  gui_codec_channels_box->currentItemData().toUInt());
-  for(int i=0;i<CODECDIALOG_MAX_SUBSTREAMS;i++) {
-    fprintf(f,"AudioBitrate%d=%u\n",i+1,
-	    gui_codec_bitrate_box[i]->currentItemData().toUInt());
-  }
+  fprintf(f,"AudioBitrate1=%u\n",
+	  gui_codec_bitrate_box->currentItemData().toUInt());
 }
 

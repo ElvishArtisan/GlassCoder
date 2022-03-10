@@ -2,7 +2,7 @@
 //
 // glassgui(1) Audio Encoder front end
 //
-//   (C) Copyright 2015-2020 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -149,8 +149,8 @@ MainWidget::MainWidget(QWidget *parent)
   gui_source_dialog=new SourceDialog("GlassGui",this);
   connect(gui_source_dialog,SIGNAL(updated()),this,SLOT(checkArgs()));
   gui_stream_dialog=new StreamDialog("GlassGui",this);
-  connect(gui_server_dialog,SIGNAL(typeChanged(Connector::ServerType,bool)),
-	  this,SLOT(serverTypeChangedData(Connector::ServerType,bool)));
+  connect(gui_server_dialog,SIGNAL(typeChanged(Connector::ServerType)),
+	  this,SLOT(serverTypeChangedData(Connector::ServerType)));
   connect(gui_server_dialog,SIGNAL(settingsChanged()),this,SLOT(checkArgs()));
 
   //
@@ -395,11 +395,9 @@ void MainWidget::metadataData()
 }
 
 
-void MainWidget::serverTypeChangedData(Connector::ServerType type,
-				       bool multirate)
+void MainWidget::serverTypeChangedData(Connector::ServerType type)
 {
   gui_stream_dialog->setServerType(type);
-  gui_codec_dialog->setMultirate(multirate);
 }
 
 

@@ -1010,3 +1010,6 @@
 	HLS with the '--server-no-deletes' switch.
 2022-03-10 Fred Gleason <fredg@paravelsystems.com>
 	* Removed support for multi-rate HLS streams from glasscoder(1).
+2022-03-10 Fred Gleason <fredg@paravelsystems.com>
+	* Removed support for multi-rate HLS streams from glassgui(1) and
+	glasscommander(1).

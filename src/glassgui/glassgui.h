@@ -63,7 +63,7 @@ class MainWidget : public GuiApplication
   void stopEncodingData();
   void showCodeData();
   void metadataData();
-  void serverTypeChangedData(Connector::ServerType type,bool multirate);
+  void serverTypeChangedData(Connector::ServerType type);
   void serverData();
   void codecData();
   void streamData();

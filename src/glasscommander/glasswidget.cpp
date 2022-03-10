@@ -381,7 +381,6 @@ void GlassWidget::serverTypeChangedData(Connector::ServerType type,
 					bool multirate)
 {
   gw_stream_dialog->setServerType(type);
-  gw_codec_dialog->setMultirate(multirate);
 }
 
 

@@ -34,8 +34,6 @@
 #include "combobox.h"
 #include "profile.h"
 
-#define CODECDIALOG_MAX_SUBSTREAMS 3
-
 class CodecDialog : public QDialog
 {
  Q_OBJECT;
@@ -43,7 +41,6 @@ class CodecDialog : public QDialog
   CodecDialog(const QString &caption,QWidget *parent);
   QSize sizeHint() const;
   void setControlsLocked(bool state);
-  void setMultirate(bool state);
   void makeArgs(QStringList *args);
   void addCodecTypes(const QString &types);
   void load(Profile *p);
@@ -64,7 +61,7 @@ class CodecDialog : public QDialog
   QLabel *gui_codec_channels_label;
   ComboBox *gui_codec_channels_box;
   QLabel *gui_codec_bitrate_label;
-  ComboBox *gui_codec_bitrate_box[CODECDIALOG_MAX_SUBSTREAMS];
+  ComboBox *gui_codec_bitrate_box;
   QPushButton *gui_close_button;
   QString gui_caption;
 };

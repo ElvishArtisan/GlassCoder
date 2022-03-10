@@ -51,7 +51,7 @@ class ServerDialog : public QDialog
   void save(FILE *f);
 
  signals:
-  void typeChanged(Connector::ServerType type,bool multirate);
+  void typeChanged(Connector::ServerType type);
   void settingsChanged();
 
  protected:

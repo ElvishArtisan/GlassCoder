@@ -392,19 +392,16 @@ void ServerDialog::serverTypeChanged(int index)
 {
   Connector::ServerType type=
     (Connector::ServerType)srv_server_type_box->itemData(index).toInt();
-  bool multirate=false;
   bool authfields=false;
   bool cleanup=false;
 
   switch(type) {
   case Connector::HlsServer:
-    multirate=true;
     authfields=true;
     cleanup=true;
     break;
 
   case Connector::IcecastStreamerServer:
-    multirate=false;
     authfields=false;
     cleanup=false;
     break;
@@ -415,7 +412,6 @@ void ServerDialog::serverTypeChanged(int index)
   case Connector::Icecast2Server:
   case Connector::FileServer:
   case Connector::FileArchiveServer:
-    multirate=false;
     authfields=true;
     cleanup=false;
     break;
@@ -431,7 +427,7 @@ void ServerDialog::serverTypeChanged(int index)
   srv_server_maxconns_spin->setDisabled(authfields);
   srv_cleanup_check->setEnabled(cleanup);
   srv_cleanup_label->setEnabled(cleanup);
-  emit typeChanged(type,multirate);
+  emit typeChanged(type);
 }
 
 
