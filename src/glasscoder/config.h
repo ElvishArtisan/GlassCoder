@@ -37,9 +37,7 @@ class Config
   enum ExitCode {ExitOk=0,ExitRetry=1,ExitFatal=2};
   Config();
   bool audioAtomicFrames() const;
-  unsigned audioBitrateQuantity() const;
-  unsigned audioBitrate(int n=-1) const;
-  std::vector<unsigned> *audioBitrates() const;
+  unsigned audioBitrate() const;
   unsigned audioChannels() const;
   AudioDevice::DeviceType audioDevice() const;
   Codec::Type audioFormat() const;
@@ -86,7 +84,7 @@ class Config
   // Audio Arguments
   //
   bool audio_atomic_frames;
-  std::vector<unsigned> *audio_bitrate;
+  unsigned audio_bitrate;
   unsigned audio_channels;
   AudioDevice::DeviceType audio_device;
   Codec::Type audio_format;

@@ -24,8 +24,8 @@
 #include "config.h"
 #include "connector.h"
 
-Connector *ConnectorFactory(Connector::ServerType type,bool is_top,
-			    Config *conf,QObject *parent=0);
+Connector *ConnectorFactory(Connector::ServerType type,Config *conf,
+			    QObject *parent=0);
 
 
 #endif  // CONNECTORFACTORY_H

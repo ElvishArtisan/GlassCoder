@@ -2,7 +2,7 @@
 //
 // Glasscoder connector for an integrated IceCast server
 //
-//   (C) Copyright 2014-2016 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -20,8 +20,6 @@
 
 #ifndef ICESTREAMCONNECTOR_H
 #define ICESTREAMCONNECTOR_H
-
-#include <vector>
 
 #include <QSignalMapper>
 #include <QTcpServer>

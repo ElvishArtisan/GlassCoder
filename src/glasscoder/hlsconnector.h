@@ -56,7 +56,7 @@ class HlsConnector : public Connector
 {
   Q_OBJECT;
  public:
-  HlsConnector(bool is_top,Config *conf,QObject *parent=0);
+  HlsConnector(Config *conf,QObject *parent);
   ~HlsConnector();
   Connector::ServerType serverType() const;
 
@@ -70,25 +70,17 @@ class HlsConnector : public Connector
   int64_t writeDataConnector(int frames,const unsigned char *data,int64_t len);
 
  private slots:
-   /*
-  void conveyorEventFinished(const NetConveyorEvent &evt,int exit_code,
-			     int resp_code,const QStringList &args);
-  void conveyorError(const NetConveyorEvent &evt,QProcess::ProcessError err,
-		     const QStringList &args);
-   */
   void conveyorStoppedData();
 
  private:
   void RotateMediaFile();
   void WritePlaylistFile();
-  void WriteTopPlaylistFile();
   QString GetMediaFilename(int seqno);
   void GetStreamTimestamp(uint8_t *bytes,uint64_t frames);
   void AddTextIdFrame(TagLib::ID3v2::Tag *tag,const QString &id,
 		      const QString &value) const;
   void AddTXXXFrame(TagLib::ID3v2::Tag *tag,const QString &desc,
 		    const QString &value) const;
-  bool hls_is_top;
   QDir *hls_temp_dir;
   QString hls_playlist_filename;
   int hls_sequence_head;

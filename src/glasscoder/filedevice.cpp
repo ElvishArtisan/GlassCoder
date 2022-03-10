@@ -2,7 +2,7 @@
 //
 // Audio source for streaming direct from a file.
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -22,8 +22,8 @@
 #include "glasslimits.h"
 
 FileDevice::FileDevice(unsigned chans,unsigned samprate,
-		       std::vector<Ringbuffer *> *rings,QObject *parent)
-  : AudioDevice(chans,samprate,rings,parent)
+		       Ringbuffer *ring,QObject *parent)
+  : AudioDevice(chans,samprate,ring,parent)
 {
 #ifdef SNDFILE
   file_sndfile=NULL;
@@ -135,9 +135,7 @@ void FileDevice::readTimerData()
 
   if(file_muted) {
     memset(pcm,0,sizeof(SNDFILE_BUFFER_SIZE*sizeof(float)*channels()));
-    for(unsigned i=0;i<ringBufferQuantity();i++) {
-      ringBuffer(i)->write(pcm,SNDFILE_BUFFER_SIZE);
-    }
+    ringBuffer()->write(pcm,SNDFILE_BUFFER_SIZE);
   }
   else {
     if((nframes=sf_readf_float(file_sndfile,pcm1,SNDFILE_BUFFER_SIZE))>0) {
@@ -145,9 +143,7 @@ void FileDevice::readTimerData()
 	remixChannels(pcm2,channels(),pcm1,file_sfinfo.channels,nframes);
 	pcm=pcm2;
       }
-      for(unsigned i=0;i<ringBufferQuantity();i++) {
-	ringBuffer(i)->write(pcm,nframes);
-      }
+      ringBuffer()->write(pcm,nframes);
       peakLevels(levels,pcm,nframes,channels());
       for(unsigned i=0;i<channels();i++) {
 	file_meter_avg[i]->addValue(levels[i]);

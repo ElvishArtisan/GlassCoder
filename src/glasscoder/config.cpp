@@ -33,7 +33,7 @@ Config::Config()
   unsigned num;
   bool ok=false;
   audio_atomic_frames=false;
-  audio_bitrate=new std::vector<unsigned>;
+  audio_bitrate=0;
   audio_channels=MAX_AUDIO_CHANNELS;
   audio_device=DEFAULT_AUDIO_DEVICE;
   audio_format=Codec::TypeVorbis;
@@ -77,7 +77,7 @@ Config::Config()
     if(cmd->key(i)=="--audio-bitrate") {
       num=cmd->value(i).toUInt(&ok);
       if(ok) {
-	audio_bitrate->push_back(num);
+	audio_bitrate=num;
       }
       else {
 	Log(LOG_ERR,"invalid --audio-bitrate value");
@@ -390,17 +390,12 @@ Config::Config()
     Log(LOG_ERR,"missing --server-url parameter");
     exit(256);
   }
-  if((audio_quality>=0.0)&&(audio_bitrate->size()>0)) {
+  if((audio_quality>=0.0)&&(audio_bitrate>0)) {
     Log(LOG_ERR,"--audio-quality and --audio-bitrate are mutually exclusive");
     exit(256);
   }
-  if((audio_bitrate->size()>1)&&(server_type!=Connector::HlsServer)) {
-    Log(LOG_ERR,"only HLS streams can have multiple bitrates");
-    exit(256);
-  }
-
-  if((audio_quality<0.0)&&(audio_bitrate->size()==0)) {
-    audio_bitrate->push_back(DEFAULT_AUDIO_BITRATE);
+  if((audio_quality<0.0)&&(audio_bitrate==0)) {
+    audio_bitrate=DEFAULT_AUDIO_BITRATE;
   }
 }
 
@@ -411,25 +406,7 @@ bool Config::audioAtomicFrames() const
 }
 
 
-unsigned Config::audioBitrateQuantity() const
-{
-  return audio_bitrate->size();
-}
-
-
-unsigned Config::audioBitrate(int n) const
-{
-  if(n>=0) {
-    return audio_bitrate->at(n);
-  }
-  if(audio_bitrate->size()==0) {
-    return 0;
-  }
-  return audio_bitrate->at(audio_bitrate->size()-1);
-}
-
-
-std::vector<unsigned> *Config::audioBitrates() const
+unsigned Config::audioBitrate() const
 {
   return audio_bitrate;
 }

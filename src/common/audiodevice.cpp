@@ -2,7 +2,7 @@
 //
 // Abstract base class for audio input sources.
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -30,10 +30,10 @@
 #include "logging.h"
 
 AudioDevice::AudioDevice(unsigned chans,unsigned samprate,
-			 std::vector<Ringbuffer *> *rings,QObject *parent)
+			 Ringbuffer *ring,QObject *parent)
   : QObject(parent)
 {
-  audio_rings=rings;
+  audio_ring=ring;
   audio_channels=chans;
   audio_samplerate=samprate;
 }
@@ -196,16 +196,9 @@ void AudioDevice::updateMeterLevels(int *lvls)
   }
 }
 
-
-unsigned AudioDevice::ringBufferQuantity() const
+Ringbuffer *AudioDevice::ringBuffer()
 {
-  return audio_rings->size();
-}
-
-
-Ringbuffer *AudioDevice::ringBuffer(unsigned n)
-{
-  return audio_rings->at(n);
+  return audio_ring;
 }
 
 

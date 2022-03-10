@@ -2,7 +2,7 @@
 //
 // Instantiate AudioDevice classes
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -23,10 +23,9 @@
 #include "filedevice.h"
 #include "jackdevice.h"
 #include "audiodevicefactory.h"
-
 AudioDevice *AudioDeviceFactory(AudioDevice::DeviceType type,
 				unsigned chans,unsigned samprate,
-				std::vector<Ringbuffer *> *rings,
+				Ringbuffer *ring,
 				QObject *parent)
 {
   AudioDevice *dev=NULL;
@@ -34,25 +33,25 @@ AudioDevice *AudioDeviceFactory(AudioDevice::DeviceType type,
   switch(type) {
   case AudioDevice::Alsa:
 #ifdef ALSA
-    dev=new AlsaDevice(chans,samprate,rings,parent);
+    dev=new AlsaDevice(chans,samprate,ring,parent);
 #endif  // ALSA
     break;
 
   case AudioDevice::AsiHpi:
 #ifdef ASIHPI
-    dev=new AsiHpiDevice(chans,samprate,rings,parent);
+    dev=new AsiHpiDevice(chans,samprate,ring,parent);
 #endif  // ASIHPI
     break;
 
   case AudioDevice::File:
 #ifdef SNDFILE
-    dev=new FileDevice(chans,samprate,rings,parent);
+    dev=new FileDevice(chans,samprate,ring,parent);
 #endif  // SNDFILE
     break;
 
   case AudioDevice::Jack:
 #ifdef JACK
-    dev=new JackDevice(chans,samprate,rings,parent);
+    dev=new JackDevice(chans,samprate,ring,parent);
 #endif  // JACK
     break;
 

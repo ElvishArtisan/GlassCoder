@@ -2,7 +2,7 @@
 //
 // Audio source for AudioScience HPI devices
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -27,8 +27,8 @@
 #include "logging.h"
 
 AsiHpiDevice::AsiHpiDevice(unsigned chans,unsigned samprate,
-			   std::vector<Ringbuffer *> *rings,QObject *parent)
-  : AudioDevice(chans,samprate,rings,parent)
+			   Ringbuffer *ring,QObject *parent)
+  : AudioDevice(chans,samprate,ring,parent)
 {
 #ifdef ASIHPI
   struct hpi_format fmt;
@@ -313,10 +313,8 @@ void AsiHpiDevice::readData()
   if(state==HPI_STATE_RECORDING) {
     if(HpiLog(HPI_InStreamReadBuf(NULL,asihpi_input_stream,asihpi_pcm_buffer,
 				  data_recorded))==0) {
-      for(unsigned i=0;i<ringBufferQuantity();i++) {
-	ringBuffer(i)->write((float *)asihpi_pcm_buffer,
-			     data_recorded/(sizeof(float)*channels()));
-      }
+      ringBuffer()->write((float *)asihpi_pcm_buffer,
+			  data_recorded/(sizeof(float)*channels()));
     }
   }
   else {

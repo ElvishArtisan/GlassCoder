@@ -23,8 +23,6 @@
 
 #include <stdint.h>
 
-#include <vector>
-
 #include <QObject>
 #include <QSocketNotifier>
 #include <QStringList>
@@ -59,20 +57,20 @@ class MainObject : public QObject
   // Audio Device
   //
   bool StartAudioDevice();
-  std::vector<Ringbuffer *> sir_ringbuffers;
+  Ringbuffer *sir_ringbuffer;
   AudioDevice *sir_audio_device;
 
   //
   // Server Connection
   //
-  void StartServerConnection(const QString &mntpt="",bool is_top=false);
+  void StartServerConnection(const QString &mntpt="");
   std::vector<Connector *> sir_connectors;
 
   //
   // Codec
   //
   bool StartCodec();
-  std::vector<Codec *> sir_codecs;
+  Codec * sir_codec;
 
   //
   // Metadata Processor
@@ -83,7 +81,6 @@ class MainObject : public QObject
   // Miscelaneous
   //
   bool StartSingleStream();
-  bool StartMultiStream();
   QTimer *sir_meter_timer;
   QTimer *sir_exit_timer;
   unsigned sir_exit_count;

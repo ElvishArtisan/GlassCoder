@@ -33,11 +33,10 @@
 #include "hlsconnector.h"
 #include "logging.h"
 
-HlsConnector::HlsConnector(bool is_top,Config *conf,QObject *parent)
+HlsConnector::HlsConnector(Config *conf,QObject *parent)
   : Connector(parent)
 {
   hls_config=conf;
-  hls_is_top=is_top;
   hls_sequence_head=0;
   hls_sequence_back=0;
   hls_media_frames=0;
@@ -152,25 +151,18 @@ void HlsConnector::connectToHostConnector(const QUrl &url)
   //
   hls_playlist_filename=hls_temp_dir->path()+"/"+hls_put_basename;
 
-  if(hls_is_top) {
-    WriteTopPlaylistFile();
-    hls_conveyor->push(this,hls_playlist_filename,NetConveyorEvent::PutMethod);
-    unlink(hls_playlist_filename.toUtf8());
-  }
-  else {
-    //
-    // Create initial media file
-    //
-    hls_media_filename=GetMediaFilename(hls_sequence_back);
-    if((hls_media_handle=
-	fopen((hls_temp_dir->path()+"/"+hls_media_filename).toUtf8(),"w"))==
-       NULL) {
-      Log(LOG_WARNING,
-	  QString().sprintf("unable to write media data to \"%s\" [%s]",
-	     (const char *)(hls_temp_dir->path()+"/"+
-			    hls_media_filename).toUtf8(),strerror(errno)));
-    }
-
+  //
+  // Create initial media file
+  //
+  hls_media_filename=GetMediaFilename(hls_sequence_back);
+  if((hls_media_handle=
+      fopen((hls_temp_dir->path()+"/"+hls_media_filename).toUtf8(),"w"))==
+     NULL) {
+    Log(LOG_WARNING,
+	QString().sprintf("unable to write media data to \"%s\" [%s]",
+			  (const char *)(hls_temp_dir->path()+"/"+
+					 hls_media_filename).toUtf8(),strerror(errno)));
+    
     //
     // Write ID3 tag(s)
     //
@@ -333,33 +325,6 @@ void HlsConnector::WritePlaylistFile()
 	    (const char *)Connector::timezoneOffset().toUtf8());
     fprintf(f,"#EXTINF:%7.5lf,\n%s\n",
     	    hls_media_durations[i],(const char *)GetMediaFilename(i).toUtf8());
-  }
-  fclose(f);
-}
-
-
-void HlsConnector::WriteTopPlaylistFile()
-{
-  FILE *f=NULL;
-
-  if((f=fopen(hls_playlist_filename.toUtf8(),"w"))==NULL) {
-    Log(LOG_ERR,
-	QString().sprintf("unable to write playlist data to \"%s\" [%s]",
-	   (const char *)(hls_temp_dir->path()+"/"+
-			  hls_playlist_filename).toUtf8(),strerror(errno)));
-    exit(256);
-  }
-  fprintf(f,"#EXTM3U\n");
-  //fprintf(f,"#EXT-X-VERSION:%d\n",HLS_VERSION);
-  for(unsigned i=0;i<audioBitrates()->size();i++) {
-    QString str=
-      QString().sprintf("#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=%u",
-			1000*audioBitrates()->at(i));
-    if(!formatIdentifier().isEmpty()) {
-      str+=",CODECS=\""+formatIdentifier()+"\"";
-    }
-    fprintf(f,"%s\n",(const char *)str.toUtf8());
-    fprintf(f,"%s\n",(const char *)Connector::basePart(Connector::subMountpointName(serverMountpoint(),audioBitrates()->at(i))).toUtf8());
   }
   fclose(f);
 }

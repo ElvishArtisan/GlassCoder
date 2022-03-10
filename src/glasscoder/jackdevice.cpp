@@ -2,7 +2,7 @@
 //
 // Audio source for the Jack Audio Connection Kit
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -63,9 +63,7 @@ int JackProcess(jack_nframes_t nframes, void *arg)
   //
   // Write It
   //
-  for(i=0;i<obj->ringBufferQuantity();i++) {
-    obj->ringBuffer(i)->write(jack_cb_interleave_buffer,nframes);
-  }
+  obj->ringBuffer()->write(jack_cb_interleave_buffer,nframes);
   obj->peakLevels(lvls,jack_cb_interleave_buffer,nframes,obj->channels());
   for(i=0;i<obj->channels();i++) {
     obj->jack_meter_avg[i]->addValue(lvls[i]);
@@ -77,8 +75,8 @@ int JackProcess(jack_nframes_t nframes, void *arg)
 
 
 JackDevice::JackDevice(unsigned chans,unsigned samprate,
-		       std::vector<Ringbuffer *> *rings,QObject *parent)
-  : AudioDevice(chans,samprate,rings,parent)
+		       Ringbuffer *ring,QObject *parent)
+  : AudioDevice(chans,samprate,ring,parent)
 {
 #ifdef JACK
   jack_server_name="";

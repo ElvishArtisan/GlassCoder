@@ -2,7 +2,7 @@
 //
 // Audio source for streaming direct from a file.
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -22,8 +22,6 @@
 #define FILEDEVICE_H
 
 #include <stdio.h>
-
-#include <vector>
 
 #include <QObject>
 #include <QString>
@@ -45,7 +43,7 @@ class FileDevice : public AudioDevice
   Q_OBJECT;
  public:
   FileDevice(unsigned chans,unsigned samprate,
-	     std::vector<Ringbuffer *> *rings,QObject *parent=0);
+	     Ringbuffer *ring,QObject *parent=0);
   ~FileDevice();
   bool processOptions(QString *err,const QStringList &keys,
 		      const QStringList &values);

@@ -2,7 +2,7 @@
 //
 // Audio source for the Advance Linux Sound Architecture
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -38,7 +38,7 @@ class AlsaDevice : public AudioDevice
   Q_OBJECT;
  public:
   AlsaDevice(unsigned chans,unsigned samprate,
-	      std::vector<Ringbuffer *> *rings,QObject *parent=0);
+	     Ringbuffer *ring,QObject *parent=0);
   ~AlsaDevice();
   bool processOptions(QString *err,const QStringList &keys,
 		      const QStringList &values);

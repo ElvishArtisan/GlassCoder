@@ -2,7 +2,7 @@
 //
 // Audio source for the Jack Audio Connection Kit
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -39,7 +39,7 @@ class JackDevice : public AudioDevice
   Q_OBJECT;
  public:
   JackDevice(unsigned chans,unsigned samprate,
-	     std::vector<Ringbuffer *> *rings,QObject *parent=0);
+	     Ringbuffer *ring,QObject *parent=0);
   ~JackDevice();
   bool processOptions(QString *err,const QStringList &keys,
 		      const QStringList &values);

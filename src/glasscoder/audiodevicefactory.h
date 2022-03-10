@@ -2,7 +2,7 @@
 //
 // Instantiate AudioDevice classes
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -25,8 +25,7 @@
 
 AudioDevice *AudioDeviceFactory(AudioDevice::DeviceType type,
 				unsigned chans,unsigned samprate,
-				std::vector<Ringbuffer *> *rings,
-				QObject *parent=0);
+				Ringbuffer *ring,QObject *parent=0);
 
 
 #endif  // AUDIODEVICEFACTORY_H

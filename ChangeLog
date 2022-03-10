@@ -1008,3 +1008,5 @@
 	* Fixed a regression in glasscoder(1) that caused stale media
 	segments to fail to be removed from the index file when using
 	HLS with the '--server-no-deletes' switch.
+2022-03-10 Fred Gleason <fredg@paravelsystems.com>
+	* Removed support for multi-rate HLS streams from glasscoder(1).

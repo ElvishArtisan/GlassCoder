@@ -1,8 +1,8 @@
 // alsadevice.cpp
 //
-// Audio source for the Advance Linux Sound Architecture
+// Audio source for the Advanced Linux Sound Architecture
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -51,16 +51,12 @@ void *AlsaCallback(void *ptr)
 			    dev->alsa_channels);
       }
       if(dev->alsa_channels==dev->channels()) {
-	for(unsigned i=0;i<dev->ringBufferQuantity();i++) {
-	  dev->ringBuffer(i)->write(pcm1,n);
-	}
+	dev->ringBuffer()->write(pcm1,n);
 	dev->peakLevels(lvls,pcm1,n,dev->channels());
       }
       else {
 	dev->remixChannels(pcm2,dev->channels(),pcm1,dev->alsa_channels,n);
-	for(unsigned i=0;i<dev->ringBufferQuantity();i++) {
-	  dev->ringBuffer(i)->write(pcm2,n);
-	}
+	dev->ringBuffer()->write(pcm2,n);
 	dev->peakLevels(lvls,pcm2,n,dev->channels());
       }
       for(i=0;i<dev->channels();i++) {
@@ -75,8 +71,8 @@ void *AlsaCallback(void *ptr)
 
 
 AlsaDevice::AlsaDevice(unsigned chans,unsigned samprate,
-		       std::vector<Ringbuffer *> *rings,QObject *parent)
-  : AudioDevice(chans,samprate,rings,parent)
+		       Ringbuffer *ring,QObject *parent)
+  : AudioDevice(chans,samprate,ring,parent)
 {
 #ifdef ALSA
   alsa_device=ALSA_DEFAULT_DEVICE;

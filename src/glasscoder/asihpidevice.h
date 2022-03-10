@@ -2,7 +2,7 @@
 //
 // Audio source for AudioScience HPI devices
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -41,7 +41,7 @@ class AsiHpiDevice : public AudioDevice
   Q_OBJECT;
  public:
   AsiHpiDevice(unsigned chans,unsigned samprate,
-	      std::vector<Ringbuffer *> *rings,QObject *parent=0);
+	       Ringbuffer *ring,QObject *parent=0);
   ~AsiHpiDevice();
   bool isAvailable() const;
   bool processOptions(QString *err,const QStringList &keys,

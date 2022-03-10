@@ -2,7 +2,7 @@
 //
 // Abstract base class for audio input sources.
 //
-//   (C) Copyright 2014-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -38,7 +38,7 @@ class AudioDevice : public QObject
   enum DeviceType {Alsa=0,AsiHpi=1,File=2,Jack=3,LastType=4};
   enum Format {FLOAT=0,S16_LE=1,S32_LE=2,LastFormat=3};
   AudioDevice(unsigned chans,unsigned samprate,
-	      std::vector<Ringbuffer *> *rings,QObject *parent=0);
+	      Ringbuffer *ring,QObject *parent=0);
   ~AudioDevice();
   virtual bool isAvailable() const;
   virtual bool processOptions(QString *err,const QStringList &keys,
@@ -61,8 +61,7 @@ class AudioDevice : public QObject
   void setMeterLevels(float *lvls);
   void setMeterLevels(int *lvls);
   void updateMeterLevels(int *lvls);
-  unsigned ringBufferQuantity() const;
-  Ringbuffer *ringBuffer(unsigned n);
+  Ringbuffer *ringBuffer();
   unsigned channels() const;
   unsigned samplerate() const;
   void remixChannels(float *pcm_out,unsigned chans_out,
@@ -73,7 +72,7 @@ class AudioDevice : public QObject
   void peakLevels(int *lvls,const float *pcm,unsigned nframes,unsigned chans);
 
  private:
-  std::vector<Ringbuffer *> *audio_rings;
+  Ringbuffer *audio_ring;
   unsigned audio_channels;
   unsigned audio_samplerate;
   int audio_meter_levels[MAX_AUDIO_CHANNELS];

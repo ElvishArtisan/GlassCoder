@@ -91,17 +91,10 @@ MainObject::MainObject(QObject *parent)
   }
 
   //
-  // Start Server Connections
+  // Start Server Connection
   //
-  if(sir_config->audioBitrateQuantity()>1) {
-    if(!StartMultiStream()) {
-      exit(256);
-    }
-  }
-  else {
-    if(!StartSingleStream()) {
-      exit(256);
-    }
+  if(!StartSingleStream()) {
+    exit(256);
   }
 
   //
@@ -162,7 +155,7 @@ void MainObject::meterData()
   int lvls[MAX_AUDIO_CHANNELS];
 
   sir_audio_device->meterLevels(lvls);
-  switch(sir_codecs[0]->channels()) {
+  switch(sir_codec->channels()) {
   case 1:
     printf("ME %04X%04X\n",lvls[0],lvls[0]);
     break;
@@ -210,17 +203,13 @@ void MainObject::exitTimerData()
 bool MainObject::StartAudioDevice()
 {
   //
-  // Create Ringbuffers
+  // Create Ringbuffer
   //
-  if(sir_config->audioBitrateQuantity()==0) {   // For VBR modes
-    sir_ringbuffers.
-      push_back(new Ringbuffer(RINGBUFFER_SIZE,sir_config->audioChannels()));
+  if(sir_config->audioBitrate()==0) {   // For VBR modes
+    sir_ringbuffer=new Ringbuffer(RINGBUFFER_SIZE,sir_config->audioChannels());
   }
   else {
-    for(unsigned i=0;i<sir_config->audioBitrateQuantity();i++) {
-      sir_ringbuffers.
-	push_back(new Ringbuffer(RINGBUFFER_SIZE,sir_config->audioChannels()));
-    }
+    sir_ringbuffer=new Ringbuffer(RINGBUFFER_SIZE,sir_config->audioChannels());
   }
 
   //
@@ -230,7 +219,8 @@ bool MainObject::StartAudioDevice()
   if((sir_audio_device=
       AudioDeviceFactory(sir_config->audioDevice(),sir_config->audioChannels(),
 			 sir_config->audioSamplerate(),
-			 &sir_ringbuffers,this))==NULL) {
+			 //			 &sir_ringbuffers,this))==NULL) {
+			 sir_ringbuffer,this))==NULL) {
     Log(LOG_ERR,
 	QString().sprintf("%s devices not supported",
 	    (const char *)AudioDevice::deviceTypeText(sir_config->audioDevice()).toUtf8()));
@@ -259,58 +249,48 @@ bool MainObject::StartAudioDevice()
 
 bool MainObject::StartCodec()
 {
-  Codec *codec;
-
-  if((codec=
-    CodecFactory(sir_config->audioFormat(),sir_ringbuffers[sir_codecs.size()],
-		 this))==NULL) {
+  if((sir_codec=
+    CodecFactory(sir_config->audioFormat(),sir_ringbuffer,this))==NULL) {
     Log(LOG_ERR,
 	QString().sprintf("unsupported codec type \"%s\"",
 	      (const char *)Codec::codecTypeText(Codec::TypeMpegL3).toUtf8()));
     return false;
   }
-  if(sir_config->audioBitrateQuantity()>0) {
-    codec->
-     setBitrate(sir_config->audioBitrate(sir_config->audioBitrateQuantity()-1));
+  if(sir_config->audioBitrate()>0) {
+    sir_codec->setBitrate(sir_config->audioBitrate());
   }
   else {
-    codec->setBitrate(0);
+    sir_codec->setBitrate(0);
   }
-  codec->setChannels(sir_config->audioChannels());
-  codec->setQuality(sir_config->audioQuality());
-  codec->setSourceSamplerate(sir_audio_device->deviceSamplerate());
-  codec->setStreamSamplerate(sir_config->audioSamplerate());
-  codec->setCompleteFrames(sir_config->audioAtomicFrames());
+  sir_codec->setChannels(sir_config->audioChannels());
+  sir_codec->setQuality(sir_config->audioQuality());
+  sir_codec->setSourceSamplerate(sir_audio_device->deviceSamplerate());
+  sir_codec->setStreamSamplerate(sir_config->audioSamplerate());
+  sir_codec->setCompleteFrames(sir_config->audioAtomicFrames());
 
-  sir_codecs.push_back(codec);
-
-  return sir_codecs.back()->start();
+  return sir_codec->start();
 }
 
 
-void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
+void MainObject::StartServerConnection(const QString &mntpt)
 {
   Connector *conn;
 
   //
   // Create Connector Instance
   //
-  conn=ConnectorFactory(sir_config->serverType(),is_top,sir_config,this);
+  conn=ConnectorFactory(sir_config->serverType(),sir_config,this);
   connect(conn,SIGNAL(stopped()),this,SLOT(connectorStoppedData()));
   connect(conn,SIGNAL(unmuteRequested()),sir_audio_device,SLOT(unmute()));
-  if(!is_top) {
-    connect(conn,SIGNAL(dataRequested(Connector *)),
-	    sir_codecs[sir_connectors.size()],SLOT(encode(Connector *)));
-    connect(conn,SIGNAL(connected(bool)),this,SLOT(connectedData(bool)));
-    connect(conn,SIGNAL(stopped()),this,SLOT(connectorStoppedData()));
-    conn->setStreamPrologue(sir_codecs[sir_connectors.size()]->
-			    streamPrologue());
-    sir_codecs[sir_connectors.size()]->
-      setCompleteFrames(sir_config->serverType()==Connector::HlsServer);
-    if(sir_meta_server!=NULL) {
-      connect(sir_meta_server,SIGNAL(metadataReceived(MetaEvent *)),
-	      conn,SLOT(sendMetadata(MetaEvent *)));
-    }
+  connect(conn,SIGNAL(dataRequested(Connector *)),
+	  sir_codec,SLOT(encode(Connector *)));
+  connect(conn,SIGNAL(connected(bool)),this,SLOT(connectedData(bool)));
+  connect(conn,SIGNAL(stopped()),this,SLOT(connectorStoppedData()));
+  conn->setStreamPrologue(sir_codec->streamPrologue());
+  sir_codec->setCompleteFrames(sir_config->serverType()==Connector::HlsServer);
+  if(sir_meta_server!=NULL) {
+    connect(sir_meta_server,SIGNAL(metadataReceived(MetaEvent *)),
+	    conn,SLOT(sendMetadata(MetaEvent *)));
   }
 
   //
@@ -330,17 +310,10 @@ void MainObject::StartServerConnection(const QString &mntpt,bool is_top)
   conn->setServerStartConnections(sir_config->serverStartConnections());
   conn->setServerUserAgent(sir_config->serverUserAgent());
   conn->setDumpHeaders(sir_config->dumpHeaders());
-  if(is_top) {
-    conn->setAudioBitrates(sir_config->audioBitrates());
-    conn->setFormatIdentifier(sir_codecs[0]->formatIdentifier());
-  }
-  else {
-    conn->setContentType(sir_codecs[sir_connectors.size()]->contentType());
-    conn->setExtension(sir_codecs[sir_connectors.size()]->defaultExtension());
-    conn->setFormatIdentifier(sir_codecs[sir_connectors.size()]->
-			      formatIdentifier());
-    conn->setAudioBitrate(sir_config->audioBitrate());
-  }
+  conn->setContentType(sir_codec->contentType());
+  conn->setExtension(sir_codec->defaultExtension());
+  conn->setFormatIdentifier(sir_codec->formatIdentifier());
+  conn->setAudioBitrate(sir_config->audioBitrate());
   conn->setAudioChannels(sir_config->audioChannels());
   conn->setAudioSamplerate(sir_config->audioSamplerate());
   conn->setScriptUp(sir_config->serverScriptUp());
@@ -368,32 +341,6 @@ bool MainObject::StartSingleStream()
     return false;
   }
   StartServerConnection();
-
-  return true;
-}
-
-
-bool MainObject::StartMultiStream()
-{
-  //
-  // Media streams
-  //
-  for(unsigned i=0;i<sir_config->audioBitrateQuantity();i++) {
-    if(!StartCodec()) {
-      return false;
-    }
-  }
-  for(unsigned i=0;i<sir_config->audioBitrateQuantity();i++) {
-    StartServerConnection(Connector::subMountpointName(sir_config->serverUrl().
-						       path(),
-						       sir_config->
-						       audioBitrate(i)));
-  }
-
-  //
-  // Top-level playlist
-  //
-  StartServerConnection(sir_config->serverUrl().path(),true);
 
   return true;
 }

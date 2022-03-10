@@ -27,14 +27,14 @@
 #include "icyconnector.h"
 #include "connectorfactory.h"
 
-Connector *ConnectorFactory(Connector::ServerType type,bool is_top,
-			    Config *conf,QObject *parent)
+Connector *ConnectorFactory(Connector::ServerType type,Config *conf,
+			    QObject *parent)
 {
   Connector *conn=NULL;
 
   switch(type) {
   case Connector::HlsServer:
-    conn=new HlsConnector(is_top,conf,parent);
+    conn=new HlsConnector(conf,parent);
     break;
 
   case Connector::Shoutcast1Server:
