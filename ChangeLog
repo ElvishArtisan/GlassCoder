@@ -1004,3 +1004,7 @@
 	the '~/.glassgui' directory.
 	* Modified glassgui(1) and glasscommander to use mode 0600 for
 	instance data files.
+2022-03-10 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a regression in glasscoder(1) that caused stale media
+	segments to fail to be removed from the index file when using
+	HLS with the '--server-no-deletes' switch.
