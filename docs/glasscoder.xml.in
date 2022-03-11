@@ -511,7 +511,7 @@ Password=&lt;password&gt;
       <listitem>
 	<para>
 	  Do not clean up or delete content previously posted to the
-	  publishing point. This setting is used only by the HTTP Live Stream
+	  publishing point. This setting is used only by the HLS
 	  server type.
 	</para>
       </listitem>

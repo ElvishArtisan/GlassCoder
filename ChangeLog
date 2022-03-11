@@ -1013,3 +1013,6 @@
 2022-03-10 Fred Gleason <fredg@paravelsystems.com>
 	* Removed support for multi-rate HLS streams from glassgui(1) and
 	glasscommander(1).
+2022-03-11 Fred Gleason <fredg@paravelsystems.com>
+	* Corrected a typo in the entry for '--server-no-deletes' in the
+	glasscoder(1) man page.
