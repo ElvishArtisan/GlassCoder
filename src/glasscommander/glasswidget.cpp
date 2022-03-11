@@ -52,8 +52,8 @@ GlassWidget::GlassWidget(const QString &instance_name,QDir *temp_dir,
   gw_config_dialog=new ConfigDialog(instance_name,gw_server_dialog,
 				    gw_codec_dialog,gw_stream_dialog,
 				    gw_source_dialog,gw_code_dialog,this);
-  connect(gw_server_dialog,SIGNAL(typeChanged(Connector::ServerType,bool)),
-	  this,SLOT(serverTypeChangedData(Connector::ServerType,bool)));
+  connect(gw_server_dialog,SIGNAL(typeChanged(Connector::ServerType)),
+	  this,SLOT(serverTypeChangedData(Connector::ServerType)));
   connect(gw_server_dialog,SIGNAL(settingsChanged()),this,SLOT(checkArgs()));
 
   for(int i=0;i<2;i++) {
@@ -377,8 +377,7 @@ void GlassWidget::checkArgs()
 }
 
 
-void GlassWidget::serverTypeChangedData(Connector::ServerType type,
-					bool multirate)
+void GlassWidget::serverTypeChangedData(Connector::ServerType type)
 {
   gw_stream_dialog->setServerType(type);
 }

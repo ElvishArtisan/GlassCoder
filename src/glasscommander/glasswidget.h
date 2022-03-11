@@ -82,7 +82,7 @@ class GlassWidget : public QFrame
   void removeData();
   void configData();
   void checkArgs();
-  void serverTypeChangedData(Connector::ServerType type,bool multirate);
+  void serverTypeChangedData(Connector::ServerType type);
   void killData();
 
  protected:
