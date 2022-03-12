@@ -394,20 +394,23 @@ void MainObject::Log(int prio,const char *fmt,...) const
 {
   char line[1024];
   va_list args;
+
+  //
+  // Send to parent controller
+  //
   va_start(args,fmt);
   if(vsnprintf(line,1023,fmt,args)>0) {
     printf("ER %d %s",prio,line);
     fflush(stdout);
   }
   va_end(args);
-  /*
-  va_list args;
 
+  //
+  // Send to syslog
+  //
   va_start(args,fmt);
   vsyslog(prio,fmt,args);
-  //  printf("ER %d %s",prio,QString::asprintf(fmt,args).toUtf8().constData());
   va_end(args);
-  */
 }
 
 
