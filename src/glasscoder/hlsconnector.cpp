@@ -162,17 +162,17 @@ void HlsConnector::connectToHostConnector(const QUrl &url)
 	QString().sprintf("unable to write media data to \"%s\" [%s]",
 			  (const char *)(hls_temp_dir->path()+"/"+
 					 hls_media_filename).toUtf8(),strerror(errno)));
-    
-    //
-    // Write ID3 tag(s)
-    //
-#ifndef HLS_OMIT_ID3_TIMESTAMPS
-    uint8_t id3_header[HLS_ID3_HEADER_SIZE];
-    hls_total_media_frames=HLS_SEGMENT_SIZE*audioSamplerate();
-    GetStreamTimestamp(id3_header,hls_total_media_frames);
-    fwrite(id3_header,1,HLS_ID3_HEADER_SIZE,hls_media_handle);
-#endif  // HLS_OMIT_ID3_TIMESTAMPS
   }
+
+  //
+  // Write ID3 tag(s)
+  //
+#ifndef HLS_OMIT_ID3_TIMESTAMPS
+  uint8_t id3_header[HLS_ID3_HEADER_SIZE];
+  hls_total_media_frames=HLS_SEGMENT_SIZE*audioSamplerate();
+  GetStreamTimestamp(id3_header,hls_total_media_frames);
+  fwrite(id3_header,1,HLS_ID3_HEADER_SIZE,hls_media_handle);
+#endif  // HLS_OMIT_ID3_TIMESTAMPS
 
   setConnected(true);
   emit unmuteRequested();

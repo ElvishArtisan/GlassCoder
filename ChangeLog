@@ -1021,3 +1021,6 @@
 	startup.
 2022-03-12 Fred Gleason <fredg@paravelsystems.com>
 	* Modified glassconv(1) to log all messages to syslog(3).
+2022-03-13 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in glassconv(1) that caused lockups due to exhaustion
+	of available file handles.

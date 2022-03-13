@@ -231,22 +231,6 @@ void MainObject::Put(const QString &destname,const QString &srcname)
   // Authentication
   //
   SetCurlAuthentication(d_curl_handle);
-  /*
-  if(!d_username.isEmpty()) {
-    if((url.scheme()=="sftp")&&(!d_public_keyfile.isEmpty())) {
-      curl_easy_setopt(d_curl_handle,
-		       CURLOPT_USERNAME,d_username.toUtf8().constData());
-      curl_easy_setopt(d_curl_handle,CURLOPT_SSH_PRIVATE_KEYFILE,
-		       d_public_keyfile.toUtf8().constData());
-      curl_easy_setopt(d_curl_handle,CURLOPT_KEYPASSWD,
-		       d_password.toUtf8().constData());
-    }
-    else {
-      curl_easy_setopt(d_curl_handle,CURLOPT_USERPWD,
-		       (d_username+":"+d_password).toUtf8().constData());
-    }
-  }
-  */
 
   //
   // Transaction
@@ -273,6 +257,7 @@ void MainObject::Put(const QString &destname,const QString &srcname)
     Log(LOG_WARNING,"upload of \"%s\" failed: %s",
 	   srcname.toUtf8().constData(),d_curl_errorbuffer);
   }
+  fclose(f);
 }
 
 
