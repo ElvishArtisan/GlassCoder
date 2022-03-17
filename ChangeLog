@@ -1024,5 +1024,5 @@
 2022-03-13 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in glassconv(1) that caused lockups due to exhaustion
 	of available file handles.
-2022-03-16 Fred Gleason <fredg@paravelsystems.com>
+2022-03-17 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug that broke the 'make rpm' target.
