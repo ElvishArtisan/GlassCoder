@@ -99,6 +99,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 %{_bindir}/glasscoder
+%{_bindir}/glassconv
 %{_mandir}/man1/glasscoder.1.gz
 %{_mandir}/man1/glasscommander.1.gz
 %{_mandir}/man1/glassgui.1.gz
@@ -129,6 +130,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Mar 17 2022 Fred Gleason <fredg@paravelsystems.com>
+-- Added glassconv(1).
 * Mon Jan 10 2022 Fred Gleason <fredg@paravelsystems.com>
 -- Replaced the 'qt-devel' build dependency with 'qt5-qtbase-devel'.
 * Thu Jan 23 2020 Fred Gleason <fredg@paravelsystems.com>
