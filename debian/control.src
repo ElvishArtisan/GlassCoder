@@ -33,7 +33,7 @@ Description: GlassGui and GlassCommander control applets for GlassCoder
 
 Package: glasscoder-pypad
 Architecture: all
-Depends: ${misc:Depends}, glasscoder (= @VERSION@-1), python3
+Depends: ${misc:Depends}, python3
 Description: PyPAD script for Rivendell
  This package provides a PyPAD script for use with the Rivendell Radio
  Automation System. It can be used to send articulated PAD updates to

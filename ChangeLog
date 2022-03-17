@@ -1031,3 +1031,6 @@
 	RPM sub-package to require matching versions.
 2022-03-17 Fred Gleason <fredg@paravelsystems.com>
 	* Added glassconv(1) to the 'glasscoder' Deb package.
+2022-03-17 Fred Gleason <fredg@paravelsystems.com>
+	* Removed the 'glasscoder' dependency from the 'glasscoder-pypad'
+	Deb package.
