@@ -13,6 +13,7 @@ binary:
 	dh_installchangelogs ChangeLog
 	mkdir -p debian/glasscoder/usr/bin
 	mv debian/tmp/usr/bin/glasscoder debian/glasscoder/usr/bin/
+	mv debian/tmp/usr/bin/glassconv debian/glasscoder/usr/bin/
 	mkdir -p debian/glasscoder/usr/share/man/man1
 	mv debian/tmp/usr/share/man/man1/glasscoder.1 debian/glasscoder/usr/share/man/man1/
 	mkdir -p debian/glasscoder/usr/share/man/man7
