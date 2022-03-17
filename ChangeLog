@@ -1034,3 +1034,5 @@
 2022-03-17 Fred Gleason <fredg@paravelsystems.com>
 	* Removed the 'glasscoder' dependency from the 'glasscoder-pypad'
 	Deb package.
+2022-03-17 Fred Gleason <fredg@paravelsystems.com>
+	* Updated the package version to 2.0.0rc0.

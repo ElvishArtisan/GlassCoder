@@ -1,6 +1,23 @@
 The NEWS file for the GlassCoder package.
 
 -------------------------------------------------------------------------------
+v2.0.0rc0 -- 17 March 2022
+
+Changes:
+   HLS Streaming. Removed support for generating multi-rate streams via HLS.
+   Added a '--server-no-deletes' switch to glasscoder(1) to suppress
+   DELETE transactions (useful when publishing to services (such as
+   Akamai MSL-4) which do not require client-generated publish-point
+   cleanup.
+
+   Credentials Handling. Added '--credentials-file' and '--delete-credentials'
+   switches to glasscoder(1) while deprecating use of the '--server-auth'
+   switch. Also added to glasscoder(1) is the ability to use an ssh(1)
+   identity for authentication when publishing HLS streams. See the
+   glasscoder(1) man page for details.
+
+   Bugfixes. See the ChangeLog for details.
+-------------------------------------------------------------------------------
 v1.0.4 -- 10 January 2022
 
 Changes:
