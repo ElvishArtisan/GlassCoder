@@ -45,7 +45,7 @@ command-line, with no configuration files or GUI required.
 %package gui
 Summary: GlassGui and GlassCommander control applets for GlassCoder
 Group: Productivity/Multimedia/Other
-Requires: glasscoder
+Requires: glasscoder = @VERSION@
 
 %description gui
 GlassGui is a control applet for driving a single instance of the GlassCoder
@@ -132,6 +132,8 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Thu Mar 17 2022 Fred Gleason <fredg@paravelsystems.com>
 -- Added glassconv(1).
+-- Tightened the 'glasscoder' dependency for the 'glasscoder-gui' sub-package
+to require matching versions.
 * Mon Jan 10 2022 Fred Gleason <fredg@paravelsystems.com>
 -- Replaced the 'qt-devel' build dependency with 'qt5-qtbase-devel'.
 * Thu Jan 23 2020 Fred Gleason <fredg@paravelsystems.com>

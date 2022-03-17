@@ -1026,3 +1026,6 @@
 	of available file handles.
 2022-03-17 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug that broke the 'make rpm' target.
+2022-03-17 Fred Gleason <fredg@paravelsystems.com>
+	* Tightened the 'glasscoder' dependency for the 'glasscoder-gui'
+	RPM sub-package to require matching versions.
