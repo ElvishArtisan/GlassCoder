@@ -1,6 +1,13 @@
 The NEWS file for the GlassCoder package.
 
 -------------------------------------------------------------------------------
+v2.0.0rc1 -- 3 May 2022
+
+Changes:
+   Bugfix. Fixed a bug in glasscommander(1) that could cause startup of
+   encoder instances to fail with an 'Unable to create credential file'
+   error message.
+-------------------------------------------------------------------------------
 v2.0.0rc0 -- 17 March 2022
 
 Changes:
