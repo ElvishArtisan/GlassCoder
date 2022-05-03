@@ -2,7 +2,7 @@
 //
 // glasscommander(1) Audio Encoder front end
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -34,6 +34,8 @@
 
 #define GLASSCOMMANDER_USAGE "[options]\n"
 #define GLASSCOMMANDER_SETTINGS_FILE QString("glasscommanderrc")
+#define GLASSCOMMANDER_TEMP_KEEPALIVE_FILENAME QString("keepalive")
+#define GLASSCOMMANDER_TEMP_KEEPALIVE_INTERVAL 60000
 #define GLASSCOMMANDER_TERMINATE_TIMEOUT 5000
 
 class MainWidget : public GuiApplication
@@ -59,6 +61,7 @@ class MainWidget : public GuiApplication
   void stopAllData();
   void encoderStoppedData();
   void stopTimeoutData();
+  void updateKeepaliveData();
 
  protected:
   void closeEvent(QCloseEvent *e);
@@ -91,6 +94,9 @@ class MainWidget : public GuiApplication
   int gui_autostart_index;
   bool gui_starting_all;
   QDir *gui_temp_dir;
+  QTimer *gui_temp_keepalive_timer;
+  QString gui_temp_keepalive_pathname;
+  int gui_temp_keepalive_fd;
 };
 
 

@@ -1036,3 +1036,7 @@
 	Deb package.
 2022-03-17 Fred Gleason <fredg@paravelsystems.com>
 	* Updated the package version to 2.0.0rc0.
+2022-05-03 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in glasscommander(1) that could cause the startup of
+	encoder instances to fail with a 'Unable to create credential file'
+	error message.

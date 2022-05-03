@@ -2,7 +2,7 @@
 //
 // glasscommander(1) Audio Encoder front end
 //
-//   (C) Copyright 2016-2020 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <fcntl.h>
 #include <unistd.h>
 
 #include <QAction>
@@ -82,6 +83,25 @@ MainWidget::MainWidget(QWidget *parent)
     ExitProgram(256);
   }
   gui_temp_dir=new QDir(tempdir);
+
+  //
+  // Temp Directory Keepalive
+  // (To keep Systemd from "helpfully" deleting the "stale" temp dir)
+  //
+  QString keepalive_pathname=
+    gui_temp_dir->absolutePath()+"/"+GLASSCOMMANDER_TEMP_KEEPALIVE_FILENAME;
+  if((gui_temp_keepalive_fd=open(keepalive_pathname.toUtf8(),
+				 O_WRONLY|O_CREAT|O_TRUNC,S_IRUSR|S_IWUSR))<0) {
+    QMessageBox::critical(this,"GlassCommander - "+tr("Error"),
+			  tr("Unable to create keepalive file")+
+			  " \""+keepalive_pathname+"\". ["+strerror(errno)+"]");
+    ExitProgram(256);
+  }
+  updateKeepaliveData();
+  gui_temp_keepalive_timer=new QTimer(this);
+  connect(gui_temp_keepalive_timer,SIGNAL(timeout()),
+    this,SLOT(updateKeepaliveData()));
+  gui_temp_keepalive_timer->start(GLASSCOMMANDER_TEMP_KEEPALIVE_INTERVAL);
 
   //
   // Timers
@@ -415,6 +435,20 @@ void MainWidget::stopTimeoutData()
     }
   }
   ExitProgram(1);
+}
+
+
+void MainWidget::updateKeepaliveData()
+{
+  QByteArray now_stamp=
+    QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss").toUtf8();
+
+  ftruncate(gui_temp_keepalive_fd,0);
+  if(write(gui_temp_keepalive_fd,now_stamp,now_stamp.size())<0) {
+    syslog(LOG_WARNING,"unable to update keepalive file \"%s\" [%s]",
+	   gui_temp_keepalive_pathname.toUtf8().constData(),
+	   strerror(errno));
+  }
 }
 
 
