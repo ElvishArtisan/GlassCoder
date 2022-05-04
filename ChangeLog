@@ -1042,3 +1042,6 @@
 	error message.
 2022-05-03 Fred Gleason <fredg@paravelsystems.com>
 	* Updated the package version to 2.0.0rc1.
+2022-05-04 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a regression in glasscoder(1) that caused the value of the
+	'#EXTINF' tags to always be '0.00000' in HLS streams.
