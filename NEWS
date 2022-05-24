@@ -1,6 +1,13 @@
 The NEWS file for the GlassCoder package.
 
 -------------------------------------------------------------------------------
+v2.0.0rc3 -- 24 May 2022
+
+Changes:
+   Bugfix. Fixed a regression in glasscoder(1) when configured to emit HLS
+   that caused the '#EXT-X-PROGRAM-DATE-TIME' tag to get an invalid value
+   when the '--server-no-deletes' flag was given.
+-------------------------------------------------------------------------------
 v2.0.0rc2 -- 4 May 2022
 
 Changes:
