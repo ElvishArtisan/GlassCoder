@@ -1047,3 +1047,7 @@
 	'#EXTINF' tags to always be '0.00000' in HLS streams.
 2022-05-04 Fred Gleason <fredg@paravelsystems.com>
 	* Updated the package version to 2.0.0rc2.
+2022-05-24 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a regression in glasscoder(1) when configured to emit
+	HLS that caused the '#EXT-X-PROGRAM-DATE-TIME' tag to get an invalid
+	value when the '--server-no-deletes' flag was given.

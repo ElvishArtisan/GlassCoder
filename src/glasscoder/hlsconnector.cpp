@@ -219,10 +219,8 @@ void HlsConnector::RotateMediaFile()
   // Update working files
   //
   fclose(hls_media_handle);
-  if(!hls_config->serverNoDeletes()) {
-    hls_media_datetimes[hls_sequence_back]=
-      QDateTime(QDate::currentDate(),QTime::currentTime());
-  }
+  hls_media_datetimes[hls_sequence_back]=
+    QDateTime(QDate::currentDate(),QTime::currentTime());
   hls_media_durations[hls_sequence_back]=
     (double)hls_media_frames/(double)audioSamplerate();
   if((hls_sequence_back-hls_sequence_head)>=HLS_MINIMUM_SEGMENT_QUAN) {
