@@ -1,40 +1,22 @@
 The NEWS file for the GlassCoder package.
 
 -------------------------------------------------------------------------------
-v2.0.0rc3 -- 24 May 2022
+v2.0.1 -- 25 June 2022
 
 Changes:
-   Bugfix. Fixed a regression in glasscoder(1) when configured to emit HLS
-   that caused the '#EXT-X-PROGRAM-DATE-TIME' tag to get an invalid value
-   when the '--server-no-deletes' flag was given.
--------------------------------------------------------------------------------
-v2.0.0rc2 -- 4 May 2022
-
-Changes:
-   Bugfix. Fixed a regression in glasscoder(1) that caused the value of the
-   '#EXTINF' tags to always be '0.00000' in HLS streams.
--------------------------------------------------------------------------------
-v2.0.0rc1 -- 3 May 2022
-
-Changes:
-   Bugfix. Fixed a bug in glasscommander(1) that could cause startup of
-   encoder instances to fail with an 'Unable to create credential file'
-   error message.
--------------------------------------------------------------------------------
-v2.0.0rc0 -- 17 March 2022
-
-Changes:
-   HLS Streaming. Removed support for generating multi-rate streams via HLS.
+   HLS Streaming. Major rework of the HLS encoder to increase
+   multi-threading and hence performance on multi-core processors.
+   Removed support for generating multi-rate streams via HLS.
    Added a '--server-no-deletes' switch to glasscoder(1) to suppress
-   DELETE transactions (useful when publishing to services (such as
-   Akamai MSL-4) which do not require client-generated publish-point
-   cleanup.
+   DELETE transactions (useful when publishing to services such as
+   Akamai MSL-4 which do not require client-generated publish-point
+   cleanup).
 
    Credentials Handling. Added '--credentials-file' and '--delete-credentials'
    switches to glasscoder(1) while deprecating use of the '--server-auth'
    switch. Also added to glasscoder(1) is the ability to use an ssh(1)
-   identity for authentication when publishing HLS streams. See the
-   glasscoder(1) man page for details.
+   identity file (private key) for authentication when publishing HLS streams.
+   See the glasscoder(1) man page for details.
 
    Bugfixes. See the ChangeLog for details.
 -------------------------------------------------------------------------------
