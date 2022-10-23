@@ -1055,3 +1055,6 @@
 	* Updated the package version to 2.0.0rc3.
 2022-06-25 Fred Gleason <fredg@paravelsystems.com>
 	* Updated the package version to 2.0.1.
+2022-10-23 Patrick Linstruth <patrick@deltecent.com>
+	* Updated glasscoder(1) and glassgui(1) to support higher AAC
+	bitrates.
