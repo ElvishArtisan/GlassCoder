@@ -204,6 +204,10 @@ void CodecDialog::codecSamplerateChanged(int n)
     gui_codec_bitrate_box->insertItem(-1,"32 kbits/sec",32);
     gui_codec_bitrate_box->insertItem(-1,"40 kbits/sec",40);
     gui_codec_bitrate_box->insertItem(-1,"48 kbits/sec",48);
+    gui_codec_bitrate_box->insertItem(-1,"96 kbits/sec",96);
+    gui_codec_bitrate_box->insertItem(-1,"128 kbits/sec",128);
+    gui_codec_bitrate_box->insertItem(-1,"196 kbits/sec",196);
+    gui_codec_bitrate_box->insertItem(-1,"256 kbits/sec",256);
     break;
 
   case Codec::TypeMpegL2:

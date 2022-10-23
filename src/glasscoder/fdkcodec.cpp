@@ -159,7 +159,12 @@ bool FdkCodec::startCodec()
     break;
 
   case 2:
-    aacEncoder_SetParam(fdk_encoder,AACENC_AOT,29);  // MPEG-4 HE-AAC/PS
+    if (bitrate() <= 48) {
+      aacEncoder_SetParam(fdk_encoder,AACENC_AOT,29);  // MPEG-4 HE-AAC/PS
+    }
+    else {
+      aacEncoder_SetParam(fdk_encoder,AACENC_AOT,2);   // AAC-LC
+    }
     aacEncoder_SetParam(fdk_encoder,AACENC_CHANNELMODE,MODE_2);
     break;
 
