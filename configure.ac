@@ -259,7 +259,7 @@ case "$ar_distro_id" in
 	if test $ar_distro_major -eq 8 ; then
 	   AC_SUBST(PYPAD_BINARY,"")
 	else
-	   AC_SUBST(PYPAD_BINARY,"%{_libdir}/rivendell/pypad/__pycache__/*.pyc")
+	   AC_SUBST(PYPAD_BINARY,"/usr/lib/rivendell/pypad/__pycache__/*.pyc")
 	fi
      ;;
 

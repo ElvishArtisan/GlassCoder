@@ -2,7 +2,7 @@
 ##
 ## Makefile.am for GlassCoder 'plugins/'
 ##
-##   (C) Copyright 2019 Fred Gleason <fredg@paravelsystems.com>
+##   (C) Copyright 2019-2024 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License as
@@ -21,14 +21,14 @@
 ## Use automake to process this into a Makefile.in
 
 install-exec-am:	
-	mkdir -p $(DESTDIR)@libdir@/rivendell/pypad
-	cp pypad_glasscoder.exemplar $(DESTDIR)@libdir@/rivendell/pypad/
-	./install_pypad.sh pypad_glasscoder.py $(DESTDIR)@libdir@/rivendell/pypad/pypad_glasscoder.py
+	mkdir -p $(DESTDIR)/usr/lib/rivendell/pypad
+	cp pypad_glasscoder.exemplar $(DESTDIR)/usr/lib/rivendell/pypad/
+	./install_pypad.sh pypad_glasscoder.py $(DESTDIR)/usr/lib/rivendell/pypad/pypad_glasscoder.py
 
 
 uninstall-local:	
-	rm -f $(DESTDIR)@libdir@/rivendell/pypad/pypad_glasscoder.exemplar
-	rm -f $(DESTDIR)@libdir@/rivendell/pypad/pypad_glasscoder.py
+	rm -f $(DESTDIR)/usr/lib/rivendell/pypad/pypad_glasscoder.exemplar
+	rm -f $(DESTDIR)/usr/lib/rivendell/pypad/pypad_glasscoder.py
 
 
 EXTRA_DIST = install_pypad.sh.in\
