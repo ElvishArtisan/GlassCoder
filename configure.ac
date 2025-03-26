@@ -4,7 +4,7 @@ dnl Autoconf configuration
 dnl
 dnl Use autoconf to process this into a configure script
 dnl
-dnl   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
+dnl   (C) Copyright 2014-2025 Fred Gleason <fredg@paravelsystems.com>
 dnl
 dnl   This program is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License version 2 as
@@ -56,6 +56,8 @@ esac
 #
 # Option Switches
 #
+AC_ARG_ENABLE(aws_s3,[  --disable-aws-s3        disable Amazon Web Services S3 support],
+		      [AWS_S3_DISABLED=yes],[])
 AC_ARG_ENABLE(twolame,[  --disable-twolame       disable MPEG-1 Layer 2 support],
 		      [TWOLAME_DISABLED=yes],[])
 AC_ARG_ENABLE(lame,[  --disable-lame          disable MPEG-1 Layer 3 support],
@@ -219,6 +221,17 @@ if test $PYTHON_FOUND ; then
   USING_PYTHON=yes
 fi
 AM_CONDITIONAL([PYTHON_AM], [test "$USING_PYTHON" = yes])
+
+#
+# Check for AWS S3 API
+#
+PKG_CHECK_MODULES(AWS_S3,aws-cpp-sdk-s3,[AWS_S3_FOUND=yes],[])
+if test $AWS_S3_FOUND ; then
+  if test -z $AWS_S3_DISABLED ; then
+    AC_DEFINE(HAVE_AWS_S3)
+    USING_AWS_S3=yes
+  fi
+fi
 
 #
 # Build DocBook Items?
@@ -403,6 +416,13 @@ if test -z $USING_PYTHON ; then
 AC_MSG_NOTICE("|                     Install PyPAD scripts ... No    |")
 else
 AC_MSG_NOTICE("|                     Install PyPAD scripts ... Yes   |")
+fi
+AC_MSG_NOTICE("|                                                     |")
+AC_MSG_NOTICE("| Data Transports:                                    |")
+if test -z $USING_AWS_S3 ; then
+AC_MSG_NOTICE("|                    Amazon Web Services S3 ... No    |")
+else
+AC_MSG_NOTICE("|                    Amazon Web Services S3 ... Yes   |")
 fi
 AC_MSG_NOTICE("|-----------------------------------------------------|")
 AC_MSG_NOTICE()

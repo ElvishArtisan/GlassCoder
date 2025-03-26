@@ -214,6 +214,11 @@ Config::Config()
     if(cmd->key(i)=="--server-url") {
       server_url=QUrl(cmd->value(i));
       if(server_url.port()<0) {
+ #ifdef HAVE_AWS_S3
+	if(server_url.scheme().toLower()=="s3") {
+	  server_url.setPort(0);
+	}
+#endif  // HAVE_AWS_S3
 	if(server_url.scheme().toLower()=="file") {
 	  server_url.setPort(0);
 	}

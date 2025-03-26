@@ -2,7 +2,7 @@
 //
 // glassconv(1) File Conveyor Service
 //
-//   (C) Copyright 2022 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2022-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -44,10 +44,13 @@ class MainObject : public QObject
  private:
   void ProcessFile(const QString &filename);
   void Put(const QString &destname,const QString &srcname);
+  void PutCurl(const QString &destname,const QString &srcname);
+  void PutAwsS3(const QString &destname,const QString &srcname);
   void Delete(const QString &destname,const QString &srcname);
   void DeleteHttp(const QString &destname,const QString &srcname);
   void DeleteFile(const QString &destname,const QString &srcname);
   void DeleteSftp(const QString &destname,const QString &srcname);
+  void DeleteAwsS3(const QString &destname,const QString &srcname);
   void SetCurlAuthentication(CURL *handle) const;
   void UnlinkLocalFile(const QString &pathname) const;
   void Log(int prio,const char *fmt,...) const;

@@ -2,7 +2,7 @@
 ##
 ## Makefile for the glasscoder(1) Audio Encoder.
 ##
-## (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
+## (C) Copyright 2014-2025 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -20,7 +20,7 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing -std=c++11 -fPIC @QT5_CLI_CFLAGS@ @LIBCURL_CFLAGS@ @SNDFILE_CFLAGS@ @TAGLIB_CFLAGS@ @OPENSSL_CFLAGS@ @ALSA_CFLAGS@
+AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing -std=c++11 -fPIC @QT5_CLI_CFLAGS@ @LIBCURL_CFLAGS@ @SNDFILE_CFLAGS@ @TAGLIB_CFLAGS@ @OPENSSL_CFLAGS@ @ALSA_CFLAGS@ @AWS_S3_CFLAGS@
 MOC = @QT5_MOC@
 
 # The dependency for qt's Meta Object Compiler (moc)
@@ -112,7 +112,7 @@ nodist_glassconv_SOURCES = cmdswitch.cpp cmdswitch.h\
                            moc_glassconv.cpp\
                            profile.cpp profile.h
 
-glassconv_LDADD = @LIBCURL_LIBS@ @QT5_CLI_LIBS@ -ldl -lpthread
+glassconv_LDADD = @LIBCURL_LIBS@ @QT5_CLI_LIBS@ @AWS_S3_LIBS@ -ldl -lpthread
 
 
 CLEANFILES = *~\

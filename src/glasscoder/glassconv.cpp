@@ -26,7 +26,17 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include <iostream>
+#include <fstream>
+
 #include <QCoreApplication>
+
+#ifdef HAVE_AWS_S3
+#include <aws/core/Aws.h>
+#include <aws/s3/S3Client.h>
+#include <aws/s3/model/PutObjectRequest.h>
+#include <aws/s3/model/DeleteObjectRequest.h>
+#endif  // HAVE_AWS_S3
 
 #include "cmdswitch.h"
 #include "config.h"
@@ -82,6 +92,16 @@ MainObject::MainObject(QObject *parent)
     Log(LOG_ERR,"destination url is invalid");
     exit(Config::ExitFatal);
   }
+#ifdef HAVE_AWS_S3
+  if((d_dest_url->scheme().toLower()!="http")&&
+     (d_dest_url->scheme().toLower()!="https")&&
+     (d_dest_url->scheme().toLower()!="sftp")&&
+     (d_dest_url->scheme().toLower()!="file")&&
+     (d_dest_url->scheme().toLower()!="s3")) {
+    Log(LOG_ERR,"destination url has unsupported scheme");
+    exit(Config::ExitFatal);
+  }
+#else
   if((d_dest_url->scheme().toLower()!="http")&&
      (d_dest_url->scheme().toLower()!="https")&&
      (d_dest_url->scheme().toLower()!="sftp")&&
@@ -89,6 +109,7 @@ MainObject::MainObject(QObject *parent)
     Log(LOG_ERR,"destination url has unsupported scheme");
     exit(Config::ExitFatal);
   }
+#endif  // HAVE_AWS_S3
 
   //
   // Initialize CURL
@@ -212,6 +233,19 @@ void MainObject::Put(const QString &destname,const QString &srcname)
 	 d_dest_url->toDisplayString().toUtf8().constData(),
 	 destname.toUtf8().constData());
 
+  QString scheme=d_dest_url->scheme().toLower();
+
+  if((scheme=="http")||(scheme=="https")||(scheme=="file")||(scheme=="sftp")) {
+    PutCurl(destname,srcname);
+  }
+  if(scheme=="s3") {
+    PutAwsS3(destname,srcname);
+  }
+}
+
+
+void MainObject::PutCurl(const QString &destname,const QString &srcname)
+{
   long resp_code=0;
   FILE *f=fopen(srcname.toUtf8(),"r");
   if(f==NULL) {
@@ -261,6 +295,46 @@ void MainObject::Put(const QString &destname,const QString &srcname)
 }
 
 
+void MainObject::PutAwsS3(const QString &destname,const QString &srcname)
+{
+#ifdef HAVE_AWS_S3
+  QStringList f0=d_dest_url->toDisplayString().split("/");
+  QString bucket=f0.last();
+  QString key=destname;
+
+  Aws::SDKOptions options;
+  Aws::InitAPI(options);
+
+  Aws::S3::S3ClientConfiguration config;
+  Aws::S3::S3Client client(config);
+  config.region="us-east-1";
+
+  Aws::S3::Model::PutObjectRequest request;
+  request.SetBucket(bucket.toUtf8().constData());
+  request.SetKey(key.toUtf8().constData());
+  std::shared_ptr<Aws::IOStream> in=
+    Aws::MakeShared<Aws::FStream>("SomeTag",srcname.toUtf8().constData(),
+				  std::ios_base::in|std::ios_base::binary);
+  if(!*in) {
+    Log(LOG_WARNING,"unable to read file \"%s\"",srcname.toUtf8().constData());
+    Aws::ShutdownAPI(options);
+    return;
+  }
+  request.SetBody(in);
+  Aws::S3::Model::PutObjectOutcome out=client.PutObject(request);
+  if(!out.IsSuccess()) {
+    auto err=out.GetError();
+    Log(LOG_WARNING,"S3 PutObject to \"%s\%s\" failed [%s:%s]",
+	bucket.toUtf8().constData(),key.toUtf8().constData(),
+	err.GetExceptionName(),err.GetMessage());
+  }
+  Aws::ShutdownAPI(options);
+#else  // HAVE_AWS_S3
+  Log(LOG_WARNING,"AWS S3 support has not been enabled, ignoring PUT request");
+#endif  // HAVE_AWS_S3
+}
+
+
 void MainObject::Delete(const QString &destname,const QString &srcname)
 {
   Log(LOG_DEBUG,"removing \"%s\" from \"%s/%s\"",
@@ -278,6 +352,9 @@ void MainObject::Delete(const QString &destname,const QString &srcname)
   }
   if(scheme=="sftp") {
     DeleteSftp(destname,srcname);
+  }
+  if(scheme=="s3") {
+    DeleteAwsS3(destname,srcname);
   }
 }
 
@@ -348,6 +425,38 @@ void MainObject::DeleteSftp(const QString &destname,const QString &srcname)
     Log(LOG_WARNING,"removal of \"%s\" failed: [%d] %s",
 	   url.toDisplayString().toUtf8().constData(),code,d_curl_errorbuffer);
   }
+}
+
+
+void MainObject::DeleteAwsS3(const QString &destname,const QString &srcname)
+{
+#ifdef HAVE_AWS_S3
+  QStringList f0=d_dest_url->toDisplayString().split("/");
+  QString bucket=f0.last();
+  QString key=destname;
+  
+  Aws::SDKOptions options;
+  Aws::InitAPI(options);
+
+  Aws::S3::S3ClientConfiguration config;
+  Aws::S3::S3Client client(config);
+  config.region="us-east-1";
+
+  Aws::S3::Model::DeleteObjectRequest request;
+  request.SetBucket(bucket.toUtf8().constData());
+  request.SetKey(key.toUtf8().constData());
+  Aws::S3::Model::DeleteObjectOutcome out=client.DeleteObject(request);
+  if(!out.IsSuccess()) {
+    auto err=out.GetError();
+    Log(LOG_WARNING,"S3 DeleteObject on \"%s\%s\" failed [%s:%s]",
+	bucket.toUtf8().constData(),key.toUtf8().constData(),
+	err.GetExceptionName(),err.GetMessage());
+  }
+  Aws::ShutdownAPI(options);
+#else  // HAVE_AWS_S3
+  Log(LOG_WARNING,
+      "AWS S3 support has not been enabled, ignoring DELETE request");
+#endif  // HAVE_AWS_S3
 }
 
 
