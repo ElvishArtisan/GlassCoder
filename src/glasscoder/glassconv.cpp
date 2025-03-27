@@ -194,8 +194,8 @@ void MainObject::ProcessFile(const QString &filename)
   }
   QString method=f1.at(1).trimmed();
   QString destname=f1.at(2);
-  printf("method: %s  destname: %s\n",method.toUtf8().constData(),
-	 destname.toUtf8().constData());
+  Log(LOG_NOTICE,"method: %s  destname: %s",method.toUtf8().constData(),
+      destname.toUtf8().constData());
   if(method=="DELETE") {
     Delete(destname,filename);
     UnlinkLocalFile(filename);
@@ -306,12 +306,17 @@ void MainObject::PutAwsS3(const QString &destname,const QString &srcname)
   Aws::InitAPI(options);
 
   Aws::S3::S3ClientConfiguration config;
+  //  config.region="us-east-1";
+  Log(LOG_NOTICE,"Using Profile: %s",d_username.toUtf8().constData());
+  config.profileName=d_username.toUtf8().constData();
   Aws::S3::S3Client client(config);
-  config.region="us-east-1";
 
   Aws::S3::Model::PutObjectRequest request;
   request.SetBucket(bucket.toUtf8().constData());
   request.SetKey(key.toUtf8().constData());
+  request.SetContentType(ContentType(key).toUtf8().constData());
+  Log(LOG_NOTICE,"FILE: %s  MimeType: %s",key.toUtf8().constData(),
+      ContentType(key).toUtf8().constData());
   std::shared_ptr<Aws::IOStream> in=
     Aws::MakeShared<Aws::FStream>("SomeTag",srcname.toUtf8().constData(),
 				  std::ios_base::in|std::ios_base::binary);
@@ -507,6 +512,21 @@ void MainObject::Log(int prio,const char *fmt,...) const
   va_end(args);
 }
 
+
+QString MainObject::ContentType(const QString &filename) const
+{
+  QStringList f0=filename.split(".");
+  QString ext=f0.last().toLower();
+
+  if(ext=="m3u8") {
+    return QString("application/vnd.apple.mpegurl");
+  }
+  if(ext=="aac") {
+    return QString("audio/aac");
+  }
+  
+  return QString("binary/octet-stream");
+}
 
 
 int main(int argv,char *argc[])
