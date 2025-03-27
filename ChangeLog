@@ -1058,3 +1058,8 @@
 2024-05-28 Fred Gleason <fredg@paravelsystems.com>
 	* Changed the installation location of the 'pypad_glasscoder.py'
 	script to '/usr/lib/rivendell/pypad/'.
+2025-03-26 Fred Gleason <fredg@paravelsystems.com>
+	* Roughed in support for Amazon Web Service S3 for HLS streams.
+2025-03-27 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug that caused the build to fail when the AWS S3 API was
+	detected.

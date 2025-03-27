@@ -225,7 +225,7 @@ AM_CONDITIONAL([PYTHON_AM], [test "$USING_PYTHON" = yes])
 #
 # Check for AWS S3 API
 #
-PKG_CHECK_MODULES(AWS_S3,aws-cpp-sdk-s3,[AWS_S3_FOUND=yes],[])
+PKG_CHECK_MODULES(AWS_S3,aws-cpp-sdk-s3,[AWS_S3_FOUND=yes],[DO_NOTHING])
 if test $AWS_S3_FOUND ; then
   if test -z $AWS_S3_DISABLED ; then
     AC_DEFINE(HAVE_AWS_S3)
