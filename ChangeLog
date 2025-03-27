@@ -1067,3 +1067,6 @@
 	* Fixed a bug in glasscoder(1) that caused HLS stream elements
 	to be tagged with the incorrect Content-Type when being sent to
 	AWS S3 endpoints.
+2025-03-27 Fred Gleason <fredg@paravelsystems.com>
+	* Added support for specifying the authentication profile to
+	use for streaming to AWS S3 buckets.

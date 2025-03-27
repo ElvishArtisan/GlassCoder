@@ -243,6 +243,9 @@ void NetConveyor::startConveyorProcess()
   args.push_back("--source-dir="+conv_temp_dir->path());
 
   conv_process=new QProcess(this);
+  QProcessEnvironment env=QProcessEnvironment::systemEnvironment();
+  ((Connector *)parent())->processConveyorEnvironment(env);
+  conv_process->setProcessEnvironment(env);
   connect(conv_process,SIGNAL(readyReadStandardOutput()),
 	  this,SLOT(processReadyReadData()));
   connect(conv_process,SIGNAL(finished(int,QProcess::ExitStatus)),

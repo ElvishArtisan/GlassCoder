@@ -31,6 +31,7 @@
 #include <QTcpSocket>
 #include <QTimer>
 #include <QProcess>
+#include <QProcessEnvironment>
 #include <QUrl>
 
 #include "metaevent.h"
@@ -109,6 +110,7 @@ class Connector : public QObject
   void setScriptDown(const QString &cmd);
   bool dumpHeaders() const;
   void setDumpHeaders(bool state);
+  virtual void processConveyorEnvironment(QProcessEnvironment &env) const;
   static QString serverTypeText(Connector::ServerType);
   static QString optionKeyword(Connector::ServerType type);
   static bool requiresServerUrl(Connector::ServerType type);

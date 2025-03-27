@@ -207,6 +207,14 @@ int64_t HlsConnector::writeDataConnector(int frames,const unsigned char *data,
 }
 
 
+void HlsConnector::processConveyorEnvironment(QProcessEnvironment &env) const
+{
+  if(serverUrl().scheme().toLower()=="s3") {
+    env.insert("AWS_PROFILE",serverUsername());
+  }
+}
+
+
 void HlsConnector::conveyorStoppedData()
 {
   emit stopped();

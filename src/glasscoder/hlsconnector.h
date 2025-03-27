@@ -2,7 +2,7 @@
 //
 // HLS/HTTP streaming connector for GlassCoder
 //
-//   (C) Copyright 2014-2022 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2014-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -68,6 +68,7 @@ class HlsConnector : public Connector
   void connectToHostConnector(const QUrl &url);
   void disconnectFromHostConnector();
   int64_t writeDataConnector(int frames,const unsigned char *data,int64_t len);
+  void processConveyorEnvironment(QProcessEnvironment &env) const;
 
  private slots:
   void conveyorStoppedData();
