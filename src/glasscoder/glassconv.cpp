@@ -32,8 +32,6 @@
 #include <QCoreApplication>
 
 #ifdef HAVE_AWS_S3
-#include <aws/core/Aws.h>
-#include <aws/s3/S3Client.h>
 #include <aws/s3/model/PutObjectRequest.h>
 #include <aws/s3/model/DeleteObjectRequest.h>
 #endif  // HAVE_AWS_S3
@@ -41,6 +39,7 @@
 #include "cmdswitch.h"
 #include "config.h"
 #include "glassconv.h"
+#include "hlsconnector.h"
 #include "profile.h"
 
 MainObject::MainObject(QObject *parent)
@@ -306,17 +305,13 @@ void MainObject::PutAwsS3(const QString &destname,const QString &srcname)
   Aws::InitAPI(options);
 
   Aws::S3::S3ClientConfiguration config;
-  //  config.region="us-east-1";
-  Log(LOG_NOTICE,"Using Profile: %s",d_username.toUtf8().constData());
   config.profileName=d_username.toUtf8().constData();
   Aws::S3::S3Client client(config);
 
   Aws::S3::Model::PutObjectRequest request;
   request.SetBucket(bucket.toUtf8().constData());
   request.SetKey(key.toUtf8().constData());
-  request.SetContentType(ContentType(key).toUtf8().constData());
-  Log(LOG_NOTICE,"FILE: %s  MimeType: %s",key.toUtf8().constData(),
-      ContentType(key).toUtf8().constData());
+  SetS3FileMetadata(request,key);
   std::shared_ptr<Aws::IOStream> in=
     Aws::MakeShared<Aws::FStream>("SomeTag",srcname.toUtf8().constData(),
 				  std::ios_base::in|std::ios_base::binary);
@@ -513,19 +508,21 @@ void MainObject::Log(int prio,const char *fmt,...) const
 }
 
 
-QString MainObject::ContentType(const QString &filename) const
+void MainObject::SetS3FileMetadata(Aws::S3::Model::PutObjectRequest &request,
+				 const QString &filename) const
 {
   QStringList f0=filename.split(".");
   QString ext=f0.last().toLower();
 
   if(ext=="m3u8") {
-    return QString("application/vnd.apple.mpegurl");
+    request.SetContentType("application/vnd.apple.mpegurl");
+    request.SetCacheControl(QString::asprintf("max-age=%d",HLS_SEGMENT_SIZE).
+			    toUtf8().constData());
   }
   if(ext=="aac") {
-    return QString("audio/aac");
+    request.SetContentType("audio/aac");
+    request.SetCacheControl("max-age=3600, stale-if-error=86400");
   }
-  
-  return QString("binary/octet-stream");
 }
 
 

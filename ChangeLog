@@ -1072,3 +1072,5 @@
 	use for streaming to AWS S3 buckets.
 2025-03-31 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to v2.1.1.
+2025-03-31 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Cache-Control' header to HLS files served via AWS S3.

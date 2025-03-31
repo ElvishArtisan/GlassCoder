@@ -25,6 +25,11 @@
 
 #include <curl/curl.h>
 
+#ifdef HAVE_AWS_S3
+#include <aws/core/Aws.h>
+#include <aws/s3/S3Client.h>
+#endif  // HAVE_AWS_S3
+
 #include <QDir>
 #include <QObject>
 #include <QTimer>
@@ -54,7 +59,8 @@ class MainObject : public QObject
   void SetCurlAuthentication(CURL *handle) const;
   void UnlinkLocalFile(const QString &pathname) const;
   void Log(int prio,const char *fmt,...) const;
-  QString ContentType(const QString &filename) const;
+  void SetS3FileMetadata(Aws::S3::Model::PutObjectRequest &request,
+		       const QString &filename) const;
   QDir *d_source_dir;
   QUrl *d_dest_url;
   QString d_username;
