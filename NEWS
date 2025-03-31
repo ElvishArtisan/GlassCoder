@@ -1,6 +1,12 @@
 The NEWS file for the GlassCoder package.
 
 -------------------------------------------------------------------------------
+v2.1.1 -- 31 March 2025
+
+Changes:
+   HLS Streaming. Added support for streaming via AWS Simple Storage Service
+   (S3). See the glasscoder(1) man page for details.
+-------------------------------------------------------------------------------
 v2.0.1 -- 25 June 2022
 
 Changes:
