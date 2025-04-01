@@ -1081,3 +1081,5 @@
 	* Incremented the package version to 2.1.0int0.
 2025-04-01 Fred Gleason <fredg@paravelsystems.com>
 	* Added error explanations to logging when processing AWS S3 errors.
+2025-04-01 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 2.1.0int1.
