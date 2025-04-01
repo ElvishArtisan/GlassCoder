@@ -323,17 +323,11 @@ void MainObject::PutAwsS3(const QString &destname,const QString &srcname)
   request.SetBody(in);
   Aws::S3::Model::PutObjectOutcome out=client.PutObject(request);
   if(!out.IsSuccess()) {
-    //
-    // FIXME: Find a way to send S3 error data to syslog
-    //
-    Log(LOG_WARNING,"S3 PutObject to \"%s\%s\" failed",
-	bucket.toUtf8().constData(),key.toUtf8().constData());
-    /*
     auto err=out.GetError();
-    Log(LOG_WARNING,"S3 PutObject to \"%s\%s\" failed [%s:%s]",
+    Log(LOG_WARNING,"S3 PutObject to \"%s\%s\" failed [%s]",
 	bucket.toUtf8().constData(),key.toUtf8().constData(),
-	err.GetExceptionName(),err.GetMessage());
-    */
+	err.GetMessage().c_str());
+
   }
   Aws::ShutdownAPI(options);
 #else  // HAVE_AWS_S3
@@ -454,17 +448,11 @@ void MainObject::DeleteAwsS3(const QString &destname,const QString &srcname)
   request.SetKey(key.toUtf8().constData());
   Aws::S3::Model::DeleteObjectOutcome out=client.DeleteObject(request);
   if(!out.IsSuccess()) {
-    //
-    // FIXME: Find a way to send S3 error data to syslog
-    //
-    Log(LOG_WARNING,"S3 DeleteObject on \"%s\%s\" failed",
-	bucket.toUtf8().constData(),key.toUtf8().constData());
-    /*
     auto err=out.GetError();
-    Log(LOG_WARNING,"S3 DeleteObject on \"%s\%s\" failed [%s:%s]",
+    Log(LOG_WARNING,"S3 DeleteObject on \"%s\%s\" failed [%s]",
 	bucket.toUtf8().constData(),key.toUtf8().constData(),
-	err.GetExceptionName(),err.GetMessage());
-    */
+	err.GetMessage().c_str());
+
   }
   Aws::ShutdownAPI(options);
 #else  // HAVE_AWS_S3
