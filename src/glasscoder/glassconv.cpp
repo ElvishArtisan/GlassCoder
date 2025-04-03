@@ -34,10 +34,10 @@
 #ifdef HAVE_AWS_S3
 #include <aws/s3/model/PutObjectRequest.h>
 #include <aws/s3/model/DeleteObjectRequest.h>
+#include <aws/s3/model/ListObjectsV2Request.h>
 #endif  // HAVE_AWS_S3
 
 #include "cmdswitch.h"
-#include "config.h"
 #include "glassconv.h"
 #include "hlsconnector.h"
 #include "profile.h"
@@ -70,26 +70,26 @@ MainObject::MainObject(QObject *parent)
     if(!cmd->processed(i)) {
       fprintf(stderr,"unrecognized option \"%s\"",
 	      cmd->key(i).toUtf8().constData());
-      exit(Config::ExitFatal);
+      CleanExit(Config::ExitFatal);
     }
   }
   openlog("glassconv",syslog_option,LOG_DAEMON);
   Log(LOG_DEBUG,"starting up");
   if(d_source_dir==NULL) {
     Log(LOG_ERR,"\"--source-dir\" argument required");
-    exit(Config::ExitFatal);
+    CleanExit(Config::ExitFatal);
   }
   if(d_dest_url==NULL) {
     Log(LOG_ERR,"\"--dest-url\" argument required");
-    exit(Config::ExitFatal);
+    CleanExit(Config::ExitFatal);
   }
   if(!d_source_dir->exists()) {
     Log(LOG_ERR,"source directory does not exist");
-    exit(Config::ExitFatal);
+    CleanExit(Config::ExitFatal);
   }
   if((!d_dest_url->isValid())||d_dest_url->isRelative()) {
     Log(LOG_ERR,"destination url is invalid");
-    exit(Config::ExitFatal);
+    CleanExit(Config::ExitFatal);
   }
 #ifdef HAVE_AWS_S3
   if((d_dest_url->scheme().toLower()!="http")&&
@@ -98,7 +98,7 @@ MainObject::MainObject(QObject *parent)
      (d_dest_url->scheme().toLower()!="file")&&
      (d_dest_url->scheme().toLower()!="s3")) {
     Log(LOG_ERR,"destination url has unsupported scheme");
-    exit(Config::ExitFatal);
+    CleanExit(Config::ExitFatal);
   }
 #else
   if((d_dest_url->scheme().toLower()!="http")&&
@@ -106,7 +106,7 @@ MainObject::MainObject(QObject *parent)
      (d_dest_url->scheme().toLower()!="sftp")&&
      (d_dest_url->scheme().toLower()!="file")) {
     Log(LOG_ERR,"destination url has unsupported scheme");
-    exit(Config::ExitFatal);
+    CleanExit(Config::ExitFatal);
   }
 #endif  // HAVE_AWS_S3
 
@@ -115,12 +115,21 @@ MainObject::MainObject(QObject *parent)
   //
   if(curl_global_init(CURL_GLOBAL_ALL)!=0) {
     Log(LOG_ERR,"curl global initialization failed");
-    exit(Config::ExitRetry);
+    CleanExit(Config::ExitRetry);
   }
   if((d_curl_handle=curl_easy_init())==NULL) {
     Log(LOG_ERR,"curl initialization failed");
-    exit(Config::ExitRetry);
+    CleanExit(Config::ExitRetry);
   }
+
+  //
+  // Initialize AWS S3 API
+  //
+#ifdef HAVE_AWS_S3
+  if(d_dest_url->scheme().toLower()=="s3") {
+    Aws::InitAPI(d_aws_options);
+  }
+#endif  // HAVE_AWS_S3
 
   //
   // Load Credentials
@@ -134,6 +143,9 @@ MainObject::MainObject(QObject *parent)
     d_ssh_identity=p->stringValue("Credentials","SshIdentity");
     d_user_agent=p->stringValue("Credentials","UserAgent",
 				QString("GlassCoder/")+VERSION);
+    if(!p->stringValue("Credentials","PrecleanUrl").isEmpty()) {
+      d_preclean_url=QUrl(p->stringValue("Credentials","PrecleanUrl"));
+    }
     UnlinkLocalFile(p->source());
   }
   delete p;
@@ -150,6 +162,15 @@ MainObject::MainObject(QObject *parent)
   d_scan_timer=new QTimer(this);
   d_scan_timer->setSingleShot(true);
   connect(d_scan_timer,SIGNAL(timeout()),this,SLOT(scanData()));
+
+  //
+  // Preclean PublishPoint
+  //
+#ifdef HAVE_AWS_S3
+  if(d_preclean_url.scheme().toLower()=="s3") {
+    CleanS3Bucket(d_preclean_url);
+  }
+#endif  // HAVE_AWS_S3
 
   //
   // Signal Disposition
@@ -196,7 +217,7 @@ void MainObject::ProcessFile(const QString &filename)
   Log(LOG_NOTICE,"method: %s  destname: %s",method.toUtf8().constData(),
       destname.toUtf8().constData());
   if(method=="DELETE") {
-    Delete(destname,filename);
+    Delete(destname);
     UnlinkLocalFile(filename);
     return;
   }
@@ -216,7 +237,7 @@ void MainObject::ProcessFile(const QString &filename)
     rmdir(d_source_dir->path().toUtf8());
 
     Log(LOG_DEBUG,"exiting normally");
-    exit(Config::ExitOk);
+    CleanExit(Config::ExitOk);
   }
   Log(LOG_WARNING,
 	 "unsupported transfer method in \"%s\", skipping",
@@ -301,9 +322,6 @@ void MainObject::PutAwsS3(const QString &destname,const QString &srcname)
   QString bucket=f0.last();
   QString key=destname;
 
-  Aws::SDKOptions options;
-  Aws::InitAPI(options);
-
   Aws::S3::S3ClientConfiguration config;
   config.profileName=d_username.toUtf8().constData();
   Aws::S3::S3Client client(config);
@@ -317,7 +335,6 @@ void MainObject::PutAwsS3(const QString &destname,const QString &srcname)
 				  std::ios_base::in|std::ios_base::binary);
   if(!*in) {
     Log(LOG_WARNING,"unable to read file \"%s\"",srcname.toUtf8().constData());
-    Aws::ShutdownAPI(options);
     return;
   }
   request.SetBody(in);
@@ -329,38 +346,36 @@ void MainObject::PutAwsS3(const QString &destname,const QString &srcname)
 	err.GetMessage().c_str());
 
   }
-  Aws::ShutdownAPI(options);
 #else  // HAVE_AWS_S3
   Log(LOG_WARNING,"AWS S3 support has not been enabled, ignoring PUT request");
 #endif  // HAVE_AWS_S3
 }
 
 
-void MainObject::Delete(const QString &destname,const QString &srcname)
+void MainObject::Delete(const QString &destname)
 {
-  Log(LOG_DEBUG,"removing \"%s\" from \"%s/%s\"",
-	 srcname.toUtf8().constData(),
+  Log(LOG_DEBUG,"removing \"%s/%s\"",
 	 d_dest_url->toDisplayString().toUtf8().constData(),
 	 destname.toUtf8().constData());
 
   QString scheme=d_dest_url->scheme().toLower();
 
   if((scheme=="http")||(scheme=="https")) {
-    DeleteHttp(destname,srcname);
+    DeleteHttp(destname);
   }
   if(scheme=="file") {
-    DeleteFile(destname,srcname);
+    DeleteFile(destname);
   }
   if(scheme=="sftp") {
-    DeleteSftp(destname,srcname);
+    DeleteSftp(destname);
   }
   if(scheme=="s3") {
-    DeleteAwsS3(destname,srcname);
+    DeleteAwsS3(destname);
   }
 }
 
 
-void MainObject::DeleteHttp(const QString &destname,const QString &srcname)
+void MainObject::DeleteHttp(const QString &destname)
 {
   long resp_code=0;
   QUrl url(d_dest_url->toDisplayString()+"/"+destname);
@@ -381,7 +396,7 @@ void MainObject::DeleteHttp(const QString &destname,const QString &srcname)
     curl_easy_getinfo(d_curl_handle,CURLINFO_RESPONSE_CODE,&resp_code);
     if((resp_code<200)||(resp_code>=300)) {
       Log(LOG_WARNING,"removal of \"%s\" returned code %lu",
-	     srcname.toUtf8().constData(),resp_code);
+	     destname.toUtf8().constData(),resp_code);
     }
   }
   else {
@@ -391,7 +406,7 @@ void MainObject::DeleteHttp(const QString &destname,const QString &srcname)
 }
 
 
-void MainObject::DeleteFile(const QString &destname,const QString &srcname)
+void MainObject::DeleteFile(const QString &destname)
 {
   QUrl url(d_dest_url->toDisplayString()+"/"+destname);
   if((unlink(url.path().toUtf8())!=0)&&(errno!=ENOENT)) {
@@ -401,7 +416,7 @@ void MainObject::DeleteFile(const QString &destname,const QString &srcname)
 }
 
 
-void MainObject::DeleteSftp(const QString &destname,const QString &srcname)
+void MainObject::DeleteSftp(const QString &destname)
 {
   struct curl_slist *cmds=NULL;
   QUrl url(d_dest_url->toDisplayString()+"/"+destname);
@@ -429,20 +444,16 @@ void MainObject::DeleteSftp(const QString &destname,const QString &srcname)
 }
 
 
-void MainObject::DeleteAwsS3(const QString &destname,const QString &srcname)
+void MainObject::DeleteAwsS3(const QString &destname) const
 {
 #ifdef HAVE_AWS_S3
   QStringList f0=d_dest_url->toDisplayString().split("/");
   QString bucket=f0.last();
   QString key=destname;
   
-  Aws::SDKOptions options;
-  Aws::InitAPI(options);
-
   Aws::S3::S3ClientConfiguration config;
   Aws::S3::S3Client client(config);
-  config.region="us-east-1";
-
+  //  config.region="us-east-1";
   Aws::S3::Model::DeleteObjectRequest request;
   request.SetBucket(bucket.toUtf8().constData());
   request.SetKey(key.toUtf8().constData());
@@ -454,7 +465,7 @@ void MainObject::DeleteAwsS3(const QString &destname,const QString &srcname)
 	err.GetMessage().c_str());
 
   }
-  Aws::ShutdownAPI(options);
+  //  Aws::ShutdownAPI(options);
 #else  // HAVE_AWS_S3
   Log(LOG_WARNING,
       "AWS S3 support has not been enabled, ignoring DELETE request");
@@ -525,6 +536,65 @@ void MainObject::SetS3FileMetadata(Aws::S3::Model::PutObjectRequest &request,
     request.SetContentType("audio/aac");
     request.SetCacheControl("max-age=3600, stale-if-error=86400");
   }
+}
+
+
+void MainObject::CleanS3Bucket(const QUrl &bucket_prefix) const
+{
+  QStringList f0=ListS3Objects(bucket_prefix.path().split("/").last());
+  for(int i=0;i<f0.size();i++) {
+    DeleteAwsS3(f0.at(i));
+  }
+  if(f0.size()>0) {
+    Log(LOG_INFO,"cleaned up %d stale files on publish point");
+  }
+}
+
+
+QStringList MainObject::ListS3Objects(const QString &prefix) const
+{
+  QStringList f0=d_dest_url->toDisplayString().split("/");
+  QString bucket=f0.last();
+  QStringList objs;
+  
+  Aws::Vector<Aws::S3::Model::Object> objects;
+  Aws::S3::S3ClientConfiguration config;
+  Aws::S3::S3Client client(config);
+  Aws::S3::Model::ListObjectsV2Request request;
+  request.SetBucket(bucket.toUtf8().constData());
+  request.SetPrefix(prefix.toUtf8().constData());
+  Aws::String ctk;
+
+  do {
+    if(!ctk.empty()) {
+      request.SetContinuationToken(ctk);
+    }
+    auto out=client.ListObjectsV2(request);
+    if(out.IsSuccess()) {
+      auto contents=out.GetResult().GetContents();
+      for(int i=0;i<contents.size();i++) {
+	objs.push_back(contents.at(i).GetKey().c_str());
+      }
+    }
+    else {
+      Log(LOG_WARNING,"failed to enumerate bucket \"%s\" [%s]",
+	  bucket.toUtf8().constData(),out.GetError().GetMessage().c_str());
+      return objs;
+    }
+  } while(!ctk.empty());
+
+  return objs;
+}
+
+
+void MainObject::CleanExit(Config::ExitCode exit_code) const
+{
+#ifdef HAVE_AWS_S3
+  if(d_dest_url->scheme().toLower()=="s3") {
+    Aws::ShutdownAPI(d_aws_options);
+  }
+#endif  // HAVE_AWS_S3
+  exit(exit_code);
 }
 
 

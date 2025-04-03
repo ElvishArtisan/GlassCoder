@@ -59,6 +59,7 @@ class Config
   QString serverUsername() const;
   QString serverPipe() const;
   bool serverNoDeletes() const;
+  bool serverPrecleanPublishPoint() const;
   QString streamAim() const;
   QString streamDescription() const;
   QString streamGenre() const;
@@ -110,6 +111,7 @@ class Config
   QString server_username;
   QString server_pipe;
   bool server_no_deletes;
+  bool server_preclean_publish_point;
 
   //
   // Stream Arguments

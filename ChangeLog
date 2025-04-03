@@ -1083,3 +1083,5 @@
 	* Added error explanations to logging when processing AWS S3 errors.
 2025-04-01 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 2.1.0int1.
+2025-04-03 Fred Gleason <fredg@paravelsystems.com>
+	* Added a '--server-preclean-publish-point' option to glasscoder(1).

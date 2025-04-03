@@ -35,6 +35,8 @@
 #include <QTimer>
 #include <QUrl>
 
+#include "config.h"
+
 #define GLASSCONV_USAGE "--source-dir=<dir> --dest-url=<url> [--debug]"
 
 class MainObject : public QObject
@@ -51,16 +53,19 @@ class MainObject : public QObject
   void Put(const QString &destname,const QString &srcname);
   void PutCurl(const QString &destname,const QString &srcname);
   void PutAwsS3(const QString &destname,const QString &srcname);
-  void Delete(const QString &destname,const QString &srcname);
-  void DeleteHttp(const QString &destname,const QString &srcname);
-  void DeleteFile(const QString &destname,const QString &srcname);
-  void DeleteSftp(const QString &destname,const QString &srcname);
-  void DeleteAwsS3(const QString &destname,const QString &srcname);
+  void Delete(const QString &destname);
+  void DeleteHttp(const QString &destname);
+  void DeleteFile(const QString &destname);
+  void DeleteSftp(const QString &destname);
+  void DeleteAwsS3(const QString &destname) const;
   void SetCurlAuthentication(CURL *handle) const;
   void UnlinkLocalFile(const QString &pathname) const;
   void Log(int prio,const char *fmt,...) const;
   void SetS3FileMetadata(Aws::S3::Model::PutObjectRequest &request,
 		       const QString &filename) const;
+  void CleanS3Bucket(const QUrl &bucket_prefix) const;
+  QStringList ListS3Objects(const QString &prefix) const;
+  void CleanExit(Config::ExitCode exit_code) const;
   QDir *d_source_dir;
   QUrl *d_dest_url;
   QString d_username;
@@ -70,6 +75,8 @@ class MainObject : public QObject
   CURL *d_curl_handle;
   char d_curl_errorbuffer[CURL_ERROR_SIZE];
   QString d_user_agent;
+  QUrl d_preclean_url;
+  Aws::SDKOptions d_aws_options;
 };
 
 

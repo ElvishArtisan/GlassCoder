@@ -50,6 +50,7 @@ Config::Config()
   server_script_up="";
   server_start_connections=0;
   server_pipe="";
+  server_preclean_publish_point=false;
   server_start_connections=0;
   server_no_deletes=false;
   stream_aim="";
@@ -209,6 +210,10 @@ Config::Config()
 	Log(LOG_ERR,"invalid argument for --server-max-connections");
 	exit(256);
       }
+      cmd->setProcessed(i,true);
+    }
+    if(cmd->key(i)=="--server-preclean-publish-point") {
+      server_preclean_publish_point=true;
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--server-url") {
@@ -539,6 +544,12 @@ QString Config::serverPipe() const
 bool Config::serverNoDeletes() const
 {
   return server_no_deletes;
+}
+
+
+bool Config::serverPrecleanPublishPoint() const
+{
+  return server_preclean_publish_point;
 }
 
 

@@ -232,6 +232,11 @@ void NetConveyor::startConveyorProcess()
   }
   fprintf(f,"UserAgent=%s\n",
 	  conv_config->serverUserAgent().toUtf8().constData());
+  if(conv_config->serverPrecleanPublishPoint()) {
+    fprintf(f,"PrecleanUrl=%s\n",
+	    conv_config->serverUrl().toString(QUrl::RemovePort).
+	    toUtf8().constData());
+  }
   fclose(f);
 
   //

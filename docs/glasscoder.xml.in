@@ -536,6 +536,22 @@ Password=&lt;password&gt;
 
     <varlistentry>
       <term>
+	<option>--server-preclean-publish-point</option>
+      </term>
+      <listitem>
+	<para>
+	  Attempt to remove extraneous files from the publishing point
+	  before starting the stream.
+	</para>
+	<para>
+	  N.B. Giving this option will cause any pre-recorded stream
+	  segments at the specified stream URL to be deleted!
+	</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>
 	<option>--server-script-down=</option><replaceable>cmd</replaceable>
       </term>
       <listitem>
