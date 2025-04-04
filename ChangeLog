@@ -1090,3 +1090,5 @@
 	Settings' dialog in glassgui(1)/glasscommander(1).
 2025-04-04 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'Show Meters' checkbox to glasscommander(1).
+2025-04-04 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 2.1.0int2.
