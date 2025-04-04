@@ -157,6 +157,15 @@ ServerDialog::ServerDialog(QDir *temp_dir,const QString &caption,QWidget *parent
   srv_cleanup_label->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 
   //
+  // Publish Point Cleanup
+  //
+  srv_preclean_check=new QCheckBox(this);
+  srv_preclean_label=
+    new QLabel(tr("Pre-clean publishing point"),this);
+  srv_preclean_label->setFont(label_font);
+  srv_preclean_label->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+
+  //
   // Close Button
   //
   srv_close_button=new QPushButton(tr("Close"),this);
@@ -213,6 +222,9 @@ bool ServerDialog::makeArgs(QStringList *args,bool escape_args)
   }
   if(!srv_cleanup_check->isChecked()) {
     args->push_back("--server-no-deletes");
+  }
+  if(srv_preclean_check->isChecked()) {
+    args->push_back("--server-preclean-publish-point");
   }
   if(srv_verbose_check->isChecked()) {
     args->push_back("--verbose");
@@ -299,6 +311,8 @@ void ServerDialog::load(Profile *p)
     setValue(p->intValue("GlassGui","ServerMaxConnections",-1));
   srv_cleanup_check->
     setChecked(p->intValue("GlassGui","ServerNoDeletes",1)!=0);
+  srv_preclean_check->
+    setChecked(p->intValue("GlassGui","ServerPrecleanPublishPoint",1)!=0);
   srv_verbose_check->setChecked(p->boolValue("GlassGui","VerboseLogging"));
   srv_server_metadata_port_spin->
     setValue(p->intValue("GlassGui","MetadataPort",-1));
@@ -327,6 +341,7 @@ void ServerDialog::save(FILE *f)
 	  srv_server_script_up_edit->text().toUtf8().constData());
   fprintf(f,"ServerMaxConnections=%d\n",srv_server_maxconns_spin->value());
   fprintf(f,"ServerNoDeletes=%d\n",srv_cleanup_check->isChecked());
+  fprintf(f,"ServerPrecleanPublishPoint=%d\n",srv_preclean_check->isChecked());
   fprintf(f,"MetadataPort=%d\n",srv_server_metadata_port_spin->value());
   fprintf(f,"VerboseLogging=%d\n",srv_verbose_check->isChecked());
 }
@@ -382,6 +397,10 @@ void ServerDialog::resizeEvent(QResizeEvent *e)
 
   srv_cleanup_check->setGeometry(105,ypos+5,15,15);
   srv_cleanup_label->setGeometry(125,ypos+1,size().width()-225,24);
+  ypos+=26;
+
+  srv_preclean_check->setGeometry(105,ypos+5,15,15);
+  srv_preclean_label->setGeometry(125,ypos+1,size().width()-225,24);
   ypos+=35;
 
   srv_close_button->setGeometry(size().width()-80,size().height()-50,70,40);
@@ -394,16 +413,19 @@ void ServerDialog::serverTypeChanged(int index)
     (Connector::ServerType)srv_server_type_box->itemData(index).toInt();
   bool authfields=false;
   bool cleanup=false;
+  bool preclean=false;
 
   switch(type) {
   case Connector::HlsServer:
     authfields=true;
     cleanup=true;
+    preclean=true;
     break;
 
   case Connector::IcecastStreamerServer:
     authfields=false;
     cleanup=false;
+    preclean=false;
     break;
 
   case Connector::Shoutcast1Server:
@@ -414,6 +436,7 @@ void ServerDialog::serverTypeChanged(int index)
   case Connector::FileArchiveServer:
     authfields=true;
     cleanup=false;
+    preclean=false;
     break;
 
   case Connector::LastServer:
@@ -427,6 +450,8 @@ void ServerDialog::serverTypeChanged(int index)
   srv_server_maxconns_spin->setDisabled(authfields);
   srv_cleanup_check->setEnabled(cleanup);
   srv_cleanup_label->setEnabled(cleanup);
+  srv_preclean_check->setEnabled(cleanup);
+  srv_preclean_label->setEnabled(cleanup);
   emit typeChanged(type);
 }
 

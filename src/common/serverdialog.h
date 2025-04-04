@@ -2,7 +2,7 @@
 //
 // Configuration dialog for server settings
 //
-//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -90,6 +90,8 @@ class ServerDialog : public QDialog
   QSpinBox *srv_server_maxconns_spin;
   QCheckBox *srv_cleanup_check;
   QLabel *srv_cleanup_label;
+  QCheckBox *srv_preclean_check;
+  QLabel *srv_preclean_label;
   QPushButton *srv_close_button;
   QDir *srv_temp_dir;
   QString srv_identity_path;
