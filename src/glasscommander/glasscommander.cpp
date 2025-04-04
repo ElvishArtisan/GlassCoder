@@ -163,6 +163,15 @@ MainWidget::MainWidget(QWidget *parent)
   connect(gui_stopall_button,SIGNAL(clicked()),this,SLOT(stopAllData()));
   gui_toolbar->addWidget(gui_stopall_button);
 
+  gui_toolbar->addSeparator();
+
+  gui_showmeters_check=new QCheckBox(this);
+  connect(gui_showmeters_check,SIGNAL(toggled(bool)),
+	  this,SLOT(showMetersData(bool)));
+  gui_toolbar->addWidget(gui_showmeters_check);
+  gui_showmeters_label=new QLabel(tr("Show Meters"),this);
+  gui_toolbar->addWidget(gui_showmeters_label);
+
   gui_insert_button=new QPushButton(tr("Insert"),this);
   gui_insert_button->setFont(bold_font);
   gui_insert_button->setStyleSheet("background-color: yellow");
@@ -231,6 +240,12 @@ void MainWidget::removeInstanceData()
   }
   gui_insert_button->hide();
   gui_abandon_action->setEnabled(true);
+}
+
+
+void MainWidget::showMetersData(bool checked)
+{
+  SaveEncoders();
 }
 
 
@@ -506,6 +521,9 @@ void MainWidget::ConnectEncoder(GlassWidget *encoder)
 	  this,SLOT(insertClickedData(const QString &)));
   connect(encoder,SIGNAL(removeClicked(const QString &)),
 	  this,SLOT(removeClickedData(const QString &)));
+  encoder->setShowMeter(gui_showmeters_check->isChecked());
+  connect(gui_showmeters_check,SIGNAL(toggled(bool)),
+	  encoder,SLOT(setShowMeter(bool)));
   encoder->show();
 }
 
@@ -519,6 +537,7 @@ void MainWidget::LoadEncoders()
   bool ok=false;
 
   p->setSource(settingsDirectory()->path()+"/"+GLASSCOMMANDER_SETTINGS_FILE);
+  gui_showmeters_check->setChecked(p->boolValue("Global","ShowMeters",true));
   name=p->stringValue(section,"InstanceName","",&ok);
   while(ok) {
     gui_encoders.push_back(new GlassWidget(name,gui_temp_dir,this));
@@ -547,6 +566,9 @@ void MainWidget::SaveEncoders()
       umask(mask);
       return;
     }
+    fprintf(f,"[Global]\n");
+    fprintf(f,"ShowMeters=%d\n",gui_showmeters_check->isChecked());
+    fprintf(f,"\n");
     for(int i=0;i<gui_encoders.size();i++) {
       fprintf(f,"[Encoder%d]\n",i+1);
       fprintf(f,"InstanceName=%s\n",

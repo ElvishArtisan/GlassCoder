@@ -31,6 +31,7 @@ GlassWidget::GlassWidget(const QString &instance_name,QDir *temp_dir,
   gw_temp_dir=temp_dir;
   gw_process=NULL;
   gw_auto_start=false;
+  gw_show_meters=true;
 
   setFrameStyle(QFrame::Box|QFrame::Raised);
   setMidLineWidth(2);
@@ -239,6 +240,23 @@ void GlassWidget::setRemoveMode()
 }
 
 
+void GlassWidget::setShowMeter(bool state)
+{
+  if(gw_show_meters!=state) {
+    gw_show_meters=state;
+    if(state) {
+      gw_meters[0]->show();
+      gw_meters[1]->show();
+    }
+    else {
+      gw_meters[0]->hide();
+      gw_meters[1]->hide();
+    }
+    resizeEvent(NULL);
+  }
+}
+
+
 void GlassWidget::startEncodingData()
 {
   QStringList args;
@@ -395,23 +413,38 @@ void GlassWidget::resizeEvent(QResizeEvent *e)
   int w=size().width();
   int h=size().height();
 
-  gw_meters[0]->setGeometry(4,4,300,h/2-4);
-  gw_meters[1]->setGeometry(4,h/2,300,h/2-4);
+  if(gw_show_meters) {
+    gw_meters[0]->setGeometry(4,4,300,h/2-4);
+    gw_meters[1]->setGeometry(4,h/2,300,h/2-4);
 
-  gw_status_frame_widget->setGeometry(307,4,134,h-8);
-  gw_status_widget->setGeometry(310,7,128,h-14);
+    gw_status_frame_widget->setGeometry(307,4,134,h-8);
+    gw_status_widget->setGeometry(310,7,128,h-14);
 
-  gw_name_label->setGeometry(445,2,190,h-4);
+    gw_name_label->setGeometry(445,2,190,h-4);
 
-  gw_message_widget->setGeometry(640,2,w-810,h-4);
+    gw_message_widget->setGeometry(640,2,w-810,h-4);
 
-  gw_start_button->setGeometry(w-160,5,70,h-9);
+    gw_start_button->setGeometry(w-160,5,70,h-9);
 
-  gw_config_button->setGeometry(w-80,5,70,h-9);
-  gw_insert_button->setGeometry(w-80,5,70,h-9);
-  gw_remove_button->setGeometry(w-80,5,70,h-9);
+    gw_config_button->setGeometry(w-80,5,70,h-9);
+    gw_insert_button->setGeometry(w-80,5,70,h-9);
+    gw_remove_button->setGeometry(w-80,5,70,h-9);
+  }
+  else {
+    gw_status_frame_widget->setGeometry(307-303,4,134,h-8);
+    gw_status_widget->setGeometry(310-303,7,128,h-14);
+
+    gw_name_label->setGeometry(445-303,2,190+151,h-4);
+
+    gw_message_widget->setGeometry(640-151,2,w-810+151,h-4);
+
+    gw_start_button->setGeometry(w-160,5,70,h-9);
+
+    gw_config_button->setGeometry(w-80,5,70,h-9);
+    gw_insert_button->setGeometry(w-80,5,70,h-9);
+    gw_remove_button->setGeometry(w-80,5,70,h-9);
+  }
 }
-
 
 void GlassWidget::ProcessFeedback(const QString &str)
 {

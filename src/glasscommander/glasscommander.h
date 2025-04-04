@@ -49,6 +49,7 @@ class MainWidget : public GuiApplication
   void addInstanceData();
   void removeInstanceData();
   void abandonInstanceData();
+  void showMetersData(bool checked);
   void topInsertClickedData();
   void insertClickedData(const QString &instance_name);
   void removeClickedData(const QString &instance_name);
@@ -88,6 +89,8 @@ class MainWidget : public GuiApplication
   QPushButton *gui_insert_button;
   QPushButton *gui_startall_button;
   QPushButton *gui_stopall_button;
+  QCheckBox *gui_showmeters_check;
+  QLabel *gui_showmeters_label;
   QTimer *gui_stop_timer;
   int gui_stop_count;
   QTimer *gui_autostart_timer;

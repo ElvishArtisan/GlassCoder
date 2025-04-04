@@ -71,6 +71,7 @@ class GlassWidget : public QFrame
   void setNormalMode();
   void setInsertMode();
   void setRemoveMode();
+  void setShowMeter(bool state);
 
  private slots:
   void startEncodingData();
@@ -93,6 +94,7 @@ class GlassWidget : public QFrame
   void ProcessFeedback(const QString &str);
   void ProcessError(int exit_code,QProcess::ExitStatus exit_status);
   PlayMeter *gw_meters[2];
+  bool gw_show_meters;
   QLabel *gw_name_label;
   QLabel *gw_status_frame_widget;
   StatusWidget *gw_status_widget;
